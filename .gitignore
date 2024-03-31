@@ -1,0 +1,4 @@
+
+/tests/YOLO test/models
+/tests/YOLO test/runs
+/tests/YOLO test/*.pt
