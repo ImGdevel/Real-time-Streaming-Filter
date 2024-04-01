@@ -2,3 +2,5 @@
 /tests/YOLO test/models
 /tests/YOLO test/runs
 /tests/YOLO test/*.pt
+/ui/__pycache__
+tests/models/yolov8x.pt
