@@ -1,10 +1,8 @@
-from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QGridLayout, QStackedWidget
+from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QHBoxLayout, QStackedWidget
 from PyQt5.QtCore import  Qt
 from .title_bar import MyTitleBar
 from .colors import Colors
-from .page1 import Page1
-from .page2 import Page2
-from .HomePage import HomePage
+from .SampleLayout import SampleLayout
 
 class MyApp(QWidget):
 
@@ -21,27 +19,45 @@ class MyApp(QWidget):
         # 레이아웃 및 타이틀 바 추가
         self.layout = QVBoxLayout()
         self.layout.addWidget(MyTitleBar(self))
-        
+        self.layout.setSpacing(10)  # 간격 설정
+
+        # 전체 레이아웃 설정
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setContentsMargins(10, 0, 10, 10)  # 상단, 하단, 좌측, 우측 여백 설정
+
+        # 오른쪽 1/4 공간 - 메뉴바
+        self.right_widget = QWidget()
+        self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        self.right_widget.setFixedWidth(200)
+
+        # 나머지 구간 - 컨텐츠
+        self.remaining_widget = QWidget()
+        self.remaining_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')
+        self.remaining_widget.setMinimumWidth(500)
+
+        # QHBoxLayout 추가
+        self.hbox_layout = QHBoxLayout()
+        self.hbox_layout.addWidget(self.right_widget)
+        self.hbox_layout.addWidget(self.remaining_widget)
+
         # QStackedWidget 추가
-        self.stacked_widget = QStackedWidget()
+        self.contentLayout = QStackedWidget()
+
+        # 페이지 추가란
+        self.sampleLayout = SampleLayout()
+        self.contentLayout.addWidget(self.sampleLayout)
         
-        # 페이지 생성 및 QStackedWidget에 추가
-        #self.page1 = Page1()
-        #self.stacked_widget.addWidget(self.page1)
-        #self.page2 = Page2()
-        #self.stacked_widget.addWidget(self.page2)
-        self.homepage = HomePage()
-        self.stacked_widget.addWidget(self.homepage)
 
-        self.grid_layout = QGridLayout()
-        self.grid_layout.addWidget(self.stacked_widget, 0, 0, 1, 3)
 
-        # 그리드 레이아웃을 전체 레이아웃에 추가
-        self.layout.addLayout(self.grid_layout)
-        self.layout.setContentsMargins(0, 0, 0, 0)  # 창과의 간격 설정
-        self.layout.addStretch(-1)
+        self.remaining_layout = QVBoxLayout()
+        self.remaining_layout.addWidget(self.contentLayout)
+        self.remaining_widget.setLayout(self.remaining_layout)
+
+        self.main_layout.addLayout(self.hbox_layout)
+        self.layout.addLayout(self.main_layout)
+
+        self.layout.setContentsMargins(0, 0, 0, 0)  # 모든 여백 제거
         self.setLayout(self.layout)
-
 
         self.setStyleSheet(f"""
             background-color: {Colors.baseColor01};
