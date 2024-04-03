@@ -20,14 +20,11 @@ class MyApp(QWidget):
 
         # 레이아웃 및 타이틀 바 추가
         self.layout = QVBoxLayout()
-        
-        # 타이틀 바 추가
         self.layout.addWidget(MyTitleBar(self))
         
         # QStackedWidget 추가
         self.stacked_widget = QStackedWidget()
-        self.grid_layout = QGridLayout()
-
+        
         # 페이지 생성 및 QStackedWidget에 추가
         #self.page1 = Page1()
         #self.stacked_widget.addWidget(self.page1)
@@ -36,6 +33,7 @@ class MyApp(QWidget):
         self.homepage = HomePage()
         self.stacked_widget.addWidget(self.homepage)
 
+        self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.stacked_widget, 0, 0, 1, 3)
 
         # 그리드 레이아웃을 전체 레이아웃에 추가
