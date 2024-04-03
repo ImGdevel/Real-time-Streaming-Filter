@@ -4,6 +4,7 @@ from .title_bar import MyTitleBar
 from .colors import Colors
 from .page1 import Page1
 from .page2 import Page2
+from .HomePage import HomePage
 
 class MyApp(QWidget):
 
@@ -28,10 +29,12 @@ class MyApp(QWidget):
         self.grid_layout = QGridLayout()
 
         # 페이지 생성 및 QStackedWidget에 추가
-        self.page1 = Page1()
-        self.stacked_widget.addWidget(self.page1)
-        self.page2 = Page2()
-        self.stacked_widget.addWidget(self.page2)
+        #self.page1 = Page1()
+        #self.stacked_widget.addWidget(self.page1)
+        #self.page2 = Page2()
+        #self.stacked_widget.addWidget(self.page2)
+        self.homepage = HomePage()
+        self.stacked_widget.addWidget(self.homepage)
 
         self.grid_layout.addWidget(self.stacked_widget, 0, 0, 1, 3)
 
