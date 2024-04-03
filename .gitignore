@@ -5,6 +5,5 @@
 /tests/YOLO test/*.pt
 tests/models/yolov8x.pt
 
-
-/ui/__pycache__
-/ui/__pycache__/*.pyc
+*.pyc
+*/__pycache__
