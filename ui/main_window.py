@@ -1,8 +1,11 @@
 from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QHBoxLayout, QStackedWidget
-from PyQt5.QtCore import  Qt
-from .title_bar import MyTitleBar
-from .colors import Colors
-from .SampleLayout import SampleLayout
+from PyQt5.QtCore import Qt
+from ui.title_bar import MyTitleBar
+from ui.colors import Colors
+from ui.menu import Menu
+from ui.router import Router
+
+# ********* 페이지(레이어)는 router.py에서 등록 **********
 
 class MyApp(QWidget):
 
@@ -30,6 +33,12 @@ class MyApp(QWidget):
         self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.right_widget.setFixedWidth(200)
 
+        # Menu 위젯 추가
+        self.menu = Menu()
+        self.menu_layout = QVBoxLayout()
+        self.menu_layout.addWidget(self.menu)
+        self.right_widget.setLayout(self.menu_layout)
+
         # 나머지 구간 - 컨텐츠
         self.remaining_widget = QWidget()
         self.remaining_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')
@@ -43,11 +52,8 @@ class MyApp(QWidget):
         # QStackedWidget 추가
         self.contentLayout = QStackedWidget()
 
-        # 페이지 추가란
-        self.sampleLayout = SampleLayout()
-        self.contentLayout.addWidget(self.sampleLayout)
-        
-
+        # Router 생성 및 전달
+        self.router = Router(self.contentLayout, self.menu)
 
         self.remaining_layout = QVBoxLayout()
         self.remaining_layout.addWidget(self.contentLayout)
@@ -64,7 +70,7 @@ class MyApp(QWidget):
             color: {Colors.textColor01};
             font-family: Arial, sans-serif;
         """)
-        
+
         # 프레임리스 윈도우 설정
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.show()
