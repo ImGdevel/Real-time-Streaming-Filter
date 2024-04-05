@@ -1,5 +1,6 @@
 from ui.SampleLayout import SampleLayout
 from ui.page1 import Page1
+from ui.RStreamPage import RStreamPage
 
 
 class Router:
@@ -8,7 +9,7 @@ class Router:
         self.contentLayout = contentLayout
 
         # 페이지 추가
-        self.add_page(SampleLayout())
+        self.add_page(RStreamPage())
         self.add_page(Page1())
 
         # Menu의 페이지 변경 시그널 연결
