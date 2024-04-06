@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 from PyQt5.QtCore import Qt, QPoint
-from .colors import Colors
+from utils import Colors
 
-class MyTitleBar(QWidget):
+class TitleBar(QWidget):
 
     def __init__(self, parent):
-        super(MyTitleBar, self).__init__()
+        super(TitleBar, self).__init__()
         self.parent = parent
         self.initUI()
 
@@ -81,7 +81,7 @@ class MyTitleBar(QWidget):
 
     def resizeEvent(self, QResizeEvent):
         """위젯 크기 변경 이벤트 핸들러"""
-        super(MyTitleBar, self).resizeEvent(QResizeEvent)
+        super(TitleBar, self).resizeEvent(QResizeEvent)
         self.title.setFixedWidth(self.parent.width())
 
     def mousePressEvent(self, event):
