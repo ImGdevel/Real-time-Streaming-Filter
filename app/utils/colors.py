@@ -8,6 +8,7 @@ class Colors:
     #TextColorSheet
     textColor01 = '#ffffff'
     baseColor01 = '#212121'
+    baseColor02 = '#2a2a2a'
 
     # Button Colots Sheet
     btnTextColor01 = '#ffffff'
