@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 from PyQt5.QtCore import Qt, QPoint
+from .colors import Colors
 
 class MyTitleBar(QWidget):
 
@@ -18,16 +19,16 @@ class MyTitleBar(QWidget):
         self.title = QLabel("My Own Bar")
         self.title.setFixedHeight(40)
         self.title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
-        self.title.setStyleSheet("""
-            background-color: #1a1a1a;
-            color: #ffffff;
+        self.title.setStyleSheet(f"""
+            background-color: {Colors.titleBarBackgroundColor};
+            color: {Colors.textColor01};
             padding: 10px;
         """)
 
         # 버튼 설정 및 스타일 적용
         btn_size = 35
-        self.btn_close = self.createButton("x", self.btn_close_clicked, btn_size, "#c33d3d")
-        self.btn_min = self.createButton("-", self.btn_min_clicked, btn_size, "#1a1a1a")
+        self.btn_close = self.createButton("x", self.btn_close_clicked, btn_size, Colors.cancelBtnColor)
+        self.btn_min = self.createButton("-", self.btn_min_clicked, btn_size, Colors.titleBarBackgroundColor)
 
         # 레이아웃에 위젯 추가
         self.layout.addWidget(self.title)
@@ -47,7 +48,7 @@ class MyTitleBar(QWidget):
         button.setFixedSize(size, size)
         button.setStyleSheet(f"""
             background-color: {bg_color};
-            color: #ffffff;
+            color: {Colors.btnTextColor01};
             font-size: 18px;
             border: none;
         """)
@@ -55,7 +56,7 @@ class MyTitleBar(QWidget):
         button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {bg_color};
-                color: #ffffff;
+                color: {Colors.btnTextColor01};
                 font-size: 18px;
                 border: none;
             }}

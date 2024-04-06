@@ -3,12 +3,14 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer, Qt
 from .title_bar import MyTitleBar
 from .video_processor import VideoProcessor
+from .colors import Colors
 
 class MyApp(QWidget):
 
     def __init__(self):
         super().__init__()
         self.initUI()
+        
 
     def initUI(self):
         # 윈도우 설정
@@ -27,19 +29,19 @@ class MyApp(QWidget):
 
         # 상단 도구 영역
         self.tool_widget = QWidget()
-        self.tool_widget.setStyleSheet("background-color: #333333;")  # 더 진한 배경색으로 변경
+        self.tool_widget.setStyleSheet(f"background-color: {Colors.btnColor02};")  # 더 진한 배경색으로 변경
         self.tool_widget.setMinimumSize(1000, 120)  # 최소 크기 설정
         self.grid_layout.addWidget(self.tool_widget, 1, 0, 1, 3)  # 상단 도구 영역
 
         # 기능 메뉴 영역
         self.menu_widget = QWidget()
-        self.menu_widget.setStyleSheet("background-color: #333333;")  # 더 진한 배경색으로 변경
+        self.menu_widget.setStyleSheet(f"background-color: {Colors.btnColor02};")  # 더 진한 배경색으로 변경
         self.menu_widget.setMinimumSize(300, 500)  # 최소 크기 설정
         self.grid_layout.addWidget(self.menu_widget, 2, 0)  # 기능 메뉴 영역
 
         # 기능 설명 및 기능들 영역
         self.description_widget = QWidget()
-        self.description_widget.setStyleSheet("background-color: #333333;")  # 더 진한 배경색으로 변경
+        self.description_widget.setStyleSheet(f"background-color: {Colors.btnColor02};")  # 더 진한 배경색으로 변경
         self.description_widget.setMinimumSize(700, 500)  # 최소 크기 설정
         self.grid_layout.addWidget(self.description_widget, 2, 1, 1, 2)  # 기능 설명 및 기능들 영역
 
@@ -97,11 +99,9 @@ class MyApp(QWidget):
         self.invert_mode = False
         self.mosaic_mode = False
 
-
-        # 전체 애플리케이션의 스타일 설정
-        self.setStyleSheet("""
-            background-color: #212121;
-            color: #ffffff;
+        self.setStyleSheet(f"""
+            background-color: {Colors.baseColor01};
+            color: {Colors.textColor01};
             font-family: Arial, sans-serif;
         """)
         
