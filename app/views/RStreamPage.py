@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer, Qt
-from ui.colors import Colors
+from utils import Colors
 
 class RStreamPage(QWidget):
     def __init__(self, parent = None):

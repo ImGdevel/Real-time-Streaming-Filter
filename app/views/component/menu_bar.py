@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
 from PyQt5.QtCore import pyqtSignal
 
-class Menu(QWidget):
+class MenuBar(QWidget):
 
     # 페이지 변경 시그널 정의
     page_changed = pyqtSignal(int)

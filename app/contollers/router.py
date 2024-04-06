@@ -1,6 +1,6 @@
-from ui.SampleLayout import SampleLayout
-from ui.page1 import Page1
-from ui.RStreamPage import RStreamPage
+from views.SampleLayout import SampleLayout
+from views.page1 import Page1
+from views.RStreamPage import RStreamPage
 
 
 class Router:

@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer, Qt
-from ui.video_processor import VideoProcessor
-from ui.colors import Colors
+from contollers import VideoProcessor
+from utils import Colors
 
 class Page1(QWidget):
     def __init__(self, parent=None):

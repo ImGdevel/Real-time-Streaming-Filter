@@ -1,11 +1,8 @@
 from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QHBoxLayout, QStackedWidget
 from PyQt5.QtCore import Qt
-from ui.title_bar import MyTitleBar
-from ui.colors import Colors
-from ui.menu import Menu
-from ui.router import Router
-
-# ********* 페이지(레이어)는 router.py에서 등록 **********
+from utils import Colors
+from contollers import Router
+from views.component import MenuBar, TitleBar
 
 class MyApp(QWidget):
 
@@ -21,7 +18,7 @@ class MyApp(QWidget):
 
         # 레이아웃 및 타이틀 바 추가
         self.layout = QVBoxLayout()
-        self.layout.addWidget(MyTitleBar(self))
+        self.layout.addWidget(TitleBar(self))
         self.layout.setSpacing(10)  # 간격 설정
 
         # 전체 레이아웃 설정
@@ -34,7 +31,7 @@ class MyApp(QWidget):
         self.right_widget.setFixedWidth(200)
 
         # Menu 위젯 추가
-        self.menu = Menu()
+        self.menu = MenuBar()
         self.menu_layout = QVBoxLayout()
         self.menu_layout.addWidget(self.menu)
         self.right_widget.setLayout(self.menu_layout)
