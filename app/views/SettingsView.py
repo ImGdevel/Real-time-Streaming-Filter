@@ -3,7 +3,7 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer, Qt
 from utils import Colors
 
-class SampleLayout(QWidget):
+class SettingsView(QWidget):
     def __init__(self, parent = None):
 
         super().__init__(parent)
