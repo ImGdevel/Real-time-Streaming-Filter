@@ -12,8 +12,8 @@ class Router:
         # 페이지 추가
         self.add_page(HomeView())
         self.add_page(RStreamPage())
-        self.add_page(ImageView())
         self.add_page(VideoView())
+        self.add_page(ImageView())
         self.add_page(SettingsView())
 
         # Menu의 페이지 변경 시그널 연결
