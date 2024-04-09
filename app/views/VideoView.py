@@ -1,6 +1,6 @@
 import os
 import cv2
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtCore import Qt, QMimeData
@@ -18,25 +18,28 @@ class VideoInfo:
 class VideoPlayerThread(QThread):
     video_frame = pyqtSignal(object)  # 비디오 프레임 신호
     current_frame = pyqtSignal(int)    # 현재 프레임 신호
+    fps_signal = pyqtSignal(float)     # FPS 신호
 
     def __init__(self, video_path):
         super(VideoPlayerThread, self).__init__()
         self.video_path = video_path
         self.cap = cv2.VideoCapture(self.video_path)
         self.video_frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))  # FPS 값 가져오기
+        self.is_playing = True
 
     def run(self):
-        while self.cap.isOpened():
+        while self.cap.isOpened() and self.is_playing:
             ret, frame = self.cap.read()
             if ret:
                 current_frame_num = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
                 self.video_frame.emit(frame)        # 비디오 프레임 신호 발생
                 self.current_frame.emit(current_frame_num)  # 현재 프레임 신호 발생
+                self.fps_signal.emit(self.fps)      # FPS 신호 발생
             else:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
                 
         self.cap.release()
-
 
 
 # PyQt5를 이용한 비디오 재생 화면 구성 클래스
@@ -45,23 +48,31 @@ class VideoView(QWidget):
         super().__init__(parent)
         self.initUI()
 
-class VideoView(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.initUI()
-
     def initUI(self):
         self.layout = QVBoxLayout()
 
+        # 중앙 정렬을 위한 수평 레이아웃
+        self.center_layout = QHBoxLayout()
+
         # 비디오 위젯 추가
         self.video_widget = QLabel(self)
-        self.video_widget.setFixedSize(640, 480)
+        self.video_widget.setScaledContents(True)  # 이미지 비율 유지
         self.video_widget.setStyleSheet("background-color: black;")
         self.video_widget.setAcceptDrops(True)  # 드롭 이벤트를 허용
         self.video_widget.dragEnterEvent = self.dragEnterEvent
         self.video_widget.dropEvent = self.dropEvent
         self.video_widget.mousePressEvent = self.openFileDialogOnClick
-        self.layout.addWidget(self.video_widget)
+
+        # QLabel의 크기를 동적으로 조절
+        self.video_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.video_widget.setMinimumSize(640, 360)  # 최소 크기 설정 (16:9 비율에 따라)
+
+        # QLabel을 수평 레이아웃에 추가하고 중앙 정렬 설정
+        self.center_layout.addWidget(self.video_widget)
+        self.center_layout.setAlignment(Qt.AlignCenter)
+
+        # 수평 레이아웃을 수직 레이아웃에 추가
+        self.layout.addLayout(self.center_layout)
 
         # 파일 탐색기 버튼
         self.file_dialog_button = QPushButton("Choose Video File")
