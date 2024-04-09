@@ -51,9 +51,6 @@ class VideoView(QWidget):
     def initUI(self):
         self.layout = QVBoxLayout()
 
-        # 중앙 정렬을 위한 수평 레이아웃
-        self.center_layout = QHBoxLayout()
-
         # 비디오 위젯 추가
         self.video_widget = QLabel(self)
         self.video_widget.setScaledContents(True)  # 이미지 비율 유지
@@ -63,54 +60,61 @@ class VideoView(QWidget):
         self.video_widget.dropEvent = self.dropEvent
         self.video_widget.mousePressEvent = self.openFileDialogOnClick
 
-        # QLabel의 크기를 동적으로 조절
-        self.video_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.video_widget.setMinimumSize(640, 360)  # 최소 크기 설정 (16:9 비율에 따라)
-
-        # QLabel을 수평 레이아웃에 추가하고 중앙 정렬 설정
-        self.center_layout.addWidget(self.video_widget)
-        self.center_layout.setAlignment(Qt.AlignCenter)
-
-        # 수평 레이아웃을 수직 레이아웃에 추가
-        self.layout.addLayout(self.center_layout)
+        # QLabel을 수직 레이아웃에 추가
+        self.layout.addWidget(self.video_widget)
 
         # 파일 탐색기 버튼
         self.file_dialog_button = QPushButton("Choose Video File")
         self.file_dialog_button.clicked.connect(self.openFileDialog)
         self.layout.addWidget(self.file_dialog_button)
 
-        # 비디오 바 (슬라이더)
+        # 비디오 바 (슬라이더), 현재 재생 시간, FPS 정보를 위한 레이아웃
+        self.bottom_layout = QHBoxLayout()
+
+        # 재생, 일시정지, 정지 버튼
+        self.play_button = QPushButton("Play")
+        self.play_button.clicked.connect(self.playVideo)
+        self.bottom_layout.addWidget(self.play_button)
+
+        self.pause_button = QPushButton("Pause")
+        self.pause_button.clicked.connect(self.pauseVideo)
+        self.bottom_layout.addWidget(self.pause_button)
+
+        self.stop_button = QPushButton("Stop")
+        self.stop_button.clicked.connect(self.stopVideo)
+        self.bottom_layout.addWidget(self.stop_button)
+
+        # 비디오 바
         self.video_bar = QSlider(Qt.Horizontal)
         self.video_bar.setEnabled(False)
         self.video_bar.sliderMoved.connect(self.changeVideoPosition)
-        self.video_bar.sliderPressed.connect(self.pauseVideo)  # 슬라이더 클릭시 일시정지
-        self.layout.addWidget(self.video_bar)
+        self.video_bar.sliderPressed.connect(self.pauseVideo)
+        self.bottom_layout.addWidget(self.video_bar)
 
         # 현재 재생 시간 표시 레이블
         self.current_time_label = QLabel("00:00:00")
-        self.layout.addWidget(self.current_time_label)
+        self.bottom_layout.addWidget(self.current_time_label)
 
-        # 버튼 레이아웃
-        self.button_layout = QHBoxLayout()
+        # FPS 값을 표시하는 레이블
+        self.fps_label = QLabel("FPS: --")
+        self.bottom_layout.addWidget(self.fps_label)
 
-        # 재생 버튼
-        self.play_button = QPushButton("Play")
-        self.play_button.clicked.connect(self.playVideo)
-        self.button_layout.addWidget(self.play_button)
-
-        # 일시정지 버튼
-        self.pause_button = QPushButton("Pause")
-        self.pause_button.clicked.connect(self.pauseVideo)
-        self.button_layout.addWidget(self.pause_button)
-
-        # 정지 버튼
-        self.stop_button = QPushButton("Stop")
-        self.stop_button.clicked.connect(self.stopVideo)
-        self.button_layout.addWidget(self.stop_button)
-
-        self.layout.addLayout(self.button_layout)
+        self.layout.addLayout(self.bottom_layout)
 
         self.setLayout(self.layout)
+
+    def resizeEvent(self, event):
+        # 부모 레이아웃의 크기가 변경될 때마다 비디오 위젯의 크기를 조정
+        super().resizeEvent(event)
+        parent_width = self.width()
+        parent_height = self.height()
+
+        # 가로 길이를 부모 레이아웃 크기에 맞추기
+        self.video_widget.setFixedWidth(parent_width)
+
+        # 가로 길이의 16:9 비율로 높이 설정
+        video_height = int(parent_width / 16 * 9)
+        self.video_widget.setFixedHeight(video_height)
 
     # 파일 대화상자를 통해 비디오 파일 선택
     def openFileDialog(self):
@@ -121,6 +125,7 @@ class VideoView(QWidget):
             self.video_thread = VideoPlayerThread(filePath)
             self.video_thread.video_frame.connect(self.updateVideoFrame)
             self.video_thread.current_frame.connect(self.updateVideoBar)
+            self.video_thread.fps_signal.connect(self.updateFPSLabel)  # FPS 신호 연결
             self.video_bar.setEnabled(True)
             self.video_thread.start()
 
@@ -132,16 +137,14 @@ class VideoView(QWidget):
         pixmap = QPixmap.fromImage(q_img)
         self.video_widget.setPixmap(pixmap.scaled(self.video_widget.width(), self.video_widget.height()))
 
-        # 비디오 슬라이더의 위치 업데이트
+    # 비디오 슬라이더의 위치 업데이트
     def updateVideoBar(self, current_frame_num):
         total_frames = self.video_thread.video_frame_count
         value = int((current_frame_num / total_frames) * 100)
         self.video_bar.setValue(value)
         
         # FPS 가져오기
-        fps = self.video_thread.cap.get(cv2.CAP_PROP_FPS)
-        
-        # 현재 재생 시간 계산
+        fps = self.video_thread.fps
         current_time = self.convertTime(current_frame_num, total_frames, fps)
         
         # 비디오 바 왼쪽에 현재 재생 시간 표시
@@ -149,15 +152,18 @@ class VideoView(QWidget):
         self.video_bar.setTickPosition(QSlider.TicksBothSides)  # 틱 위치 설정
         self.video_bar.setToolTip(current_time)  # 툴팁으로 현재 시간 표시
 
-        # 비디오 바 왼쪽에 현재 재생 시간 표시
-        self.current_time_label.setText(current_time)  # 현재 시간 레이블 업데이트
+        # 현재 재생 시간 레이블 업데이트
+        self.current_time_label.setText(current_time)
+
+    # FPS 레이블 업데이트
+    def updateFPSLabel(self, fps_value):
+        self.fps_label.setText(f"FPS: {fps_value}")
 
     def openFileDialogOnClick(self, event):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
             self.loadVideo(filePath)
-
 
     # 드래그 이벤트 오버라이드
     def dragEnterEvent(self, event: QDragEnterEvent):
