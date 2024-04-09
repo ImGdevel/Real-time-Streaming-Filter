@@ -5,6 +5,9 @@
 /tests/YOLO test/*.pt
 tests/models/yolov8x.pt
 
+# sample 
+/app/resource/*.mp4
+
 # pycache ignore
 *.pyc
 */__pycache__
