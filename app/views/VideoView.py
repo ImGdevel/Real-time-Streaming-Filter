@@ -3,6 +3,8 @@ import cv2
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 
 # 비디오 파일 정보를 관리하는 클래스
 class VideoInfo:
@@ -51,6 +53,10 @@ class VideoView(QWidget):
         # 비디오 위젯 추가
         self.video_widget = QLabel(self)
         self.video_widget.setFixedSize(640, 480)
+        self.video_widget.setStyleSheet("background-color: black;")
+        self.video_widget.setAcceptDrops(True)  # 드롭 이벤트를 허용
+        self.video_widget.dragEnterEvent = self.dragEnterEvent
+        self.video_widget.dropEvent = self.dropEvent
         self.layout.addWidget(self.video_widget)
 
         # 파일 탐색기 버튼
@@ -131,7 +137,27 @@ class VideoView(QWidget):
         # 비디오 바 왼쪽에 현재 재생 시간 표시
         self.current_time_label.setText(current_time)  # 현재 시간 레이블 업데이트
 
+    # 드래그 이벤트 오버라이드
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
+    # 드롭 이벤트 오버라이드
+    def dropEvent(self, event: QDropEvent):
+        files = [url.toLocalFile() for url in event.mimeData().urls()]
+        if files:
+            file_path = files[0]  # 첫 번째 파일만 가져옴
+            self.loadVideo(file_path)
+
+    def loadVideo(self, file_path):
+        self.video_info = VideoInfo(file_path)
+        self.video_thread = VideoPlayerThread(file_path)
+        self.video_thread.video_frame.connect(self.updateVideoFrame)
+        self.video_thread.current_frame.connect(self.updateVideoBar)
+        self.video_bar.setEnabled(True)
+        self.video_thread.start()
 
     # 비디오 재생 위치 변경
     def changeVideoPosition(self, value):
