@@ -13,7 +13,7 @@ class MyApp(QWidget):
     def initUI(self):
         # 윈도우 설정
         self.setWindowTitle('Real-time video filtering program')
-        self.setFixedSize(1024, 768)
+        self.setFixedSize(1440, 1080)
         self.center()
 
         # 레이아웃 및 타이틀 바 추가
