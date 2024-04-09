@@ -6,16 +6,17 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 
-# 비디오 파일 정보를 관리하는 클래스
 class VideoInfo:
+    '''비디오 파일 정보를 관리하는 클래스'''
     def __init__(self, video_path):
         self.video_path = video_path
         self.video_name = os.path.basename(video_path)
         self.video_extension = os.path.splitext(video_path)[1][1:].lower()
         self.video_size = os.path.getsize(video_path)
 
-# 비디오 재생을 위한 스레드 클래스
+
 class VideoPlayerThread(QThread):
+    '''비디오 재생을 위한 스레드 클래스'''
     video_frame = pyqtSignal(object)  # 비디오 프레임 신호
     current_frame = pyqtSignal(int)    # 현재 프레임 신호
     fps_signal = pyqtSignal(float)     # FPS 신호
@@ -29,6 +30,7 @@ class VideoPlayerThread(QThread):
         self.is_playing = True
 
     def run(self):
+        '''비디오 재생 스레드의 메인 루프'''
         while self.cap.isOpened() and self.is_playing:
             ret, frame = self.cap.read()
             if ret:
@@ -42,13 +44,15 @@ class VideoPlayerThread(QThread):
         self.cap.release()
 
 
-# PyQt5를 이용한 비디오 재생 화면 구성 클래스
+
 class VideoView(QWidget):
+    '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
 
     def initUI(self):
+        '''UI 초기화'''
         self.layout = QVBoxLayout()
 
         # 비디오 위젯 추가
@@ -102,9 +106,10 @@ class VideoView(QWidget):
         self.layout.addLayout(self.bottom_layout)
 
         self.setLayout(self.layout)
+        
 
     def resizeEvent(self, event):
-        # 부모 레이아웃의 크기가 변경될 때마다 비디오 위젯의 크기를 조정
+        '''부모 레이아웃의 크기가 변경될 때마다 비디오 위젯의 크기를 조정'''
         super().resizeEvent(event)
         parent_width = self.width()
         parent_height = self.height()
@@ -116,8 +121,9 @@ class VideoView(QWidget):
         video_height = int(parent_width / 16 * 9)
         self.video_widget.setFixedHeight(video_height)
 
-    # 파일 대화상자를 통해 비디오 파일 선택
+
     def openFileDialog(self):
+        '''파일 대화상자를 통해 비디오 파일 선택'''
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
@@ -129,16 +135,18 @@ class VideoView(QWidget):
             self.video_bar.setEnabled(True)
             self.video_thread.start()
 
-    # 비디오 프레임을 QLabel 위젯에 업데이트
+
     def updateVideoFrame(self, frame):
+        '''비디오 프레임을 QLabel 위젯에 업데이트'''
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, c = rgb_frame.shape
         q_img = QImage(rgb_frame.data, w, h, w * c, QImage.Format_RGB888)
         pixmap = QPixmap.fromImage(q_img)
         self.video_widget.setPixmap(pixmap.scaled(self.video_widget.width(), self.video_widget.height()))
 
-    # 비디오 슬라이더의 위치 업데이트
+
     def updateVideoBar(self, current_frame_num):
+        '''비디오 슬라이더의 위치 업데이트'''
         total_frames = self.video_thread.video_frame_count
         value = int((current_frame_num / total_frames) * 100)
         self.video_bar.setValue(value)
@@ -155,31 +163,38 @@ class VideoView(QWidget):
         # 현재 재생 시간 레이블 업데이트
         self.current_time_label.setText(current_time)
 
-    # FPS 레이블 업데이트
+
     def updateFPSLabel(self, fps_value):
+        '''FPS 레이블 업데이트'''
         self.fps_label.setText(f"FPS: {fps_value}")
 
+
     def openFileDialogOnClick(self, event):
+        '''파일 대화상자를 통해 비디오 파일 선택 (마우스 클릭 이벤트로 트리거)'''
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
             self.loadVideo(filePath)
 
-    # 드래그 이벤트 오버라이드
+
     def dragEnterEvent(self, event: QDragEnterEvent):
+        '''드래그 이벤트 오버라이드'''
         if event.mimeData().hasUrls():
             event.accept()
         else:
             event.ignore()
 
-    # 드롭 이벤트 오버라이드
+
     def dropEvent(self, event: QDropEvent):
+        '''드롭 이벤트 오버라이드'''
         files = [url.toLocalFile() for url in event.mimeData().urls()]
         if files:
             file_path = files[0]  # 첫 번째 파일만 가져옴
             self.loadVideo(file_path)
 
+
     def loadVideo(self, file_path):
+        '''비디오 파일 로드'''
         self.video_info = VideoInfo(file_path)
         self.video_thread = VideoPlayerThread(file_path)
         self.video_thread.video_frame.connect(self.updateVideoFrame)
@@ -187,41 +202,46 @@ class VideoView(QWidget):
         self.video_bar.setEnabled(True)
         self.video_thread.start()
 
-    # 비디오 재생 위치 변경
+
     def changeVideoPosition(self, value):
+        '''비디오 재생 위치 변경'''
         if hasattr(self, 'video_thread'):
             total_frames = self.video_thread.video_frame_count
             target_frame = int(value / 100 * total_frames)
             self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
 
-    # 비디오 재생
+
     def playVideo(self):
+        '''비디오 재생'''
         if hasattr(self, 'video_thread'):
             if self.video_thread.cap.get(cv2.CAP_PROP_POS_FRAMES) == self.video_thread.video_frame_count:
                 self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
                 self.video_bar.setValue(0)  # 슬라이더 값도 초기화
             self.video_thread.start()
 
-    # 비디오 일시정지
+
     def pauseVideo(self):
+        '''비디오 일시정지'''
         if hasattr(self, 'video_thread'):
             self.video_thread.terminate()
 
-    # 비디오 정지
+
     def stopVideo(self):
+        '''비디오 정지'''
         if hasattr(self, 'video_thread'):
             self.video_thread.terminate()
             self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
             self.video_bar.setValue(0)  # 슬라이더 값도 초기화
 
+
     def convertTime(self, frame_number, total_frames, fps):
+        '''프레임 번호를 시간 형식으로 변환'''
         if fps == 0:
             return "00:00:00"  # fps 값이 0일 경우 "00:00:00"을 반환하여 오류를 방지
         seconds = frame_number / fps
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
-
 
 if __name__ == "__main__":
     import sys
