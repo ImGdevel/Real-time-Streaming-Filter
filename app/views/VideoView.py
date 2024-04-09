@@ -33,8 +33,11 @@ class VideoPlayerThread(QThread):
                 self.video_frame.emit(frame)        # 비디오 프레임 신호 발생
                 self.current_frame.emit(current_frame_num)  # 현재 프레임 신호 발생
             else:
-                break
+                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
+                
         self.cap.release()
+
+
 
 # PyQt5를 이용한 비디오 재생 화면 구성 클래스
 class VideoView(QWidget):
@@ -57,6 +60,7 @@ class VideoView(QWidget):
         self.video_widget.setAcceptDrops(True)  # 드롭 이벤트를 허용
         self.video_widget.dragEnterEvent = self.dragEnterEvent
         self.video_widget.dropEvent = self.dropEvent
+        self.video_widget.mousePressEvent = self.openFileDialogOnClick
         self.layout.addWidget(self.video_widget)
 
         # 파일 탐색기 버튼
@@ -137,6 +141,13 @@ class VideoView(QWidget):
         # 비디오 바 왼쪽에 현재 재생 시간 표시
         self.current_time_label.setText(current_time)  # 현재 시간 레이블 업데이트
 
+    def openFileDialogOnClick(self, event):
+        options = QFileDialog.Options()
+        filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
+        if filePath:
+            self.loadVideo(filePath)
+
+
     # 드래그 이벤트 오버라이드
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
@@ -186,8 +197,9 @@ class VideoView(QWidget):
             self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
             self.video_bar.setValue(0)  # 슬라이더 값도 초기화
 
-    # 현재 재생 시간 계산 함수
     def convertTime(self, frame_number, total_frames, fps):
+        if fps == 0:
+            return "00:00:00"  # fps 값이 0일 경우 "00:00:00"을 반환하여 오류를 방지
         seconds = frame_number / fps
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
