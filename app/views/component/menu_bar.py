@@ -13,15 +13,19 @@ class MenuBar(QWidget):
     def initUI(self):
         self.layout = QVBoxLayout()  # 수직 레이아웃 사용
 
-        self.button1 = QPushButton("Home")
-        self.button1.clicked.connect(lambda: self.page_changed.emit(0)) 
-        self.layout.addWidget(self.button1)
-
-        self.button2 = QPushButton("Page1")
-        self.button2.clicked.connect(lambda: self.page_changed.emit(1)) 
-        self.layout.addWidget(self.button2)
+        # page button 추가
+        self.addMenuButton("Home", 0)
+        self.addMenuButton("Stream",1)
+        self.addMenuButton("Video", 2)
+        self.addMenuButton("Image",3)
+        self.addMenuButton("Setting",4)
 
         # 상단에 여백 추가
         self.layout.addStretch()
 
         self.setLayout(self.layout)
+
+    def addMenuButton(self, name, number):
+        self.button = QPushButton(name)
+        self.button.clicked.connect(lambda: self.page_changed.emit(number)) 
+        self.layout.addWidget(self.button)
