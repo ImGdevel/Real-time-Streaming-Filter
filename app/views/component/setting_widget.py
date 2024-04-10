@@ -12,9 +12,9 @@ class SettingWidget(QWidget):
 
     def initUI(self):
         self.layout = QVBoxLayout()
-        self.setStyleSheet(f'background-color: {Colors.baseColor01};')
-        self.setMinimumSize(100, 300)
         self.download_button = QPushButton()
+        
+        self.layout.addWidget(self.download_button)
         self.setLayout(self.layout)
         
 
