@@ -1,15 +1,19 @@
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt, QMimeDatabase
+from PyQt5.QtCore import pyqtSignal
 from utils import Colors
 
 
 class DragDropLabel(QLabel):
+
+    drop_signal = pyqtSignal(list)
 
     def __init__(self, parent = None):
         super().__init__(parent)
         self.initUI()
 
     def initUI(self):
+        self.setAcceptDrops(True)
         self.layout = QVBoxLayout()
         self.dropbox_lable = QLabel()
         self.dropbox_lable.setMinimumSize(500, 300)
@@ -40,14 +44,16 @@ class DragDropLabel(QLabel):
 
     #파일 끌어오기
     def dragEnterEvent(self, event):
-        print("Drag in")
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
     #파일 놓기
     def dropEvent(self, event):
         urls = self.find_image(event.mimeData())
         if urls:
-            for url in urls:
-                print(url.toLocalFile())
+            self.drop_signal.emit(self.urls)
             event.accept()
         else:
             event.ignore()

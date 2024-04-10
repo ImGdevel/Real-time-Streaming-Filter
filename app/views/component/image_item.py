@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QGridLayout, QLabel, QWidget, QFileIconProvider, QVBoxLayout, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtCore import QUrl, Qt, QFileInfo
 
 class ImageItem(QWidget):
     def __init__(self, file_info):
@@ -8,12 +8,13 @@ class ImageItem(QWidget):
         self.file_data = file_info
         icon_provider = QFileIconProvider()
 
+        file_url = QFileInfo(QUrl.toLocalFile(file_info))
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignCenter)
-        self.image_label.setPixmap(icon_provider.icon(file_info).pixmap(64, 64))
+        self.image_label.setPixmap(icon_provider.icon(file_url).pixmap(32, 32))
 
         self.name_label = QLabel()
-        self.name_label.setAlignment(Qt.AlignBottom)
+        self.name_label.setAlignment(Qt.AlignCenter)
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
@@ -33,5 +34,4 @@ class ImageItem(QWidget):
             QMessageBox.critical(self, "Error", "Failed to load image")
 
     def open_file(self, file_path):
-        file_url = QUrl.fromLocalFile(file_path)
-        QDesktopServices.openUrl(file_url)
+        QDesktopServices.openUrl(file_path)
