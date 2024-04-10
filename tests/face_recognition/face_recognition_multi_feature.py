@@ -35,9 +35,13 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
 def extract_face_features(image_path):
     image = face_recognition.load_image_file(image_path)
     face_landmarks_list = face_recognition.face_landmarks(image)
-    if len(face_landmarks_list) > 0:
+    if len(face_landmarks_list) > 1:
+        print("Too many faces in ", image_path)
+        return None
+    elif len(face_landmarks_list) > 0:
         return face_recognition.face_encodings(image)[0]
     else:
+        print("Cannot found face in ", image_path)
         return None
 
 # 사람의 여러 장의 사진을 등록하는 함수
@@ -51,11 +55,13 @@ def register_person(person_name, image_paths):
         known_faces[person_name] = person_faces
 
 # 여러 장의 사진을 등록
-#register_person("me", ["./tests/face_recognition/me_1.jpg", "./tests/face_recognition/me_2.jpg", "./tests/face_recognition/me_4.jpg"])
-#register_person("me1", ["./tests/face_recognition/me_1.jpg"])
-#register_person("me2", ["./tests/face_recognition/me_2.jpg"])
-#register_person("me3", ["./tests/face_recognition/me_3.jpg"])
-register_person("me4", ["./tests/face_recognition/me_4.webp"])
+register_person("SSH_glass", ["./tests/face_recognition/me_4.jpg"])
+#register_person("WSH", ["./tests/face_recognition/WSH.png"])
+#register_person("LJW", ["./tests/face_recognition/LJW.png"])
+register_person("SSH", ["./tests/face_recognition/me_left.jpg"])
+#register_person("WSH2", ["./tests/face_recognition/WSH.png"])
+#register_person("LJW2", ["./tests/face_recognition/LJW.png"])
+
 
 # OpenCV를 사용하여 웹캠 열기
 cap = cv2.VideoCapture(0)
@@ -87,7 +93,7 @@ while True:
 
         # 식별된 얼굴 이름을 화면에 표시
         text = recognized_face + " " + str(tolerance_used)
-        print(tolerance_used)
+        #print(tolerance_used)
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
         cv2.putText(frame, text, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 

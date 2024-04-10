@@ -8,3 +8,4 @@ tests/models/yolov8x.pt
 
 /ui/__pycache__
 /ui/__pycache__/*.pyc
+/tests
