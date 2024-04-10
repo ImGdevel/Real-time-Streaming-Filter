@@ -1,5 +1,5 @@
 
-
+# test ignore
 /tests/YOLO test/models
 /tests/YOLO test/runs
 /tests/YOLO test/*.pt
@@ -8,4 +8,10 @@ tests/models/yolov8x.pt
 
 /ui/__pycache__
 /ui/__pycache__/*.pyc
-/tests
+
+
+
+# pycache ignore
+*.pyc
+*/__pycache__
+*/__pycache__/*
