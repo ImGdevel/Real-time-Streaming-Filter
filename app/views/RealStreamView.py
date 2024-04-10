@@ -14,6 +14,7 @@ class VideoProcessor(QThread):
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')  # 얼굴 인식을 위한 분류기
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
+        self.mosaic_active = False  # 모자이크 활성화 상태
 
     def run(self):
         '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
@@ -24,6 +25,10 @@ class VideoProcessor(QThread):
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
                 if self.is_flipped:
                     frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
+                
+                if self.mosaic_active:
+                    frame_rgb = self.apply_mosaic(frame_rgb)
+
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
                 q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
@@ -38,6 +43,19 @@ class VideoProcessor(QThread):
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
         self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
+
+    def apply_mosaic(self, frame_rgb):
+        '''모자이크 처리 메서드'''
+        faces = self.face_cascade.detectMultiScale(frame_rgb, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                
+        for (x, y, w, h) in faces:
+            face_img = frame_rgb[y:y+h, x:x+w]
+            face_img = cv2.resize(face_img, (w//10, h//10))
+            face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
+            frame_rgb[y:y+h, x:x+w] = face_img
+        
+        return frame_rgb
+
 
 # GUI 클래스
 class RealStreamView(QWidget):
@@ -68,6 +86,25 @@ class RealStreamView(QWidget):
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
         self.layout.addWidget(self.toolbar, 0, 0)
 
+        # 툴바에 버튼 추가
+        self.toggle_button = QPushButton("Toggle Webcam")  # 웹캠 토글 버튼
+        self.toggle_button.setCheckable(True)  # 체크 가능 설정
+        self.toggle_button.clicked.connect(self.toggle_webcam)  # 클릭 이벤트 연결
+
+        self.flip_button = QPushButton("Flip Horizontal")  # 화면 좌우 뒤집기 버튼
+        self.flip_button.clicked.connect(self.flip_horizontal)  # 클릭 이벤트 연결
+
+        self.mosaic_button = QPushButton("Toggle Mosaic")  # 모자이크 토글 버튼
+        self.mosaic_button.setCheckable(True)  # 체크 가능 설정
+        self.mosaic_button.clicked.connect(self.toggle_mosaic)  # 클릭 이벤트 연결
+
+        # 툴바에 버튼 배치
+        toolbar_layout = QVBoxLayout()
+        toolbar_layout.addWidget(self.toggle_button)
+        toolbar_layout.addWidget(self.flip_button)
+        toolbar_layout.addWidget(self.mosaic_button)
+        self.toolbar.setLayout(toolbar_layout)
+
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
         self.video_widget = QLabel()  # 비디오 플레이어 레이블
@@ -81,15 +118,6 @@ class RealStreamView(QWidget):
         self.bottom_layout = QVBoxLayout()  # 수직 레이아웃
         self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 설정
         self.bottom_widget.setLayout(self.bottom_layout)
-
-        self.toggle_button = QPushButton("Toggle Webcam")  # 웹캠 토글 버튼
-        self.toggle_button.setCheckable(True)  # 체크 가능 설정
-        self.toggle_button.clicked.connect(self.toggle_webcam)  # 클릭 이벤트 연결
-        self.bottom_layout.addWidget(self.toggle_button)
-
-        self.flip_button = QPushButton("Flip Horizontal")  # 화면 좌우 뒤집기 버튼
-        self.flip_button.clicked.connect(self.flip_horizontal)  # 클릭 이벤트 연결
-        self.bottom_layout.addWidget(self.flip_button)
 
         self.layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
 
@@ -109,6 +137,17 @@ class RealStreamView(QWidget):
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
         self.video_processor.flip_horizontal()
+
+    def toggle_mosaic(self):
+        '''모자이크 토글 메서드'''
+        if self.mosaic_button.isChecked():
+            # 모자이크 활성화
+            self.video_processor.mosaic_active = True
+            self.mosaic_button.setText("Disable Mosaic")
+        else:
+            # 모자이크 비활성화
+            self.video_processor.mosaic_active = False
+            self.mosaic_button.setText("Toggle Mosaic")
 
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
