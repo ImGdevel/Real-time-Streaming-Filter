@@ -4,7 +4,10 @@
 /tests/YOLO test/runs
 /tests/YOLO test/*.pt
 tests/models/yolov8x.pt
-
+/tests/face_detection_dlib
+/tests/face_detection_opencv
+/tests/face_recognition
+/tests/face_recognition_deepface
 
 /ui/__pycache__
 /ui/__pycache__/*.pyc
@@ -15,7 +18,4 @@ tests/models/yolov8x.pt
 *.pyc
 */__pycache__
 */__pycache__/*
-/tests/face_detection_dlib
-/tests/face_detection_opencv
-/tests/face_recognition
-/tests/face_recognition_deepface
+
