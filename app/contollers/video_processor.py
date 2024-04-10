@@ -1,43 +1,55 @@
+from PyQt5.QtGui import QImage
+from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
 
-class VideoProcessor:
+# 비디오 처리 스레드
+class VideoProcessor(QThread):
+    frame_ready = pyqtSignal(QImage)
+
     def __init__(self):
-        self.video_cap = cv2.VideoCapture(0)
-        # 얼굴 검출을 위한 Haar 분류기 초기화
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    
-    def get_frame(self):
-        """ 현재 비디오 프레임을 반환 """
-        ret, frame = self.video_cap.read()
-        if ret:
-            # BGR 포맷을 RGB 포맷으로 변환하여 반환
-            return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        else:
-            return None
+        super().__init__()
+        self.video_cap = cv2.VideoCapture(0)  # 웹캠 캡처 객체
+        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')  # 얼굴 인식을 위한 분류기
+        self.is_running = False  # 스레드 실행 상태
+        self.is_flipped = False  # 화면 좌우 뒤집기 상태
+        self.mosaic_active = False  # 모자이크 활성화 상태
 
-    def mosaic_face(self, frame):
-        """ 얼굴 부분을 모자이크 처리 """
-        mosaic_frame = frame.copy()
-        gray = cv2.cvtColor(mosaic_frame, cv2.COLOR_BGR2GRAY)
-        faces = self.face_cascade.detectMultiScale(gray, 2, 5)
-        
-        #검출된 얼굴 부분을 모자이크 처리
+    def run(self):
+        '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
+        self.is_running = True
+        while self.is_running:
+            ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
+            if ret:
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+                if self.is_flipped:
+                    frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
+                
+                if self.mosaic_active:
+                    frame_rgb = self.apply_mosaic(frame_rgb)
+
+                height, width, channel = frame_rgb.shape
+                bytes_per_line = 3 * width
+                q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
+            self.msleep(16)  # 약 60fps
+
+    def stop(self):
+        '''스레드 종료 메서드'''
+        self.is_running = False
+        self.wait()
+
+    def flip_horizontal(self):
+        '''화면 좌우 뒤집기 메서드'''
+        self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
+
+    def apply_mosaic(self, frame_rgb):
+        '''모자이크 처리 메서드'''
+        faces = self.face_cascade.detectMultiScale(frame_rgb, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                
         for (x, y, w, h) in faces:
-            roi = mosaic_frame[y:y+h, x:x+w]
-            roi = cv2.resize(roi, (w//15, h//15), interpolation=cv2.INTER_LINEAR)
-            roi = cv2.resize(roi, (w, h), interpolation=cv2.INTER_NEAREST)
-            mosaic_frame[y:y+h, x:x+w] = roi
+            face_img = frame_rgb[y:y+h, x:x+w]
+            face_img = cv2.resize(face_img, (w//10, h//10))
+            face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
+            frame_rgb[y:y+h, x:x+w] = face_img
         
-        return mosaic_frame
-
-    def convert_to_grayscale(self, frame):
-        # 이미지를 그레이스케일로 변환
-        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # 그레이스케일 이미지를 RGB 포맷으로 변환하여 반환
-        return cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2RGB)
-    
-    def invert_colors(self, frame):
-        # 이미지의 색상을 반전시킴
-        frame_inverted = cv2.bitwise_not(frame)
-        # 반전된 이미지를 RGB 포맷으로 변환하여 반환
-        return cv2.cvtColor(frame_inverted, cv2.COLOR_BGR2RGB)
+        return frame_rgb
