@@ -1,4 +1,4 @@
-from models.Filtering import ObjectDetect
+from models.ObjectDetect import ObjectDetect
 import cv2
 
 class Filtering:
