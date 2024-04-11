@@ -59,8 +59,9 @@ class RealStreamView(QWidget):
         self.core_buttons_widget = QWidget()
 
         # 실시간 영상 재생/중지 버튼
-        self.play_pause_button = QPushButton("Play\nPause")
+        self.play_pause_button = QPushButton("Start\nWebcam")
         self.play_pause_button.setFixedSize(70,70)
+        self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
         # 일시정지 버튼
@@ -185,12 +186,12 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.video_processor.isRunning():
                 self.video_processor.start()
-                self.play_pause_button.setText("Stop Webcam")
+                self.play_pause_button.setText("Stop\nWebcam")
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
             if self.video_processor.isRunning():
                 self.video_processor.stop()
-                self.play_pause_button.setText("Start Webcam")
+                self.play_pause_button.setText("Start\nWebcam")
                 self.timer.stop()
 
     def stop_webcam(self):
