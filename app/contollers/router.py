@@ -1,4 +1,4 @@
-from views.RStreamPage import RStreamPage
+from views.RealStreamView import RealStreamView
 from views.VideoView import VideoView
 from views.ImageView import ImageView
 from views.SettingsView import SettingsView
@@ -11,7 +11,7 @@ class Router:
 
         # 페이지 추가
         self.add_page(HomeView())
-        self.add_page(RStreamPage())
+        self.add_page(RealStreamView())
         self.add_page(VideoView())
         self.add_page(ImageView())
         self.add_page(SettingsView())

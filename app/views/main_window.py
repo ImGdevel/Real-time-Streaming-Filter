@@ -15,6 +15,7 @@ class MyApp(QWidget):
         self.setWindowTitle('Real-time video filtering program')
         self.setFixedSize(1280, 800)
         self.center()
+        self.setAcceptDrops(True)
 
         # 레이아웃 및 타이틀 바 추가
         self.layout = QVBoxLayout()
