@@ -145,8 +145,37 @@ class RealStreamView(QWidget):
         '''하단 레이어 설정 메서드'''
         self.bottom_widget = QWidget()  # 하단 위젯
         self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.bottom_layout = QVBoxLayout()  # 수직 레이아웃
-        self.bottom_widget.setLayout(self.bottom_layout)
+        
+        # 버튼 추가
+        self.button1 = QPushButton("Button 1")
+        self.button1.clicked.connect(self.dummy_function_1)
+
+        self.button2 = QPushButton("Button 2")
+        self.button2.clicked.connect(self.dummy_function_2)
+
+        self.button3 = QPushButton("Button 3")
+        self.button3.clicked.connect(self.dummy_function_3)
+
+        self.button4 = QPushButton("Button 4")
+        self.button4.clicked.connect(self.dummy_function_4)
+
+        self.button5 = QPushButton("Button 5")
+        self.button5.clicked.connect(self.dummy_function_5)
+
+        self.button6 = QPushButton("Button 6")
+        self.button6.clicked.connect(self.dummy_function_6)
+
+        # 버튼 레이아웃 설정
+        bottom_layout = QHBoxLayout()
+        bottom_layout.addWidget(self.button1)
+        bottom_layout.addWidget(self.button2)
+        bottom_layout.addWidget(self.button3)
+        bottom_layout.addWidget(self.button4)
+        bottom_layout.addWidget(self.button5)
+        bottom_layout.addWidget(self.button6)
+        bottom_layout.setSpacing(10)
+
+        self.bottom_widget.setLayout(bottom_layout)
         self.layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
 
 
@@ -212,6 +241,36 @@ class RealStreamView(QWidget):
         '''더미 버튼 기능 메서드'''
         # 더미 버튼 기능 로직 추가
         pass
+
+    def dummy_function_1(self):
+        '''더미 버튼 기능 메서드 1'''
+        print("Button 1 clicked!")
+        # 더미 버튼 기능 로직 추가
+
+    def dummy_function_2(self):
+        '''더미 버튼 기능 메서드 2'''
+        print("Button 2 clicked!")
+        # 더미 버튼 기능 로직 추가
+
+    def dummy_function_3(self):
+        '''더미 버튼 기능 메서드 3'''
+        print("Button 3 clicked!")
+        # 더미 버튼 기능 로직 추가
+
+    def dummy_function_4(self):
+        '''더미 버튼 기능 메서드 4'''
+        print("Button 4 clicked!")
+        # 더미 버튼 기능 로직 추가
+
+    def dummy_function_5(self):
+        '''더미 버튼 기능 메서드 5'''
+        print("Button 5 clicked!")
+        # 더미 버튼 기능 로직 추가
+
+    def dummy_function_6(self):
+        '''더미 버튼 기능 메서드 6'''
+        print("Button 6 clicked!")
+        # 더미 버튼 기능 로직 추가
 
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
