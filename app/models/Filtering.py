@@ -1,4 +1,5 @@
 from models.ObjectDetect import ObjectDetect
+from models.FaceFilter import *
 import cv2
 
 class Filtering:
@@ -20,7 +21,7 @@ class Filtering:
         """
         self.object = ObjectDetect()
         
-    def filtering(self, img, objects, face=None):
+    def filtering(self, img, objects, except_people=None):
         """
         Filters the image based on detected objects and optionally on faces.
 
@@ -37,7 +38,10 @@ class Filtering:
         for box, is_face in zip(boxesList, isFace):  # Corrected: renamed isFace to is_face
             if is_face == True:
                 # If it's a human face
-                pass
+                face_encode = face_encoding(img, box)
+                
+                if is_known_person(except_people, face_encode):
+                    continue
             boxesList.append(box)
             
         custList = self.object.custDetect(img)
