@@ -1,5 +1,9 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from models.ObjectDetect import ObjectDetect
+=======
+from models import ObjectDetect
+>>>>>>> Stashed changes
 import cv2
 
 class Filtering:
@@ -19,7 +23,7 @@ class Filtering:
         """
         Initializes the Filtering class.
         """
-        self.object = ObjectDetect()
+        self.object = ObjectDetect.ObjectDetect()
         
     def filtering(self, img, objects, face=None):
         """
@@ -34,12 +38,12 @@ class Filtering:
             list: List of bounding boxes for detected objects.
         """
         boxesList = []
-        obj = self.object.objectDetect(img)
-        for box, isFace in obj:
-            if isFace == True:
+        boxesList, isFace = self.object.orgDetect(img)  # Corrected: unpacking the tuple
+        for box, is_face in zip(boxesList, isFace):  # Corrected: renamed isFace to is_face
+            if is_face == True:
                 # If it's a human face
                 pass
-            boxesList.append(obj)
+            boxesList.append(box)
             
         custList = self.object.custDetect(img)
         for obj in custList:
@@ -63,6 +67,7 @@ class Filtering:
             temp = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
             blur_obj = cv2.blur(temp, (blurRatio, blurRatio))
             img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blur_obj
+<<<<<<< Updated upstream
 =======
 import ObjectFiltering
 class Filtering:
@@ -76,4 +81,6 @@ class Filtering:
         for obj in objList:
             boxesList.append(obj)
         return boxesList
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
