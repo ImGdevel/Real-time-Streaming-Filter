@@ -1,10 +1,15 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt,  QTimer
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt,  QTimer
 from utils import Colors
 from contollers import VideoProcessor
 
+from contollers import RealStreamProcessor
+
 class RealStreamView(QWidget):
+    """실시간 스트리밍 View"""
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,7 +26,7 @@ class RealStreamView(QWidget):
 
         self.setLayout(self.layout)
 
-        self.video_processor = VideoProcessor()  # 비디오 처리 스레드 객체 생성
+        self.video_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.video_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
