@@ -14,7 +14,7 @@ class RealStreamProcessor(QThread):
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
         self.mosaic_active = False  # 모자이크 활성화 상태
-        self.filtering = Filtering.Filtering()
+        self.filtering = Filtering()
 
     def run(self):
         '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
@@ -42,7 +42,6 @@ class RealStreamProcessor(QThread):
                     testDict[obj.custNames[cls]] = 1
                 testDict["Human face"] = 1
                 boxesList = self.filtering.filtering(frame, testDict)
-                print(boxesList)
                 
 
 
