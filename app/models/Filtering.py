@@ -38,7 +38,7 @@ class Filtering:
         for box, is_face in zip(boxesList, isFace):  # Corrected: renamed isFace to is_face
             if is_face == True:
                 # If it's a human face
-                face_encode = face_encoding(img, box)
+                face_encode = face_encoding_box(img, box)
                 
                 if is_known_person(except_people, face_encode):
                     continue
