@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QListWidget, QListWidgetItem
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QScrollArea
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt
 from utils import Colors
@@ -40,27 +40,24 @@ class FilterSettingView(QWidget):
         filter_label.setAlignment(Qt.AlignCenter)
         filter_label.setStyleSheet("font-weight: bold;")
 
-        # Filter 목록 스크롤 뷰
+        # Filter 목록
         self.filter_list_widget = QListWidget()
-        self.filter_list_widget.setStyleSheet(f"background-color: {Colors.baseColor02};")  # 스크롤 뷰 배경색 설정
-        self.filter_list_widget.addItems(["Filter 1", "Filter 2", "Filter 3"])  # 임시 필터 목록
-        
-        # Add Filter 버튼
+        self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
+        self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
+
+        # 기존 필터 추가
+        for filter_name in ["Filter 1", "Filter 2", "Filter 3"]:
+            self.add_filter(filter_name)
+
+        # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
         add_button.clicked.connect(self.add_filter)
 
-        # Delete Filter 버튼
         delete_button = QPushButton("Delete Filter")
         delete_button.clicked.connect(self.delete_filter)
 
         left_layout.addWidget(filter_label)
-        
-        # 스크롤 뷰에 필터 목록 추가
-        filter_scroll = QScrollArea()
-        filter_scroll.setWidget(self.filter_list_widget)
-        filter_scroll.setWidgetResizable(True)
-        left_layout.addWidget(filter_scroll)
-
+        left_layout.addWidget(self.filter_list_widget)
         left_layout.addWidget(add_button)
         left_layout.addWidget(delete_button)
 
@@ -92,24 +89,32 @@ class FilterSettingView(QWidget):
 
         return right_layout
 
-    def add_filter(self):
+    def add_filter(self, filter_name=None):
         """Filter 추가 메서드"""
-        new_filter = f"Filter {self.filter_list_widget.count() + 1}"
-        item = QListWidgetItem(new_filter)
+        if not filter_name:
+            filter_name = f"Filter {self.filter_list_widget.count() + 1}"
+        
+        button = QPushButton(filter_name)
+        button.clicked.connect(self.filter_list_btn_event)
+        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
+        button.setFixedSize(155, 40)  # 버튼 크기 설정
+        
+        item = QListWidgetItem()
         self.filter_list_widget.addItem(item)
+        self.filter_list_widget.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+
 
     def delete_filter(self):
         """Filter 삭제 메서드"""
         selected_items = self.filter_list_widget.selectedItems()
         for item in selected_items:
-            self.filter_list_widget.takeItem(self.filter_list_widget.row(item))
+            index = self.filter_list_widget.row(item)
+            self.filter_list_widget.takeItem(index)
 
-    def change_filter_setting(self, index):
-        """Filter 설정 변경 메서드"""
-        # Filter 선택에 따른 설정 변경 로직 추가
-        pass
-
-    def apply_filter_setting(self):
-        """Filter 설정 적용 메서드"""
-        # Filter 설정 적용 로직 추가
-        pass
+    def filter_list_btn_event(self):
+        """Filter 버튼 클릭 이벤트 메서드"""
+        button = self.sender()
+        if button:
+            filter_name = button.text()
+            print(f"Button '{filter_name}' clicked.")
