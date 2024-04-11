@@ -1,5 +1,4 @@
-from models.ObjectDetect import ObjectDetect
-from models import ObjectDetect
+from models.Filtering import ObjectDetect
 import cv2
 
 class Filtering:
@@ -19,7 +18,7 @@ class Filtering:
         """
         Initializes the Filtering class.
         """
-        self.object = ObjectDetect.ObjectDetect()
+        self.object = ObjectDetect()
         
     def filtering(self, img, objects, face=None):
         """
