@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QHBoxLayout, QStackedWidget
 from PyQt5.QtCore import Qt
 from utils import Colors
-from contollers import Router
+from controllers import Router
 from views.component import MenuBar, TitleBar
 
 class MyApp(QWidget):
@@ -15,6 +15,7 @@ class MyApp(QWidget):
         self.setWindowTitle('Real-time video filtering program')
         self.setFixedSize(1280, 800)
         self.center()
+        self.setAcceptDrops(True)
 
         # 레이아웃 및 타이틀 바 추가
         self.layout = QVBoxLayout()
