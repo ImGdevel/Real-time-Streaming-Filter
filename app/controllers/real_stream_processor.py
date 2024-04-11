@@ -1,6 +1,7 @@
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
+import Filtering
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
@@ -13,6 +14,7 @@ class RealStreamProcessor(QThread):
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
         self.mosaic_active = False  # 모자이크 활성화 상태
+        self.filtering = Filtering.Filtering()
 
     def run(self):
         '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
@@ -31,7 +33,20 @@ class RealStreamProcessor(QThread):
 
 
                 # todo : frame_rgb, 혹은 frame을 받아서 얼굴 모자이크 및 객체 인식을 할 것 
-
+                blur_ratio = 50
+                testDict = dict()
+                obj = self.filtering.object
+                for cls in obj.orgNames:
+                    testDict[obj.orgNames[cls]] = 0
+                for cls in obj.custNames:
+                    testDict[obj.custNames[cls]] = 1
+                testDict["Human face"] = 1
+                boxesList = self.filtering.filtering(frame, testDict)
+                print(boxesList)
+                for box in boxesList:
+                    temp = frame_rgb[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
+                    blur_obj = cv2.blur(temp, (blur_ratio, blur_ratio))
+                    frame_rgb[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blur_obj
 
 
                 height, width, channel = frame_rgb.shape
