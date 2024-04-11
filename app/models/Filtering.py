@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from models.ObjectDetect import ObjectDetect
 import cv2
 
@@ -62,3 +63,17 @@ class Filtering:
             temp = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
             blur_obj = cv2.blur(temp, (blurRatio, blurRatio))
             img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blur_obj
+=======
+import ObjectFiltering
+class Filtering:
+    
+    def __init__(self):
+        self.object = ObjectFiltering.ObjectFiltering()
+        
+    def filtering(self, img, objects, face = None):
+        boxesList = []
+        objList = self.object.objectDetect(img, objects)
+        for obj in objList:
+            boxesList.append(obj)
+        return boxesList
+>>>>>>> Stashed changes
