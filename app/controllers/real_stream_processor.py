@@ -21,11 +21,18 @@ class RealStreamProcessor(QThread):
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+
+                #sample filter
                 if self.is_flipped:
                     frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
                 
-                if self.mosaic_active:
-                    frame_rgb = self.apply_mosaic(frame_rgb)
+                #if self.mosaic_active:
+                #    frame_rgb = self.apply_mosaic(frame_rgb)
+
+
+                # todo : frame_rgb, 혹은 frame을 받아서 얼굴 모자이크 및 객체 인식을 할 것 
+
+
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
@@ -43,13 +50,13 @@ class RealStreamProcessor(QThread):
         self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
 
     def apply_mosaic(self, frame_rgb):
-        '''모자이크 처리 메서드'''
-        faces = self.face_cascade.detectMultiScale(frame_rgb, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        '''모자이크 처리 메서드 (샘플임 삭제해도 됨)''' 
+        #faces = self.face_cascade.detectMultiScale(frame_rgb, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
                 
-        for (x, y, w, h) in faces:
-            face_img = frame_rgb[y:y+h, x:x+w]
-            face_img = cv2.resize(face_img, (w//10, h//10))
-            face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
-            frame_rgb[y:y+h, x:x+w] = face_img
+        #for (x, y, w, h) in faces:
+        #    face_img = frame_rgb[y:y+h, x:x+w]
+        #    face_img = cv2.resize(face_img, (w//10, h//10))
+        #    face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
+        #    frame_rgb[y:y+h, x:x+w] = face_img
         
         return frame_rgb
