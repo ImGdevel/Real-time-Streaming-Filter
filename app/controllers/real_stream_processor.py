@@ -43,10 +43,7 @@ class RealStreamProcessor(QThread):
                 testDict["Human face"] = 1
                 boxesList = self.filtering.filtering(frame, testDict)
                 print(boxesList)
-                for box in boxesList:
-                    temp = frame_rgb[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
-                    blur_obj = cv2.blur(temp, (blur_ratio, blur_ratio))
-                    frame_rgb[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blur_obj
+                
 
 
                 height, width, channel = frame_rgb.shape

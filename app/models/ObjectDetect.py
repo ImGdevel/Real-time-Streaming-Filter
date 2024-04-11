@@ -32,7 +32,7 @@ class ObjectDetect:
         self.orgNames = self.origin.names
         self.custNames = self.custom.names
         
-    def originDetect(self, img):
+    def orgDetect(self, img):
         """Detects objects using the general YOLO model.
 
         Args:
