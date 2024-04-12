@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QGridLayout, QLabel, QWidget, QFileIconProvider, QVBoxLayout, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QLabel, QWidget, QFileIconProvider, QVBoxLayout, QMessageBox 
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtCore import QUrl, Qt, QFileInfo
+from PyQt5.QtCore import QUrl, Qt, QFileInfo, pyqtSignal
 
 class ImageItem(QWidget):
+    delet_signal = pyqtSignal(QWidget)
     def __init__(self, file_info):
         super().__init__()
         self.file_data = file_info
@@ -26,6 +27,9 @@ class ImageItem(QWidget):
         if event.button() == Qt.LeftButton:  # 왼쪽 버튼 더블 클릭 확인
             self.show_image(self.file_data)
 
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.delet_signal.emit(self)
 
     def show_image(self, file_path):
         if file_path:
