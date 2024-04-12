@@ -82,7 +82,8 @@ def face_encoding_box(frame, box):
     Returns:
     - 얼굴의 인코딩 값
     """
-    encoding = face_recognition.face_encodings(frame, [(box[0], box[1], box[2], box[3])])[0]
+    print(box[0], " : ",box[1]," : ",box[2]," : ",box[3])
+    encoding = face_recognition.face_encodings(frame, [(int(box[3]), int(box[0]), int(box[1]), int(box[2]))])[0]
     return encoding
 
 # 사람의 여러 장의 사진을 등록하는 함수
@@ -138,7 +139,7 @@ def recognize_face(known_faces, face_encoding, tolerance=0.6):
 #제외할 얼굴 딕셔너리, 검색할 얼굴 인코딩값을 넣으면 아는 사람인지 아닌지 반환
 def is_known_person(people_list, face_encoding):
     #등록된 사람 딕셔너리를 일단 파일에서 받아옴
-    known_faces = load_known_faces('known_faces.pickle')
+    # known_faces = load_known_faces('known_faces.pickle')
     #이후 그 안에서 필터링을 제외할 사람 데이터를 담은 딕셔너리를 생성
     except_faces = {}
     for person in people_list:

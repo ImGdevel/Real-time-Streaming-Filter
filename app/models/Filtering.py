@@ -21,7 +21,7 @@ class Filtering:
         """
         self.object = ObjectDetect()
         
-    def filtering(self, img, objects, except_people=None):
+    def filtering(self, img, objects, except_people=[]):
         """
         Filters the image based on detected objects and optionally on faces.
 
