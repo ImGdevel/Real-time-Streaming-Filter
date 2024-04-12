@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
-from PyQt5.QtCore import Qt, QMimeDatabase
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import Qt, QMimeDatabase, pyqtSignal
+from PyQt5.QtGui import QPixmap
 from utils import Colors
+from urllib.parse import urlparse
 
 
 class DragDropLabel(QLabel):
@@ -55,6 +56,11 @@ class DragDropLabel(QLabel):
         urls = self.find_image(event.mimeData())
         if urls:
             self.drop_signal.emit(self.urls)
+            print(urls[0])
+            file_path = urls[0].toLocalFile()
+            pixmap = QPixmap(file_path)
+            pixmap = pixmap.scaled(500, 350)
+            self.dropbox_lable.setPixmap(pixmap)
             event.accept()
         else:
             event.ignore()

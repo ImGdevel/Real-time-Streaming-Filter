@@ -26,6 +26,7 @@ class ImageView(QWidget):
         self.file_view_widget = FileViewWidget()
         self.file_view_widget.setMinimumSize(300, 150)
         self.file_view_widget.setMaximumWidth(500)
+        self.file_view_widget.setMaximumHeight(350)
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         
         self.setting_frame = QWidget()
@@ -37,7 +38,7 @@ class ImageView(QWidget):
         self.setting_layout.addWidget(self.setting_widget)
         self.setting_frame.setLayout(self.setting_layout)
 
-        self.layout.addWidget(self.dropbox_widget, 0, 0,)
+        self.layout.addWidget(self.dropbox_widget, 0, 0)
         self.layout.addWidget(self.setting_frame, 0, 1)
         self.layout.addWidget(self.file_view_widget, 1, 0)
 
