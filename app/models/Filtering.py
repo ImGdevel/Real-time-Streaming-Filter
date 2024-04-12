@@ -37,7 +37,7 @@ class Filtering:
         for box, label in zip(boxesList, labelList):  # Corrected: renamed isFace to is_face
             if objects[label] == 1:
                 boxesList.append(box)
-            
+        custList = []
         custList, labelList = self.object.custDetect(img)
         for obj, label in zip(custList, labelList):
             if objects[label] == 1:
