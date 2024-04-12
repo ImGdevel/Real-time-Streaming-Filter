@@ -34,19 +34,24 @@ class Filtering:
             list: List of bounding boxes for detected objects.
         """
         boxesList = []
-        boxesList, isFace = self.object.orgDetect(img)  # Corrected: unpacking the tuple
-        for box, is_face in zip(boxesList, isFace):  # Corrected: renamed isFace to is_face
-            if is_face == True:
+        boxesList, labelList = self.object.orgDetect(img)  # Corrected: unpacking the tuple
+        for box, label in zip(boxesList, labelList):  # Corrected: renamed isFace to is_face
+            if label == "Human Face":
                 # If it's a human face
                 face_encode = face_encoding_box(img, box)
                 
                 if is_known_person(except_people, face_encode):
                     continue
-            boxesList.append(box)
+                else :
+                    boxesList.append(box)
+                    continue
+            if objects[label] == 1:
+                boxesList.append(box)
             
-        custList = self.object.custDetect(img)
-        for obj in custList:
-            boxesList.append(obj)
+        custList, labelList = self.object.custDetect(img)
+        for obj, label in zip(custList, labelList):
+            if objects[label] == 1:
+                boxesList.append(obj)
             
         return boxesList
     

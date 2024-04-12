@@ -46,17 +46,14 @@ class ObjectDetect:
         orgBoxes = results[0].boxes.xyxy.cpu().tolist() # Get coordinates of detected objects
         annotator = Annotator(img, line_width=2, example=self.orgNames)
         boxesList = []  
-        isFace = []
+        labelList = []
         
         if orgBoxes is not None:
             for box, cls in zip(orgBoxes, orgClss):
                 annotator.box_label(box, color=colors(int(cls), True), label=self.orgNames[int(cls)])
-                if self.orgNames[cls] == "Human face":
-                    isFace.append(True)
-                else:
-                    isFace.append(False)
                 boxesList.append(box) 
-        return boxesList, isFace
+                labelList.append(self.orgNames[cls])
+        return boxesList, labelList
 
     def custDetect(self, frame):
         """Detects custom objects using the custom YOLO model.
@@ -72,11 +69,13 @@ class ObjectDetect:
         custClss = results2[0].boxes.cls.cpu().tolist()     
         annotator = Annotator(frame, line_width=2, example=self.custNames)
         boxesList = []  
+        labelList = []
         
         if custBoxes is not None:
             for box, cls in zip(custBoxes, custClss):
                 annotator.box_label(box, color=colors(int(cls), True), label=self.custNames[int(cls)])
                 boxesList.append(box)
+                labelList.append(self.custNames[cls])
                 
         return boxesList
     
