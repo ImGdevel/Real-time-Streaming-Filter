@@ -57,12 +57,21 @@ class Filtering:
         Args:
             blurRatio (int): Blurring ratio.
             img (numpy.ndarray): Input image.
-            boxesList (list): List of bounding boxes for the regions of interest.
+            boxesList (list): List of bounding boxes for the regions of interest in YOLO format (box[0], box[1], box[2], box[3]).
 
         Returns:
-            None
+            img (numpy.ndarray): Modified image with blurring applied to specified regions.
         """
         for box in boxesList:
-            temp = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
-            blur_obj = cv2.blur(temp, (blurRatio, blurRatio))
-            img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blur_obj
+
+            
+            # 정수로 변환
+            roi = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
+
+            # ROI에 blur 적용
+            blurred_roi = cv2.blur(roi, (blurRatio, blurRatio))
+            
+            # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
+            img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blurred_roi
+            
+        return img
