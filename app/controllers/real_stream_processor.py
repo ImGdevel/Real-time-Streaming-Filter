@@ -36,6 +36,8 @@ class RealStreamProcessor(QThread):
                 boxesList = self.filtering.filtering(frame, testDict)
                 blured_frame = self.filtering.blur(blur_ratio, frame, boxesList)
 
+
+
                 frame_rgb = cv2.cvtColor(blured_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
                 if self.is_flipped:

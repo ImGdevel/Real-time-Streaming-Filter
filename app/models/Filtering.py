@@ -41,7 +41,7 @@ class Filtering:
             if label == "Human face":
                 print("If it's a Human face")
                 face_encode = face_encoding_box(img, box)
-                
+
                 if is_known_person(except_people, face_encode):
                     continue
                 else :

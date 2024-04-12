@@ -106,7 +106,7 @@ def face_encoding_box(frame, box):
 
 
     #encoding = face_recognition.face_encodings(frame, [(int(box[1]), int(box[3]), int(box[0]), int(box[2]))])[0]
-    encoding = face_recognition.face_encodings(frame, [(int(box[1]), int(box[3]), int(box[0]), int(box[2]))])
+    encoding = face_recognition.face_encodings(frame, [(int(box[1]), int(box[2]), int(box[3]), int(box[0]))])
     
     return encoding
 
@@ -151,18 +151,17 @@ def recognize_face(known_faces, face_encoding, tolerance=0.6):
     tolerance_used = None
 
     for name, encodings in known_faces.items():
-            print("Print")
-            print(type(encodings))
-            print(encodings)
-            print("--------------------------------------")
-            print(type(face_encoding[0]))
-            print(face_encoding[0])
             distance = face_recognition.face_distance([encodings], face_encoding[0])
+            print("==========distance==========")
+            print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
-                
+
+    print(recognized_face, ":::::")
+    print(tolerance_used)
+
     return recognized_face, tolerance_used
 
 
@@ -176,7 +175,7 @@ def is_known_person(people_list, face_encoding):
         except_faces.update(find_person_data(person, known_faces))
     #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
     person_name, tolerance = recognize_face(except_faces, face_encoding)
-    
+    print("||||" + person_name + "||||")
     if person_name == "unknown":
         return False
     else:
@@ -192,7 +191,7 @@ def is_known_person(people_list, face_encoding):
 
 # test = "test"
 
-register_person("test", ["./app/models/biden.jpg", "./app/models/me_4.jpg"])
+#register_person("test", ["./tests/photo/jlpt.jpg", "./tests/photo/me_front.jpg", "./tests/photo/me_4.jpg"])
 
 # known_faces = load_known_faces('./app/models/known_faces.pickle')
 
