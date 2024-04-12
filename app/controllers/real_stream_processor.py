@@ -22,16 +22,7 @@ class RealStreamProcessor(QThread):
         while self.is_running:
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
-
-                #sample filter
-                if self.is_flipped:
-                    frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
-                
-                #if self.mosaic_active:
-                #    frame_rgb = self.apply_mosaic(frame_rgb)
-
-
+                 
                 # todo : frame_rgb, 혹은 frame을 받아서 얼굴 모자이크 및 객체 인식을 할 것 
                 blur_ratio = 50
                 testDict = dict()
@@ -39,17 +30,21 @@ class RealStreamProcessor(QThread):
                 for cls in obj.orgNames:
                     testDict[obj.orgNames[cls]] = 0
                 for cls in obj.custNames:
-                    testDict[obj.custNames[cls]] = 1
-                testDict["Human face"] = 1
+                    testDict[obj.custNames[cls]] = 0
+                testDict["Human face"] = 0
+
                 boxesList = self.filtering.filtering(frame, testDict)
-
-
                 blured_frame = self.filtering.blur(blur_ratio, frame, boxesList)
+
+                frame_rgb = cv2.cvtColor(blured_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+
+                if self.is_flipped:
+                    frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
 
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
-                q_img = QImage(blured_frame.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
             self.msleep(16)  # 약 60fps
 

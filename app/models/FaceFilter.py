@@ -130,7 +130,7 @@ def register_person(person_name, image_paths):
             person_faces[face_code] = face_features
             i = i + 1
     if person_faces:
-        with open('./app/models/known_faces.pickle', 'wb') as f:
+        with open('./models/known_faces.pickle', 'wb') as f:
             pickle.dump(person_faces, f)
     else:
         print("No faces found for :", person_name)
@@ -166,7 +166,7 @@ def recognize_face(known_faces, face_encoding, tolerance=0.6):
 #제외할 얼굴 딕셔너리, 검색할 얼굴 인코딩값을 넣으면 아는 사람인지 아닌지 반환
 def is_known_person(people_list, face_encoding):
     #등록된 사람 딕셔너리를 일단 파일에서 받아옴
-    known_faces = load_known_faces('./app/models/known_faces.pickle')
+    known_faces = load_known_faces('./models/known_faces.pickle')
     #이후 그 안에서 필터링을 제외할 사람 데이터를 담은 딕셔너리를 생성
     except_faces = {}
     for person in people_list:
