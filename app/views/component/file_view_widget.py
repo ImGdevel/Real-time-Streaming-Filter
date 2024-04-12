@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QGraphicsView, QGraphicsScene, QVBoxLayout, QScrollArea
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
+from PyQt5.QtCore import Qt, QUrl
 from utils.colors import Colors
 from .image_item import ImageItem
 
@@ -16,18 +16,14 @@ class FileViewWidget(QWidget):
         #file view
         self.scroll_area = QScrollArea()
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        #self.file_view_widget = QWidget()
-        self.scroll_area.setMinimumSize(500, 200)
-        self.scroll_area.setMaximumWidth(500)
-        self.scroll_area.setMaximumHeight(200)
-        self.scroll_area.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        self.file_view_widget = QWidget()
         self.scroll_widget = QWidget()
         self.file_box_layout = QHBoxLayout()
         self.scroll_layout = QHBoxLayout(self.scroll_widget)
-        self.scroll_area.setWidgetResizable(False)
+        self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.scroll_widget)
-        #self.file_box_layout.addWidget(self.scroll_area)
-        #self.file_view_widget.setLayout(self.file_box_layout)
+        self.file_box_layout.addWidget(self.scroll_area)
+        self.file_view_widget.setLayout(self.file_box_layout)
 
         #button
         self.button_widget = QWidget()
@@ -45,7 +41,7 @@ class FileViewWidget(QWidget):
         self.button_widget.setLayout(self.button_layout)
 
         #set frame layout
-        self.layout.addWidget(self.scroll_area)
+        self.layout.addWidget(self.file_view_widget)
         self.layout.addWidget(self.button_widget)
         self.setLayout(self.layout)
         
@@ -59,7 +55,11 @@ class FileViewWidget(QWidget):
             print("on")
 
     def openFileExplorer(self):
-        print("FileExplorer")
+        filters = "이미지 파일 (*.bmp *.dng *.jpeg *.jpg *.mpo *.png *.tif *.tiff *.webp *.pnm)"
+        fname = QFileDialog.getOpenFileName(self, '파일 선택', '/home', filters)
+        if fname:
+            file_info = [QUrl.fromLocalFile(fname[0])]
+            self.addNewFile(file_info)
 
     def addNewFile(self, urls):
         for i, file_info in enumerate(urls):

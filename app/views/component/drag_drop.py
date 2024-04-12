@@ -56,7 +56,6 @@ class DragDropLabel(QLabel):
         urls = self.find_image(event.mimeData())
         if urls:
             self.drop_signal.emit(self.urls)
-            print(urls[0])
             file_path = urls[0].toLocalFile()
             pixmap = QPixmap(file_path)
             pixmap = pixmap.scaled(500, 350)
