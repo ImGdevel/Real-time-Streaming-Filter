@@ -1,44 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QSplitter
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QSplitter, QMessageBox
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
 from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QPushButton
-
-class AddFaceDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle("Add Face")
-        self.setFixedSize(600, 400)
-
-        layout = QVBoxLayout()
-
-        # 이름 입력 필드
-        self.face_name_edit = QLineEdit()
-        self.face_name_edit.setPlaceholderText("Enter face name")
-
-        # 추가 버튼
-        add_button = QPushButton("Add")
-        add_button.clicked.connect(self.add_face)
-
-        form_layout = QFormLayout()
-        form_layout.addRow("Face Name:", self.face_name_edit)
-        form_layout.addRow(add_button)
-
-        layout.addLayout(form_layout)
-        self.setLayout(layout)
-
-    def add_face(self):
-        """얼굴 추가 메서드"""
-        face_name = self.face_name_edit.text()
-
-        # 이름이 입력되었는지 확인
-        if face_name:
-            # 부모 창의 register_face 메서드 호출
-            self.parent().register_face(face_name)
-            self.close()
+from views.component import AddFaceDialog
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
@@ -129,6 +94,13 @@ class FilterSettingView(QWidget):
         
         face_layout.addWidget(face_label)
         face_layout.addWidget(face_setting_widget)
+
+        # Add 버튼 추가
+        add_face_button = QPushButton("Add")
+        add_face_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')
+        add_face_button.setFixedSize(60, 30)
+        add_face_button.clicked.connect(self.show_add_face_dialog)
+        face_layout.addWidget(add_face_button)
         
         return face_layout
 
@@ -206,9 +178,7 @@ class FilterSettingView(QWidget):
 
     def select_registered_face(self, item):
         """등록된 얼굴 선택 메서드"""
-        self.available_faces_list.addItem(item.text())
-        row = self.registered_faces_list.row(item)
-        self.registered_faces_list.takeItem(row)
+        pass
 
     def add_filter(self, filter_name=None):
         """Filter 추가 메서드"""
@@ -239,3 +209,18 @@ class FilterSettingView(QWidget):
         if button:
             filter_name = button.text()
             print(f"Button '{filter_name}' clicked.")
+            
+    def show_add_face_dialog(self):
+        """얼굴 추가 다이얼로그 표시 메서드"""
+        dialog = AddFaceDialog(self)
+        dialog.added_face.connect(self.update_available_faces)
+        dialog.exec_()
+
+    def update_available_faces(self, face_name):
+        """available_faces_list 업데이트 메서드"""
+        if face_name not in [self.available_faces_list.item(i).text() for i in range(self.available_faces_list.count())]:
+            self.available_faces_list.addItem(face_name)
+
+    def add_new_face(self):
+        """얼굴 추가 메서드"""
+        self.show_add_face_dialog()
