@@ -1,7 +1,44 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QScrollArea
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QSplitter
 from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
+from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QPushButton
+
+class AddFaceDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle("Add Face")
+        self.setFixedSize(600, 400)
+
+        layout = QVBoxLayout()
+
+        # 이름 입력 필드
+        self.face_name_edit = QLineEdit()
+        self.face_name_edit.setPlaceholderText("Enter face name")
+
+        # 추가 버튼
+        add_button = QPushButton("Add")
+        add_button.clicked.connect(self.add_face)
+
+        form_layout = QFormLayout()
+        form_layout.addRow("Face Name:", self.face_name_edit)
+        form_layout.addRow(add_button)
+
+        layout.addLayout(form_layout)
+        self.setLayout(layout)
+
+    def add_face(self):
+        """얼굴 추가 메서드"""
+        face_name = self.face_name_edit.text()
+
+        # 이름이 입력되었는지 확인
+        if face_name:
+            # 부모 창의 register_face 메서드 호출
+            self.parent().register_face(face_name)
+            self.close()
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
@@ -63,31 +100,115 @@ class FilterSettingView(QWidget):
 
         return left_layout
 
+    def setup_face_layout(self):
+        """얼굴 인식 필터 설정 영역 레이아웃 생성"""
+        face_layout = QVBoxLayout()
+        
+        face_label = QLabel("Face Filtering")
+        face_label.setStyleSheet("font-weight: bold;")
+        face_label.setFixedHeight(30)  # 높이 설정
+        
+        # 얼굴 등록 박스 설정
+        face_register_layout = QHBoxLayout()
+        
+        # 등록되지 않은 얼굴 목록
+        self.available_faces_list = QListWidget()
+        self.available_faces_list.addItems(["Face 1", "Face 2", "Face 3"])  # 임시 데이터
+        self.available_faces_list.itemClicked.connect(self.register_face)
+        
+        # 등록된 얼굴 목록
+        self.registered_faces_list = QListWidget()
+        self.registered_faces_list.itemClicked.connect(self.select_registered_face)
+        
+        face_register_layout.addWidget(self.registered_faces_list)  # 등록된 얼굴 목록을 먼저 추가
+        face_register_layout.addWidget(self.available_faces_list)  # 등록되지 않은 얼굴 목록을 그 다음에 추가
+        
+        face_setting_widget = QWidget()
+        face_setting_widget.setLayout(face_register_layout)
+        face_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
+        
+        face_layout.addWidget(face_label)
+        face_layout.addWidget(face_setting_widget)
+        
+        return face_layout
+
+
+    def setup_object_layout(self):
+        """객체 필터링 설정 영역 레이아웃 생성"""
+        object_layout = QVBoxLayout()
+        
+        object_label = QLabel("Object Filtering")
+        object_label.setStyleSheet("font-weight: bold;")
+        object_label.setFixedHeight(30)  # 높이 설정
+        
+        object_setting_widget = QWidget()
+        object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
+        
+        object_layout.addWidget(object_label)
+        object_layout.addWidget(object_setting_widget)
+        
+        return object_layout
+
     def setup_right_layer(self):
         """오른쪽 레이어 설정 메서드"""
         right_layout = QVBoxLayout()
         right_layout.setContentsMargins(10, 10, 10, 10)  # 여백 설정
 
-        # 얼굴 인식 필터 설정
-        face_label = QLabel("Face Filtering")
-        face_label.setStyleSheet("font-weight: bold;")
+        # QSplitter 생성
+        splitter = QSplitter(Qt.Vertical)
 
-        # 얼굴 인식 필터 설정 공간 (임시로 QLabel로 표시)
-        face_setting_label = QLabel("Face Filter Setting Area")
+        # 얼굴 인식 필터 설정 영역
+        face_widget = QWidget()
+        face_widget.setLayout(self.setup_face_layout())
+        
+        # 객체 필터링 설정 영역
+        object_widget = QWidget()
+        object_widget.setLayout(self.setup_object_layout())
+        
+        # QSplitter에 위젯 추가
+        splitter.addWidget(face_widget)
+        splitter.addWidget(object_widget)
 
-        # 객체 필터링 설정
-        object_label = QLabel("Object Filtering")
-        object_label.setStyleSheet("font-weight: bold;")
+        # todo: 하단 오른 쪽 끝에 적용 버튼 추가
+        apply_button = QPushButton("적용")
+        apply_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
+        apply_button.setFixedSize(60, 30)  # 높이 설정
 
-        # 객체 필터링 설정 공간 (임시로 QLabel로 표시)
-        object_setting_label = QLabel("Object Filter Setting Area")
+        # 수평 레이아웃 생성 및 오른쪽 정렬
+        apply_layout = QHBoxLayout()
+        apply_layout.addStretch(1)
+        apply_layout.addWidget(apply_button)
 
-        right_layout.addWidget(face_label)
-        right_layout.addWidget(face_setting_label)
-        right_layout.addWidget(object_label)
-        right_layout.addWidget(object_setting_label)
+        # 수평 레이아웃을 오른쪽 레이아웃에 추가
+        right_layout.addWidget(splitter)
+        right_layout.addLayout(apply_layout)
 
+        # splitter.setSizes를 이 위치로 이동
+        def set_splitter_sizes():
+            splitter.setSizes([int(self.width() * 5 / 9), int(self.width() * 4 / 9)])
+        
+        # widget이 나타난 후에 호출되도록 QTimer를 사용
+        QTimer.singleShot(0, set_splitter_sizes)
+        
         return right_layout
+
+    def register_face(self, item):
+        """얼굴 등록 메서드"""
+        face_name = item.text()
+        
+        # 중복 체크
+        if self.registered_faces_list.findItems(face_name, Qt.MatchExactly):
+            print(f"'{face_name}' is already registered.")
+            return
+        
+        # 등록
+        self.registered_faces_list.addItem(face_name)
+
+    def select_registered_face(self, item):
+        """등록된 얼굴 선택 메서드"""
+        self.available_faces_list.addItem(item.text())
+        row = self.registered_faces_list.row(item)
+        self.registered_faces_list.takeItem(row)
 
     def add_filter(self, filter_name=None):
         """Filter 추가 메서드"""
