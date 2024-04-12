@@ -77,7 +77,7 @@ class ObjectDetect:
                 boxesList.append(box)
                 labelList.append(self.custNames[cls])
                 
-        return boxesList
+        return boxesList, labelList
     
     def getOrgLabel(self):
         """

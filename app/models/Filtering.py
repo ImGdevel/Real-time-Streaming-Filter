@@ -47,7 +47,7 @@ class Filtering:
                     continue
             if objects[label] == 1:
                 boxesList.append(box)
-            
+        custList = []
         custList, labelList = self.object.custDetect(img)
         for obj, label in zip(custList, labelList):
             if objects[label] == 1:
