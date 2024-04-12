@@ -88,7 +88,8 @@ def face_encoding(frame, top, right, bottom, left):
     Returns:
     - 얼굴의 인코딩 값
     """
-    encoding = face_recognition.face_encodings(frame, [(top, right, bottom, left)])[0]
+    #encoding = face_recognition.face_encodings(frame, [(top, right, bottom, left)])[0]
+    encoding = face_recognition.face_encodings(frame, [(top, right, bottom, left)])
     return encoding
 
 def face_encoding_box(frame, box):
@@ -102,14 +103,11 @@ def face_encoding_box(frame, box):
     Returns:
     - 얼굴의 인코딩 값
     """
-    center_x, center_y, width, height = box
-    half_width = width / 2
-    half_height = height / 2
-    top = int(center_y - half_height)
-    right = int(center_x + half_width)
-    bottom = int(center_y + half_height)
-    left = int(center_x - half_width)
-    encoding = face_recognition.face_encodings(frame,[(top, right, bottom, left)])[0]
+
+
+    #encoding = face_recognition.face_encodings(frame, [(int(box[1]), int(box[3]), int(box[0]), int(box[2]))])[0]
+    encoding = face_recognition.face_encodings(frame, [(int(box[1]), int(box[3]), int(box[0]), int(box[2]))])
+    
     return encoding
 
 # 사람의 여러 장의 사진을 등록하는 함수
@@ -151,10 +149,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.6):
     recognized_face = "unknown"
     min_distance = float('inf')
     tolerance_used = None
-    
+
     for name, encodings in known_faces.items():
-        for encoding in encodings:
-            distance = face_recognition.face_distance([encoding], face_encoding)
+            print("Print")
+            print(type(encodings))
+            print(encodings)
+            print("--------------------------------------")
+            print(type(face_encoding[0]))
+            print(face_encoding[0])
+            distance = face_recognition.face_distance([encodings], face_encoding[0])
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
@@ -189,7 +192,7 @@ def is_known_person(people_list, face_encoding):
 
 # test = "test"
 
-# #register_person(test, ["./app/models/biden.jpg", "./app/models/me_4.jpg"])
+register_person("test", ["./app/models/biden.jpg", "./app/models/me_4.jpg"])
 
 # known_faces = load_known_faces('./app/models/known_faces.pickle')
 

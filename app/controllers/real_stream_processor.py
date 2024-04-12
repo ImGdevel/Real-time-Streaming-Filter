@@ -30,8 +30,8 @@ class RealStreamProcessor(QThread):
                 for cls in obj.orgNames:
                     testDict[obj.orgNames[cls]] = 0
                 for cls in obj.custNames:
-                    testDict[obj.custNames[cls]] = 0
-                testDict["Human face"] = 0
+                    testDict[obj.custNames[cls]] = 1
+                testDict["Human face"] = 1
 
                 boxesList = self.filtering.filtering(frame, testDict)
                 blured_frame = self.filtering.blur(blur_ratio, frame, boxesList)

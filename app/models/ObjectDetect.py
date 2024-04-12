@@ -44,13 +44,13 @@ class ObjectDetect:
         results = self.origin.predict(img, show=False)  # Predict results using the general model
         orgClss = results[0].boxes.cls.cpu().tolist()   # Get class labels of detected objects
         orgBoxes = results[0].boxes.xyxy.cpu().tolist() # Get coordinates of detected objects
-        annotator = Annotator(img, line_width=2, example=self.orgNames)
+        #annotator = Annotator(img, line_width=2, example=self.orgNames)
         boxesList = []  
         labelList = []
         
         if orgBoxes is not None:
             for box, cls in zip(orgBoxes, orgClss):
-                annotator.box_label(box, color=colors(int(cls), True), label=self.orgNames[int(cls)])
+                #annotator.box_label(box, color=colors(int(cls), True), label=self.orgNames[int(cls)])
                 boxesList.append(box) 
                 labelList.append(self.orgNames[cls])
         return boxesList, labelList
@@ -67,13 +67,13 @@ class ObjectDetect:
         results2 = self.custom.predict(frame, show=False) # Predict results using the custom model
         custBoxes = results2[0].boxes.xyxy.cpu().tolist()   
         custClss = results2[0].boxes.cls.cpu().tolist()     
-        annotator = Annotator(frame, line_width=2, example=self.custNames)
+        #annotator = Annotator(frame, line_width=2, example=self.custNames)
         boxesList = []  
         labelList = []
         
         if custBoxes is not None:
             for box, cls in zip(custBoxes, custClss):
-                annotator.box_label(box, color=colors(int(cls), True), label=self.custNames[int(cls)])
+                #annotator.box_label(box, color=colors(int(cls), True), label=self.custNames[int(cls)])
                 boxesList.append(box)
                 labelList.append(self.custNames[cls])
                 

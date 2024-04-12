@@ -21,7 +21,7 @@ class Filtering:
         """
         self.object = ObjectDetect()
         
-    def filtering(self, img, objects, except_people=[]):
+    def filtering(self, img, objects, except_people=['test']):
         """
         Filters the image based on detected objects and optionally on faces.
 
@@ -33,27 +33,31 @@ class Filtering:
         Returns:
             list: List of bounding boxes for detected objects.
         """
-        boxesList = []
+
+        results = []
         boxesList, labelList = self.object.orgDetect(img)  # Corrected: unpacking the tuple
         for box, label in zip(boxesList, labelList):  # Corrected: renamed isFace to is_face
-            if label == "Human Face":
-                # If it's a human face
+
+            if label == "Human face":
+                print("If it's a Human face")
                 face_encode = face_encoding_box(img, box)
                 
                 if is_known_person(except_people, face_encode):
                     continue
                 else :
-                    boxesList.append(box)
+                    results.append(box)
                     continue
+
             if objects[label] == 1:
-                boxesList.append(box)
+                results.append(box)
+
         custList = []
         custList, labelList = self.object.custDetect(img)
         for obj, label in zip(custList, labelList):
             if objects[label] == 1:
-                boxesList.append(obj)
+                results.append(obj)
             
-        return boxesList
+        return results
     
     def blur(self, blurRatio, img, boxesList):
         """
