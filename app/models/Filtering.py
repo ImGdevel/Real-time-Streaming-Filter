@@ -35,7 +35,7 @@ class Filtering:
         """
 
         results = []
-        boxesList, labelList = self.object.orgDetect(img)  # 수정: 튜플 언패킹
+        boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
         for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
 
             if label == "Human face":
@@ -52,7 +52,7 @@ class Filtering:
                 results.append(box)
 
         custList = []
-        custList, labelList = self.object.custDetect(img)
+        custList, labelList = self.object.custom_detect(img)
         for obj, label in zip(custList, labelList):
             if objects[label] == 1:
                 results.append(obj)

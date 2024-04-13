@@ -32,7 +32,7 @@ class ObjectDetect:
         self.orgNames = self.origin.names
         self.custNames = self.custom.names
         
-    def orgDetect(self, img):
+    def origin_detect(self, img):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
@@ -53,7 +53,7 @@ class ObjectDetect:
                 labelList.append(self.orgNames[cls])
         return boxesList, labelList
 
-    def custDetect(self, frame):
+    def custom_detect(self, frame):
         """사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
@@ -65,7 +65,7 @@ class ObjectDetect:
         results2 = self.custom.predict(frame, verbose=False, show=False) # 사용자 정의 모델로 결과 예측
         custBoxes = results2[0].boxes.xyxy.cpu().tolist()   
         custClss = results2[0].boxes.cls.cpu().tolist()     
-        boxesList = []  
+        boxesList = []
         labelList = []
         
         if custBoxes is not None:
