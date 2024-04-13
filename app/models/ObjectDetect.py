@@ -41,7 +41,7 @@ class ObjectDetect:
         Returns:
             tuple: A tuple containing lists of bounding boxes and a list indicating whether each object is a human face.
         """
-        results = self.origin.predict(img, show=False)  # Predict results using the general model
+        results = self.origin.predict(img, verbose=False, show=False)  # Predict results using the general model
         orgClss = results[0].boxes.cls.cpu().tolist()   # Get class labels of detected objects
         orgBoxes = results[0].boxes.xyxy.cpu().tolist() # Get coordinates of detected objects
         annotator = Annotator(img, line_width=2, example=self.orgNames)
@@ -64,7 +64,7 @@ class ObjectDetect:
         Returns:
             list: List of bounding boxes for detected objects.
         """
-        results2 = self.custom.predict(frame, show=False) # Predict results using the custom model
+        results2 = self.custom.predict(frame, verbose=False, show=False) # Predict results using the custom model
         custBoxes = results2[0].boxes.xyxy.cpu().tolist()   
         custClss = results2[0].boxes.cls.cpu().tolist()     
         annotator = Annotator(frame, line_width=2, example=self.custNames)
