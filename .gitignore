@@ -22,3 +22,4 @@ tests/models/yolov8x.pt
 */__pycache__
 */__pycache__/*
 
+/app/models/*jpg
