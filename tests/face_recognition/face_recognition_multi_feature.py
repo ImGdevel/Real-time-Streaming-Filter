@@ -20,9 +20,16 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
     recognized_face = "unknown"
     min_distance = float('inf')
     tolerance_used = None
-    
+
     for name, encodings in known_faces.items():
+        print(type(encodings))
         for encoding in encodings:
+            print("Print")
+            print(type(encoding))
+            print(encoding)
+            print("--------------------------------------")
+            print(type(face_encoding))
+            print(face_encoding)
             distance = face_recognition.face_distance([encoding], face_encoding)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
@@ -58,7 +65,7 @@ def register_person(person_name, image_paths):
 register_person("SSH_glass", ["./tests/face_recognition/me_4.jpg"])
 #register_person("WSH", ["./tests/face_recognition/WSH.png"])
 #register_person("LJW", ["./tests/face_recognition/LJW.png"])
-register_person("SSH", ["./tests/face_recognition/me_left.jpg"])
+#register_person("SSH", ["./tests/face_recognition/me_left.jpg"])
 #register_person("WSH2", ["./tests/face_recognition/WSH.png"])
 #register_person("LJW2", ["./tests/face_recognition/LJW.png"])
 

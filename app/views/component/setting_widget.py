@@ -12,9 +12,15 @@ class SettingWidget(QWidget):
 
     def initUI(self):
         self.layout = QVBoxLayout()
-        self.download_button = QPushButton()
+        self.download_button = QPushButton("Download")
+        self.download_button.clicked.connect(self.Download)
         
         self.layout.addWidget(self.download_button)
         self.setLayout(self.layout)
-        
 
+    
+    def Download(self):
+        print("download")
+
+    def addSettingButton(self, button):
+        self.layout().addWidget(button)
