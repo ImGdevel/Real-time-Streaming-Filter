@@ -4,77 +4,72 @@ import cv2
 
 class ObjectDetect:
     """
-    A class for object detection using YOLO models.
+    YOLO 모델을 사용한 객체 탐지를 위한 클래스입니다.
 
-    Attributes:
-        origin (YOLO): YOLO model for general object detection.
-        custom (YOLO): YOLO model for detecting custom objects.
-        orgNames (list): Labels for objects detected by the general model.
-        custNames (list): Labels for objects detected by the custom model.
+    속성:
+        origin (YOLO): 일반 객체 탐지를 위한 YOLO 모델입니다.
+        custom (YOLO): 사용자 정의 객체 탐지를 위한 YOLO 모델입니다.
+        orgNames (list): 일반 모델에 의해 탐지된 객체의 라벨입니다.
+        custNames (list): 사용자 정의 모델에 의해 탐지된 객체의 라벨입니다.
 
-    Methods:
-        __init__: Initializes the ObjectDetect class with YOLO models and their labels.
-        originDetect: Detects objects using the general YOLO model.
-        custDetect: Detects custom objects using the custom YOLO model.
-        getOrgLabel: Returns the labels for objects detected by the general model.
-        getCustLabel: Returns the labels for objects detected by the custom model.
+    메서드:
+        __init__: YOLO 모델과 그들의 라벨로 ObjectDetect 클래스를 초기화합니다.
+        orgDetect: 일반 YOLO 모델을 사용하여 객체를 탐지합니다.
+        custDetect: 사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
+        getOrgLabel: 일반 모델에 의해 탐지된 객체의 라벨을 반환합니다.
+        getCustLabel: 사용자 정의 모델에 의해 탐지된 객체의 라벨을 반환합니다.
     """
 
-    origin = YOLO("models/yolov8n-oiv7.pt")   # General object detection model
-    custom = YOLO("models/bad.pt")   # Custom object detection model
-    orgNames = None  # Labels for the general model
-    custNames = None  # Labels for the custom model
+    origin = YOLO("models/yolov8n-oiv7.pt")   # 일반 객체 탐지 모델
+    custom = YOLO("models/bad.pt")   # 사용자 정의 객체 탐지 모델
+    orgNames = None  # 일반 모델의 라벨
+    custNames = None  # 사용자 정의 모델의 라벨
     
     def __init__(self):
         """
-        Initializes the ObjectDetect class.
+        ObjectDetect 클래스를 초기화합니다.
         """
         self.orgNames = self.origin.names
         self.custNames = self.custom.names
         
     def orgDetect(self, img):
-        """Detects objects using the general YOLO model.
+        """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
-            img (numpy.ndarray): Source image.
+            img (numpy.ndarray): 원본 이미지입니다.
 
         Returns:
-            tuple: A tuple containing lists of bounding boxes and a list indicating whether each object is a human face.
+            tuple: 바운딩 박스의 목록과 각 객체가 얼굴인지를 나타내는 목록을 포함하는 튜플입니다.
         """
-        results = self.origin.predict(img, verbose=False, show=False)  # Predict results using the general model
-        orgClss = results[0].boxes.cls.cpu().tolist()   # Get class labels of detected objects
-        orgBoxes = results[0].boxes.xyxy.cpu().tolist() # Get coordinates of detected objects
-        #annotator = Annotator(img, line_width=2, example=self.orgNames)
+        results = self.origin.predict(img, verbose=False, show=False)  # 일반 모델로 결과 예측
+        orgClss = results[0].boxes.cls.cpu().tolist()   # 탐지된 객체의 클래스 라벨 가져오기
+        orgBoxes = results[0].boxes.xyxy.cpu().tolist() # 탐지된 객체의 좌표 가져오기
         boxesList = []  
-        labelList = []
         labelList = []
         
         if orgBoxes is not None:
             for box, cls in zip(orgBoxes, orgClss):
-                #annotator.box_label(box, color=colors(int(cls), True), label=self.orgNames[int(cls)])
                 boxesList.append(box) 
                 labelList.append(self.orgNames[cls])
         return boxesList, labelList
 
     def custDetect(self, frame):
-        """Detects custom objects using the custom YOLO model.
+        """사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
-            frame (numpy.ndarray): Source image.
+            frame (numpy.ndarray): 원본 이미지입니다.
 
         Returns:
-            list: List of bounding boxes for detected objects.
+            list: 탐지된 객체의 바운딩 박스 목록입니다.
         """
-        results2 = self.custom.predict(frame, verbose=False, show=False) # Predict results using the custom model
+        results2 = self.custom.predict(frame, verbose=False, show=False) # 사용자 정의 모델로 결과 예측
         custBoxes = results2[0].boxes.xyxy.cpu().tolist()   
         custClss = results2[0].boxes.cls.cpu().tolist()     
-        #annotator = Annotator(frame, line_width=2, example=self.custNames)
         boxesList = []  
         labelList = []
         
         if custBoxes is not None:
             for box, cls in zip(custBoxes, custClss):
-                #annotator.box_label(box, color=colors(int(cls), True), label=self.custNames[int(cls)])
                 boxesList.append(box)
                 labelList.append(self.custNames[cls])
                 
@@ -82,18 +77,18 @@ class ObjectDetect:
     
     def getOrgLabel(self):
         """
-        Returns the labels for objects detected by the general model.
+        일반 모델에 의해 탐지된 객체의 라벨을 반환합니다.
 
         Returns:
-            list: Labels for objects detected by the general model.
+            list: 일반 모델에 의해 탐지된 객체의 라벨입니다.
         """
         return self.orgNames
     
     def getCustLabel(self):
         """
-        Returns the labels for objects detected by the custom model.
+        사용자 정의 모델에 의해 탐지된 객체의 라벨을 반환합니다.
 
         Returns:
-            list: Labels for objects detected by the custom model.
+            list: 사용자 정의 모델에 의해 탐지된 객체의 라벨입니다.
         """
         return self.custNames
