@@ -4,42 +4,42 @@ import cv2
 
 class Filtering:
     """
-    A class for applying filtering techniques to images based on detected objects.
+    객체를 감지하여 이미지에 필터링 기법을 적용하는 클래스입니다.
     
-    Attributes:
-        object (ObjectDetect): An instance of ObjectDetect class for object detection.
+    속성:
+        object (ObjectDetect): 객체 감지를 위한 ObjectDetect 클래스의 인스턴스입니다.
         
-    Methods:
-        __init__: Initializes the Filtering class with an ObjectDetect instance.
-        filtering: Filters the image based on detected objects and optionally on faces.
-        blur: Applies blurring to the regions of interest specified by boxesList.
+    메서드:
+        __init__: ObjectDetect 인스턴스를 사용하여 Filtering 클래스를 초기화합니다.
+        filtering: 감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
+        blur: boxesList에 지정된 관심 영역에 블러를 적용합니다.
     """
     
     def __init__(self):
         """
-        Initializes the Filtering class.
+        Filtering 클래스를 초기화합니다.
         """
         self.object = ObjectDetect()
         
     def filtering(self, img, objects, except_people=['test']):
         """
-        Filters the image based on detected objects and optionally on faces.
+        감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
 
         Args:
-            img (numpy.ndarray): Input image.
-            objects (list): List of objects to detect.
-            face (bool, optional): Whether to detect faces. Defaults to None.
+            img (numpy.ndarray): 입력 이미지입니다.
+            objects (list): 감지할 객체의 목록입니다.
+            face (bool, optional): 얼굴을 감지할지 여부입니다. 기본값은 None입니다.
 
         Returns:
-            list: List of bounding boxes for detected objects.
+            list: 감지된 객체의 바운딩 박스 목록입니다.
         """
 
         results = []
-        boxesList, labelList = self.object.orgDetect(img)  # Corrected: unpacking the tuple
-        for box, label in zip(boxesList, labelList):  # Corrected: renamed isFace to is_face
+        boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
+        for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
 
             if label == "Human face":
-                print("If it's a Human face")
+                print("사람 얼굴일 경우")
                 face_encode = face_encoding_box(img, box)
 
                 if is_known_person(except_people, face_encode):
@@ -52,7 +52,7 @@ class Filtering:
                 results.append(box)
 
         custList = []
-        custList, labelList = self.object.custDetect(img)
+        custList, labelList = self.object.custom_detect(img)
         for obj, label in zip(custList, labelList):
             if objects[label] == 1:
                 results.append(obj)
@@ -61,15 +61,15 @@ class Filtering:
     
     def blur(self, blurRatio, img, boxesList):
         """
-        Applies blurring to the regions of interest specified by boxesList.
+        boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
         Args:
-            blurRatio (int): Blurring ratio.
-            img (numpy.ndarray): Input image.
-            boxesList (list): List of bounding boxes for the regions of interest in YOLO format (box[0], box[1], box[2], box[3]).
+            blurRatio (int): 블러 비율입니다.
+            img (numpy.ndarray): 입력 이미지입니다.
+            boxesList (list): YOLO 형식의 바운딩 박스 목록입니다 (box[0], box[1], box[2], box[3]).
 
         Returns:
-            img (numpy.ndarray): Modified image with blurring applied to specified regions.
+            img (numpy.ndarray): 지정된 영역에 블러가 적용된 수정된 이미지입니다.
         """
         for box in boxesList:
 
