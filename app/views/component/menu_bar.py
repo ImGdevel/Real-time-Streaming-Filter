@@ -15,10 +15,11 @@ class MenuBar(QWidget):
 
         # page button 추가
         self.addMenuButton("Home", 0)
-        self.addMenuButton("Stream",1)
+        self.addMenuButton("Stream", 1)
         self.addMenuButton("Video", 2)
-        self.addMenuButton("Image",3)
-        self.addMenuButton("Setting",4)
+        self.addMenuButton("Image", 3)
+        self.addMenuButton("Filter", 4)
+        self.addMenuButton("Setting", 5)
 
         # 상단에 여백 추가
         self.layout.addStretch()

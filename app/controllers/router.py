@@ -3,6 +3,7 @@ from views.VideoView import VideoView
 from views.ImageView import ImageView
 from views.SettingsView import SettingsView
 from views.HomeView import HomeView
+from views.FilterSettingView import FilterSettingView
 
 class Router:
 
@@ -14,6 +15,7 @@ class Router:
         self.add_page(RealStreamView())
         self.add_page(VideoView())
         self.add_page(ImageView())
+        self.add_page(FilterSettingView())
         self.add_page(SettingsView())
 
         # Menu의 페이지 변경 시그널 연결
