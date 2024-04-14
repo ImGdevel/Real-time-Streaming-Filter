@@ -1,14 +1,13 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QSplitter, QMessageBox
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter
 from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
-from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QPushButton
 from views.component import AddFaceDialog
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
+        self.current_filter = None
 
     def initUI(self):
         # 전체 레이아웃 설정
