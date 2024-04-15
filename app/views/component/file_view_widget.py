@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl, pyqtSignal
 from utils.colors import Colors
 from .image_item import ImageItem
 
 class FileViewWidget(QWidget):
     count = int
+    remove_file = pyqtSignal(QUrl)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
@@ -70,6 +71,7 @@ class FileViewWidget(QWidget):
             self.count += 1
 
     def removeFile(self, widget):
+        self.remove_file.emit(widget.getUrl())
         if self.remove_mode:
             self.scroll_layout.removeWidget(widget)
             widget.deleteLater()

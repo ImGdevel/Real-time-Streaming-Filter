@@ -7,6 +7,7 @@ from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget
 class ImageView(QWidget):
 
     count = int
+    urls = list()
 
     def __init__(self, parent = None):
 
@@ -17,7 +18,11 @@ class ImageView(QWidget):
         self.setAcceptDrops(True)
         self.count = 0
         # 전체 레이아웃 설정
-        self.layout = QGridLayout()
+        self.layout = QVBoxLayout()
+
+        self.top_widget = QWidget()
+        self.top_layout = QHBoxLayout()
+
         #dropbox 위젯
         self.dropbox_widget = DragDropLabel()
         self.dropbox_widget.drop_signal.connect(self.addItemFileView)
@@ -25,12 +30,14 @@ class ImageView(QWidget):
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
         self.file_view_widget.setMinimumSize(300, 150)
-        self.file_view_widget.setMaximumWidth(500)
+        self.file_view_widget.setMaximumWidth(800)
         self.file_view_widget.setMaximumHeight(350)
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        self.file_view_widget.remove_file.connect(self.removeUrl)
         
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
+        self.setting_widget.download_button.clicked.connect(self.Download)
         self.setting_frame.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.setting_frame.setMinimumSize(100, 150)
         self.setting_frame.setMaximumWidth(200)
@@ -38,16 +45,24 @@ class ImageView(QWidget):
         self.setting_layout.addWidget(self.setting_widget)
         self.setting_frame.setLayout(self.setting_layout)
 
-        self.layout.addWidget(self.dropbox_widget, 0, 0)
-        self.layout.addWidget(self.setting_frame, 0, 1)
-        self.layout.addWidget(self.file_view_widget, 1, 0)
+        self.top_layout.addWidget(self.dropbox_widget)
+        self.top_layout.addWidget(self.setting_frame)
+        self.top_widget.setLayout(self.top_layout)
+        self.layout.addWidget(self.top_widget)
+        self.layout.addWidget(self.file_view_widget)
 
         self.setLayout(self.layout)
     
-
+    def removeUrl(self, url):
+        self.urls.remove(url)
 
     def addItemFileView(self, urls):
+        for i in urls:
+            self.urls.append(i) 
         self.file_view_widget.addNewFile(urls)
+
+    def Download(self):
+        print("download")
 
 
 
