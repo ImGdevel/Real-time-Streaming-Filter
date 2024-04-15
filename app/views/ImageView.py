@@ -27,7 +27,6 @@ class ImageView(QWidget):
         #dropbox 위젯
         self.dropbox_widget = DragDropLabel()
         self.dropbox_widget.drop_signal.connect(self.addItemFileView)
-        self.dropbox_widget.find_signal.connect(self.findUrls)
 
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
@@ -36,6 +35,7 @@ class ImageView(QWidget):
         self.file_view_widget.setMaximumHeight(350)
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.file_view_widget.remove_file.connect(self.removeUrl)
+        self.file_view_widget.add_file.connect(self.addItemFileView)
         
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
@@ -59,19 +59,15 @@ class ImageView(QWidget):
         self.urls.remove(url)
 
     def addItemFileView(self, urls):
+        add_urls = list()
         for i in urls:
-            self.urls.append(i) 
-        self.file_view_widget.addNewFile(urls)
+            if i not in self.urls:
+                self.urls.append(i) 
+                add_urls.append(i)
+        self.file_view_widget.addNewFile(add_urls)
 
     def Download(self):
         print("download")
-
-    def findUrls(self, urls):
-        for i in urls:
-            if i in self.urls:
-                return False
-            else :
-                return True
 
 
 

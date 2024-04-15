@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 class DragDropLabel(QLabel):
 
     drop_signal = pyqtSignal(list)
-    find_signal = pyqtSignal(list)
 
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -56,16 +55,14 @@ class DragDropLabel(QLabel):
     def dropEvent(self, event):
         urls = self.find_image(event.mimeData())
         
-        if self.find_signal.emit(urls) :
-            if urls:
-                self.drop_signal.emit(self.urls)
-                file_path = urls[0].toLocalFile()
-                self.setExampleView(file_path)
-                event.accept()
-            else:
-                event.ignore()
+        if urls:
+            self.drop_signal.emit(self.urls)
+            file_path = urls[0].toLocalFile()
+            self.setExampleView(file_path)
+            event.accept()
         else:
             event.ignore()
+
 
     def getUrls(self):
         return self.urls

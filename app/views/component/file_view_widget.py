@@ -6,6 +6,7 @@ from .image_item import ImageItem
 class FileViewWidget(QWidget):
     count = int
     remove_file = pyqtSignal(QUrl)
+    add_file = pyqtSignal(QUrl)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
@@ -31,7 +32,7 @@ class FileViewWidget(QWidget):
         self.button_widget.setFixedSize(300, 50)
         self.button_layout = QHBoxLayout()
 
-        self.remove_button = QPushButton("Del = off")
+        self.remove_button = QPushButton("Del = OFF")
         self.remove_button.clicked.connect(self.setRemoveMode)
         
         self.file_explorer_button = QPushButton("Serch")
@@ -62,13 +63,13 @@ class FileViewWidget(QWidget):
         fname = QFileDialog.getOpenFileName(self, '파일 선택', '/home', filters)
         if fname:
             file_info = [QUrl.fromLocalFile(fname[0])]
-            self.addNewFile(file_info)
+            self.add_file.emit(file_info)
 
     def addNewFile(self, urls):
         for i, file_info in enumerate(urls):
             file_widget = ImageItem(file_info)
             file_widget.delet_signal.connect(self.removeFile)
-            file_widget.setFixedSize(80, 80)
+            file_widget.setFixedSize(100, 100)
             self.scroll_layout.addWidget(file_widget)
             self.count += 1
 
