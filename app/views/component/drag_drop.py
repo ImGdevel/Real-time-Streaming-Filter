@@ -17,8 +17,8 @@ class DragDropLabel(QLabel):
         self.setAcceptDrops(True)
         self.layout = QVBoxLayout()
         self.dropbox_lable = QLabel()
-        self.dropbox_lable.setMinimumSize(300, 150)
-        self.dropbox_lable.setMaximumWidth(550)
+        #self.dropbox_lable.setMinimumSize(300, 150)
+        #self.dropbox_lable.setMaximumWidth(550)
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
         self.dropbox_lable.setText('파일을 끌어오세요')
         self.dropbox_lable.setStyleSheet('''

@@ -31,6 +31,7 @@ class FileViewWidget(QWidget):
         #button
         self.button_widget = QWidget()
         self.button_widget.setFixedSize(300, 50)
+        self.button_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')
         self.button_layout = QHBoxLayout()
 
         self.remove_button = QPushButton("Del = OFF")

@@ -21,8 +21,9 @@ class ImageView(QWidget):
         self.layout = QVBoxLayout()
 
         self.top_widget = QWidget()
+        self.top_widget.setMaximumWidth(1000)
         self.top_layout = QHBoxLayout()
-        self.top_layout.setSpacing(7)
+        self.top_layout.setSpacing(3)
 
         #dropbox 위젯
         self.dropbox_widget = DragDropLabel()
@@ -31,8 +32,8 @@ class ImageView(QWidget):
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
         self.file_view_widget.setMinimumSize(300, 150)
-        self.file_view_widget.setMaximumWidth(800)
-        self.file_view_widget.setMaximumHeight(350)
+        self.file_view_widget.setMaximumWidth(1000)
+        self.file_view_widget.setMaximumHeight(250)
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
