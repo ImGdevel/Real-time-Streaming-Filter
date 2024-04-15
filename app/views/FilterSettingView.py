@@ -7,9 +7,9 @@ from models import FilterManager, Filter
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.initUI()
         self.current_filter = None
         self.filter_manager = FilterManager()
+        self.initUI()
 
     def initUI(self):
         # 전체 레이아웃 설정
