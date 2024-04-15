@@ -191,8 +191,7 @@ class FilterSettingView(QWidget):
         if not filter_name:
             filter_name = f"Filter {self.filter_list_widget.count() + 1}"
             self.filter_setting_processor.add_filter(filter_name)
-        
-        self.set_current_filter(filter_name)
+            self.set_current_filter(filter_name)
         
         button = QPushButton(filter_name)
         button.clicked.connect(self.filter_list_btn_event)

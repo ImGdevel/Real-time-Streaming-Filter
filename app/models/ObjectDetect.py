@@ -31,8 +31,8 @@ class ObjectDetect:
         """
         origin = self.modelManager.orginModel
         custom = self.modelManager.customModel
-        self.orginNames = self.origin.names
-        self.customNames = self.custom.names
+        self.orginNames = origin.names
+        self.customNames = custom.names
         
     def origin_detect(self, img):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
