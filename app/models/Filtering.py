@@ -1,5 +1,6 @@
 from models.ObjectDetect import ObjectDetect
 from models.FaceFilter import *
+from models.ModelManager import ModelManager
 import cv2
 
 class Filtering:
@@ -20,8 +21,9 @@ class Filtering:
         Filtering 클래스를 초기화합니다.
         """
         self.object = ObjectDetect()
+        self.modelManager = ModelManager()
         
-    def filtering(self, img, objects, except_people=['test']):
+    def filtering(self, img, filter_info):
         """
         감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
 
@@ -37,24 +39,23 @@ class Filtering:
         results = []
         boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
         for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
+            if filter_info.face_filter_on is True:   
+                if label == "Human face":
+                    print("사람 얼굴일 경우")
+                    face_encode = face_encoding_box(img, box)
 
-            if label == "Human face":
-                print("사람 얼굴일 경우")
-                face_encode = face_encoding_box(img, box)
-
-                if is_known_person(except_people, face_encode):
-                    continue
-                else :
-                    results.append(box)
-                    continue
-
-            if objects[label] == 1:
+                    if is_known_person(filter_info.face_filter, face_encode):
+                        continue
+                    else :
+                        results.append(box)
+                        continue    
+            if label in filter_info.object_filter:
                 results.append(box)
 
         custList = []
         custList, labelList = self.object.custom_detect(img)
         for obj, label in zip(custList, labelList):
-            if objects[label] == 1:
+            if label in filter_info.object_filter:
                 results.append(obj)
             
         return results

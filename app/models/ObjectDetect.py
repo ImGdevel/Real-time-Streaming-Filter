@@ -77,20 +77,3 @@ class ObjectDetect:
                 
         return boxesList, labelList
     
-    def getOrgLabel(self):
-        """
-        일반 모델에 의해 탐지된 객체의 라벨을 반환합니다.
-
-        Returns:
-            list: 일반 모델에 의해 탐지된 객체의 라벨입니다.
-        """
-        return self.orginNames
-    
-    def getCustLabel(self):
-        """
-        사용자 정의 모델에 의해 탐지된 객체의 라벨을 반환합니다.
-
-        Returns:
-            list: 사용자 정의 모델에 의해 탐지된 객체의 라벨입니다.
-        """
-        return self.customNames

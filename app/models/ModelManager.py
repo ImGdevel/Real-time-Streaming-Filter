@@ -16,3 +16,11 @@ class ModelManager:
             cls.orginModel = YOLO("models/yolov8n-oiv7.pt")
             cls.customModel = YOLO("models/bad.pt")
         return cls._instance
+    
+    def get_label(self):
+        label = self.orginModel.names
+        for custom in self.customModel.names:
+            if custom not in label:
+                label.append(custom)
+        return label
+     
