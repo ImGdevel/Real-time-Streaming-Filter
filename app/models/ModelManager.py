@@ -18,9 +18,11 @@ class ModelManager:
         return cls._instance
     
     def get_label(self):
-        label = self.orginModel.names
-        for custom in self.customModel.names:
-            if custom not in label:
-                label.append(custom)
+        label = list(self.orginModel.names.values())
+        custom = list(self.customModel.names.values())
+        for c in custom:
+            if c not in label:
+                label.append(c)
+
         return label
      

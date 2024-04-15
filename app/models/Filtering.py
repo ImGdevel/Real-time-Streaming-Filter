@@ -1,6 +1,7 @@
 from models.ObjectDetect import ObjectDetect
 from models.FaceFilter import *
 from models.ModelManager import ModelManager
+from models.filter_info import Filter
 import cv2
 
 class Filtering:
@@ -23,7 +24,7 @@ class Filtering:
         self.object = ObjectDetect()
         self.modelManager = ModelManager()
         
-    def filtering(self, img, filter_info):
+    def filtering(self, img, filter_info = Filter("test")):
         """
         감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
 
