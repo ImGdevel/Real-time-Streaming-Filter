@@ -6,7 +6,7 @@ from .image_item import ImageItem
 class FileViewWidget(QWidget):
     count = int
     remove_file = pyqtSignal(QUrl)
-    add_file = pyqtSignal(QUrl)
+    add_file = pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
