@@ -15,6 +15,17 @@ class FilterManager:
         """새로운 필터를 추가합니다."""
         self.filter_list.append(filter_obj)
 
+    def update_filter(self, filtername: str, filterinfo: Filter):
+        print("적용 전:", self.filter_list)
+        for filter in self.filter_list:
+            print("비교", filter.name, "/" , filtername, "=", filter.name == filtername)
+
+            if filter.name == filtername:
+                print("가져온 데이터", filterinfo)
+                filter = filterinfo
+                print("적용 후:", self.filter_list)
+        
+
     def remove_filter(self, filter_name: str):
         """지정된 이름의 필터를 제거합니다."""
         for idx, filter_obj in enumerate(self.filter_list):
@@ -41,8 +52,3 @@ class FilterManager:
         loaded_data = AppDataSaver(self.filter_list).load_data(filename)
         if loaded_data:
             self.filter_list = [Filter(**filter_data) for filter_data in loaded_data]
-
-    def set_filter(self, filtername, filterinfo):
-        for filter in self.filter_list:
-            if filter.name is filtername:
-                filter = filterinfo

@@ -150,6 +150,7 @@ class FilterSettingView(QWidget):
         # todo: 하단 오른 쪽 끝에 적용 버튼 추가
         apply_button = QPushButton("적용")
         apply_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
+        apply_button.clicked.connect(self.apply_filter_settings)
         apply_button.setFixedSize(60, 30)  # 높이 설정
 
         # 수평 레이아웃 생성 및 오른쪽 정렬
@@ -233,7 +234,6 @@ class FilterSettingView(QWidget):
     def update_registered_faces_list(self, face_filter_data):
         """registered_faces_list 업데이트 메서드"""
         # 기존 항목 삭제
-        
         self.registered_faces_list.clear()
         
         # face_filter_data를 QListWidget에 추가
@@ -242,7 +242,6 @@ class FilterSettingView(QWidget):
             self.registered_faces_list.addItem(item)
 
 
-            
     def show_add_face_dialog(self):
         """얼굴 추가 다이얼로그 표시 메서드"""
         dialog = AddFaceDialog(self)
@@ -257,3 +256,18 @@ class FilterSettingView(QWidget):
     def add_new_face(self):
         """얼굴 추가 메서드"""
         self.show_add_face_dialog()
+
+    def apply_filter_settings(self):
+        """세팅된 필터링 정보 저장"""
+        print("필터 정보 저장")
+
+        # registered_faces_list의 내용 가져오기
+        updated_face_filter = [self.registered_faces_list.item(i).text() for i in range(self.registered_faces_list.count())]
+
+        print("업데이트 될 리스트:", updated_face_filter)
+        # 현재 선택된 필터 정보 업데이트
+        self.filter_setting_processor.update_filter(self.current_filter, "New Filter", True ,updated_face_filter, [])
+
+
+
+
