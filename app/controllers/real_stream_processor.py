@@ -1,8 +1,7 @@
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
-from models import Filtering 
-from controllers.FilterManager import FilterManager
+from models import Filtering, FilterManager
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):

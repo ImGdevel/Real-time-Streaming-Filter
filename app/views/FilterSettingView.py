@@ -1,14 +1,15 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QListWidget, QListWidgetItem, QSplitter, QMessageBox
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter
 from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
-from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QPushButton
 from views.component import AddFaceDialog
+from models import FilterManager, Filter
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
+        self.current_filter = None
+        self.filter_manager = FilterManager()
 
     def initUI(self):
         # 전체 레이아웃 설정
@@ -47,8 +48,9 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
         self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
 
+    
         # 기존 필터 추가
-        for filter_name in ["Filter 1", "Filter 2", "Filter 3"]:
+        for filter_name in self.filter_manager.filter_list:
             self.add_filter(filter_name)
 
         # Add Filter, Delete Filter 버튼
@@ -180,10 +182,12 @@ class FilterSettingView(QWidget):
         """등록된 얼굴 선택 메서드"""
         pass
 
-    def add_filter(self, filter_name=None):
+    def add_filter(self, filter:Filter=None):
         """Filter 추가 메서드"""
-        if not filter_name:
-            filter_name = f"Filter {self.filter_list_widget.count() + 1}"
+        if not filter:
+            name = f"Filter {self.filter_list_widget.count() + 1}"
+            filter = self.filter_manager.add_filter(name)
+        filter_name = filter.name
         
         button = QPushButton(filter_name)
         button.clicked.connect(self.filter_list_btn_event)
