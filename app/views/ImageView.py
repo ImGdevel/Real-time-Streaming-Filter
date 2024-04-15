@@ -22,10 +22,12 @@ class ImageView(QWidget):
 
         self.top_widget = QWidget()
         self.top_layout = QHBoxLayout()
+        self.top_layout.setSpacing(7)
 
         #dropbox 위젯
         self.dropbox_widget = DragDropLabel()
         self.dropbox_widget.drop_signal.connect(self.addItemFileView)
+        self.dropbox_widget.find_signal.connect(self.findUrls)
 
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
@@ -63,6 +65,13 @@ class ImageView(QWidget):
 
     def Download(self):
         print("download")
+
+    def findUrls(self, urls):
+        for i in urls:
+            if i in self.urls:
+                return False
+            else :
+                return True
 
 
 
