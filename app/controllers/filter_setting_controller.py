@@ -7,13 +7,13 @@ class FilterSettingController:
         print("호출")
         self.test = []
 
-    def add_filter(self, filter_name):
+    def add_filter(self, filter_name : str):
         """Filter 추가 메서드"""
-        filter = Filter(name=filter_name)
+        filter = Filter(name=filter_name, face_filter=["1","2"] ,object_filter=["1","2"])
         self.test.append(filter)
         
 
-    def delete_filter(self, filter_name):
+    def delete_filter(self, filter_name : str):
         """Filter 삭제 메서드"""
         self.test.remove(filter_name)
         
@@ -31,4 +31,4 @@ class FilterSettingController:
 
     def get_filters(self):
         """Filter """
-        return []
+        return self.test[:]

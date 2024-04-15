@@ -11,9 +11,8 @@ class FilterSettingView(QWidget):
 
         self.current_filter = None
         self.filter_setting_processor = FilterSettingController()
-
         self.filter_setting_processor.add_filter("MyFilter")
-        print(self.filter_setting_processor.get_filters())
+
         self.initUI()
 
     def initUI(self):
@@ -53,11 +52,11 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
         self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
 
-        print(self.filter_setting_processor.get_filters())
+        
         # 기존 필터 추가
-        for filter_name in self.filter_setting_processor.get_filters():
-            self.add_filter(filter_name)
-
+        for filter in self.filter_setting_processor.get_filters():
+            self.add_filter(filter.name)
+        
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
         add_button.clicked.connect(self.add_filter)
@@ -191,9 +190,8 @@ class FilterSettingView(QWidget):
         """Filter 추가 메서드"""
         if not filter_name:
             filter_name = f"Filter {self.filter_list_widget.count() + 1}"
+            self.filter_setting_processor.add_filter(filter_name)
         
-        #filter_setting_processor에 filter추가
-        self.filter_setting_processor.add_filter(filter_name)
         self.set_current_filter(filter_name)
         
         button = QPushButton(filter_name)
@@ -205,8 +203,6 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.addItem(item)
         self.filter_list_widget.setItemWidget(item, button)
         item.setSizeHint(button.sizeHint())
-
-        print(self.filter_setting_processor.get_filters())
 
 
     def delete_filter(self):
@@ -228,7 +224,7 @@ class FilterSettingView(QWidget):
         """현제 선택된 필터 처리"""
         self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
-        print(self.filter_setting_processor.get_filters())
+
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list(filter_data.face_filter)
@@ -240,13 +236,12 @@ class FilterSettingView(QWidget):
         # 기존 항목 삭제
         
         self.registered_faces_list.clear()
-
+        
         # face_filter_data를 QListWidget에 추가
         for face_name in face_filter_data:
             item = QListWidgetItem(face_name)
             self.registered_faces_list.addItem(item)
 
-        print(self.filter_setting_processor.get_filters())
 
             
     def show_add_face_dialog(self):
