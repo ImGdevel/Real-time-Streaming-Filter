@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBo
 from PyQt5.QtCore import Qt, QUrl, pyqtSignal
 from utils.colors import Colors
 from .image_item import ImageItem
+import os
 
 class FileViewWidget(QWidget):
     count = int
@@ -59,11 +60,22 @@ class FileViewWidget(QWidget):
             print("on")
 
     def openFileExplorer(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
         filters = "이미지 파일 (*.bmp *.dng *.jpeg *.jpg *.mpo *.png *.tif *.tiff *.webp *.pnm)"
-        fname = QFileDialog.getOpenFileName(self, '파일 선택', '/home', filters)
-        if fname:
-            file_info = [QUrl.fromLocalFile(fname[0])]
-            self.add_file.emit(file_info)
+        fname = QFileDialog()
+        fname.setFileMode(QFileDialog.ExistingFiles)
+        fname.setNameFilter(filters)
+        if fname.exec_():
+            selected_files = fname.selectedFiles()
+            file_list = list()
+            # Process selected files
+            for file_path in selected_files:
+                _, extension = os.path.splitext(file_path)
+                if extension.lower() in ['.bmp', '.dng', '.jpeg', '.jpg', '.mpo', '.png', '.tif', '.tiff', '.webp', '.pnm']:
+                    file_info = QUrl.fromLocalFile(file_path)
+                    file_list.append(file_info)
+            self.add_file.emit(file_list)
 
     def addNewFile(self, urls):
         for i, file_info in enumerate(urls):

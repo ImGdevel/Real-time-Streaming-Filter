@@ -57,8 +57,6 @@ class DragDropLabel(QLabel):
         
         if urls:
             self.drop_signal.emit(self.urls)
-            file_path = urls[0].toLocalFile()
-            self.setExampleView(file_path)
             event.accept()
         else:
             event.ignore()
