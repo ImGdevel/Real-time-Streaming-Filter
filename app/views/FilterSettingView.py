@@ -51,7 +51,7 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
         self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
 
-    
+
         # 기존 필터 추가
         for filter_name in self.filter_setting_processor.get_filters():
             self.add_filter(filter_name)
