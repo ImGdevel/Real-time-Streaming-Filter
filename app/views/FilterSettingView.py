@@ -3,13 +3,16 @@ from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
 from views.component import AddFaceDialog
 from models import FilterManager, Filter
+from controllers.filter_setting_controller import FilterSettingController
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.initUI()
+
         self.current_filter = None
-        self.filter_manager = FilterManager()
+        self.filter_setting_processor = FilterSettingController()
+
+        self.initUI()
 
     def initUI(self):
         # 전체 레이아웃 설정
@@ -50,7 +53,7 @@ class FilterSettingView(QWidget):
 
     
         # 기존 필터 추가
-        for filter_name in self.filter_manager.filter_list:
+        for filter_name in self.filter_setting_processor.get_filters():
             self.add_filter(filter_name)
 
         # Add Filter, Delete Filter 버튼
@@ -182,12 +185,13 @@ class FilterSettingView(QWidget):
         """등록된 얼굴 선택 메서드"""
         pass
 
-    def add_filter(self, filter:Filter=None):
+    def add_filter(self, filter_name):
         """Filter 추가 메서드"""
-        if not filter:
-            name = f"Filter {self.filter_list_widget.count() + 1}"
-            filter = self.filter_manager.add_filter(name)
-        filter_name = filter.name
+        if not filter_name:
+            filter_name = f"Filter {self.filter_list_widget.count() + 1}"
+            
+        self.filter_setting_processor.add_filter(filter_name)
+        self.current_filter = filter_name
         
         button = QPushButton(filter_name)
         button.clicked.connect(self.filter_list_btn_event)
