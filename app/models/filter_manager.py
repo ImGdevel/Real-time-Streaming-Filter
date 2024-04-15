@@ -41,3 +41,8 @@ class FilterManager:
         loaded_data = AppDataSaver(self.filter_list).load_data(filename)
         if loaded_data:
             self.filter_list = [Filter(**filter_data) for filter_data in loaded_data]
+
+    def set_filter(self, filtername, filterinfo):
+        for filter in self.filter_list:
+            if filter.name is filtername:
+                filter = filterinfo
