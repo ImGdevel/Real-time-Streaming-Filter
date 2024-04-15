@@ -22,7 +22,10 @@ class FilterManager:
 
             if filter.name == filtername:
                 print("가져온 데이터", filterinfo)
-                filter = filterinfo
+                filter.name = filterinfo.name
+                filter.face_filter_on = filterinfo.face_filter_on
+                filter.face_filter = filterinfo.face_filter
+                filter.object_filter = filterinfo.object_filter
                 print("적용 후:", self.filter_list)
         
 
