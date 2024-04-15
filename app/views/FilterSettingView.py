@@ -9,7 +9,7 @@ class FilterSettingView(QWidget):
         super().__init__(parent)
         self.initUI()
         self.current_filter = None
-        self.filter_manager = FilterManager()
+        #self.filter_manager = FilterManager()
 
     def initUI(self):
         # 전체 레이아웃 설정
@@ -48,9 +48,9 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
         self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
 
-    
+
         # 기존 필터 추가
-        for filter_name in self.filter_manager.filter_list:
+        for filter_name in []:
             self.add_filter(filter_name)
 
         # Add Filter, Delete Filter 버튼
