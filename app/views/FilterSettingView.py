@@ -266,7 +266,7 @@ class FilterSettingView(QWidget):
 
         print("업데이트 될 리스트:", updated_face_filter)
         # 현재 선택된 필터 정보 업데이트
-        self.filter_setting_processor.update_filter(self.current_filter, "New Filter", True ,updated_face_filter, [])
+        self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, [])
 
 
 

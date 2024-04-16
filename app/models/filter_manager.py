@@ -44,6 +44,9 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 return filter_obj
         return None
+
+    def get_filters(self):
+        return self.filter_list[:]
     
     def save_filters(self, filename: str):
         """filter_list를 파일에 저장합니다."""
