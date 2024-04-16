@@ -128,50 +128,50 @@ class FilterSettingView(QWidget):
         # QVBoxLayout을 self.object_setting_widget 위젯에 설정
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
         
-        # 체크박스 추가
-        self.checkbox1 = QCheckBox("Tobacco")
-        self.checkbox2 = QCheckBox("Knife")
-        self.checkbox3 = QCheckBox("Bloodshed")
-        self.checkbox4 = QCheckBox("Explicit_Content")
+        # 토글 버튼(체크박스 스타일) 추가
+        self.toggle_button1 = QPushButton("Tobacco")
+        self.toggle_button2 = QPushButton("Knife")
+        self.toggle_button3 = QPushButton("Bloodshed")
+        self.toggle_button4 = QPushButton("Explicit_Content")
         
-        # 체크박스에 고유한 식별자 부여
-        self.checkbox1.setObjectName("Tobacco")
-        self.checkbox2.setObjectName("Knife")
-        self.checkbox3.setObjectName("Bloodshed")
-        self.checkbox4.setObjectName("Explicit_Content")
+        # 버튼에 고유한 식별자 부여
+        self.toggle_button1.setObjectName("Tobacco")
+        self.toggle_button2.setObjectName("Knife")
+        self.toggle_button3.setObjectName("Bloodshed")
+        self.toggle_button4.setObjectName("Explicit_Content")
         
-        # 체크박스 상태 변경 이벤트 연결
-        self.checkbox1.stateChanged.connect(self.checkbox_state_changed)
-        self.checkbox2.stateChanged.connect(self.checkbox_state_changed)
-        self.checkbox3.stateChanged.connect(self.checkbox_state_changed)
-        self.checkbox4.stateChanged.connect(self.checkbox_state_changed)
-        
-        self.checked_object = []
+        # 버튼 클릭 이벤트 연결
+        self.toggle_button1.clicked.connect(self.toggle_button_clicked)
+        self.toggle_button2.clicked.connect(self.toggle_button_clicked)
+        self.toggle_button3.clicked.connect(self.toggle_button_clicked)
+        self.toggle_button4.clicked.connect(self.toggle_button_clicked)
 
-        # 체크박스 위젯들을 QVBoxLayout에 추가
-        self.object_setting_layout.addWidget(self.checkbox1)
-        self.object_setting_layout.addWidget(self.checkbox2)
-        self.object_setting_layout.addWidget(self.checkbox3)
-        self.object_setting_layout.addWidget(self.checkbox4)
+        # 현재 선택된 객체 필터링 설정
+        self.selected_filtering_object = []
+
+        # 버튼 위젯들을 QVBoxLayout에 추가
+        self.object_setting_layout.addWidget(self.toggle_button1)
+        self.object_setting_layout.addWidget(self.toggle_button2)
+        self.object_setting_layout.addWidget(self.toggle_button3)
+        self.object_setting_layout.addWidget(self.toggle_button4)
 
         object_layout.addWidget(object_label)
         object_layout.addWidget(self.object_setting_widget)
         
         return object_layout
 
-    # 체크박스 상태 변경 이벤트 핸들러
-    def checkbox_state_changed(self, state):
-        sender_checkbox = self.sender()  # 이벤트를 발생시킨 체크박스 가져오기
-        checkbox_name = sender_checkbox.objectName()  # 체크박스의 고유한 식별자 가져오기
-        
-        if sender_checkbox.isChecked():  # 체크박스가 체크되었을 때
-            print(f"{checkbox_name} is checked.")
-            if checkbox_name not in self.selected_filtering_object:  # 리스트에 없으면 추가
-                self.selected_filtering_object.append(checkbox_name)
-        else:  # 체크박스가 체크 해제되었을 때
-            print(f"{checkbox_name} is unchecked.")
-            if checkbox_name in self.selected_filtering_object:  # 리스트에 있으면 제거
-                self.selected_filtering_object.remove(checkbox_name)
+    def toggle_button_clicked(self):
+        """토글 버튼(체크박스 스타일) 클릭 이벤트 핸들러"""
+        sender_button = self.sender()  # 이벤트를 발생시킨 버튼 가져오기
+        button_name = sender_button.objectName()  # 버튼의 고유한 식별자 가져오기
+
+        # 버튼의 스타일 변경
+        if button_name in self.selected_filtering_object:
+            sender_button.setStyleSheet(f'background-color: {Colors.baseColor00}; color: white;')  # 선택되지 않은 상태의 스타일
+            self.selected_filtering_object.remove(button_name)  # 리스트에서 제거
+        else:
+            sender_button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택된 상태의 스타일
+            self.selected_filtering_object.append(button_name)  # 리스트에 추가
 
     
     def setup_right_layer(self):
@@ -275,6 +275,7 @@ class FilterSettingView(QWidget):
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list(filter_data.face_filter)
+            self.update_object_setting_list(filter_data.object_filter)
 
         else:
             print(f"Filter '{filter_name}' not found")
@@ -294,15 +295,22 @@ class FilterSettingView(QWidget):
             item = QListWidgetItem(face_name)
             self.registered_faces_list.addItem(item)
 
-    def update_object_setting_list(self, face_filter_data):
+    def update_object_setting_list(self, filtering_object_datas):
         """_object_setting_list 업데이트 메서드"""
-        # 기존 항목 삭제
-        self.object_setting_widget.clear()
         
-        # face_filter_data를 QListWidget에 추가
-        for face_name in face_filter_data:
-            item = QListWidgetItem(face_name)
-            self.registered_faces_list.addItem(item)
+        # 기존 버튼들의 스타일만 업데이트
+        for i in range(self.object_setting_layout.count()):
+            button = self.object_setting_layout.itemAt(i).widget()
+            if button.objectName() in filtering_object_datas:
+                button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택된 상태의 스타일
+                button.setChecked(True)  # 버튼을 체크 상태로 설정
+            else:
+                button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 선택되지 않은 상태의 스타일
+                button.setChecked(False)  # 버튼을 체크 해제 상태로 설정
+
+        # selected_filtering_object 업데이트
+        self.selected_filtering_object = filtering_object_datas.copy()
+
 
 
     def show_add_face_dialog(self):
