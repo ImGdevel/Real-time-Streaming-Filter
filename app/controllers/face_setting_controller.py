@@ -2,7 +2,7 @@ from models.face_manager import FaceManager
 from controllers.path_finder import *
 from models import FaceFilter
 import pickle
-import json
+import cv2
 
 class PersonFaceSettingController:
 
@@ -18,18 +18,15 @@ class PersonFaceSettingController:
             os.makedirs(self.face_path)
         save_path = os.path.join(self.face_path, "register_note.bin")
 
-        json_data = json.dumps([vars(fm) for fm in self.face_list])
         with open(save_path, 'wb') as file:
-            file.write(pickle.dupms(json_data))
+            pickle.dump(self.face_list, file)
 
     def load_person_faces(self):
         """기존에 등록된 face정보를 로드함"""
         if os.path.exists(self.face_path):
             save_path = os.path.join(self.face_path, "register_note.bin")
             with open(save_path, 'rb') as file:
-                loaded_json_data = pickle.load(file)
-
-            self.face_list = [FaceManager(**fm) for fm in json.loads(loaded_json_data)]
+                self.face_list = pickle.load(file)
 
     # def add_person_face(self, new_face: FaceManager):
     #     """person_face 추가 메서드"""
@@ -47,8 +44,11 @@ class PersonFaceSettingController:
         if new_face_name not in names:  # 동일한 이름의 필터가 없는 경우에만 추가
             self.face_list.append(FaceManager(new_face_name)) 
 
-    def add_person_encoding(self, face_name: str, face_encoding):
-        """face_name과 numpy배열을 전달하면 face_name과 일치하는 객체에 배열을 추가"""
+    def add_person_encoding(self, face_name: str, file_path):
+        """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
+        face_encoding = cv2.imread(file_path)
+        FaceFilter.register_person(face_name, file_path)
+
         for face in self.face_list:
             if face.face_name == face_name:
                 max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
@@ -78,12 +78,21 @@ class PersonFaceSettingController:
         for face in self.face_list:
             if face.face_name == person_name:
                 return face
+        print(f"'{person_name}이 존재하지 않습니다.'")
 
     def get_person_encoding(self, person_name: str, encoding_name: str):
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
         for face in self.face_list:
             if face.face_name == person_name:
-                return face.encoding_list[encoding_name]
+                return face.encoding_list.get(encoding_name)
+        print(f"'{person_name}이 존재하지 않습니다.'")
+        return None
+    
+    def get_person_encodings(self, person_name: str):
+        for face in self.face_list:
+            if face.face_name == person_name:
+                return face.encoding_list
+        print(f"'{person_name}이 존재하지 않습니다.'")
 
     def update_person_face(self, person_name, person: FaceManager):
         """person_face 업데이트 메서드"""
