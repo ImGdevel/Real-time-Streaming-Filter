@@ -91,7 +91,8 @@ class FilterSettingView(QWidget):
 
         # 등록되지 않은 얼굴 목록
         self.available_faces_list = QListWidget()
-        self.available_faces_list.addItems(["Face 1", "Face 2", "Face 3"])  # 임시 데이터
+        for people in self.face_setting_processor.get_person_faces():
+            self.available_faces_list.addItem(people)  # 임시 데이터
         self.available_faces_list.itemClicked.connect(self.register_face)
         
         face_register_layout.addWidget(self.registered_faces_list)
