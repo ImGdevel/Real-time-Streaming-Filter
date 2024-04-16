@@ -5,6 +5,26 @@ from views.component import AddFaceDialog
 from models import FilterManager, Filter
 from controllers import FilterSettingController, PersonFaceSettingController
 
+class FilterListWidget(QListWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setStyleSheet(f'background-color: {Colors.baseColor02};')
+        self.setSpacing(10)
+
+    def add_filter(self, filter_name):
+        button = QPushButton(filter_name)
+        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
+        button.setFixedSize(155, 40)
+        item = QListWidgetItem()
+        self.addItem(item)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+    
+    def update_filter_list():
+        pass
+
+
+
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -42,7 +62,7 @@ class FilterSettingView(QWidget):
     def setup_left_layer(self):
         """왼쪽 레이어 설정 메서드"""
         left_layout = QVBoxLayout()
-        left_layout.setContentsMargins(10, 10, 10, 10)  # 여백 설정
+        left_layout.setContentsMargins(10, 10, 10, 10)
 
         # Filter List 라벨
         filter_label = QLabel("Filter List")
@@ -50,19 +70,13 @@ class FilterSettingView(QWidget):
         filter_label.setStyleSheet("font-weight: bold;")
 
         # Filter 목록
-        self.filter_list_widget = QListWidget()
-        self.filter_list_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')  # 스크롤 뷰 배경색 설정
-        self.filter_list_widget.setSpacing(10)  # 아이템 간의 간격 설정
-
-        
-        # 기존 필터 추가
+        self.filter_list_widget = FilterListWidget()
         for filter in self.filter_setting_processor.get_filters():
-            self.add_filter(filter.name)
-        
+            self.filter_list_widget.add_filter(filter.name)
+
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
         add_button.clicked.connect(self.add_filter)
-
         delete_button = QPushButton("Delete Filter")
         delete_button.clicked.connect(self.delete_filter)
 
@@ -235,6 +249,19 @@ class FilterSettingView(QWidget):
         """등록된 얼굴 선택 메서드"""
         pass
 
+    # def add_filter(self):
+    #     """Filter 추가 메서드"""
+    #     filter_name = f"Filter {self.filter_list_widget.count() + 1}"
+    #     self.filter_setting_processor.add_filter(filter_name)
+    #     self.filter_list_widget.add_filter(filter_name)
+
+    # def delete_filter(self):
+    #     """Filter 삭제 메서드"""
+    #     selected_items = self.filter_list_widget.selectedItems()
+    #     for item in selected_items:
+    #         index = self.filter_list_widget.row(item)
+    #         self.filter_list_widget.takeItem(index)
+
     def add_filter(self, filter_name):
         """Filter 추가 메서드"""
         if not filter_name:
@@ -246,12 +273,22 @@ class FilterSettingView(QWidget):
         button.clicked.connect(self.filter_list_btn_event)
         button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
         button.setFixedSize(155, 40)  # 버튼 크기 설정
+
+        self.filter_list_widget.add_filter(filter_name)
         
         item = QListWidgetItem()
         self.filter_list_widget.addItem(item)
         self.filter_list_widget.setItemWidget(item, button)
         item.setSizeHint(button.sizeHint())
 
+    def add_filter(self, filter_name):
+        button = QPushButton(filter_name)
+        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
+        button.setFixedSize(155, 40)
+        item = QListWidgetItem()
+        self.addItem(item)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
 
     def delete_filter(self):
         """Filter 삭제 메서드"""
