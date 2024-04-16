@@ -47,7 +47,7 @@ class VideoProcessor(QThread):
 
 
 class VideoView(QWidget):
-    video_path = QUrl()
+    video_path = str
 
     '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
@@ -141,7 +141,7 @@ class VideoView(QWidget):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
-            self.video_path = filePath[0]
+            self.video_path = filePath
             self.video_info = VideoInfo(filePath)
             self.video_thread = VideoProcessor(filePath)
             self.video_thread.video_frame.connect(self.updateVideoFrame)
@@ -259,7 +259,7 @@ class VideoView(QWidget):
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
     
     def inCoding(self):
-        path = self.video_path.toLocalFile()
+        path = self.video_path
         print(path)
 
 if __name__ == "__main__":
