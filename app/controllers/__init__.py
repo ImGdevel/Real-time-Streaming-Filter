@@ -1,6 +1,4 @@
 from .real_stream_processor import RealStreamProcessor
 from .video_processor import VideoProcessor
-from .router import Router
-from .video_player_thread import VideoPlayerThread
 from .filter_setting_controller import FilterSettingController
 from .face_setting_controller import PersonFaceSettingController

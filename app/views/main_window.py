@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDesktopWidget, QVBoxLayout, QWidget, QHBoxLayout, QStackedWidget
 from PyQt5.QtCore import Qt
 from utils import Colors
-from controllers import Router
+from controllers.router import Router
 from views.component import MenuBar, TitleBar
 
 class MyApp(QWidget):
