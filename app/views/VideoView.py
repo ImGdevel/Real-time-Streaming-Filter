@@ -2,8 +2,7 @@ import os
 import cv2
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QUrl
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
 from controllers import VideoProcessor
@@ -48,6 +47,8 @@ class VideoProcessor(QThread):
 
 
 class VideoView(QWidget):
+    video_path = QUrl()
+
     '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -140,6 +141,7 @@ class VideoView(QWidget):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
+            self.video_path = filePath[0]
             self.video_info = VideoInfo(filePath)
             self.video_thread = VideoProcessor(filePath)
             self.video_thread.video_frame.connect(self.updateVideoFrame)
@@ -257,7 +259,8 @@ class VideoView(QWidget):
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
     
     def inCoding(self):
-        print("vidoe download")
+        path = self.video_path.toLocalFile()
+        print(path)
 
 if __name__ == "__main__":
     import sys
