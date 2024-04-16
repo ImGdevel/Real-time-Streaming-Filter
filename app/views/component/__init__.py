@@ -6,3 +6,5 @@ from .setting_widget import SettingWidget
 from .image_item import ImageItem
 from .add_Face_dialog import AddFaceDialog
 from .file_view_widget import FileViewWidget
+from .filter_list_widget import FilterListWidget
+from .list_widget import ListWidget
