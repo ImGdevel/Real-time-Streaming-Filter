@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
+from controllers import VideoProcessor
 
 class VideoInfo:
     '''비디오 파일 정보를 관리하는 클래스'''
@@ -16,14 +17,14 @@ class VideoInfo:
         self.video_size = os.path.getsize(video_path)
 
 
-class VideoPlayerThread(QThread):
+class VideoProcessor(QThread):
     '''비디오 재생을 위한 스레드 클래스'''
     video_frame = pyqtSignal(object)  # 비디오 프레임 신호
     current_frame = pyqtSignal(int)    # 현재 프레임 신호
     fps_signal = pyqtSignal(float)     # FPS 신호
 
     def __init__(self, video_path):
-        super(VideoPlayerThread, self).__init__()
+        super(VideoProcessor, self).__init__()
         self.video_path = video_path
         self.cap = cv2.VideoCapture(self.video_path)
         self.video_frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -140,7 +141,7 @@ class VideoView(QWidget):
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
             self.video_info = VideoInfo(filePath)
-            self.video_thread = VideoPlayerThread(filePath)
+            self.video_thread = VideoProcessor(filePath)
             self.video_thread.video_frame.connect(self.updateVideoFrame)
             self.video_thread.current_frame.connect(self.updateVideoBar)
             self.video_thread.fps_signal.connect(self.updateFPSLabel)  # FPS 신호 연결
@@ -208,7 +209,7 @@ class VideoView(QWidget):
     def loadVideo(self, file_path):
         '''비디오 파일 로드'''
         self.video_info = VideoInfo(file_path)
-        self.video_thread = VideoPlayerThread(file_path)
+        self.video_thread = VideoProcessor(file_path)
         self.video_thread.video_frame.connect(self.updateVideoFrame)
         self.video_thread.current_frame.connect(self.updateVideoBar)
         self.video_bar.setEnabled(True)

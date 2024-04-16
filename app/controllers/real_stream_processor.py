@@ -1,7 +1,8 @@
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
-from models import Filtering
+from models import Filtering, FilterManager
+from models.ModelManager import ModelManager
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
@@ -10,11 +11,12 @@ class RealStreamProcessor(QThread):
     def __init__(self):
         super().__init__()
         self.video_cap = cv2.VideoCapture(0)  # 웹캠 캡처 객체
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')  # 얼굴 인식을 위한 분류기
+        self.filtering = Filtering()
+        self.filter_manager = FilterManager()
+        
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
         self.mosaic_active = False  # 모자이크 활성화 상태
-        self.filtering = Filtering()
 
     def run(self):
         '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
@@ -22,28 +24,12 @@ class RealStreamProcessor(QThread):
         while self.is_running:
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+                processed_frame = self.process_frame(frame)  # 프레임 처리
+                
+                frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
-                #sample filter
                 if self.is_flipped:
                     frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
-                
-                #if self.mosaic_active:
-                #    frame_rgb = self.apply_mosaic(frame_rgb)
-
-
-                # todo : frame_rgb, 혹은 frame을 받아서 얼굴 모자이크 및 객체 인식을 할 것 
-                blur_ratio = 50
-                testDict = dict()
-                obj = self.filtering.object
-                for cls in obj.orgNames:
-                    testDict[obj.orgNames[cls]] = 0
-                for cls in obj.custNames:
-                    testDict[obj.custNames[cls]] = 1
-                testDict["Human face"] = 1
-                boxesList = self.filtering.filtering(frame, testDict)
-                
-
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
@@ -51,23 +37,23 @@ class RealStreamProcessor(QThread):
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
             self.msleep(16)  # 약 60fps
 
+    def process_frame(self, frame):
+        '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
+        blur_ratio = 50
+        
+        boxesList = self.filtering.filtering(frame)
+        processed_frame = self.filtering.blur(blur_ratio, frame, boxesList)
+        
+        return processed_frame
+
     def stop(self):
         '''스레드 종료 메서드'''
+        model = ModelManager()
+        print("모델 라벨")
+        print(model.get_label())
         self.is_running = False
         self.wait()
 
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
         self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
-
-    def apply_mosaic(self, frame_rgb):
-        '''모자이크 처리 메서드 (샘플임 삭제해도 됨)''' 
-        #faces = self.face_cascade.detectMultiScale(frame_rgb, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-                
-        #for (x, y, w, h) in faces:
-        #    face_img = frame_rgb[y:y+h, x:x+w]
-        #    face_img = cv2.resize(face_img, (w//10, h//10))
-        #    face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
-        #    frame_rgb[y:y+h, x:x+w] = face_img
-        
-        return frame_rgb
