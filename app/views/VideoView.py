@@ -112,6 +112,12 @@ class VideoView(QWidget):
         self.setting_widget = SettingWidget()
         self.setting_widget.download_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
+        self.button1 = QPushButton("button1")
+        self.button1.clicked.connect(self.button1Act)
+        self.button2 = QPushButton("button2")
+        self.button1.clicked.connect(self.button2Act)
+        self.setting_widget.addSettingButton(self.button1)
+        self.setting_widget.addSettingButton(self.button2)
 
         self.video_layout.addLayout(self.bottom_layout)
         self.video_frame.setLayout(self.video_layout)
@@ -261,6 +267,12 @@ class VideoView(QWidget):
     def inCoding(self):
         path = self.video_path
         print(path)
+
+    def button1Act(self):
+        print("btn1")
+    
+    def button2Act(self):
+        print("btn2")
 
 if __name__ == "__main__":
     import sys
