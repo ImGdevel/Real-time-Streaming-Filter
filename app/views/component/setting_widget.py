@@ -18,4 +18,4 @@ class SettingWidget(QWidget):
         self.setLayout(self.layout)
 
     def addSettingButton(self, button):
-        self.layout().addWidget(button)
+        self.layout.addWidget(button)
