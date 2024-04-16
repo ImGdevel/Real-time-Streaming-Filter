@@ -13,6 +13,7 @@ class FilterSettingView(QWidget):
         self.selected_filtering_object = [] 
         self.filter_setting_processor = FilterSettingController()
         self.face_setting_processor = PersonFaceSettingController()
+        self.face_setting_processor.load_person_faces()
         self.filter_setting_processor.add_filter("MyFilter")
 
         self.initUI()
@@ -305,7 +306,7 @@ class FilterSettingView(QWidget):
     def update_available_faces(self, face_name):
         """available_faces_list_widget 업데이트 메서드"""
         if face_name not in self.available_faces_list_widget.get_items_text():
-            self.available_faces_list_widget.addItem(face_name)
+            self.available_faces_list_widget.add_item(face_name)
 
     def add_new_face(self):
         """얼굴 추가 메서드"""
@@ -318,6 +319,7 @@ class FilterSettingView(QWidget):
         updated_filtering_object = self.selected_filtering_object
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
+        self.face_setting_processor.save_person_face()
         
 
 

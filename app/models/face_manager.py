@@ -4,11 +4,19 @@ from controllers.path_finder import *
 from models import FaceFilter
 import pickle
 import cv2
+import numpy as np
 
 class FaceManager:
+
+    _instance = None
+    face_list = []
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
     
     def __init__(self):
-        self.face_list = []
         self.face_path = os.path.join(get_appdata_folder(), "mosaic")
         self.face_path = os.path.join(self.face_path, "face")
 

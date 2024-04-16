@@ -1,10 +1,9 @@
-from models.face_manager import FaceManager
+from models import Face, FaceManager
 from controllers.path_finder import *
 
 class PersonFaceSettingController:
 
     def __init__(self):
-        self.test = ["person1", "person2", "person3"]
         self.face_manager = FaceManager()
     
     def save_person_face(self):
@@ -53,10 +52,10 @@ class PersonFaceSettingController:
         
         return True
 
-    def update_person_face(self, person_name, person: FaceManager):
+    def update_person_face(self, person_name, person: Face):
         """person_face 업데이트 메서드"""
         self.face_manager.update_person_face(person_name, person)
 
     def get_person_faces(self):
         """person_face """
-        return self.face_list
+        return self.face_manager.get_person_faces()
