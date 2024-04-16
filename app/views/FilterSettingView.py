@@ -120,11 +120,17 @@ class FilterSettingView(QWidget):
         object_label.setStyleSheet("font-weight: bold;")
         object_label.setFixedHeight(30)  # 높이 설정
         
-        object_setting_widget = QWidget()
-        object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
+        self.object_setting_widget = QWidget()
+        self.object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
         
+        # 필터링 할 오브젝트 목록
+        self.available_faces_list = QListWidget()
+        self.available_faces_list.addItems(["object1", "object2", "object3"])  # 임시 데이터
+        self.available_faces_list.itemClicked.connect(self.select_filtering_object)
+
+
         object_layout.addWidget(object_label)
-        object_layout.addWidget(object_setting_widget)
+        object_layout.addWidget(self.object_setting_widget)
         
         return object_layout
 
@@ -222,20 +228,35 @@ class FilterSettingView(QWidget):
             print(f"Button '{filter_name}' clicked.")
 
     def set_current_filter(self, filter_name):
-        """현제 선택된 필터 처리"""
+        """현제 선택된 필터로 창 업데이트"""
         self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list(filter_data.face_filter)
+
         else:
             print(f"Filter '{filter_name}' not found")
+
+    def select_filtering_object(self):
+        """filtering할 객체 선택"""
+        pass
         
     def update_registered_faces_list(self, face_filter_data):
         """registered_faces_list 업데이트 메서드"""
         # 기존 항목 삭제
         self.registered_faces_list.clear()
+        
+        # face_filter_data를 QListWidget에 추가
+        for face_name in face_filter_data:
+            item = QListWidgetItem(face_name)
+            self.registered_faces_list.addItem(item)
+
+    def update_object_setting_list(self, face_filter_data):
+        """_object_setting_list 업데이트 메서드"""
+        # 기존 항목 삭제
+        self.object_setting_widget.clear()
         
         # face_filter_data를 QListWidget에 추가
         for face_name in face_filter_data:
@@ -268,6 +289,7 @@ class FilterSettingView(QWidget):
         print("업데이트 될 리스트:", updated_face_filter)
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, [])
+
 
 
 
