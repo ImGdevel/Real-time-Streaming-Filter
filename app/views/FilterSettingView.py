@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox
 from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
 from views.component import AddFaceDialog
@@ -10,6 +10,7 @@ class FilterSettingView(QWidget):
         super().__init__(parent)
 
         self.current_filter = None
+        self.selected_filtering_object = [] 
         self.filter_setting_processor = FilterSettingController()
         self.face_setting_processor = PersonFaceSettingController()
         self.filter_setting_processor.add_filter("MyFilter")
@@ -83,14 +84,15 @@ class FilterSettingView(QWidget):
         # 얼굴 등록 박스 설정
         face_register_layout = QHBoxLayout()
         
+        # 등록된 얼굴 목록
+        self.registered_faces_list = QListWidget()
+        self.registered_faces_list.itemClicked.connect(self.select_registered_face)
+
+
         # 등록되지 않은 얼굴 목록
         self.available_faces_list = QListWidget()
         self.available_faces_list.addItems(["Face 1", "Face 2", "Face 3"])  # 임시 데이터
         self.available_faces_list.itemClicked.connect(self.register_face)
-        
-        # 등록된 얼굴 목록
-        self.registered_faces_list = QListWidget()
-        self.registered_faces_list.itemClicked.connect(self.select_registered_face)
         
         face_register_layout.addWidget(self.registered_faces_list)
         face_register_layout.addWidget(self.available_faces_list) 
@@ -122,18 +124,56 @@ class FilterSettingView(QWidget):
         
         self.object_setting_widget = QWidget()
         self.object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
-        
-        # 필터링 할 오브젝트 목록
-        self.available_faces_list = QListWidget()
-        self.available_faces_list.addItems(["object1", "object2", "object3"])  # 임시 데이터
-        self.available_faces_list.itemClicked.connect(self.select_filtering_object)
 
+        # QVBoxLayout을 self.object_setting_widget 위젯에 설정
+        self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
+        
+        # 체크박스 추가
+        self.checkbox1 = QCheckBox("Tobacco")
+        self.checkbox2 = QCheckBox("Knife")
+        self.checkbox3 = QCheckBox("Bloodshed")
+        self.checkbox4 = QCheckBox("Explicit_Content")
+        
+        # 체크박스에 고유한 식별자 부여
+        self.checkbox1.setObjectName("Tobacco")
+        self.checkbox2.setObjectName("Knife")
+        self.checkbox3.setObjectName("Bloodshed")
+        self.checkbox4.setObjectName("Explicit_Content")
+        
+        # 체크박스 상태 변경 이벤트 연결
+        self.checkbox1.stateChanged.connect(self.checkbox_state_changed)
+        self.checkbox2.stateChanged.connect(self.checkbox_state_changed)
+        self.checkbox3.stateChanged.connect(self.checkbox_state_changed)
+        self.checkbox4.stateChanged.connect(self.checkbox_state_changed)
+        
+        self.checked_object = []
+
+        # 체크박스 위젯들을 QVBoxLayout에 추가
+        self.object_setting_layout.addWidget(self.checkbox1)
+        self.object_setting_layout.addWidget(self.checkbox2)
+        self.object_setting_layout.addWidget(self.checkbox3)
+        self.object_setting_layout.addWidget(self.checkbox4)
 
         object_layout.addWidget(object_label)
         object_layout.addWidget(self.object_setting_widget)
         
         return object_layout
 
+    # 체크박스 상태 변경 이벤트 핸들러
+    def checkbox_state_changed(self, state):
+        sender_checkbox = self.sender()  # 이벤트를 발생시킨 체크박스 가져오기
+        checkbox_name = sender_checkbox.objectName()  # 체크박스의 고유한 식별자 가져오기
+        
+        if sender_checkbox.isChecked():  # 체크박스가 체크되었을 때
+            print(f"{checkbox_name} is checked.")
+            if checkbox_name not in self.selected_filtering_object:  # 리스트에 없으면 추가
+                self.selected_filtering_object.append(checkbox_name)
+        else:  # 체크박스가 체크 해제되었을 때
+            print(f"{checkbox_name} is unchecked.")
+            if checkbox_name in self.selected_filtering_object:  # 리스트에 있으면 제거
+                self.selected_filtering_object.remove(checkbox_name)
+
+    
     def setup_right_layer(self):
         """오른쪽 레이어 설정 메서드"""
         right_layout = QVBoxLayout()
@@ -241,6 +281,7 @@ class FilterSettingView(QWidget):
 
     def select_filtering_object(self):
         """filtering할 객체 선택"""
+        
         pass
         
     def update_registered_faces_list(self, face_filter_data):
@@ -281,14 +322,15 @@ class FilterSettingView(QWidget):
 
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
-        print("필터 정보 저장")
 
         # registered_faces_list의 내용 가져오기
         updated_face_filter = [self.registered_faces_list.item(i).text() for i in range(self.registered_faces_list.count())]
-
+        updated_filtering_object = self.selected_filtering_object
         print("업데이트 될 리스트:", updated_face_filter)
         # 현재 선택된 필터 정보 업데이트
-        self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, [])
+        self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
+        
+
 
 
 
