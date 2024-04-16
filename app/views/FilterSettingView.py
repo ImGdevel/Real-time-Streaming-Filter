@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
 from views.component import AddFaceDialog
 from models import FilterManager, Filter
-from controllers.filter_setting_controller import FilterSettingController
+from controllers import FilterSettingController, PersonFaceSettingController
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
@@ -11,6 +11,7 @@ class FilterSettingView(QWidget):
 
         self.current_filter = None
         self.filter_setting_processor = FilterSettingController()
+        self.face_setting_processor = PersonFaceSettingController()
         self.filter_setting_processor.add_filter("MyFilter")
 
         self.initUI()
