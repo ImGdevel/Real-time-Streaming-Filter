@@ -1,122 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from utils import Colors
-from views.component import AddFaceDialog, FilterListWidget
+from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget
 from controllers import FilterSettingController, PersonFaceSettingController
-
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem
-from PyQt5.QtCore import pyqtSignal
-
-class RegisteredFacesListWidget(QListWidget):
-    onClickItemEvent = pyqtSignal(str)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet(f'background-color: {Colors.baseColor02};')
-        self.setSpacing(10)
-        self.itemClicked.connect(self.emit_button_clicked)
-
-    def add_item(self, filter_name):
-        button = QPushButton(filter_name)
-        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
-        button.setFixedSize(155, 40)
-        item = QListWidgetItem()
-        self.addItem(item)
-        self.setItemWidget(item, button)
-        item.setSizeHint(button.sizeHint())
-        button.clicked.connect(self.emit_button_clicked)
-
-    def get_item_text(self, index):
-        """아이템 인덱스를 통해 위젯 내의 버튼의 텍스트를 반환하는 메서드"""
-        item = self.item(index)
-        if item:
-            widget = self.itemWidget(item)
-            if isinstance(widget, QPushButton):
-                return widget.text()
-        return None
-
-    def emit_button_clicked(self):
-        """얼굴 클릭 시그널을 발생시키는 메서드"""
-        button = self.sender()
-        if button:
-            self.onClickItemEvent.emit(button.text())  # 시그널 발생
-
-class AvailableFacesListWidget(QListWidget):
-    onClickItemEvent = pyqtSignal(str)
-
-    def __init__(self, face_setting_processor, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet(f'background-color: {Colors.baseColor02};')
-        self.setSpacing(10)
-        self.face_setting_processor = face_setting_processor
-        self.populate_faces()
-
-    def populate_faces(self):
-        for people in self.face_setting_processor.get_person_faces():
-            self.add_item(people)  # 임시 데이터
-
-    def add_item(self, filter_name):
-        button = QPushButton(filter_name)
-        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
-        button.setFixedSize(155, 40)
-        item = QListWidgetItem()
-        self.addItem(item)
-        self.setItemWidget(item, button)
-        item.setSizeHint(button.sizeHint())
-        button.clicked.connect(self.emit_button_clicked)
-
-    def get_item_text(self, index):
-        """아이템 인덱스를 통해 위젯 내의 버튼의 텍스트를 반환하는 메서드"""
-        item = self.item(index)
-        if item:
-            widget = self.itemWidget(item)
-            if isinstance(widget, QPushButton):
-                return widget.text()
-        return None
-
-    def emit_button_clicked(self):
-        """얼굴 클릭 시그널을 발생시키는 메서드"""
-        button = self.sender()
-        if button:
-            self.onClickItemEvent.emit(button.text())  # 시그널 발생
-
-
-class FilterListWidget(QListWidget):
-    onClickItemEvent = pyqtSignal(str)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet(f'background-color: {Colors.baseColor02};')
-        self.setSpacing(10)
-
-    def add_item(self, item_name):
-        button = QPushButton(item_name)
-        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
-        button.setFixedSize(155, 40)
-        item = QListWidgetItem()
-        self.addItem(item)
-        self.setItemWidget(item, button)
-        item.setSizeHint(button.sizeHint())
-        button.clicked.connect(self.emit_button_clicked)
-
-    def get_item_text(self, index):
-        """아이템 인덱스를 통해 위젯 내의 버튼의 텍스트를 반환하는 메서드"""
-        item = self.item(index)
-        if item:
-            widget = self.itemWidget(item)
-            if isinstance(widget, QPushButton):
-                return widget.text()
-        return None
-
-    def emit_button_clicked(self):
-        """필터 버튼 클릭 시그널을 발생시키는 메서드"""
-        button = self.sender()
-        if button:
-            self.onClickItemEvent.emit(button.text())  # 시그널 발생
-    
-    def update_filter_list(self):
-
-        pass
 
 
 class FilterSettingView(QWidget):
@@ -364,8 +250,14 @@ class FilterSettingView(QWidget):
 
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
+
+        
         self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
+
+        if filter_data is None:
+            # todo : filter가 없는 경우 로직
+            pass
 
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
@@ -375,10 +267,6 @@ class FilterSettingView(QWidget):
         else:
             print(f"Filter '{filter_name}' not found")
 
-    def select_filtering_object(self):
-        """filtering할 객체 선택"""
-        
-        pass
         
     def update_registered_faces_list_widget(self, face_filter_data):
         """registered_faces_list_widget 업데이트 메서드"""
@@ -416,7 +304,7 @@ class FilterSettingView(QWidget):
 
     def update_available_faces(self, face_name):
         """available_faces_list_widget 업데이트 메서드"""
-        if face_name not in [self.available_faces_list_widget.get_item_text(i) for i in range(self.available_faces_list_widget.count())]:
+        if face_name not in self.available_faces_list_widget.get_items_text():
             self.available_faces_list_widget.addItem(face_name)
 
     def add_new_face(self):
@@ -425,12 +313,9 @@ class FilterSettingView(QWidget):
 
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
-
         # registered_faces_list_widget의 내용 가져오기
-        
-        updated_face_filter = [self.registered_faces_list_widget.get_item_text(i) for i in range(self.registered_faces_list_widget.count())]
+        updated_face_filter = self.registered_faces_list_widget.get_items_text()
         updated_filtering_object = self.selected_filtering_object
-        print("업데이트 될 리스트:", updated_face_filter)
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
         
