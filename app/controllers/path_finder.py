@@ -41,10 +41,10 @@ def find_documents_folder():
         # Windows 이외의 운영 체제에서는 지원하지 않음
         return None
 
-# Documents 폴더 경로 가져오기
-documents_folder = find_documents_folder()
+# # Documents 폴더 경로 가져오기
+# documents_folder = find_documents_folder()
 
-if documents_folder:
-    print("사용자의 Documents 폴더:", documents_folder)
-else:
-    print("사용자의 Documents 폴더를 찾을 수 없습니다.")    
+# if documents_folder:
+#     print("사용자의 Documents 폴더:", documents_folder)
+# else:
+#     print("사용자의 Documents 폴더를 찾을 수 없습니다.")    

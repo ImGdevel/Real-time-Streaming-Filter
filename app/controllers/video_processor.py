@@ -31,6 +31,9 @@ class VideoProcessor(QThread):
                 
         self.cap.release()
 
+
+
+
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self):
         cap = cv2.VideoCapture(self.video_path) #filtered video_path
@@ -67,3 +70,19 @@ class VideoProcessor(QThread):
 
         cap.release()
         cv2.destroyAllWindows()
+
+
+    def run_filtered_video(self):
+        '''필터링된 비디오 재생'''
+        filtered_cap = cv2.VideoCapture('output_video.mp4')
+        while filtered_cap.isOpened() and self.is_playing:
+            ret, frame = filtered_cap.read()
+            if ret:
+                current_frame_num = int(filtered_cap.get(cv2.CAP_PROP_POS_FRAMES))
+                self.video_frame.emit(frame)        # 비디오 프레임 신호 발생
+                self.current_frame.emit(current_frame_num)  # 현재 프레임 신호 발생
+                self.fps_signal.emit(self.fps)      # FPS 신호 발생
+            else:
+                filtered_cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
+                
+        filtered_cap.release()
