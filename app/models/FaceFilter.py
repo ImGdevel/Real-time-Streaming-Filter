@@ -141,7 +141,7 @@ def register_person(person_name, image_paths, known_faces_path = './models/known
     """
 
     if os.path.exists(known_faces_path):
-        load_known_faces(known_faces_path)
+        person_faces = load_known_faces(known_faces_path)
     else:
         person_faces = {}
 
@@ -193,6 +193,36 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
     print(tolerance_used)
 
     return recognized_face, tolerance_used
+
+def delete_person(person_name, known_faces_path='./models/known_faces.pickle'):
+    """
+    주어진 known_faces_path에서 특정 person_name에 해당하는 모든 얼굴 데이터를 삭제하고, 변경된 데이터를 다시 pickle 파일로 저장합니다.
+    
+    Args:
+    - person_name: 삭제할 얼굴 데이터의 소유자 이름
+    - known_faces_path: 얼굴 데이터 파일의 경로 (기본값: './models/known_faces.pickle')
+    """
+    # 데이터 파일이 존재하는지 확인
+    if os.path.exists(known_faces_path):
+        # 데이터 파일 불러오기
+        known_faces = load_known_faces(known_faces_path)
+
+        # 해당 person_name에 해당하는 모든 얼굴 데이터 삭제
+        keys_to_delete = [key for key in known_faces.keys() if key.startswith(person_name)]
+        if keys_to_delete:
+            for key in keys_to_delete:
+                del known_faces[key]
+            print(f"All face data for '{person_name}' deleted successfully.")
+        else:
+            print(f"No face data found for '{person_name}'.")
+        
+        # 변경된 데이터를 다시 저장
+        with open(known_faces_path, 'wb') as f:
+            pickle.dump(known_faces, f)
+            print("Data saved successfully.")
+    else:
+        print("Data file not found.")
+
 
 def delete_face_code(face_code, known_faces_path = './models/known_faces.pickle'):
     """
