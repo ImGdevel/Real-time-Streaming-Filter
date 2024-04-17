@@ -65,9 +65,11 @@ class ImageView(QWidget):
             if i not in self.urls:
                 self.urls.append(i) 
                 add_urls.append(i)
-        file_path = add_urls[0].toLocalFile()
-        self.dropbox_widget.setExampleView(file_path)
-        self.file_view_widget.addNewFile(add_urls)
+        
+        if add_urls :
+            file_path = add_urls[0].toLocalFile()
+            self.dropbox_widget.setExampleView(file_path)
+            self.file_view_widget.addNewFile(add_urls)
 
     def Download(self):
         print("download")
