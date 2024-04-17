@@ -40,7 +40,7 @@ class ListWidget(QListWidget):
     def get_items_text(self):
         return [self.get_item_text(i) for i in range(self.count())]
     
-    def set_on_click_item_event(self, event):
+    def set_items_event(self, event):
         self.onClickItemEvent.connect(event)
 
 

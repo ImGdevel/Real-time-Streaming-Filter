@@ -64,7 +64,7 @@ class FilterSettingView(QWidget):
 
         # Filter 목록
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.onClickItemEvent.connect(self.filter_list_btn_event)  # 새로운 시그널에 연결
+        self.filter_list_widget.set_items_event(self.filter_list_btn_event)
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
@@ -176,11 +176,11 @@ class FilterSettingView(QWidget):
         
         # RegisteredFacesListWidget 초기화 및 설정
         self.registered_faces_list_widget = RegisteredFacesListWidget()
-        self.registered_faces_list_widget.onClickItemEvent.connect(self.select_registered_face)
+        self.registered_faces_list_widget.set_items_event(self.select_registered_face)
         
         # AvailableFacesListWidget 초기화 및 설정
         self.available_faces_list_widget = AvailableFacesListWidget(self.face_setting_processor)
-        self.available_faces_list_widget.onClickItemEvent.connect(self.register_face)
+        self.available_faces_list_widget.set_items_event(self.register_face)
         
         face_register_layout.addWidget(self.registered_faces_list_widget)
         face_register_layout.addWidget(self.available_faces_list_widget) 
@@ -302,12 +302,9 @@ class FilterSettingView(QWidget):
 
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
-
-        
         self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
-        
-
+    
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list_widget(filter_data.face_filter)

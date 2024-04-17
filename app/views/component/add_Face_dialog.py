@@ -7,7 +7,7 @@ from PyQt5.QtGui import QPixmap
 from controllers import PersonFaceSettingController
 
 class AddFaceDialog(QDialog):
-    added_face = pyqtSignal(str)
+    added_face = pyqtSignal(str)  # 얼굴 추가 시그널 선언
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -15,6 +15,7 @@ class AddFaceDialog(QDialog):
         self.initUI()
 
     def initUI(self):
+        """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
         self.setFixedSize(800, 600)
         
@@ -22,6 +23,7 @@ class AddFaceDialog(QDialog):
         self.setLayout(main_layout)
 
     def setup_main_layout(self):
+        """메인 레이아웃 설정 메서드"""
         main_layout = QHBoxLayout()
 
         scroll_area = self.setup_scroll_area()
@@ -33,6 +35,7 @@ class AddFaceDialog(QDialog):
         return main_layout
 
     def setup_scroll_area(self):
+        """스크롤 영역 설정 메서드"""
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         
@@ -47,6 +50,7 @@ class AddFaceDialog(QDialog):
         return scroll_area
 
     def setup_available_faces_list(self):
+        """사용 가능한 얼굴 목록 위젯 설정 메서드"""
         available_faces_list = QListWidget()
         
         for person in self.face_setting_processor.get_person_faces():
@@ -55,6 +59,7 @@ class AddFaceDialog(QDialog):
         return available_faces_list
 
     def setup_face_registration_layout(self):
+        """얼굴 등록 레이아웃 설정 메서드"""
         face_registration_layout = QVBoxLayout()
         
         text_layout = self.setup_text_layout()
@@ -70,6 +75,7 @@ class AddFaceDialog(QDialog):
         return face_registration_layout
 
     def setup_text_layout(self):
+        """텍스트 입력 레이아웃 설정 메서드"""
         text_layout = QVBoxLayout()
         
         self.face_name_input = QLineEdit()
@@ -78,6 +84,7 @@ class AddFaceDialog(QDialog):
         return text_layout
 
     def setup_image_layout(self):
+        """이미지 업로드 레이아웃 설정 메서드"""
         image_layout = QVBoxLayout()
         
         self.face_image_label = QLabel()
@@ -93,8 +100,11 @@ class AddFaceDialog(QDialog):
         return image_layout
 
     def add_face(self):
+        """얼굴 추가 메서드"""
         face_name = self.face_name_input.text()
         self.face_setting_processor.add_person_face(face_name)
+        
+        # 이미 리스트에 있는지 확인
         if self.available_faces_list.findItems(face_name, Qt.MatchExactly):
             print(f"'{face_name}' is already in the list.")
             return
@@ -103,10 +113,11 @@ class AddFaceDialog(QDialog):
         self.face_setting_processor.save_person_face()
         self.filepath = None
         self.available_faces_list.addItem(face_name)
-        self.added_face.emit(face_name)
+        self.added_face.emit(face_name)  # 신호 발생
         self.face_name_input.clear()
 
     def upload_image(self):
+        """이미지 업로드 메서드"""
         options = QFileDialog.Options()
         filepath, _ = QFileDialog.getOpenFileName(
             self, "Upload Image", "", "Images (*.png *.jpg *.jpeg);;All Files (*)", options=options
