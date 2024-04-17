@@ -48,9 +48,6 @@ class RealStreamProcessor(QThread):
 
     def stop(self):
         '''스레드 종료 메서드'''
-        model = ModelManager()
-        print("모델 라벨")
-        print(model.get_label())
         self.is_running = False
         self.wait()
 

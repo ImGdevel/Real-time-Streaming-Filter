@@ -1,3 +1,4 @@
+import os
 import dlib
 import face_recognition
 import re
@@ -60,6 +61,25 @@ def find_person_data(name, data_dict):
             filtered_data[key] = value
     return filtered_data
     
+def find_max_face_number(name, data_dict):
+    """
+    주어진 딕셔너리에서 입력된 이름에 해당하는 가장 큰 얼굴 번호를 찾습니다.
+    
+    Args:
+    - name: 찾을 이름
+    - data_dict: 이름_i와 데이터가 매핑된 딕셔너리
+    
+    Returns:
+    - 입력된 이름에 해당하는 가장 큰 얼굴 번호
+    """
+    pattern = re.compile(f"{name}_\d+")
+    max_face_number = -1
+    for key in data_dict.keys():
+        if pattern.match(key):
+            face_number = int(key.split("_")[-1])
+            if face_number > max_face_number:
+                max_face_number = face_number
+    return max_face_number
 
 # 사람별 얼굴 특징을 저장된 파일에서부터 불러오는 함수
 def load_known_faces(data_path):
@@ -111,7 +131,7 @@ def face_encoding_box(frame, box):
     return encoding
 
 # 사람의 여러 장의 사진을 등록하는 함수
-def register_person(person_name, image_paths):
+def register_person(person_name, image_paths, known_faces_path = './models/known_faces.pickle'):
     """
     사람의 여러 장의 사진을 등록하고 얼굴 특징을 저장합니다.
     
@@ -119,22 +139,32 @@ def register_person(person_name, image_paths):
     - person_name: 사람의 이름
     - image_paths: 사진 파일 경로의 리스트
     """
-    person_faces = {}
-    i = 0
+
+    if os.path.exists(known_faces_path):
+        person_faces = load_known_faces(known_faces_path)
+    else:
+        person_faces = {}
+
+    max_face_number = find_max_face_number(person_name, person_faces)
+    
+    
     for image_path in image_paths:
         face_features = extract_face_features(image_path)
         if face_features is not None:
-            face_code = person_name + "_" + str(i)
+            max_face_number += 1
+            face_code = person_name + "_" + str(max_face_number)
             person_faces[face_code] = face_features
-            i = i + 1
+            
     if person_faces:
-        with open('./models/known_faces.pickle', 'wb') as f:
+        with open(known_faces_path, 'wb') as f:
             pickle.dump(person_faces, f)
-    else:
+    else:   
         print("No faces found for :", person_name)
+        with open(known_faces_path, 'wb') as f:
+            pickle.dump(person_faces, f)
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
-def recognize_face(known_faces, face_encoding, tolerance=0.6):
+def recognize_face(known_faces, face_encoding, tolerance=0.5):
     """
     얼굴을 인식하여 인식된 사람과 일치하는지 확인합니다.
     
@@ -164,11 +194,39 @@ def recognize_face(known_faces, face_encoding, tolerance=0.6):
 
     return recognized_face, tolerance_used
 
+def delete_face_code(face_code, known_faces_path = './models/known_faces.pickle'):
+    """
+    특정 face_code를 삭제하고 데이터를 pickle로 다시 저장합니다.
+    
+    Args:
+    - face_code: 삭제할 face_code
+    - data_path: 데이터 파일의 경로 
+    """
+
+    # 데이터 파일이 존재하는지 확인
+    if os.path.exists(known_faces_path):
+        # 데이터 파일 불러오기
+        known_faces = load_known_faces(known_faces_path)
+        
+        # 특정 face_code 삭제
+        if face_code in known_faces:
+            del known_faces[face_code]
+            print(f"Face code '{face_code}' deleted successfully.")
+        else:
+            print(f"Face code '{face_code}' not found.")
+        
+        # 수정된 데이터를 다시 저장
+        with open(known_faces_path, 'wb') as f:
+            pickle.dump(known_faces, f)
+            print("Data saved successfully.")
+    else:
+        print("Data file not found.")
+
 
 #제외할 얼굴 딕셔너리, 검색할 얼굴 인코딩값을 넣으면 아는 사람인지 아닌지 반환
-def is_known_person(people_list, face_encoding):
+def is_known_person(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
     #등록된 사람 딕셔너리를 일단 파일에서 받아옴
-    known_faces = load_known_faces('./models/known_faces.pickle')
+    known_faces = load_known_faces(known_faces_path)
     #이후 그 안에서 필터링을 제외할 사람 데이터를 담은 딕셔너리를 생성
     except_faces = {}
     for person in people_list:
