@@ -2,12 +2,15 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLab
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
-from controllers import RealStreamProcessor
+from controllers import RealStreamProcessor, FilterSettingController
+from views.component import FilterListWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.filter_setting_processor = FilterSettingController()
+
         self.initUI()
 
     def initUI(self):
@@ -45,8 +48,9 @@ class RealStreamView(QWidget):
         toolbar_layout.addWidget(self.video_options_widget)
 
         # 하단 필터 리스트
-        self.setup_filter_list()
-        toolbar_layout.addWidget(self.filter_scroll_area)
+        filter_scroll_area = self.setup_filter_list()
+        filter_list_layout = FilterListWidget()
+        toolbar_layout.addWidget(filter_list_layout)
 
         toolbar_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         toolbar_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -108,32 +112,13 @@ class RealStreamView(QWidget):
 
     def setup_filter_list(self):
         '''하단 필터 리스트 설정 메서드'''
-        # 필터 리스트
-        self.filter_scroll_area = QScrollArea()
-        self.filter_scroll_area.setWidgetResizable(True)
-        self.filter_scroll_area.setFixedSize(260, 150) 
-
-        # 필터 버튼 생성
-        self.flip_button = QPushButton("Flip Horizontal")
-        self.flip_button.clicked.connect(self.apply_flip)
-
-        self.mosaic_button = QPushButton("Toggle Mosaic")
-        self.mosaic_button.clicked.connect(self.apply_mosaic)
-
-        self.dummy_button = QPushButton("Dummy Button")
-        self.dummy_button.clicked.connect(self.dummy_function)
-
-        # 필터 버튼 레이아웃 설정
-        filter_layout = QVBoxLayout()
-        filter_layout.addWidget(self.flip_button)
-        filter_layout.addWidget(self.mosaic_button)
-        filter_layout.addWidget(self.dummy_button)
-        filter_layout.setSpacing(10)
 
         filter_widget = QWidget()
-        filter_widget.setLayout(filter_layout)
 
-        self.filter_scroll_area.setWidget(filter_widget)
+        
+        filter_list_layout = FilterListWidget()
+
+        return filter_list_layout
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''

@@ -61,7 +61,7 @@ class Filtering:
             
         # return results
     
-    def blur(self, blurRatio, img, boxesList):
+    def blur(self,img, boxesList, blurRatio = 50):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
