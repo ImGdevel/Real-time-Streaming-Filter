@@ -87,8 +87,8 @@ class FileViewWidget(QWidget):
             self.count += 1
 
     def removeFile(self, widget):
-        self.remove_file.emit(widget.getUrl())
         if self.remove_mode:
+            self.remove_file.emit(widget.getUrl())
             self.scroll_layout.removeWidget(widget)
             widget.deleteLater()
 
