@@ -40,17 +40,16 @@ class RealStreamView(QWidget):
         toolbar_layout = QVBoxLayout()
 
         # 상단 핵심 버튼 설정
-        self.setup_core_buttons()
-        toolbar_layout.addWidget(self.core_buttons_widget)
+        core_buttons_widget = self.setup_core_buttons()
+        toolbar_layout.addLayout(core_buttons_widget)
 
         # 중단 설정 (웹캠 선택, 비디오 배율)
-        self.setup_video_options()
-        toolbar_layout.addWidget(self.video_options_widget)
+        video_options_widget = self.setup_video_options()
+        toolbar_layout.addLayout(video_options_widget)
 
         # 하단 필터 리스트
-        filter_scroll_area = self.setup_filter_list()
-        filter_list_layout = FilterListWidget()
-        toolbar_layout.addWidget(filter_list_layout)
+        filter_list_layout = self.setup_filter_list()
+        toolbar_layout.addLayout(filter_list_layout)
 
         toolbar_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         toolbar_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -60,7 +59,7 @@ class RealStreamView(QWidget):
 
     def setup_core_buttons(self):
         '''상단 핵심 버튼 설정 메서드'''
-        self.core_buttons_widget = QWidget()
+        core_buttons_layout = QHBoxLayout()
 
         # 실시간 영상 재생/중지 버튼
         self.play_pause_button = QPushButton("Start\nWebcam")
@@ -79,17 +78,17 @@ class RealStreamView(QWidget):
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
-        core_buttons_layout = QHBoxLayout()
+        
         core_buttons_layout.addWidget(self.play_pause_button)
         core_buttons_layout.addWidget(self.stop_button)
         core_buttons_layout.addWidget(self.new_window_button)
         core_buttons_layout.setSpacing(10)  # 버튼 사이 간격 설정
 
-        self.core_buttons_widget.setLayout(core_buttons_layout)
+        return core_buttons_layout
 
     def setup_video_options(self):
         '''중단 비디오 옵션 설정 메서드'''
-        self.video_options_widget = QWidget()
+        video_options_layout = QVBoxLayout()
 
         # 웹캠 선택 콤보박스
         self.webcam_combo = QComboBox()
@@ -102,21 +101,23 @@ class RealStreamView(QWidget):
         self.aspect_ratio_combo.currentIndexChanged.connect(self.change_aspect_ratio)
 
         # 중단 레이아웃 설정
-        video_options_layout = QVBoxLayout()
+        
         video_options_layout.addWidget(QLabel("Webcam:"))
         video_options_layout.addWidget(self.webcam_combo)
         video_options_layout.addWidget(QLabel("Aspect Ratio:"))
         video_options_layout.addWidget(self.aspect_ratio_combo)
-
-        self.video_options_widget.setLayout(video_options_layout)
+        return video_options_layout
 
     def setup_filter_list(self):
         '''하단 필터 리스트 설정 메서드'''
+        filter_list_layout = QVBoxLayout()
 
-        filter_widget = QWidget()
 
-        
-        filter_list_layout = FilterListWidget()
+        filter_list_wedget = FilterListWidget()
+        filter_list_wedget.set_on_click_item_event(self.on_filter_button_event)
+
+
+        filter_list_layout.addWidget(filter_list_wedget)
 
         return filter_list_layout
 
@@ -186,6 +187,9 @@ class RealStreamView(QWidget):
             self.play_pause_button.setText("Start Webcam")
             self.timer.stop()
 
+    def on_filter_button_event(self, index):
+        print(index)
+        pass
     
     def open_new_window(self):
         '''새창 메서드'''
