@@ -179,7 +179,7 @@ class FilterSettingView(QWidget):
         self.registered_faces_list_widget.set_items_event(self.select_registered_face)
         
         # AvailableFacesListWidget 초기화 및 설정
-        self.available_faces_list_widget = AvailableFacesListWidget(self.face_setting_processor)
+        self.available_faces_list_widget = AvailableFacesListWidget()
         self.available_faces_list_widget.set_items_event(self.register_face)
         
         face_register_layout.addWidget(self.registered_faces_list_widget)

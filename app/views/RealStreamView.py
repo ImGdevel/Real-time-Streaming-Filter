@@ -116,7 +116,6 @@ class RealStreamView(QWidget):
 
         filter_list_wedget = FilterListWidget()
         filter_list_wedget.set_items_event(self.on_filter_button_event)
-
         filter_list_layout.addWidget(filter_list_wedget)
 
         return filter_list_layout

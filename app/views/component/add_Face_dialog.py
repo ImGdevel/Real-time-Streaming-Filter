@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from controllers import PersonFaceSettingController
+from .list_widget import AvailableFacesListWidget
 
 class AddFaceDialog(QDialog):
     added_face = pyqtSignal(str)  # 얼굴 추가 시그널 선언
@@ -12,53 +13,34 @@ class AddFaceDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.face_setting_processor = PersonFaceSettingController()
-        self.initUI()
+        self._initUI()
 
-    def initUI(self):
+    def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
         self.setFixedSize(800, 600)
-        
-        main_layout = self.setup_main_layout()
-        self.setLayout(main_layout)
 
-    def setup_main_layout(self):
-        """메인 레이아웃 설정 메서드"""
         main_layout = QHBoxLayout()
 
-        scroll_area = self.setup_scroll_area()
-        face_registration_layout = self.setup_face_registration_layout()
+        scroll_area = self._setup_scroll_area()
+        face_registration_layout = self._setup_face_registration_layout()
 
-        main_layout.addWidget(scroll_area)
+        main_layout.addLayout(scroll_area)
         main_layout.addLayout(face_registration_layout)
-        
-        return main_layout
 
-    def setup_scroll_area(self):
+        self.setLayout(main_layout)
+
+    def _setup_scroll_area(self):
         """스크롤 영역 설정 메서드"""
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
         
-        scroll_content = QWidget()
-        scroll_layout = QVBoxLayout(scroll_content)
-        
-        self.available_faces_list = self.setup_available_faces_list()
+        scroll_layout = QVBoxLayout()
+        self.available_faces_list = AvailableFacesListWidget()
         
         scroll_layout.addWidget(self.available_faces_list)
-        scroll_area.setWidget(scroll_content)
         
-        return scroll_area
+        return scroll_layout
 
-    def setup_available_faces_list(self):
-        """사용 가능한 얼굴 목록 위젯 설정 메서드"""
-        available_faces_list = QListWidget()
-        
-        for person in self.face_setting_processor.get_person_faces():
-            available_faces_list.addItem(person.face_name)
-        
-        return available_faces_list
-
-    def setup_face_registration_layout(self):
+    def _setup_face_registration_layout(self):
         """얼굴 등록 레이아웃 설정 메서드"""
         face_registration_layout = QVBoxLayout()
         

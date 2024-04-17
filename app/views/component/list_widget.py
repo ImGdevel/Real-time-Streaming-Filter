@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton
 from PyQt5.QtCore import pyqtSignal
-from controllers import FilterSettingController
+from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors
 
 class ListWidget(QListWidget):
@@ -50,9 +50,10 @@ class RegisteredFacesListWidget(ListWidget):
         super().__init__(parent)
 
 class AvailableFacesListWidget(ListWidget):
-    def __init__(self, face_setting_processor, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.face_setting_processor = face_setting_processor
+        
+        self.face_setting_processor = PersonFaceSettingController()
         self.populate_faces()
 
     def populate_faces(self):

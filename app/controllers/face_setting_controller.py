@@ -5,6 +5,7 @@ class PersonFaceSettingController:
 
     def __init__(self):
         self.face_manager = FaceManager()
+        self.load_person_faces()
     
     def save_person_face(self):
         """현재까지 변경된 사항들을 파일에 저장"""
