@@ -42,7 +42,7 @@ class RealStreamProcessor(QThread):
         blur_ratio = 50
         
         boxesList = self.filtering.filtering(frame)
-        processed_frame = self.filtering.blur(blur_ratio, frame, boxesList)
+        processed_frame = self.filtering.blur(frame, boxesList)
         
         return processed_frame
 
