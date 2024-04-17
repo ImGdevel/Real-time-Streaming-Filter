@@ -15,6 +15,7 @@ class FilterSettingView(QWidget):
         self.face_setting_processor = PersonFaceSettingController()
         self.face_setting_processor.load_person_faces()
         self.filter_setting_processor.add_filter("MyFilter")
+        self.filter_setting_processor.load_filter()
 
         self.initUI()
 
