@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
 from PyQt5.QtCore import Qt, QUrl, pyqtSignal
 from utils.colors import Colors
 from .image_item import ImageItem
@@ -19,14 +19,14 @@ class FileViewWidget(QWidget):
         #file view
         self.scroll_area = QScrollArea()
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.file_view_widget = QWidget()
+        self.file_view_label = QLabel()
         self.scroll_widget = QWidget()
         self.file_box_layout = QHBoxLayout()
         self.scroll_layout = QHBoxLayout(self.scroll_widget)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.scroll_widget)
         self.file_box_layout.addWidget(self.scroll_area)
-        self.file_view_widget.setLayout(self.file_box_layout)
+        self.file_view_label.setLayout(self.file_box_layout)
 
         #button
         self.button_widget = QWidget()
@@ -45,7 +45,7 @@ class FileViewWidget(QWidget):
         self.button_widget.setLayout(self.button_layout)
 
         #set frame layout
-        self.layout.addWidget(self.file_view_widget)
+        self.layout.addWidget(self.file_view_label)
         self.layout.addWidget(self.button_widget)
         self.setLayout(self.layout)
         
