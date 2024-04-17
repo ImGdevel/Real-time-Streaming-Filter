@@ -1,10 +1,7 @@
 from models.face_info import Face
-import os
-from controllers.path_finder import *
 from models import FaceFilter
-import pickle
 import cv2
-import numpy as np
+from models.path_manager import PathManager
 
 class FaceManager:
 
@@ -17,29 +14,15 @@ class FaceManager:
         return cls._instance
     
     def __init__(self):
-        self.face_path = os.path.join(get_appdata_folder(), "mosaic")
-        self.face_path = os.path.join(self.face_path, "face")
+        self.path_manager = PathManager()
 
     def save_person_face(self):
         """현재까지 변경된 사항들을 파일에 저장"""
-        if not os.path.exists(self.face_path):
-            os.makedirs(self.face_path)
-        save_path = os.path.join(self.face_path, "register_note.bin")
-
-        with open(save_path, 'wb') as file:
-            print("save")
-            print(self.face_list)
-            pickle.dump(self.face_list, file)
+        self.path_manager.save_face_data(self.face_list)
 
     def load_person_faces(self):
         """기존에 등록된 face정보를 로드함"""
-        if os.path.exists(self.face_path):
-            save_path = os.path.join(self.face_path, "register_note.bin")
-            with open(save_path, 'rb') as file:
-                self.face_list = pickle.load(file)
-                print("load")
-                print(self.face_list)
-    
+        self.face_list = self.path_manager.load_face_data()
         
     def add_person_face(self, new_face_name: str):
         """person_face 추가 메서드"""
