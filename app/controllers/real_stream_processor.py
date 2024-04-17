@@ -2,6 +2,7 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
 from models import Filtering, FilterManager
+from models.ModelManager import ModelManager
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
@@ -40,15 +41,7 @@ class RealStreamProcessor(QThread):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         blur_ratio = 50
         
-        testDict = dict()
-        obj = self.filtering.object
-        for cls in obj.orgNames:
-            testDict[obj.orgNames[cls]] = 0
-        for cls in obj.custNames:
-            testDict[obj.custNames[cls]] = 1
-        testDict["Human face"] = 1
-        
-        boxesList = self.filtering.filtering(frame, testDict)
+        boxesList = self.filtering.filtering(frame)
         processed_frame = self.filtering.blur(blur_ratio, frame, boxesList)
         
         return processed_frame

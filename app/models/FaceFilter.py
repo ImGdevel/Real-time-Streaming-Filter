@@ -141,7 +141,7 @@ def register_person(person_name, image_paths, known_faces_path = './models/known
     """
 
     if os.path.exists(known_faces_path):
-        load_known_faces(known_faces_path)
+        person_faces = load_known_faces(known_faces_path)
     else:
         person_faces = {}
 

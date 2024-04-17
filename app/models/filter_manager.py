@@ -1,10 +1,11 @@
 from typing import Union
-from models import Filter, AppDataSaver
-
+from models import Filter
+from models.path_manager import PathManager
 
 class FilterManager:
     _instance = None
     filter_list: list = []
+    path_manager = PathManager()
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -14,6 +15,20 @@ class FilterManager:
     def add_filter(self, filter_obj: Filter):
         """새로운 필터를 추가합니다."""
         self.filter_list.append(filter_obj)
+
+    def update_filter(self, filtername: str, filterinfo: Filter):
+        print("적용 전:", self.filter_list)
+        for filter in self.filter_list:
+            print("비교", filter.name, "/" , filtername, "=", filter.name == filtername)
+
+            if filter.name == filtername:
+                print("가져온 데이터", filterinfo)
+                filter.name = filterinfo.name
+                filter.face_filter_on = filterinfo.face_filter_on
+                filter.face_filter = filterinfo.face_filter
+                filter.object_filter = filterinfo.object_filter
+                print("적용 후:", self.filter_list)
+        
 
     def remove_filter(self, filter_name: str):
         """지정된 이름의 필터를 제거합니다."""
@@ -30,14 +45,14 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 return filter_obj
         return None
-    
-    def save_filters(self, filename: str):
-        """filter_list를 파일에 저장합니다."""
-        data_to_save = [filter_obj.__dict__ for filter_obj in self.filter_list]
-        AppDataSaver(data_to_save).save_data(filename)
 
-    def load_filters(self, filename: str):
+    def get_filters(self):
+        return self.filter_list[:]
+    
+    def save_filters(self):
+        """filter_list를 파일에 저장합니다."""
+        self.path_manager.save_filter_data(self.filter_list)
+
+    def load_filters(self):
         """파일에서 filter_list를 불러옵니다."""
-        loaded_data = AppDataSaver(self.filter_list).load_data(filename)
-        if loaded_data:
-            self.filter_list = [Filter(**filter_data) for filter_data in loaded_data]
+        self.filter_list = self.path_manager.load_filter_data()
