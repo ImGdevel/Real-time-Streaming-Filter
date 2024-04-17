@@ -53,7 +53,7 @@ class AvailableFacesListWidget(ListWidget):
 
     def populate_faces(self):
         for people in self.face_setting_processor.get_person_faces():
-            self.add_item(people)  # 임시 데이터
+            self.add_item(people.face_name)  # 임시 데이터
 
 class FilterListWidget(ListWidget):
     def __init__(self, parent=None):

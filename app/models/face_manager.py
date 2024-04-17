@@ -27,6 +27,8 @@ class FaceManager:
         save_path = os.path.join(self.face_path, "register_note.bin")
 
         with open(save_path, 'wb') as file:
+            print("save")
+            print(self.face_list)
             pickle.dump(self.face_list, file)
 
     def load_person_faces(self):
@@ -35,20 +37,26 @@ class FaceManager:
             save_path = os.path.join(self.face_path, "register_note.bin")
             with open(save_path, 'rb') as file:
                 self.face_list = pickle.load(file)
+                print("load")
+                print(self.face_list)
 
         
     def add_person_face(self, new_face_name: str):
         """person_face 추가 메서드"""
+        print("add person face")
         names = []
         for face in self.face_list:
             names.append(face.face_name)
         if new_face_name not in names:  # 동일한 이름의 필터가 없는 경우에만 추가
-            self.face_list.append(FaceManager(new_face_name)) 
+            print("new person append")
+            self.face_list.append(Face(new_face_name)) 
+            print(self.face_list)
 
     def add_person_encoding(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
+        print("add person encoding")
         face_encoding = cv2.imread(file_path)
-        FaceFilter.register_person(face_name, file_path)
+        FaceFilter.register_person(face_name, [file_path])
 
         for face in self.face_list:
             if face.face_name == face_name:
@@ -60,6 +68,7 @@ class FaceManager:
 
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
+        print("delete person face")
         for face in self.face_list:
             if face.face_name == person_name:
                 self.face_list.remove(face)
@@ -68,6 +77,7 @@ class FaceManager:
 
     def delete_person_encoding(self, person_name: str, encoding_name: str):
         """person_name의 encoding리스트 중 하나를 제거"""
+        print("delete person encoding")
         for face in self.face_list:
             if face.face_name == person_name:
                 value = face.encoding_list.pop(encoding_name, 0)
@@ -76,6 +86,7 @@ class FaceManager:
         
     def get_person_face(self, person_name):
         """person_face를 가져오게 하기"""
+        print("get person face")
         for face in self.face_list:
             if face.face_name == person_name:
                 return face
@@ -83,6 +94,7 @@ class FaceManager:
 
     def get_person_encoding(self, person_name: str, encoding_name: str):
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
+        print("get person encoding")
         for face in self.face_list:
             if face.face_name == person_name:
                 return face.encoding_list.get(encoding_name)
@@ -90,6 +102,7 @@ class FaceManager:
         return None
     
     def get_person_encodings(self, person_name: str):
+        print("get person encodings")
         for face in self.face_list:
             if face.face_name == person_name:
                 return face.encoding_list
@@ -97,13 +110,19 @@ class FaceManager:
 
     def update_person_face(self, person_name, person: Face):
         """person_face 업데이트 메서드"""
+        print("update person face")
         for face in self.face_list:
             if face.face_name == person_name:
                 face.face_name = person.face_name
                 face.encoding_list = person.encoding_list
+                return
+        
+        self.face_list.append(Face(person_name, person))
+
 
     def update_person_name(self, last_name: str, new_name: str):
         """사람 이름 변경"""
+        print("update person name")
         for face in self.face_list:
             if face.face_name == new_name:
                 return False
@@ -116,6 +135,8 @@ class FaceManager:
 
     def get_person_faces(self):
         """person_face """
+        print("get person faces")
+        print("get person faces")
         return self.face_list
 
 
