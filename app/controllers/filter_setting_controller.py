@@ -19,6 +19,12 @@ class FilterSettingController:
         if self.filter_manager.get_filter(filter_name):
             self.filter_manager.remove_filter(filter_name)
 
+    def save_filter(self):
+        self.filter_manager.save_filters()
+
+    def load_filter(self):
+        self.filter_manager.load_filters()
+
         
     def get_filter(self, filter_name):
         """Filter를 가져오게 하기"""

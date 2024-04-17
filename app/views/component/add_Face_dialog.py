@@ -95,12 +95,12 @@ class AddFaceDialog(QDialog):
     def add_face(self):
         face_name = self.face_name_input.text()
         self.face_setting_processor.add_person_face(face_name)
-
         if self.available_faces_list.findItems(face_name, Qt.MatchExactly):
             print(f"'{face_name}' is already in the list.")
             return
 
         self.face_setting_processor.add_person_encoding(face_name, self.filepath)
+        self.face_setting_processor.save_person_face()
         self.filepath = None
         self.available_faces_list.addItem(face_name)
         self.added_face.emit(face_name)

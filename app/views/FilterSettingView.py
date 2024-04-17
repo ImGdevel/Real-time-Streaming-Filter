@@ -319,7 +319,7 @@ class FilterSettingView(QWidget):
         updated_filtering_object = self.selected_filtering_object
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
-        self.face_setting_processor.save_person_face()
+        self.filter_setting_processor.save_filter()
         
 
 
