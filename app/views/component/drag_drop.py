@@ -17,8 +17,8 @@ class DragDropLabel(QLabel):
         self.setAcceptDrops(True)
         self.layout = QVBoxLayout()
         self.dropbox_lable = QLabel()
-        self.dropbox_lable.setMinimumSize(300, 150)
-        self.dropbox_lable.setMaximumWidth(500)
+        #self.dropbox_lable.setMinimumSize(300, 150)
+        #self.dropbox_lable.setMaximumWidth(550)
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
         self.dropbox_lable.setText('파일을 끌어오세요')
         self.dropbox_lable.setStyleSheet('''
@@ -54,15 +54,31 @@ class DragDropLabel(QLabel):
     #파일 놓기
     def dropEvent(self, event):
         urls = self.find_image(event.mimeData())
+        
         if urls:
             self.drop_signal.emit(self.urls)
-            file_path = urls[0].toLocalFile()
-            pixmap = QPixmap(file_path)
-            pixmap = pixmap.scaled(500, 350)
-            self.dropbox_lable.setPixmap(pixmap)
             event.accept()
         else:
             event.ignore()
 
+
     def getUrls(self):
         return self.urls
+    
+    def setExampleView(self, urls):
+        pixmap = QPixmap(urls)
+        widget_size = self.dropbox_lable.size()
+        # Get image size
+        image_size = pixmap.size()
+
+        # Calculate scaling factor to fit the image into the widget
+        width_factor = widget_size.width() / image_size.width()
+        height_factor = widget_size.height() / image_size.height()
+
+        # Choose the smallest scaling factor to maintain aspect ratio
+        scale_factor = min(width_factor, height_factor)
+
+        # Scale pixmap with maintaining aspect ratio
+        scaled_pixmap = pixmap.scaled(image_size * scale_factor, Qt.KeepAspectRatio)
+
+        self.dropbox_lable.setPixmap(scaled_pixmap)

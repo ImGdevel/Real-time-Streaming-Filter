@@ -3,10 +3,10 @@ import dlib
 import face_recognition
 import re
 import pickle
-# 사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
-#known_faces = {}
+#사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
+known_faces = {}
 
-# 이미지에서 얼굴 특징을 추출하여 반환하는 함수
+#이미지에서 얼굴 특징을 추출하여 반환하는 함수
 def extract_face_features(image_path):
     """
     주어진 이미지 파일에서 얼굴 특징을 추출합니다.
@@ -279,7 +279,7 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
 
 # test = "test"
 
-#register_person("test", ["./tests/photo/jlpt.jpg", "./tests/photo/me_front.jpg", "./tests/photo/me_4.jpg"])
+# register_person("test", ["./tests/photo/jlpt.jpg", "./tests/photo/me_front.jpg", "./tests/photo/me_4.jpg"])
 
 # known_faces = load_known_faces('./app/models/known_faces.pickle')
 
