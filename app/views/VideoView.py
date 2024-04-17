@@ -2,9 +2,9 @@ import os
 import cv2
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QUrl
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from .component import SettingWidget
 from controllers import VideoProcessor
 
 class VideoInfo:
@@ -47,6 +47,8 @@ class VideoProcessor(QThread):
 
 
 class VideoView(QWidget):
+    video_path = str
+
     '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -54,7 +56,9 @@ class VideoView(QWidget):
 
     def initUI(self):
         '''UI 초기화'''
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
+        self.video_frame = QWidget()
+        self.video_layout = QVBoxLayout()
 
         # 비디오 위젯 추가
         self.video_widget = QLabel(self)
@@ -66,12 +70,12 @@ class VideoView(QWidget):
         self.video_widget.mousePressEvent = self.openFileDialogOnClick
 
         # QLabel을 수직 레이아웃에 추가
-        self.layout.addWidget(self.video_widget)
+        self.video_layout.addWidget(self.video_widget)
 
         # 파일 탐색기 버튼
         self.file_dialog_button = QPushButton("Choose Video File")
         self.file_dialog_button.clicked.connect(self.openFileDialog)
-        self.layout.addWidget(self.file_dialog_button)
+        self.video_layout.addWidget(self.file_dialog_button)
 
         # 비디오 바 (슬라이더), 현재 재생 시간, FPS 정보를 위한 레이아웃
         self.bottom_layout = QHBoxLayout()
@@ -104,7 +108,22 @@ class VideoView(QWidget):
         self.fps_label = QLabel("FPS: --")
         self.bottom_layout.addWidget(self.fps_label)
 
-        self.layout.addLayout(self.bottom_layout)
+        # setting view
+        self.setting_widget = SettingWidget()
+        self.setting_widget.download_button.clicked.connect(self.inCoding)
+        self.setting_widget.setMinimumWidth(200)
+        self.button1 = QPushButton("button1")
+        self.button1.clicked.connect(self.button1Act)
+        self.button2 = QPushButton("button2")
+        self.button1.clicked.connect(self.button2Act)
+        self.setting_widget.addSettingButton(self.button1)
+        self.setting_widget.addSettingButton(self.button2)
+
+        self.video_layout.addLayout(self.bottom_layout)
+        self.video_frame.setLayout(self.video_layout)
+
+        self.layout.addWidget(self.video_frame)
+        self.layout.addWidget(self.setting_widget)
 
         self.setLayout(self.layout)
         
@@ -128,6 +147,7 @@ class VideoView(QWidget):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
+            self.video_path = filePath
             self.video_info = VideoInfo(filePath)
             self.video_thread = VideoProcessor(filePath)
             self.video_thread.video_frame.connect(self.updateVideoFrame)
@@ -243,6 +263,16 @@ class VideoView(QWidget):
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+    
+    def inCoding(self):
+        path = self.video_path
+        print(path)
+
+    def button1Act(self):
+        print("btn1")
+    
+    def button2Act(self):
+        print("btn2")
 
 if __name__ == "__main__":
     import sys

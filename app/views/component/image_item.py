@@ -39,3 +39,6 @@ class ImageItem(QWidget):
 
     def open_file(self, file_path):
         QDesktopServices.openUrl(file_path)
+    
+    def getUrl(self):
+        return self.file_data

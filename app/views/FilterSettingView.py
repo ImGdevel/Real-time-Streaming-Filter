@@ -14,7 +14,6 @@ class FilterSettingView(QWidget):
         self.filter_setting_processor = FilterSettingController()
         self.face_setting_processor = PersonFaceSettingController()
         self.face_setting_processor.load_person_faces()
-        self.filter_setting_processor.load_filter()
 
         self.initUI()
 
@@ -66,8 +65,6 @@ class FilterSettingView(QWidget):
         # Filter 목록
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.filter_list_btn_event)  # 새로운 시그널에 연결
-        for filter in self.filter_setting_processor.get_filters():
-            self.filter_list_widget.add_item(filter.name)
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
