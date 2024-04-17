@@ -34,11 +34,23 @@ class FilterSettingView(QWidget):
         self.right_widget.setLayout(self.right_layout)
         self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 오른쪽 레이어 배경색 설정
 
+        self.empty_widget = QWidget()        
+
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
         self.layout.addWidget(self.left_widget, 1)  # 왼쪽 레이어 크기를 1로 설정
         self.layout.addWidget(self.right_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
+        self.layout.addWidget(self.empty_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
+        self.show_filter_setting_window(False)
 
         self.setLayout(self.layout)
+
+    def show_filter_setting_window(self, is_show):
+        if is_show:
+            self.right_widget.show()
+            self.empty_widget.hide()
+        else:
+            self.right_widget.hide()
+            self.empty_widget.show()
 
     # 왼쪽 레이어
     def setup_left_layer(self):
@@ -299,18 +311,16 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
         
 
-        if filter_data is None:
-            # todo : filter가 없는 경우 로직
-            pass
-
         if filter_data:
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list_widget(filter_data.face_filter)
             self.update_object_setting_list(filter_data.object_filter)
             self.set_filter_name_label(filter_name)
-
+            self.show_filter_setting_window(True)
         else:
             print(f"Filter '{filter_name}' not found")
+            self.show_filter_setting_window(False)
+            
         
     def update_registered_faces_list_widget(self, face_filter_data):
         """registered_faces_list_widget 업데이트 메서드"""
