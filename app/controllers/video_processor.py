@@ -74,7 +74,7 @@ class VideoProcessor(QThread):
 
     def run_filtered_video(self):
         '''필터링된 비디오 재생'''
-        filtered_cap = cv2.VideoCapture('output_video.mp4')
+        filtered_cap = cv2.VideoCapture('output_video.mp4') #링크는 나중에 바꾸고
         while filtered_cap.isOpened() and self.is_playing:
             ret, frame = filtered_cap.read()
             if ret:
