@@ -23,7 +23,7 @@ tests/models/yolov8x.pt
 */__pycache__/*
 
 /app/models/*jpg
+app/models/test.py
 app/models/testpickle/known_faces.pickle
 app/models/testpickle/image_2.jpg
 app/models/testpickle/image_1.jpg
-app/models/test.py
