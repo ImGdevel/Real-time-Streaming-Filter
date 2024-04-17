@@ -39,7 +39,7 @@ class FaceManager:
                 self.face_list = pickle.load(file)
                 print("load")
                 print(self.face_list)
-
+    
         
     def add_person_face(self, new_face_name: str):
         """person_face 추가 메서드"""
