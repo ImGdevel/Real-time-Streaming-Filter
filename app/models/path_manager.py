@@ -61,3 +61,7 @@ class PathManager:
             return filter_data
         else:
             return []
+        
+
+    def save_image_path(self):
+        pass

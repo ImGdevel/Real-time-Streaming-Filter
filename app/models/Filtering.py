@@ -37,31 +37,31 @@ class Filtering:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
 
-        # results = []
-        # boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
-        # for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
-        #     if filter_info.face_filter_on is True:   
-        #         if label == "Human face":
-        #             print("사람 얼굴일 경우")
-        #             face_encode = face_encoding_box(img, box)
+        results = []
+        boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
+        for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
+            if filter_info.face_filter_on is True:   
+                if label == "Human face":
+                    print("사람 얼굴일 경우")
+                    face_encode = face_encoding_box(img, box)
 
-        #             if is_known_person(filter_info.face_filter, face_encode):
-        #                 continue
-        #             else :
-        #                 results.append(box)
-        #                 continue    
-        #     if label in filter_info.object_filter:
-        #         results.append(box)
+                    if is_known_person(filter_info.face_filter, face_encode):
+                        continue
+                    else :
+                        results.append(box)
+                        continue    
+            if label in filter_info.object_filter:
+                results.append(box)
 
-        # custList = []
-        # custList, labelList = self.object.custom_detect(img)
-        # for obj, label in zip(custList, labelList):
-        #     if label in filter_info.object_filter:
-        #         results.append(obj)
+        custList = []
+        custList, labelList = self.object.custom_detect(img)
+        for obj, label in zip(custList, labelList):
+            if label in filter_info.object_filter:
+                results.append(obj)
             
-        # return results
+        return results
     
-    def blur(self, blurRatio, img, boxesList):
+    def blur(self,img, boxesList, blurRatio = 50):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
