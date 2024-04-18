@@ -16,6 +16,7 @@ class VideoProcessor(QThread):
         self.video_frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
         self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))  # FPS 값 가져오기
         self.is_playing = True
+        self.filtering = Filtering()
 
     def run(self):
         '''비디오 재생 스레드의 메인 루프'''
