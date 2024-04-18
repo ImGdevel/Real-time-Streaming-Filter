@@ -6,10 +6,12 @@ from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QList
 from PyQt5.QtCore import Qt, pyqtSignal, QSize
 from PyQt5.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
+from models import register_person
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .file_view_widget import FileViewWidget
 from .image_viewer import ImageViewWidget
+
 
 class AddFaceDialog(QDialog):
     added_face = pyqtSignal(str) 
@@ -23,7 +25,7 @@ class AddFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(600, 500)
+        self.setFixedSize(600, 600)
 
         main_layout = QHBoxLayout()
 
@@ -58,9 +60,6 @@ class AddFaceDialog(QDialog):
 
         image_layout = self.setup_image_layout()
 
-        upload_image_button = QPushButton("Register")
-        # 파일 탐색기 열기
-        
         add_button = QPushButton("Register")
         add_button.clicked.connect(self.update_registered_person)
         
@@ -117,8 +116,21 @@ class AddFaceDialog(QDialog):
         scroll_area.setFixedWidth(400)
         
         image_layout.addWidget(scroll_area)
+
+        # 파일 탐색기 열기 버튼 추가
+        upload_image_button = QPushButton("Upload Image")
+        upload_image_button.clicked.connect(self.open_file_dialog)
+        image_layout.addWidget(upload_image_button)
         
         return image_layout
+
+    def open_file_dialog(self):
+        """파일 탐색기 열기 및 이미지 추가"""
+        options = QFileDialog.Options()
+        file_paths, _ = QFileDialog.getOpenFileNames(self, "Open Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
+        
+        if file_paths:
+            self.add_face_process(file_paths)
 
     def drag_enter_event(self, event):
         """드래그 이벤트 처리"""
@@ -140,21 +152,38 @@ class AddFaceDialog(QDialog):
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.CopyAction)
             event.accept()
-
-            for url in event.mimeData().urls():
-                file_path = url.toLocalFile()
-                pixmap = QPixmap(file_path)  # 이미지 경로를 QPixmap으로 변환
-                pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
-                icon = QIcon(pixmap)
-                
-                # face_id = "face_" + str(len(self.current_person.encoding_list))  # face_id 생성
-                # self.current_person.encoding_list[face_id] = file_path  # 이미지 경로 추가
-                
-                item = QListWidgetItem()
-                item.setIcon(icon)  # 아이콘 설정
-                self.image_list_widget.addItem(item)
+            
+            image_files = [url.toLocalFile() for url in event.mimeData().urls()]
+            self.add_face_process(image_files)
         else:
             event.ignore()
+
+    def add_face_process(self, image_files):
+        """이미지 등록 프로세스"""
+
+        # 이미지 등록
+        if self.current_person.face_name and image_files:
+            register_person(self.current_person.face_name, image_files)
+
+            for file_path in image_files:
+            
+                # 여기에 사진 인코딩 로직 추가
+                # 예시로 인코딩 로직의 소요시간이 5초라고 가정하고 5초동안 대기한다.
+                # 실패하면 실패 목록에 넣고 아래 단계 실행
+
+                pixmap = QPixmap(file_path)
+                pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
+                icon = QIcon(pixmap)
+
+                item = QListWidgetItem()
+                item.setIcon(icon)
+                self.image_list_widget.addItem(item)
+
+        else: 
+            print("이미지 등록 실패")
+
+
+
     
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
@@ -169,10 +198,6 @@ class AddFaceDialog(QDialog):
                 item = QListWidgetItem(icon, face_id)
                 self.image_list_widget.addItem(item)
 
-    def add_face_process(self):
-        # 이미지 등록 프로세스
-        pass
-    
     def change__person_name(self, new_name):
         """이름 변경"""
         if self.current_person:
