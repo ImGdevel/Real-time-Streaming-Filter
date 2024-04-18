@@ -43,8 +43,7 @@ class ListWidget(QListWidget):
     def set_items_event(self, event):
         self.onClickItemEvent.connect(event)
 
-
-
+    
 class RegisteredFacesListWidget(ListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)

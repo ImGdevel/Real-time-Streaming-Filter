@@ -14,8 +14,7 @@ class PersonFaceSettingController:
     def load_person_faces(self):
         """기존에 등록된 face정보를 로드함"""
         self.face_manager.load_person_faces()
-
-        
+    
     def add_person_face(self, new_face_name: str):
         """person_face 추가 메서드"""
         self.face_manager.add_person_face(new_face_name)
@@ -24,7 +23,6 @@ class PersonFaceSettingController:
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
         self.face_manager.add_person_encoding(face_name, file_path)
                 
-
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
         self.face_manager.delete_person_face(person_name)

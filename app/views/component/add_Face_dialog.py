@@ -18,7 +18,7 @@ class AddFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(600, 500)
 
         main_layout = QHBoxLayout()
 
@@ -35,6 +35,7 @@ class AddFaceDialog(QDialog):
         
         scroll_layout = QVBoxLayout()
         self.available_faces_list = AvailableFacesListWidget()
+        self.available_faces_list.setFixedWidth(200)
         
         scroll_layout.addWidget(self.available_faces_list)
         
