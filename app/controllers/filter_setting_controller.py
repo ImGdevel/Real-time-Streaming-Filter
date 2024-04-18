@@ -4,6 +4,7 @@ class FilterSettingController:
 
     def __init__(self):
         self.filter_manager = FilterManager()
+        self.load_filter()
         self.test = []
 
     def add_filter(self, filter_name: str):
