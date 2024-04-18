@@ -5,7 +5,7 @@ from utils.colors import Colors
 from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget
 
 class ImageView(QWidget):
-
+    
     count = int
     urls = list()
 
@@ -37,7 +37,8 @@ class ImageView(QWidget):
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
-        
+        self.file_view_widget.drop_signal.connect(self.addItemFileView)
+
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
         self.setting_widget.download_button.clicked.connect(self.Download)

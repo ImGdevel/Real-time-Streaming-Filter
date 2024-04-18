@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt, QMimeDatabase, pyqtSignal
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QDragEnterEvent
 from utils import Colors
 from urllib.parse import urlparse
 
@@ -45,14 +45,14 @@ class DragDropLabel(QLabel):
         return self.urls
 
     #파일 끌어오기
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
             event.accept()
         else:
             event.ignore()
 
     #파일 놓기
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDragEnterEvent):
         urls = self.find_image(event.mimeData())
         
         if urls:

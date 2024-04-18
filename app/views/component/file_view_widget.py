@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
-from PyQt5.QtCore import Qt, QUrl, pyqtSignal
+from PyQt5.QtCore import Qt, QUrl, pyqtSignal, QMimeDatabase
+from PyQt5.QtGui import QDragEnterEvent
 from utils.colors import Colors
 from .image_item import ImageItem
 import os
+from urllib.parse import urlparse
 
 class FileViewWidget(QWidget):
+    drop_signal = pyqtSignal(list)
     count = int
     remove_file = pyqtSignal(QUrl)
     add_file = pyqtSignal(list)
@@ -13,6 +16,7 @@ class FileViewWidget(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setAcceptDrops(True)
         self.remove_mode = False
         self.count = 0
         self.layout = QVBoxLayout()
@@ -27,6 +31,9 @@ class FileViewWidget(QWidget):
         self.scroll_area.setWidget(self.scroll_widget)
         self.file_box_layout.addWidget(self.scroll_area)
         self.file_view_label.setLayout(self.file_box_layout)
+        self.file_view_label.setAcceptDrops(True)
+        self.file_view_label.dragEnterEvent = self.dragEnterEvent
+        self.file_view_label.dropEvent = self.dropEvent
 
         #button
         self.button_widget = QWidget()
@@ -91,5 +98,37 @@ class FileViewWidget(QWidget):
             self.remove_file.emit(widget.getUrl())
             self.scroll_layout.removeWidget(widget)
             widget.deleteLater()
+
+    def find_image(self, mimedata):
+        self.urls = list()
+        db = QMimeDatabase()
+        allowed_extensions = ['image/bmp', 'image/x-adobe-dng', 'image/jpeg',
+                               'image/jpg', 'image/mpo', 'image/png', 'image/tif',
+                                'image/tiff', 'image/webp', 'image/x-portable-floatmap']
+        for url in mimedata.urls():
+            mimetype = db.mimeTypeForUrl(url)
+            if mimetype.name() in allowed_extensions:
+                self.urls.append(url)
+        return self.urls
+    
+    #파일 끌어오기
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    #파일 놓기
+    def dropEvent(self, event: QDragEnterEvent):
+        urls = self.find_image(event.mimeData())
+        
+        if urls:
+            self.drop_signal.emit(self.urls)
+            event.accept()
+        else:
+            event.ignore()
+
+    def getUrls(self):
+        return self.urls
 
 
