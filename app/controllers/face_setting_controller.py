@@ -33,7 +33,7 @@ class PersonFaceSettingController:
         
     def get_person_face(self, person_name):
         """person_face를 가져오게 하기"""
-        return self.face_manager.get_person_face
+        return self.face_manager.get_person_face(person_name)
 
     def get_person_encoding(self, person_name: str, encoding_name: str):
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""

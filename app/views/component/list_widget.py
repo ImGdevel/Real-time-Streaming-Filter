@@ -59,14 +59,19 @@ class AvailableFacesListWidget(ListWidget):
         for people in self.face_setting_processor.get_person_faces():
             self.add_item(people.face_name)
 
+    def update_list(self):
+        self.clear()
+        for people in self.face_setting_processor.get_person_faces():
+            self.add_item(people.face_name)
+
 class FilterListWidget(ListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
-        self.filter_liat_update()
+        self.update_filter_list()
     
-    def filter_liat_update(self):
+    def update_filter_list(self):
+        self.clear()
         lists = self.filter_setting_processor.get_filters()
         for filter in lists:
             self.add_item(filter.name)
-
