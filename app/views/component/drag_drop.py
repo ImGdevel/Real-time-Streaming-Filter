@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QLabel, QHBoxLayout
 from PyQt5.QtCore import Qt, QMimeDatabase, pyqtSignal
 from PyQt5.QtGui import QPixmap, QDragEnterEvent
 from utils import Colors
@@ -14,13 +14,11 @@ class DragDropLabel(QLabel):
         self.initUI()
 
     def initUI(self):
-        self.setAcceptDrops(True)
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         self.dropbox_lable = QLabel()
-        #self.dropbox_lable.setMinimumSize(300, 150)
-        #self.dropbox_lable.setMaximumWidth(550)
+        self.dropbox_lable.setFixedSize(378, 412)
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
-        self.dropbox_lable.setText('파일을 끌어오세요')
+        self.dropbox_lable.setText('Original')
         self.dropbox_lable.setStyleSheet('''
             QLabel{
                 border: 4px dashed #aaa;
@@ -29,7 +27,21 @@ class DragDropLabel(QLabel):
             }
         ''')
 
+        self.filtered_label = QLabel()
+        self.filtered_label.setFixedSize(378, 412)
+        self.filtered_label.setAlignment(Qt.AlignCenter)
+        self.filtered_label.setText('Filtered')
+        self.filtered_label.setStyleSheet('''
+            QLabel{
+                    border: 4px dashed #aaa;
+                    font-size: 15pt;
+                    font-family:'Malgun Gothic';
+            }
+        ''')
+
+
         self.layout.addWidget(self.dropbox_lable)
+        self.layout.addWidget(self.filtered_label)
         self.setLayout(self.layout)
         
     def find_image(self, mimedata):
@@ -68,6 +80,7 @@ class DragDropLabel(QLabel):
     def setExampleView(self, urls):
         pixmap = QPixmap(urls)
         widget_size = self.dropbox_lable.size()
+        print(widget_size)
         # Get image size
         image_size = pixmap.size()
 

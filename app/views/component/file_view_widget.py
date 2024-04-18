@@ -10,6 +10,7 @@ class FileViewWidget(QWidget):
     drop_signal = pyqtSignal(list)
     count = int
     remove_file = pyqtSignal(QUrl)
+    image_change = pyqtSignal(QUrl)
     add_file = pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -98,6 +99,8 @@ class FileViewWidget(QWidget):
             self.remove_file.emit(widget.getUrl())
             self.scroll_layout.removeWidget(widget)
             widget.deleteLater()
+        else :
+            self.image_change.emit(widget.getUrl())
 
     def find_image(self, mimedata):
         self.urls = list()

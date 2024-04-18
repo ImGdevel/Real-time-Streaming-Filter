@@ -38,6 +38,7 @@ class ImageView(QWidget):
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
         self.file_view_widget.drop_signal.connect(self.addItemFileView)
+        self.file_view_widget.image_change.connect(self.changeImage)
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
@@ -71,6 +72,10 @@ class ImageView(QWidget):
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
             self.file_view_widget.addNewFile(add_urls)
+
+    def changeImage(self, url):
+        file_path = url.toLocalFile()
+        self.dropbox_widget.setExampleView(file_path)
 
     def Download(self):
         print("download")
