@@ -3,11 +3,13 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
 from utils.colors import Colors
 from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget
+from controllers import ImageProcessor
 
 class ImageView(QWidget):
     
     count = int
     urls = list()
+    filtered_image = dict()
 
     def __init__(self, parent = None):
 
@@ -17,6 +19,7 @@ class ImageView(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
         self.count = 0
+        self.filter_image_processor = ImageProcessor()
         # 전체 레이아웃 설정
         self.layout = QVBoxLayout()
 
@@ -42,7 +45,7 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.Download)
+        self.setting_widget.incoding_button.clicked.connect(self.Incoding)
         self.setting_frame.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.setting_frame.setMinimumSize(100, 150)
         self.setting_frame.setMaximumWidth(200)
@@ -77,8 +80,10 @@ class ImageView(QWidget):
         file_path = url.toLocalFile()
         self.dropbox_widget.setExampleView(file_path)
 
-    def Download(self):
-        print("download")
+    def Incoding(self):
+        if self.urls:
+            self.filtered_image = self.filter_image_processor.filtering_images(self.urls)
+        
 
 
 

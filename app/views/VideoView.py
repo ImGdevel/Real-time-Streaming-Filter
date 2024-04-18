@@ -110,7 +110,7 @@ class VideoView(QWidget):
 
         # setting view
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.inCoding)
+        self.setting_widget.incoding_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
         self.button1 = QPushButton("button1")
         self.button1.clicked.connect(self.button1Act)
