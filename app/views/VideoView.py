@@ -6,6 +6,8 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal, QUrl
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
 from controllers import VideoProcessor
+from views.component import FilterListWidget
+
 
 class VideoInfo:
     '''비디오 파일 정보를 관리하는 클래스'''
@@ -15,48 +17,29 @@ class VideoInfo:
         self.video_extension = os.path.splitext(video_path)[1][1:].lower()
         self.video_size = os.path.getsize(video_path)
 
-
-class VideoProcessor(QThread):
-    '''비디오 재생을 위한 스레드 클래스'''
-    video_frame = pyqtSignal(object)  # 비디오 프레임 신호
-    current_frame = pyqtSignal(int)    # 현재 프레임 신호
-    fps_signal = pyqtSignal(float)     # FPS 신호
-
-    def __init__(self, video_path):
-        super(VideoProcessor, self).__init__()
-        self.video_path = video_path
-        self.cap = cv2.VideoCapture(self.video_path)
-        self.video_frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))  # FPS 값 가져오기
-        self.is_playing = True
-
-    def run(self):
-        '''비디오 재생 스레드의 메인 루프'''
-        while self.cap.isOpened() and self.is_playing:
-            ret, frame = self.cap.read()
-            if ret:
-                current_frame_num = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
-                self.video_frame.emit(frame)        # 비디오 프레임 신호 발생
-                self.current_frame.emit(current_frame_num)  # 현재 프레임 신호 발생
-                self.fps_signal.emit(self.fps)      # FPS 신호 발생
-            else:
-                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
-                
-        self.cap.release()
-
-
-
 class VideoView(QWidget):
     video_path = str
 
     '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
+        #self.video_processor = VideoProcessor()
         self.initUI()
 
     def initUI(self):
         '''UI 초기화'''
         self.layout = QHBoxLayout()
+        
+        # 비디오 위젯 및 레이아웃 설정
+        self.initVideoWidget()
+        
+        # 설정 위젯 설정
+        self.initSettingWidget()
+        
+        self.setLayout(self.layout)
+
+    def initVideoWidget(self):
+        '''비디오 위젯 및 레이아웃 초기화'''
         self.video_frame = QWidget()
         self.video_layout = QVBoxLayout()
 
@@ -77,7 +60,15 @@ class VideoView(QWidget):
         self.file_dialog_button.clicked.connect(self.openFileDialog)
         self.video_layout.addWidget(self.file_dialog_button)
 
-        # 비디오 바 (슬라이더), 현재 재생 시간, FPS 정보를 위한 레이아웃
+        # 비디오 바 및 하단 레이아웃 설정
+        self.initVideoBar()
+        self.video_layout.addLayout(self.bottom_layout)
+
+        self.video_frame.setLayout(self.video_layout)
+        self.layout.addWidget(self.video_frame)
+
+    def initVideoBar(self):
+        '''비디오 바 및 하단 레이아웃 초기화'''
         self.bottom_layout = QHBoxLayout()
 
         # 재생, 일시정지, 정지 버튼
@@ -108,25 +99,37 @@ class VideoView(QWidget):
         self.fps_label = QLabel("FPS: --")
         self.bottom_layout.addWidget(self.fps_label)
 
-        # setting view
+    def initSettingWidget(self):
+        '''설정 위젯 초기화'''
         self.setting_widget = SettingWidget()
         self.setting_widget.download_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
+        
+        # 설정 위젯에 버튼 추가
+        self.initSettingButtons()
+        
+        self.layout.addWidget(self.setting_widget)
+
+    def initSettingButtons(self):
+        '''설정 위젯에 버튼 추가'''
+
+        self.filter_list_widget = FilterListWidget()
+        self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
+
         self.button1 = QPushButton("button1")
         self.button1.clicked.connect(self.button1Act)
         self.button2 = QPushButton("button2")
-        self.button1.clicked.connect(self.button2Act)
+        self.button2.clicked.connect(self.button2Act)
+
+        self.setting_widget.addWidget(self.filter_list_widget)
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
-
-        self.video_layout.addLayout(self.bottom_layout)
-        self.video_frame.setLayout(self.video_layout)
-
-        self.layout.addWidget(self.video_frame)
-        self.layout.addWidget(self.setting_widget)
-
-        self.setLayout(self.layout)
         
+
+    def set_filter_option(self, index):
+        """필터 옵션 선택"""
+        #self.video_processor.set_filter(index)
+        pass
 
     def resizeEvent(self, event):
         '''부모 레이아웃의 크기가 변경될 때마다 비디오 위젯의 크기를 조정'''
