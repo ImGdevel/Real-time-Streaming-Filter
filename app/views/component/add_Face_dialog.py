@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget,
     QLineEdit, QLabel, QFileDialog, QScrollArea, QWidget
 )
-from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem
-from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
+from PyQt5.QtCore import Qt, pyqtSignal, QSize, QCoreApplication
 from PyQt5.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from models import register_person
@@ -161,26 +161,25 @@ class AddFaceDialog(QDialog):
     def add_face_process(self, image_files):
         """이미지 등록 프로세스"""
 
-        # 이미지 등록
-        if self.current_person.face_name and image_files:
-            register_person(self.current_person.face_name, image_files)
+        print("진행 시작")
 
-            for file_path in image_files:
-            
-                # 여기에 사진 인코딩 로직 추가
-                # 예시로 인코딩 로직의 소요시간이 5초라고 가정하고 5초동안 대기한다.
-                # 실패하면 실패 목록에 넣고 아래 단계 실행
+        for idx, file_path in enumerate(image_files):
+            if self.current_person.face_name:
+                print("인코딩 시작")
+                if register_person(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
+                    pixmap = QPixmap(file_path)
+                    pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
+                    icon = QIcon(pixmap)
 
-                pixmap = QPixmap(file_path)
-                pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
-                icon = QIcon(pixmap)
+                    item = QListWidgetItem()
+                    item.setIcon(icon)
+                    self.image_list_widget.addItem(item)
+                    self.face_setting_processor.add_person_encoding(self.current_person.face_name, file_path)
+                    
+                    print("인코딩 실패")
+                else:
+                    print(f"이미지 등록 실패: {file_path}")
 
-                item = QListWidgetItem()
-                item.setIcon(icon)
-                self.image_list_widget.addItem(item)
-
-        else: 
-            print("이미지 등록 실패")
 
 
 
