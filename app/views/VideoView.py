@@ -18,12 +18,12 @@ class VideoInfo:
         self.video_size = os.path.getsize(video_path)
 
 class VideoView(QWidget):
-    video_path = str
-
+    
     '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
-        #self.video_processor = VideoProcessor()
+        self.video_processor = VideoProcessor()
+        self.video_path = str
         self.initUI()
 
     def initUI(self):
@@ -104,7 +104,7 @@ class VideoView(QWidget):
         self.setting_widget = SettingWidget()
         self.setting_widget.download_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
-        
+        self.setting_widget.setMaximumWidth(240)
         # 설정 위젯에 버튼 추가
         self.initSettingButtons()
         
@@ -116,9 +116,9 @@ class VideoView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
 
-        self.button1 = QPushButton("button1")
+        self.button1 = QPushButton("Test - 인코딩")
         self.button1.clicked.connect(self.button1Act)
-        self.button2 = QPushButton("button2")
+        self.button2 = QPushButton("Test - download")
         self.button2.clicked.connect(self.button2Act)
 
         self.setting_widget.addWidget(self.filter_list_widget)
@@ -128,21 +128,8 @@ class VideoView(QWidget):
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
-        #self.video_processor.set_filter(index)
+        self.video_processor.set_filter(index)
         pass
-
-    def resizeEvent(self, event):
-        '''부모 레이아웃의 크기가 변경될 때마다 비디오 위젯의 크기를 조정'''
-        super().resizeEvent(event)
-        parent_width = self.width()
-        parent_height = self.height()
-
-        # 가로 길이를 부모 레이아웃 크기에 맞추기
-        self.video_widget.setFixedWidth(parent_width)
-
-        # 가로 길이의 16:9 비율로 높이 설정
-        video_height = int(parent_width / 16 * 9)
-        self.video_widget.setFixedHeight(video_height)
 
 
     def openFileDialog(self):
@@ -150,14 +137,7 @@ class VideoView(QWidget):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
-            self.video_path = filePath
-            self.video_info = VideoInfo(filePath)
-            self.video_thread = VideoProcessor(filePath)
-            self.video_thread.video_frame.connect(self.updateVideoFrame)
-            self.video_thread.current_frame.connect(self.updateVideoBar)
-            self.video_thread.fps_signal.connect(self.updateFPSLabel)  # FPS 신호 연결
-            self.video_bar.setEnabled(True)
-            self.video_thread.start()
+            self.loadVideo(filePath)
 
 
     def updateVideoFrame(self, frame):
@@ -171,12 +151,12 @@ class VideoView(QWidget):
 
     def updateVideoBar(self, current_frame_num):
         '''비디오 슬라이더의 위치 업데이트'''
-        total_frames = self.video_thread.video_frame_count
+        total_frames = self.video_processor.video_frame_count
         value = int((current_frame_num / total_frames) * 100)
         self.video_bar.setValue(value)
         
         # FPS 가져오기
-        fps = self.video_thread.fps
+        fps = self.video_processor.fps
         current_time = self.convertTime(current_frame_num, total_frames, fps)
         
         # 비디오 바 왼쪽에 현재 재생 시간 표시
@@ -219,42 +199,41 @@ class VideoView(QWidget):
 
     def loadVideo(self, file_path):
         '''비디오 파일 로드'''
+        self.video_path = file_path
         self.video_info = VideoInfo(file_path)
-        self.video_thread = VideoProcessor(file_path)
-        self.video_thread.video_frame.connect(self.updateVideoFrame)
-        self.video_thread.current_frame.connect(self.updateVideoBar)
+        self.video_processor.set_video(file_path)
+        self.video_processor.video_frame.connect(self.updateVideoFrame)
+        self.video_processor.current_frame.connect(self.updateVideoBar)
+        self.video_processor.fps_signal.connect(self.updateFPSLabel)  # FPS 신호 연결
         self.video_bar.setEnabled(True)
-        self.video_thread.start()
+        self.video_processor.start()
 
 
     def changeVideoPosition(self, value):
         '''비디오 재생 위치 변경'''
-        if hasattr(self, 'video_thread'):
-            total_frames = self.video_thread.video_frame_count
+        if hasattr(self, 'video_processor') and self.video_processor.is_video_ready:
+            total_frames = self.video_processor.video_frame_count
             target_frame = int(value / 100 * total_frames)
-            self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
+            self.video_processor.cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
 
 
     def playVideo(self):
         '''비디오 재생'''
-        if hasattr(self, 'video_thread'):
-            if self.video_thread.cap.get(cv2.CAP_PROP_POS_FRAMES) == self.video_thread.video_frame_count:
-                self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
-                self.video_bar.setValue(0)  # 슬라이더 값도 초기화
-            self.video_thread.start()
+        self.video_processor.play_video()
+        self.video_bar.setValue(0)  # 슬라이더 값도 초기화
 
 
     def pauseVideo(self):
         '''비디오 일시정지'''
-        if hasattr(self, 'video_thread'):
-            self.video_thread.terminate()
+        if hasattr(self, 'video_processor') and self.video_processor.is_video_ready:
+            self.video_processor.terminate()
 
 
     def stopVideo(self):
         '''비디오 정지'''
-        if hasattr(self, 'video_thread'):
-            self.video_thread.terminate()
-            self.video_thread.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
+        if hasattr(self, 'video_processor') and self.video_processor.is_video_ready:
+            self.video_processor.terminate()
+            self.video_processor.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 영상의 시작 지점으로 이동
             self.video_bar.setValue(0)  # 슬라이더 값도 초기화
 
 
@@ -272,16 +251,8 @@ class VideoView(QWidget):
         print(path)
 
     def button1Act(self):
-        print("btn1")
+        print("인코딩 실행")
+        self.video_processor.filtering_video()
     
     def button2Act(self):
-        print("btn2")
-
-if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-
-    app = QApplication(sys.argv)
-    window = VideoView()
-    window.show()
-    sys.exit(app.exec_())
+        self.video_processor.download_video()
