@@ -20,6 +20,7 @@ class AddFaceDialog(QDialog):
         super().__init__(parent)
         self.face_setting_processor = PersonFaceSettingController()
         self.current_person = None
+        
         self._initUI()
 
     def _initUI(self):
@@ -29,13 +30,20 @@ class AddFaceDialog(QDialog):
 
         main_layout = QHBoxLayout()
 
-        registered_person_list_layout = self._setup_registered_person_list_layout()
-        face_registration_layout = self._setup_face_registration_layout()
+        self.registered_person_list_layout = self._setup_registered_person_list_layout()
+        self.face_registration_layout = self._setup_face_registration_layout()
 
-        main_layout.addLayout(registered_person_list_layout)
-        main_layout.addLayout(face_registration_layout)
+        self.face_registration_widget = QWidget()
+        self.face_registration_widget.setLayout(self.face_registration_layout)
+        self.empty_widget = QWidget()
+
+        main_layout.addLayout(self.registered_person_list_layout)
+        main_layout.addWidget(self.face_registration_widget)
+        main_layout.addWidget(self.empty_widget)
+        self.show_window(False)
 
         self.setLayout(main_layout)
+        
 
     def _setup_registered_person_list_layout(self):
         """registered_person_list 메서드"""
@@ -59,29 +67,38 @@ class AddFaceDialog(QDialog):
         
         return scroll_layout
 
+
     def _setup_face_registration_layout(self):
         """얼굴 등록 레이아웃 설정 메서드"""
         face_registration_layout = QVBoxLayout()
-        
+
         self.text_layout = TitleEdit()
-        self.text_layout.onEditEvent.connect(self.change__person_name)
+        self.text_layout.onEditEvent.connect(self.change_person_name)
 
         image_layout = self.setup_image_layout()
 
         add_button = QPushButton("Register")
         add_button.clicked.connect(self.update_registered_person)
 
-
-        
         face_registration_layout.addWidget(self.text_layout)
         face_registration_layout.addLayout(image_layout)
         face_registration_layout.addWidget(add_button)
         
         return face_registration_layout
+    
+    def show_window(self, show_window):
+        """화면 """
+        if show_window:
+            self.empty_widget.hide()
+            self.face_registration_widget.show()
+        else:
+            self.empty_widget.show()
+            self.face_registration_widget.hide()
+        
 
     def change_current_registered_person(self, index: str):
         """등록된 사람 선택하는 메서드"""
-        
+        self.show_window(True)
         person_info = self.face_setting_processor.get_person_face(index) # 등록된 사람 가져오기 -> Face 객체
         self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
         
@@ -137,6 +154,8 @@ class AddFaceDialog(QDialog):
     def add_person(self):
         self.registered_person_list.add_item("defalut")
         self.face_setting_processor.add_person_face("defalut")
+        self.change_current_registered_person("defalut")
+        
 
     def open_file_dialog(self):
         """파일 탐색기 열기 및 이미지 추가"""
@@ -209,15 +228,13 @@ class AddFaceDialog(QDialog):
                 item = QListWidgetItem(icon, face_id)
                 self.image_list_widget.addItem(item)
 
-    def change__person_name(self, new_name):
+    def change_person_name(self, new_name):
         """이름 변경"""
         if self.current_person:
-            self.face_setting_processor.update_person_name(self.current_person.face_name , new_name)
-            # todo : registered_person_list를 업데이트
-            
-            self.text_layout.set_title(new_name) #title 변경
-            self.current_person.face_name = new_name
-            self.registered_person_list.update_list()
+            if self.face_setting_processor.update_person_name(self.current_person.face_name , new_name):
+                self.text_layout.set_title(new_name) #title 변경
+                self.current_person.face_name = new_name
+                self.registered_person_list.update_list()
 
 
     def update_registered_person(self):
