@@ -43,15 +43,17 @@ class FaceManager:
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
         print("add person encoding")
         face_encoding = cv2.imread(file_path)
-        FaceFilter.register_person(face_name, file_path)
 
         for face in self.face_list:
             if face.face_name == face_name:
-                max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
-                max_face_number += 1
-                face_code = face_name + "_" + str(max_face_number)
-                face.encoding_list[face_code] = face_encoding
+                if  FaceFilter.register_person(self.current_person.face_name, file_path):
+                    max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
+                    max_face_number += 1
+                    face_code = face_name + "_" + str(max_face_number)
+                    face.encoding_list[face_code] = face_encoding
+                    return True
                 
+        return False
 
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
