@@ -21,7 +21,7 @@ class PersonFaceSettingController:
 
     def add_person_encoding(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        self.face_manager.add_person_encoding(face_name, file_path)
+        return self.face_manager.add_person_encoding(face_name, file_path)
                 
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
