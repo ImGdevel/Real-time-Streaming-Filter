@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QList
 from PyQt5.QtCore import Qt, pyqtSignal, QSize, QCoreApplication
 from PyQt5.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
-from models import register_person
+from models import register_person, Face
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .file_view_widget import FileViewWidget
@@ -45,9 +45,17 @@ class AddFaceDialog(QDialog):
         self.registered_person_list = AvailableFacesListWidget()
         self.registered_person_list.onClickItemEvent.connect(self.change_current_registered_person)
         self.registered_person_list.setFixedWidth(200)
+
+        # Add Filter, Delete Filter 버튼
+        add_button = QPushButton("Add")
+        add_button.clicked.connect(self.add_person)
+        #delete_button = QPushButton("Delete Filter")
+        #delete_button.clicked.connect(self.delete_person)
         
         scroll_layout.addWidget(self.available_faces_list_label)
         scroll_layout.addWidget(self.registered_person_list)
+        scroll_layout.addWidget(add_button)
+        #scroll_layout.addWidget(delete_button)
         
         return scroll_layout
 
@@ -62,6 +70,8 @@ class AddFaceDialog(QDialog):
 
         add_button = QPushButton("Register")
         add_button.clicked.connect(self.update_registered_person)
+
+
         
         face_registration_layout.addWidget(self.text_layout)
         face_registration_layout.addLayout(image_layout)
@@ -123,6 +133,10 @@ class AddFaceDialog(QDialog):
         image_layout.addWidget(upload_image_button)
         
         return image_layout
+    
+    def add_person(self):
+        self.registered_person_list.add_item("defalut")
+        self.face_setting_processor.add_person_face("defalut")
 
     def open_file_dialog(self):
         """파일 탐색기 열기 및 이미지 추가"""
@@ -164,7 +178,8 @@ class AddFaceDialog(QDialog):
         print("진행 시작")
 
         for idx, file_path in enumerate(image_files):
-            if self.current_person.face_name:
+            print(self.current_person)
+            if not self.current_person.face_name is None:
                 print("인코딩 시작")
                 if register_person(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
                     pixmap = QPixmap(file_path)
@@ -179,9 +194,6 @@ class AddFaceDialog(QDialog):
                     print("인코딩 실패")
                 else:
                     print(f"이미지 등록 실패: {file_path}")
-
-
-
 
     
     def update_image_list(self):
