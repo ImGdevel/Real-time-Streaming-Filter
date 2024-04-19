@@ -51,7 +51,7 @@ class PersonFaceSettingController:
         
         return True
 
-    def update_person_face(self, person_name, person: Face):
+    def update_person_face(self, person_name, person: dict):
         """person_face 업데이트 메서드"""
         self.face_manager.update_person_face(person_name, person)
 

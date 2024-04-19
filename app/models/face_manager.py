@@ -39,7 +39,7 @@ class FaceManager:
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
         print("add person encoding")
         face_encoding = cv2.imread(file_path)
-        FaceFilter.register_person(face_name, [file_path])
+        FaceFilter.register_person(face_name, file_path)
 
         for face in self.face_list:
             if face.face_name == face_name:
@@ -91,16 +91,16 @@ class FaceManager:
                 return face.encoding_list
         print(f"'{person_name}이 존재하지 않습니다.'")
 
-    def update_person_face(self, person_name, person: Face):
+    def update_person_face(self, person_name, person: dict):
         """person_face 업데이트 메서드"""
         print("update person face")
+        # print(person)
         for face in self.face_list:
             if face.face_name == person_name:
-                face.face_name = person.face_name
-                face.encoding_list = person.encoding_list
-                return
-        
-        self.face_list.append(Face(person_name, person))
+                face.encoding_list = person
+        for face in self.face_list:
+            if face.face_name == person_name:
+                print(face.encoding_list)
 
 
     def update_person_name(self, last_name: str, new_name: str):
