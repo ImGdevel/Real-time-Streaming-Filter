@@ -181,7 +181,7 @@ class AddFaceDialog(QDialog):
             print(self.current_person)
             if not self.current_person.face_name is None:
                 print("인코딩 시작")
-                if register_person(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
+                if self.face_setting_processor.add_person_encoding(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
                     pixmap = QPixmap(file_path)
                     pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
                     icon = QIcon(pixmap)
@@ -189,9 +189,8 @@ class AddFaceDialog(QDialog):
                     item = QListWidgetItem()
                     item.setIcon(icon)
                     self.image_list_widget.addItem(item)
-                    self.face_setting_processor.add_person_encoding(self.current_person.face_name, file_path)
                     
-                    print("인코딩 실패")
+                    print("인코딩 성공")
                 else:
                     print(f"이미지 등록 실패: {file_path}")
 
