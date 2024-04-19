@@ -14,7 +14,7 @@ from .image_viewer import ImageViewWidget
 
 
 class AddFaceDialog(QDialog):
-    added_face = pyqtSignal(str) 
+    added_face = pyqtSignal() 
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -100,11 +100,14 @@ class AddFaceDialog(QDialog):
         """등록된 사람 선택하는 메서드"""
         self.show_window(True)
         person_info = self.face_setting_processor.get_person_face(index) # 등록된 사람 가져오기 -> Face 객체
-        self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
-        
-        # todo : 현재 선택된 사람의 정보를 바탕으로 _setup_face_registration_layout 을 업데이트해야 함
-        self.text_layout.set_title(index) #title 변경
-        #        setup_image_layout에는 이미 등록된 이미지가 리스트로 들어가도록해야함
+
+        if not person_info is None:
+            self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
+            # todo : 현재 선택된 사람의 정보를 바탕으로 _setup_face_registration_layout 을 업데이트해야 함
+            self.text_layout.set_title(index) #title 변경
+            self.update_image_list()
+        else:
+            print("사람 정보가 존재하지 않습니다.")
 
     def setup_image_layout(self):
         """이미지 업로드 레이아웃 설정 메서드"""
@@ -132,9 +135,6 @@ class AddFaceDialog(QDialog):
                 border: 3px solid white;
             }
         """)
-
-        # 이미지 리스트를 업데이트
-        self.update_image_list()
         
         # 스크롤 뷰 설정
         scroll_area = QScrollArea()
@@ -152,9 +152,11 @@ class AddFaceDialog(QDialog):
         return image_layout
     
     def add_person(self):
+        """사람 추가"""
         self.registered_person_list.add_item("defalut")
         self.face_setting_processor.add_person_face("defalut")
         self.change_current_registered_person("defalut")
+        self.added_face.emit()
         
 
     def open_file_dialog(self):
@@ -217,14 +219,15 @@ class AddFaceDialog(QDialog):
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
         self.image_list_widget.clear()  # 기존 아이템 삭제
-        
+
+        image_list = self.face_setting_processor.get_person_encodings(self.current_person.face_name)
         if self.current_person:
-            for face_id, encoding_value in self.current_person.encoding_list.items():
+            for encoding_value in image_list:
                 pixmap = QPixmap(encoding_value)  # 이미지 경로를 QPixmap으로 변환
                 pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
                 icon = QIcon(pixmap)
                 
-                item = QListWidgetItem(icon, face_id)
+                item = QListWidgetItem(icon, None)
                 self.image_list_widget.addItem(item)
 
     def change_person_name(self, new_name):
@@ -238,5 +241,7 @@ class AddFaceDialog(QDialog):
 
     def update_registered_person(self):
         """사람 등록"""
+        print(self.current_person)
         if self.current_person and self.current_person.face_name:
             self.face_setting_processor.update_person_face(self.current_person.face_name, self.current_person.encoding_list)
+            self.added_face.emit()

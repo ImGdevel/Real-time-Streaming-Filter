@@ -238,14 +238,10 @@ class FilterSettingView(QWidget):
 
     def register_face(self, person_name):
         """얼굴 등록 메서드"""
-
-        # 중복 체크
-        if self.registered_faces_list_widget.is_in_item(person_name):
+        if self.registered_faces_list_widget.is_in_item(person_name): #중복 체크
             print(f"'{person_name}' is already registered.")
             return
-        
-        # 등록
-        self.registered_faces_list_widget.add_item(person_name)
+        self.registered_faces_list_widget.add_item(person_name) # 등록
 
     def select_registered_face(self, item):
         """등록된 얼굴 선택 메서드"""
@@ -266,10 +262,9 @@ class FilterSettingView(QWidget):
             self.filter_list_widget.takeItem(index)
 
 
-    def filter_list_btn_event(self, text):
+    def filter_list_btn_event(self, filter_name):
         """Filter 버튼 클릭 이벤트 메서드"""
-        if text:
-            filter_name = text
+        if filter_name:
             self.set_current_filter(filter_name)
             print(f"Button '{filter_name}' clicked.")
 
@@ -283,8 +278,9 @@ class FilterSettingView(QWidget):
             print(f"Filter data for '{filter_name}': {filter_data}")
             self.update_registered_faces_list_widget(filter_data.face_filter)
             self.update_object_setting_list(filter_data.object_filter)
-            self.filter_name_widget.set_title(filter_name)
+            self.filter_name_widget.set_title(filter_name)      
             self.show_filter_setting_window(True)
+
         else:
             print(f"Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
@@ -325,10 +321,10 @@ class FilterSettingView(QWidget):
         dialog.exec_()
 
 
-    def update_available_faces(self, face_name):
+    def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""
-        if face_name not in self.available_faces_list_widget.get_items_text():
-            self.available_faces_list_widget.add_item(face_name)
+        self.available_faces_list_widget.update_list()
+
 
 
     def change_filter_name(self, text):

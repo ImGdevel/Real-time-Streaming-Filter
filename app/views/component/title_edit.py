@@ -40,7 +40,7 @@ class TitleEdit(QWidget):
         self.tiltle_label.setText(text)
         
     
-    def toggle_edit_mode(self):
+    def toggle_edit_mode(self,):
         """편집 모드 전환 메서드"""
         if not self.edit_mode:
             self.title_edit_button.setText("save")
@@ -64,4 +64,5 @@ class TitleEdit(QWidget):
 
             self.filter_name_line_edit.hide()
             self.tiltle_label.show() 
+
 
