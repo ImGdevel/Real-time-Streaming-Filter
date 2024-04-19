@@ -28,11 +28,15 @@ class FaceManager:
         """person_face 추가 메서드"""
         print("add person face")
         names = []
+        max_face_id = -1
         for face in self.face_list:
             names.append(face.face_name)
+            if max_face_id < face.face_id:
+                max_face_id = face.face_id
         if new_face_name not in names:  # 동일한 이름의 필터가 없는 경우에만 추가
             print("new person append")
-            self.face_list.append(Face(new_face_name)) 
+            max_face_id += 1
+            self.face_list.append(Face(max_face_id, new_face_name)) 
             print(self.face_list)
 
     def add_person_encoding(self, face_name: str, file_path):
