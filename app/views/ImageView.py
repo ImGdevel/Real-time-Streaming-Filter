@@ -63,6 +63,8 @@ class ImageView(QWidget):
     
     def removeUrl(self, url):
         self.urls.remove(url)
+        if self.filtered_image:
+            self.filtered_image.remove(url.toLocalFile())
 
     def addItemFileView(self, urls):
         add_urls = list()
@@ -79,10 +81,23 @@ class ImageView(QWidget):
     def changeImage(self, url):
         file_path = url.toLocalFile()
         self.dropbox_widget.setExampleView(file_path)
+        if self.filtered_image:
+            print("in")
+            self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
 
     def Incoding(self):
-        if self.urls:
-            self.filtered_image = self.filter_image_processor.filtering_images(self.urls)
+        url_list = self.UrlListConverter(self.urls)
+        if url_list:
+            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
+            print(self.filtered_image)
+    
+    def UrlListConverter(self, urls):
+        origin_urls =list()
+        if urls:
+            for url in urls:
+                origin_urls.append(url.toLocalFile())
+        
+        return origin_urls
         
 
 
