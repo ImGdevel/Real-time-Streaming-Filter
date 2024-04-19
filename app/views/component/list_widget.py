@@ -22,7 +22,7 @@ class ListWidget(QListWidget):
         item.setSizeHint(button.sizeHint())
         button.clicked.connect(self.emit_button_clicked)
 
-    def get_item_text(self, index):
+    def get_item_text(self, index: int):
         """아이템 인덱스를 통해 위젯 내의 버튼의 텍스트를 반환하는 메서드"""
         item = self.item(index)
         if item:
@@ -30,6 +30,13 @@ class ListWidget(QListWidget):
             if isinstance(widget, QPushButton):
                 return widget.text()
         return None
+    
+    def is_in_item(self, index: str):
+        """현재 아이템 리스트에 있는지 확인"""
+        for i in range(self.count()):
+            if self.get_item_text(i) == index:
+                return True
+        return False
 
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""

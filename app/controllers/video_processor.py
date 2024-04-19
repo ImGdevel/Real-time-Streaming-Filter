@@ -17,6 +17,12 @@ class VideoProcessor(QThread):
         self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))  # FPS 값 가져오기
         self.is_playing = True
         self.filtering = Filtering()
+        self.filter_manager = FilterManager()
+        self.current_filter = None
+
+    def set_video(video_path):
+
+        pass
 
     def run(self):
         '''비디오 재생 스레드의 메인 루프'''
@@ -31,8 +37,6 @@ class VideoProcessor(QThread):
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
                 
         self.cap.release()
-
-
 
 
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
@@ -87,3 +91,8 @@ class VideoProcessor(QThread):
                 filtered_cap.set(cv2.CAP_PROP_POS_FRAMES, 0) 
                 
         filtered_cap.release()
+
+    def set_filter(self, filter):
+        """필터 설정"""
+        self.current_filter = self.filter_manager.get_filter(filter)
+        print("현제 적용 필터 :",  self.current_filter)

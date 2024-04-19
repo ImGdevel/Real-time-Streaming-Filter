@@ -4,3 +4,4 @@ from .filter_manager import FilterManager
 from .face_manager import FaceManager
 from .face_info import Face
 from .FaceFilter import recognize_face, register_person
+from .path_manager import PathManager

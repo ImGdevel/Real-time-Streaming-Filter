@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
-from models import Filtering, PathManager
+from models import Filtering, PathManager, FilterManager
 from models.ModelManager import ModelManager
 import os
 from datetime import datetime
@@ -14,6 +14,8 @@ class ImageProcessor(QThread):
         super().__init__()
         self.filtering = Filtering()
         self.path_manager = PathManager()
+        self.filter_manager = FilterManager()
+        self.current_filter = None
 
     #원본 사진을 받아서 임시로 이미지 처리
     def filtering_images(self, image_paths):
@@ -77,5 +79,9 @@ class ImageProcessor(QThread):
             # print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1
 
+    def set_filter(self, filter):
+        """필터 설정"""
+        self.current_filter = self.filter_manager.get_filter(filter)
+        print("현제 적용 필터 :",  self.current_filter)
 
             

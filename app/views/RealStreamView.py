@@ -24,8 +24,8 @@ class RealStreamView(QWidget):
 
         self.setLayout(self.layout)
 
-        self.video_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
-        self.video_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
+        self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
+        self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
 
@@ -115,7 +115,7 @@ class RealStreamView(QWidget):
         filter_list_layout = QVBoxLayout()
 
         filter_list_wedget = FilterListWidget()
-        filter_list_wedget.set_items_event(self.on_filter_button_event)
+        filter_list_wedget.set_items_event(self.set_filter_option)
         filter_list_layout.addWidget(filter_list_wedget)
 
         return filter_list_layout
@@ -132,7 +132,6 @@ class RealStreamView(QWidget):
         self.bottom_widget = QWidget()  # 하단 위젯
         self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         
-
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
@@ -145,26 +144,22 @@ class RealStreamView(QWidget):
     def toggle_webcam(self):
         '''웹캠 토글 메서드'''
         if self.play_pause_button.isChecked():
-            if not self.video_processor.isRunning():
-                self.video_processor.start()
+            if not self.streaming_processor.isRunning():
+                self.streaming_processor.start()
                 self.play_pause_button.setText("Stop\nWebcam")
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
-            if self.video_processor.isRunning():
-                self.video_processor.stop()
+            if self.streaming_processor.isRunning():
+                self.streaming_processor.stop()
                 self.play_pause_button.setText("Start\nWebcam")
                 self.timer.stop()
 
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
-        if self.video_processor.isRunning():
-            self.video_processor.stop()
+        if self.streaming_processor.isRunning():
+            self.streaming_processor.stop()
             self.play_pause_button.setText("Start Webcam")
             self.timer.stop()
-
-    def on_filter_button_event(self, index):
-        self.video_processor.set_filter(index)
-        pass
     
     def open_new_window(self):
         '''새창 메서드'''
@@ -183,19 +178,24 @@ class RealStreamView(QWidget):
 
     def apply_flip(self):
         '''좌우반전 필터 적용 메서드'''
-        self.video_processor.flip_horizontal()
+        self.streaming_processor.flip_horizontal()
         # 좌우반전 필터 적용 로직 추가
+        pass
+
+    def set_filter_option(self, index):
+        '''필터 옵션 선택'''
+        self.streaming_processor.set_filter(index)
         pass
 
     def apply_mosaic(self):
         '''모자이크 필터 적용 메서드'''
         if self.mosaic_button.isChecked():
             # 모자이크 활성화
-            self.video_processor.mosaic_active = True
+            self.streaming_processor.mosaic_active = True
             self.mosaic_button.setText("Disable Mosaic")
         else:
             # 모자이크 비활성화
-            self.video_processor.mosaic_active = False
+            self.streaming_processor.mosaic_active = False
             self.mosaic_button.setText("Toggle Mosaic")
         # 모자이크 필터 적용 로직 추가
         pass
@@ -209,7 +209,7 @@ class RealStreamView(QWidget):
 
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
-        self.video_processor.stop()
+        self.streaming_processor.stop()
         self.timer.stop()
 
     
