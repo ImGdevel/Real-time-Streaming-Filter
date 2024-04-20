@@ -28,7 +28,7 @@ class ImageProcessor(QThread):
             blur_ratio = 50
 
             boxesList = self.filtering.filtering(image)
-            processed_image = self.filtering.blur(blur_ratio, image, boxesList)
+            processed_image = self.filtering.blur(image, boxesList)
             
 
             
