@@ -95,8 +95,10 @@ class VideoProcessor(QThread):
     def download_video(self):
         """필터링 된 비디오를 다운합니다."""
         # todo : output_video_path를 다운로드 경로로 이동
+        
         self.output_video_path = self.path_manager.load_download_path()
         shutil.move(self.temp_video_path, self.output_video_path)
+        print("move video to : " + self.output_video_path)
 
         pass
         

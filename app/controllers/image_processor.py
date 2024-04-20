@@ -70,6 +70,7 @@ class ImageProcessor(QThread):
     def create_filtered_image(self, QImage_list):
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         download_directory = self.path_manager.load_download_path()
+        print("down images to : " + self.output_video_path)
         sequence_number = 1
         for qimage in QImage_list:
             img = self.QImage_to_cv2(qimage)

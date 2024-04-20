@@ -150,7 +150,7 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
     else:
         person_faces = {}
 
-    
+
     
     face_features = extract_face_features(image_path)
     if face_features is not None:
@@ -183,18 +183,19 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
     recognized_face = "unknown"
     min_distance = float('inf')
     tolerance_used = None
-
+    print("===============known_faces==================")
+    print(known_faces)
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            print("==========distance==========")
-            print(distance)
+            #print("==========distance==========")
+            #print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    print(recognized_face, ":::::")
-    print(tolerance_used)
+    #print(recognized_face, ":::::")
+    #print(tolerance_used)
 
     return recognized_face, tolerance_used
 
@@ -267,7 +268,8 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
         except_faces.update(find_person_data(person, known_faces))
     #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
     person_name, tolerance = recognize_face(except_faces, face_encoding)
-    print("||||" + person_name + "||||")
+    print("===============except_faces==================")
+    print(except_faces)
     if person_name == "unknown":
         return False
     else:
