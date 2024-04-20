@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
 from PyQt5.QtCore import pyqtSignal
+from utils import Style
 
 class MenuBar(QWidget):
 
@@ -28,5 +29,6 @@ class MenuBar(QWidget):
 
     def addMenuButton(self, name, number):
         self.button = QPushButton(name)
+        self.button.setStyleSheet(Style.menu_button_style)
         self.button.clicked.connect(lambda: self.page_changed.emit(number)) 
         self.layout.addWidget(self.button)
