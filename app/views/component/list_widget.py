@@ -68,6 +68,7 @@ class AvailableFacesListWidget(ListWidget):
 
     def update_list(self):
         self.clear()
+        print("필터 업데이트!")
         for people in self.face_setting_processor.get_person_faces():
             self.add_item(people.face_name)
 
