@@ -6,9 +6,10 @@ from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, 
 from controllers import ImageProcessor
 
 class ImageView(QWidget):
-
+    
     count = int
     urls = list()
+    filtered_image = dict()
 
     def __init__(self, parent = None):
 
@@ -21,6 +22,7 @@ class ImageView(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
         self.count = 0
+        self.filter_image_processor = ImageProcessor()
         # 전체 레이아웃 설정
         self.layout = QVBoxLayout()
 
@@ -41,10 +43,12 @@ class ImageView(QWidget):
         self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
-        
+        self.file_view_widget.drop_signal.connect(self.addItemFileView)
+        self.file_view_widget.image_change.connect(self.changeImage)
+
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.Download)
+        self.setting_widget.incoding_button.clicked.connect(self.Incoding)
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
@@ -68,6 +72,8 @@ class ImageView(QWidget):
     
     def removeUrl(self, url):
         self.urls.remove(url)
+        if self.filtered_image:
+            del self.filtered_image[url.toLocalFile()]
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
@@ -86,8 +92,27 @@ class ImageView(QWidget):
             self.dropbox_widget.setExampleView(file_path)
             self.file_view_widget.addNewFile(add_urls)
 
-    def Download(self):
-        print("download")
+    def changeImage(self, url):
+        file_path = url.toLocalFile()
+        self.dropbox_widget.setExampleView(file_path)
+        if self.filtered_image:
+            print("in")
+            self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
+
+    def Incoding(self):
+        url_list = self.UrlListConverter(self.urls)
+        if url_list:
+            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
+            print(self.filtered_image)
+    
+    def UrlListConverter(self, urls):
+        origin_urls =list()
+        if urls:
+            for url in urls:
+                origin_urls.append(url.toLocalFile())
+        
+        return origin_urls
+        
 
 
 

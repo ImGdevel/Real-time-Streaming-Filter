@@ -102,7 +102,7 @@ class VideoView(QWidget):
     def initSettingWidget(self):
         '''설정 위젯 초기화'''
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.inCoding)
+        self.setting_widget.incoding_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
         self.setting_widget.setMaximumWidth(240)
         # 설정 위젯에 버튼 추가

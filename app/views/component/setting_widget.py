@@ -12,9 +12,9 @@ class SettingWidget(QWidget):
 
     def initUI(self):
         self.layout = QVBoxLayout()
-        self.download_button = QPushButton("Download")
+        self.incoding_button = QPushButton("Incoding")
         
-        self.layout.addWidget(self.download_button)
+        self.layout.addWidget(self.incoding_button)
         self.setLayout(self.layout)
 
     def addSettingButton(self, button):
