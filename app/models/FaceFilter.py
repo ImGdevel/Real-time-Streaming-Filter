@@ -150,14 +150,16 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
     else:
         person_faces = {}
 
-    
+
     
     face_features = extract_face_features(image_path)
     if face_features is not None:
         max_face_number = find_max_face_number(person_name, person_faces) + 1
         face_code = person_name + "_" + str(max_face_number)
         person_faces[face_code] = face_features           
-
+        
+        print("register FaceFilter :", face_code)
+        
         with open(known_faces_path, 'wb') as f:
             pickle.dump(person_faces, f)
 
@@ -267,7 +269,7 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
         except_faces.update(find_person_data(person, known_faces))
     #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
     person_name, tolerance = recognize_face(except_faces, face_encoding)
-    print("||||" + person_name + "||||")
+
     if person_name == "unknown":
         return False
     else:

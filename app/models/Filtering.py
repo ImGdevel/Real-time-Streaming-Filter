@@ -1,6 +1,7 @@
 from models.ObjectDetect import ObjectDetect
 from models.FaceFilter import *
 from models.ModelManager import ModelManager
+from models.face_manager import FaceManager
 from models.filter_info import Filter
 import cv2
 
@@ -23,7 +24,8 @@ class Filtering:
         """
         self.object = ObjectDetect()
         self.modelManager = ModelManager()
-        
+        self.faceManager = FaceManager()
+
     def filtering(self, img, filter_info = Filter("test")):
         """
         감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
@@ -36,20 +38,26 @@ class Filtering:
         Returns:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
-
+        if filter_info in None:
+            filter_info = Filter("test")
         results = []
+        known_faces_id = []
+        for name in filter_info.face_filter:
+            known_faces_id.append(self.faceManager.get_person_face_id(name))
+
         boxesList, labelList = self.object.origin_detect(img)  # 수정: 튜플 언패킹
         for box, label in zip(boxesList, labelList):  # 수정: isFace를 is_face로 변경
-            if filter_info.face_filter_on is True:   
+            if filter_info.face_filter_on is True:
                 if label == "Human face":
                     print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-
-                    if is_known_person(filter_info.face_filter, face_encode):
+                    
+                    
+                    if is_known_person(known_faces_id, face_encode):
                         continue
                     else :
                         results.append(box)
-                        continue    
+                        continue
             if label in filter_info.object_filter:
                 results.append(box)
 

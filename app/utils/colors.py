@@ -15,6 +15,10 @@ class Colors:
     # Button Colots Sheet
     btnTextColor01 = '#ffffff'
 
-    btnColor01 = ''
-    btnColor02 = '#333333'
+    buttonColor_01_base = '#212121'
+    buttonColor_01_hover = '#111111'
+    buttonColor_01_select = '#111111'
+
+    # 테두리색
+    borderColor01 = '#111111'
 

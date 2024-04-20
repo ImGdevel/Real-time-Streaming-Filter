@@ -82,6 +82,12 @@ class FaceManager:
                 return face
         print(f"'{person_name}이 존재하지 않습니다.'")
 
+    def get_person_face_id(self, person_name):
+        """person_face_id를 가져오게 하기"""
+        for face in self.face_list:
+            if face.face_name == person_name:
+                return face.face_id
+
     def get_person_encoding(self, person_name: str, encoding_name: str) -> QImage:
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
         print("get person encoding")

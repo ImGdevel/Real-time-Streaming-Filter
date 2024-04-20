@@ -17,6 +17,7 @@ class ImageProcessor(QThread):
         self.filter_manager = FilterManager()
         self.current_filter = None
 
+
     #원본 사진을 받아서 임시로 이미지 처리
     def filtering_images(self, image_paths):
         processed_images = []
@@ -25,9 +26,10 @@ class ImageProcessor(QThread):
             image = cv2.imread(image_path)
             
             # 이미지 처리 
-            blur_ratio = 50
+            #blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+
+            boxesList = self.filtering.filtering(image, self.current_filter)
             processed_image = self.filtering.blur(image, boxesList)
             
 
@@ -90,13 +92,14 @@ class ImageProcessor(QThread):
 
     def create_filtered_image(self, QImage_list):
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        save_directory = self.path_manager.save_image_path()
+        download_directory = self.path_manager.load_download_path()
+        print("down images to : " + self.output_video_path)
         sequence_number = 1
         for qimage in QImage_list:
             img = self.QImage_to_cv2(qimage)
             # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
             image_name = f"{current_time}_{sequence_number}.jpg"
-            output_path = os.path.join(save_directory, image_name)
+            output_path = os.path.join(download_directory, image_name)
             cv2.imwrite(output_path, img)
             # print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1

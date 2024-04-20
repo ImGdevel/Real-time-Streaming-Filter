@@ -13,6 +13,9 @@ class FilterSettingController:
             filter = Filter(name=filter_name,face_filter_on=True, face_filter=[], object_filter=[])
             self.filter_manager.add_filter(filter)
             self.test.append(filter)
+            self.save_filter()
+
+        
         
     def get_filter(self, filter_name):
         """Filter를 가져오게 하기"""
@@ -32,6 +35,7 @@ class FilterSettingController:
         """Filter 삭제 메서드"""
         if self.filter_manager.get_filter(filter_name):
             self.filter_manager.remove_filter(filter_name)
+        self.save_filter()
 
     def get_filters(self):
         """Filter """

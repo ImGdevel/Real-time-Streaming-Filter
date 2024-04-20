@@ -1,7 +1,8 @@
 import cv2
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
-from models import Filtering, FilterManager
+from models import Filtering, FilterManager, PathManager
+import shutil
 
 class VideoProcessor(QThread):
     '''비디오 재생을 위한 스레드 클래스'''
@@ -13,7 +14,11 @@ class VideoProcessor(QThread):
         super().__init__()
         self.filtering = Filtering()
         self.filter_manager = FilterManager()
-        self.output_video_path = str
+        #임시 경로와 다운로드 할 경로
+        self.path_manager = PathManager()
+
+        self.temp_video_path = str
+        
         self.current_filter = None
         self.is_playing = False
         self.is_video_ready = False
@@ -59,13 +64,13 @@ class VideoProcessor(QThread):
         cap = cv2.VideoCapture(self.video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
         # 새 동영상 파일 경로 및 설정
-        output_video_path = 'output_video.mp4'
+        self.temp_video_path = 'output_video.mp4'
 
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        output_video = cv2.VideoWriter(output_video_path, fourcc, fps, (frame_width, frame_height))
+        output_video = cv2.VideoWriter(self.temp_video_path, fourcc, fps, (frame_width, frame_height))
 
         while True:
             ret, frame = cap.read()  # 프레임 읽기
@@ -73,30 +78,28 @@ class VideoProcessor(QThread):
                 break  # 동영상 끝에 도달하면 반복 중지
 
             # 여기서 프레임 처리 (예: 필터링, 객체 감지 등)
-            blur_ratio = 50
-        
-            testDict = dict()
-            obj = self.filtering.object
-            for cls in obj.orgNames:
-                testDict[obj.orgNames[cls]] = 0
-            for cls in obj.custNames:
-                testDict[obj.custNames[cls]] = 1
-            testDict["Human face"] = 1
+            #blur_ratio = 50
+    
             
-            boxesList = self.filtering.filtering(frame, testDict)
-            processed_frame = self.filtering.blur(blur_ratio, frame, boxesList)
+            boxesList = self.filtering.filtering(frame, self.current_filter)
+            processed_frame = self.filtering.blur(frame, boxesList)
             # 출력 동영상에 프레임 쓰기
             output_video.write(processed_frame)
 
         cap.release()
         cv2.destroyAllWindows()
         print("인코딩 완료")
-        self.set_video(output_video_path) # 필터된 비디오로 재생 연결
+        self.set_video(self.temp_video_path) # 필터된 비디오로 재생 연결
         self.play_video()
 
     def download_video(self):
         """필터링 된 비디오를 다운합니다."""
         # todo : output_video_path를 다운로드 경로로 이동
+        
+        self.output_video_path = self.path_manager.load_download_path()
+        shutil.move(self.temp_video_path, self.output_video_path)
+        print("move video to : " + self.output_video_path)
+
         pass
         
     def set_filter(self, filter):
