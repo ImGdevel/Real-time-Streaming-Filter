@@ -30,3 +30,5 @@ app/models/testpickle/image_1.jpg
 app/models/testpickle/image_1_processed.jpg
 app/models/testpickle/image_2_processed.jpg
 
+app/models/known_faces.pickle
+*.pickle
