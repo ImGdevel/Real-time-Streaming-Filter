@@ -13,6 +13,8 @@ class RealStreamProcessor(QThread):
         self.video_cap = cv2.VideoCapture(0)  # 웹캠 캡처 객체
         self.filtering = Filtering()
         self.filter_manager = FilterManager()
+
+        self.current_filter = None
         
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
@@ -41,16 +43,23 @@ class RealStreamProcessor(QThread):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         blur_ratio = 50
         
+        #필터 적용 ~~ = current_filter
+
         boxesList = self.filtering.filtering(frame)
         processed_frame = self.filtering.blur(frame, boxesList)
         
         return processed_frame
+    
+    def set_filter(self, filter):
+        """필터 설정"""
+        self.current_filter = self.filter_manager.get_filter(filter)
+        print("현제 적용 필터 :",  self.current_filter)
+
+    def flip_horizontal(self):
+        '''화면 좌우 뒤집기 메서드'''
+        self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
 
     def stop(self):
         '''스레드 종료 메서드'''
         self.is_running = False
         self.wait()
-
-    def flip_horizontal(self):
-        '''화면 좌우 뒤집기 메서드'''
-        self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
