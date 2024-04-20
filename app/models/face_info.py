@@ -3,6 +3,5 @@ from typing import Dict
 
 @dataclass
 class Face:
-    face_id: int
-    face_name: str
-    encoding_list: Dict[str, str] = field(default_factory=dict) # ["face_id","encoding_value(사진)"]
+    face_name : str
+    encoding_list: Dict[str, str] = field(default_factory=dict)

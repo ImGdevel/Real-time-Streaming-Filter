@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayo
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
 from utils.colors import Colors
-from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget
+from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget
 from controllers import ImageProcessor
 
 class ImageView(QWidget):
@@ -14,9 +14,6 @@ class ImageView(QWidget):
     def __init__(self, parent = None):
 
         super().__init__(parent)
-
-        self.image_processor = ImageProcessor()
-
         self.initUI()
 
     def initUI(self):
@@ -48,13 +45,7 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.Download)
-
-        self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
-
-        self.setting_widget.addWidget(self.filter_list_widget)
-
+        self.setting_widget.incoding_button.clicked.connect(self.Incoding)
         self.setting_frame.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.setting_frame.setMinimumSize(100, 150)
         self.setting_frame.setMaximumWidth(200)
@@ -74,11 +65,6 @@ class ImageView(QWidget):
         self.urls.remove(url)
         if self.filtered_image:
             self.filtered_image.remove(url.toLocalFile())
-
-    def set_filter_option(self, index):
-        """필터 옵션 선택"""
-        self.image_processor.set_filter(index)
-        pass
 
     def addItemFileView(self, urls):
         add_urls = list()

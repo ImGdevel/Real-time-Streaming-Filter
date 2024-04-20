@@ -2,7 +2,6 @@ from models.face_info import Face
 from models import FaceFilter
 import cv2
 from models.path_manager import PathManager
-from PyQt5.QtGui import QImage, QPixmap
 
 class FaceManager:
 
@@ -29,32 +28,26 @@ class FaceManager:
         """person_face 추가 메서드"""
         print("add person face")
         names = []
-        max_face_id = -1
         for face in self.face_list:
             names.append(face.face_name)
-            if max_face_id < face.face_id:
-                max_face_id = face.face_id
         if new_face_name not in names:  # 동일한 이름의 필터가 없는 경우에만 추가
             print("new person append")
-            max_face_id += 1
-            self.face_list.append(Face(max_face_id, new_face_name)) 
+            self.face_list.append(Face(new_face_name)) 
             print(self.face_list)
 
     def add_person_encoding(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
         print("add person encoding")
         face_encoding = cv2.imread(file_path)
+        FaceFilter.register_person(face_name, [file_path])
 
         for face in self.face_list:
             if face.face_name == face_name:
-                if  FaceFilter.register_person(str(face.face_id), file_path):
-                    max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
-                    max_face_number += 1
-                    face_code = face_name + "_" + str(max_face_number)
-                    face.encoding_list[face_code] = face_encoding
-                    return True
+                max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
+                max_face_number += 1
+                face_code = face_name + "_" + str(max_face_number)
+                face.encoding_list[face_code] = face_encoding
                 
-        return False
 
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
@@ -82,18 +75,12 @@ class FaceManager:
                 return face
         print(f"'{person_name}이 존재하지 않습니다.'")
 
-    def get_person_encoding(self, person_name: str, encoding_name: str) -> QImage:
+    def get_person_encoding(self, person_name: str, encoding_name: str):
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
         print("get person encoding")
         for face in self.face_list:
             if face.face_name == person_name:
-                face_encoding = face.encoding_list.get(encoding_name)
-                face_encoding = cv2.cvtColor(face_encoding, cv2.COLOR_BGR2RGB)
-                height, width, channel = face_encoding.shape
-                bytes_per_line = 3 * width
-                q_image = QImage(face_encoding.data, width, height, bytes_per_line, QImage.Format_RGB888)
-                
-                return q_image
+                return face.encoding_list.get(encoding_name)
         print(f"'{person_name}이 존재하지 않습니다.'")
         return None
     
@@ -101,26 +88,19 @@ class FaceManager:
         print("get person encodings")
         for face in self.face_list:
             if face.face_name == person_name:
-                q_images = []
-                for face_encoding in face.encoding_list.values():
-                    face_encoding = cv2.cvtColor(face_encoding, cv2.COLOR_BGR2RGB)
-                    height, width, channel = face_encoding.shape
-                    bytes_per_line = 3 * width
-                    q_image = QImage(face_encoding.data, width, height, bytes_per_line, QImage.Format_RGB888)
-                    q_images.append(q_image)
-                return q_images
+                return face.encoding_list
         print(f"'{person_name}이 존재하지 않습니다.'")
 
-    def update_person_face(self, person_name, person: dict):
+    def update_person_face(self, person_name, person: Face):
         """person_face 업데이트 메서드"""
         print("update person face")
-        print(person)
         for face in self.face_list:
             if face.face_name == person_name:
-                face.encoding_list = person
-        for face in self.face_list:
-            if face.face_name == person_name:
-                print(face.encoding_list)
+                face.face_name = person.face_name
+                face.encoding_list = person.encoding_list
+                return
+        
+        self.face_list.append(Face(person_name, person))
 
 
     def update_person_name(self, last_name: str, new_name: str):

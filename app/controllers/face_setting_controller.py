@@ -5,7 +5,6 @@ class PersonFaceSettingController:
 
     def __init__(self):
         self.face_manager = FaceManager()
-        self.load_person_faces()
     
     def save_person_face(self):
         """현재까지 변경된 사항들을 파일에 저장"""
@@ -14,15 +13,17 @@ class PersonFaceSettingController:
     def load_person_faces(self):
         """기존에 등록된 face정보를 로드함"""
         self.face_manager.load_person_faces()
-    
+
+        
     def add_person_face(self, new_face_name: str):
         """person_face 추가 메서드"""
         self.face_manager.add_person_face(new_face_name)
 
     def add_person_encoding(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        return self.face_manager.add_person_encoding(face_name, file_path)
+        self.face_manager.add_person_encoding(face_name, file_path)
                 
+
     def delete_person_face(self, person_name: str):
         """person_face 삭제 메서드"""
         self.face_manager.delete_person_face(person_name)
@@ -33,11 +34,11 @@ class PersonFaceSettingController:
         
     def get_person_face(self, person_name):
         """person_face를 가져오게 하기"""
-        return self.face_manager.get_person_face(person_name)
+        return self.face_manager.get_person_face
 
     def get_person_encoding(self, person_name: str, encoding_name: str):
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
-        return self.face_manager.get_person_encoding(person_name, encoding_name)
+        return self.face_manager.add_person_encoding(person_name, encoding_name)
     
     def get_person_encodings(self, person_name: str):
         """한 사람의 모든 인코딩 리스트 반환"""
@@ -51,10 +52,9 @@ class PersonFaceSettingController:
         
         return True
 
-    def update_person_face(self, person_name, person: dict):
+    def update_person_face(self, person_name, person: Face):
         """person_face 업데이트 메서드"""
         self.face_manager.update_person_face(person_name, person)
-        self.save_person_face()
 
     def get_person_faces(self):
         """person_face """

@@ -17,14 +17,17 @@ class FilterManager:
         self.filter_list.append(filter_obj)
 
     def update_filter(self, filtername: str, filterinfo: Filter):
-        """필터를 업데이트 합니다."""
+        print("적용 전:", self.filter_list)
         for filter in self.filter_list:
+            print("비교", filter.name, "/" , filtername, "=", filter.name == filtername)
+
             if filter.name == filtername:
+                print("가져온 데이터", filterinfo)
                 filter.name = filterinfo.name
                 filter.face_filter_on = filterinfo.face_filter_on
                 filter.face_filter = filterinfo.face_filter
                 filter.object_filter = filterinfo.object_filter
-                print("업데이트 :", self.filter_list)
+                print("적용 후:", self.filter_list)
         
 
     def remove_filter(self, filter_name: str):
@@ -44,7 +47,6 @@ class FilterManager:
         return None
 
     def get_filters(self):
-        """전체 필터 리스트를 가져옵니다."""
         return self.filter_list[:]
     
     def save_filters(self):
