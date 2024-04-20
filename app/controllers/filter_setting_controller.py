@@ -14,6 +14,8 @@ class FilterSettingController:
             self.filter_manager.add_filter(filter)
             self.test.append(filter)
             self.save_filter()
+
+        
         
     def get_filter(self, filter_name):
         """Filter를 가져오게 하기"""

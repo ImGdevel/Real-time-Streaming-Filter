@@ -48,40 +48,38 @@ class ListWidget(QListWidget):
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
         button = self.sender()
-        self.set_current_item(self.get_item_index(button.text()))
         if button:
             self.onClickItemEvent.emit(button.text())  # 시그널 발생
     
     def delete_item(self, text):
         """선택된 텍스트에 해당하는 항목 삭제"""
-        current_row = self.currentRow()
         for i in range(self.count()):
             if self.get_item_text(i) == text:
                 self.takeItem(i)
                 break
+
+        current_row = self.currentRow()
+        
         if current_row != -1:
+            print("다음",current_row)
             self.setCurrentRow(max(0, current_row - 1))
 
     def get_current_item_text(self):
         """현재 선택된 아이템의 텍스트를 반환하는 메서드"""
         current_item = self.currentItem()
+        print("현제", current_item)
         if current_item:
             widget = self.itemWidget(current_item)
             if isinstance(widget, QPushButton):
                 return widget.text()
         return None
 
-
     def get_items_text(self):
         return [self.get_item_text(i) for i in range(self.count())]
     
     def set_items_event(self, event):
-        
         self.onClickItemEvent.connect(event)
 
-    def set_current_item(self, index):
-        """현재 항목 설정"""
-        self.setCurrentRow(index)
 
     
 class RegisteredFacesListWidget(ListWidget):

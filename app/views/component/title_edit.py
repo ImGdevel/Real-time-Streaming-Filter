@@ -43,26 +43,34 @@ class TitleEdit(QWidget):
     def toggle_edit_mode(self,):
         """편집 모드 전환 메서드"""
         if not self.edit_mode:
-            self.title_edit_button.setText("save")
-            self.edit_mode = True
-
             # QLabel을 QLineEdit로 교체
-            self.filter_name_line_edit.setText(self.tiltle_label.text())
-            filter_name_layout = self.tiltle_label.parentWidget().layout()
-            filter_name_layout.replaceWidget(self.tiltle_label, self.filter_name_line_edit)
-            self.tiltle_label.hide()
-            self.filter_name_line_edit.show()
+            self.set_edit_mode()
         else:
-            self.title_edit_button.setText("edit")
-            self.edit_mode = False
-            self.onEditEvent.emit(self.filter_name_line_edit.text())
+            # 
+            self.set_show_mode()
             
-            # QLineEdit의 텍스트를 QLabel에 반영
-            self.tiltle_label.setText(self.filter_name_line_edit.text())
-            filter_name_layout = self.filter_name_line_edit.parentWidget().layout()
-            filter_name_layout.replaceWidget(self.filter_name_line_edit, self.tiltle_label)
 
-            self.filter_name_line_edit.hide()
-            self.tiltle_label.show() 
+    def set_edit_mode(self):
+        self.edit_mode = True
+        self.title_edit_button.setText("save")
+
+        self.filter_name_line_edit.setText(self.tiltle_label.text())
+        filter_name_layout = self.tiltle_label.parentWidget().layout()
+        filter_name_layout.replaceWidget(self.tiltle_label, self.filter_name_line_edit)
+        self.tiltle_label.hide()
+        self.filter_name_line_edit.show()
+
+    def set_show_mode(self):
+        self.edit_mode = False
+        self.title_edit_button.setText("edit")
+        self.onEditEvent.emit(self.filter_name_line_edit.text())
+        
+        # QLineEdit의 텍스트를 QLabel에 반영
+        self.tiltle_label.setText(self.filter_name_line_edit.text())
+        filter_name_layout = self.filter_name_line_edit.parentWidget().layout()
+        filter_name_layout.replaceWidget(self.filter_name_line_edit, self.tiltle_label)
+
+        self.filter_name_line_edit.hide()
+        self.tiltle_label.show()
 
 
