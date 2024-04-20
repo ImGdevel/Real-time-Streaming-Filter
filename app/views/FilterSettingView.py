@@ -252,14 +252,15 @@ class FilterSettingView(QWidget):
         filter_name = f"Filter {self.filter_list_widget.count() + 1}"
         self.filter_setting_processor.add_filter(filter_name)
         self.filter_list_widget.add_item(filter_name)
+        self.set_current_filter(filter_name)
 
 
     def delete_filter(self):
         """Filter 삭제 메서드"""
-        selected_items = self.filter_list_widget.selectedItems()
-        for item in selected_items:
-            index = self.filter_list_widget.row(item)
-            self.filter_list_widget.takeItem(index)
+        self.filter_setting_processor.delete_filter(self.current_filter)
+        self.filter_list_widget.delete_item(self.current_filter)
+        
+        self.set_current_filter(self.filter_list_widget.get_current_item_text())
 
 
     def filter_list_btn_event(self, filter_name):
@@ -290,7 +291,6 @@ class FilterSettingView(QWidget):
         """registered_faces_list_widget 업데이트 메서드"""
         # 기존 항목 삭제
         self.registered_faces_list_widget.clear()
-        self.registered_faces_list_widget
         
         # face_filter_data를 QListWidget에 추가
         for face_name in face_filter_data:
@@ -331,6 +331,8 @@ class FilterSettingView(QWidget):
         """필터 이름 변경"""
         filter = self.filter_setting_processor.get_filter(self.current_filter)
         self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
+        self.set_current_filter(text)
+
         
     
     def apply_filter_settings(self):
