@@ -38,7 +38,8 @@ class Filtering:
         Returns:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
-
+        if filter_info in None:
+            filter_info = Filter("test")
         results = []
         known_faces_id = []
         for name in filter_info.face_filter:
