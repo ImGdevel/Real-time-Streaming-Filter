@@ -48,7 +48,7 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.download_button.clicked.connect(self.Download)
+        self.setting_widget.incoding_button.clicked.connect(self.Incoding)
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
@@ -73,7 +73,7 @@ class ImageView(QWidget):
     def removeUrl(self, url):
         self.urls.remove(url)
         if self.filtered_image:
-            self.filtered_image.remove(url.toLocalFile())
+            del self.filtered_image[url.toLocalFile()]
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""

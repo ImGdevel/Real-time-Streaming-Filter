@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
-from models import Filtering, PathManager
+from models import Filtering, PathManager, FilterManager
 from models.ModelManager import ModelManager
 import os
 from datetime import datetime
