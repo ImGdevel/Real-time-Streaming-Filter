@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 from dataclasses import dataclass, field
+from deep_sort_realtime.deepsort_tracker import DeepSort
 
 
 class ModelManager:
@@ -9,12 +10,14 @@ class ModelManager:
     _instance = None
     orginModel: YOLO
     customModel: YOLO
+    tracker: DeepSort
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
             cls.orginModel = YOLO("models/yolov8n-oiv7.pt")
             cls.customModel = YOLO("models/bad.pt")
+            cls.tracker = DeepSort(max_age=10)
         return cls._instance
     
     def get_label(self):
