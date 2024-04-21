@@ -106,7 +106,8 @@ class ImageProcessor(QThread):
 
     def set_filter(self, filter):
         """필터 설정"""
-        self.current_filter = self.filter_manager.get_filter(filter)
-        print("현제 적용 필터 :",  self.current_filter)
+        if not filter is None:
+            self.current_filter = self.filter_manager.get_filter(filter)
+            print("현제 적용 필터 :",  self.current_filter)
 
             
