@@ -10,7 +10,6 @@ class RealStreamView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
-
         self.initUI()
 
     def initUI(self):
@@ -119,9 +118,9 @@ class RealStreamView(QWidget):
         '''하단 필터 리스트 설정 메서드'''
         filter_list_layout = QVBoxLayout()
 
-        self.filter_list_wedget = FilterListWidget()
-        self.filter_list_wedget.set_items_event(self.set_filter_option)
-        filter_list_layout.addWidget(self.filter_list_wedget)
+        self.filter_list_widget = FilterListWidget()
+        self.filter_list_widget.set_items_event(self.set_filter_option)
+        filter_list_layout.addWidget(self.filter_list_widget)
 
         return filter_list_layout
 
@@ -130,7 +129,10 @@ class RealStreamView(QWidget):
         self.video_widget = QLabel()  # 비디오 플레이어 레이블
         self.video_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_widget.setAlignment(Qt.AlignCenter)  # 정렬 설정
+
         self.layout.addWidget(self.video_widget, 0, 1)
+
+
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
