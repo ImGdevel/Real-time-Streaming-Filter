@@ -4,7 +4,6 @@ from utils import Colors, Style
 from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit
 from controllers import FilterSettingController, PersonFaceSettingController
 
-
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -43,7 +42,9 @@ class FilterSettingView(QWidget):
 
         self.setLayout(self.layout)
 
-
+    def render(self):
+        """페이지 refesh"""
+        pass
 
     # 왼쪽 레이어
     def setup_left_layer(self):
@@ -233,10 +234,10 @@ class FilterSettingView(QWidget):
 
         # 버튼의 스타일 변경
         if button_name in self.selected_filtering_object:
-            sender_button.setStyleSheet(f'background-color: {Colors.baseColor00}; color: white;')  # 선택되지 않은 상태의 스타일
+            sender_button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택되지 않은 상태의 스타일
             self.selected_filtering_object.remove(button_name)  # 리스트에서 제거
         else:
-            sender_button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택된 상태의 스타일
+            sender_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 선택된 상태의 스타일
             self.selected_filtering_object.append(button_name)  # 리스트에 추가
     
 
@@ -277,16 +278,14 @@ class FilterSettingView(QWidget):
         """Filter 버튼 클릭 이벤트 메서드"""
         if filter_name:
             self.set_current_filter(filter_name)
-            print(f"Button '{filter_name}' clicked.")
 
 
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
         self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
-        print("선택된 필터 정보:", filter_data)
+        print("[Log] : 선택된 필터 > ", filter_data)
         if filter_data:
-            print(f"Filter data for '{filter_name}': {filter_data}")
             self.filter_list_widget.update_filter_list()
             self.update_registered_faces_list_widget(filter_data.face_filter)
             self.update_object_setting_list(filter_data.object_filter)

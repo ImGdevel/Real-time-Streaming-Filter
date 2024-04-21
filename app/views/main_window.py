@@ -79,3 +79,6 @@ class MyApp(QWidget):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def render():
+        pass
