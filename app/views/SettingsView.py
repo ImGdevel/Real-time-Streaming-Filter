@@ -75,7 +75,11 @@ class SettingsView(QWidget):
         self.setWindowTitle('파일 경로 선택기')
         self.setGeometry(300, 300, 400, 200)
         self.show()
-
+    
+    def render(self):
+        """페이지 refesh"""
+        pass
+    
     def showFolderDialog(self):
         # 파일 선택 다이얼로그
         options = QFileDialog.Options()

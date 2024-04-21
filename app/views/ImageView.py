@@ -69,6 +69,11 @@ class ImageView(QWidget):
         self.layout.addWidget(self.file_view_widget)
 
         self.setLayout(self.layout)
+
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
+        pass
     
     def removeUrl(self, url):
         self.urls.remove(url)

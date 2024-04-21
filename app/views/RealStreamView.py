@@ -29,6 +29,11 @@ class RealStreamView(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
 
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
+        pass
+
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
         self.toolbar = QWidget()  # 툴바 위젯
@@ -114,9 +119,9 @@ class RealStreamView(QWidget):
         '''하단 필터 리스트 설정 메서드'''
         filter_list_layout = QVBoxLayout()
 
-        filter_list_wedget = FilterListWidget()
-        filter_list_wedget.set_items_event(self.set_filter_option)
-        filter_list_layout.addWidget(filter_list_wedget)
+        self.filter_list_wedget = FilterListWidget()
+        self.filter_list_wedget.set_items_event(self.set_filter_option)
+        filter_list_layout.addWidget(self.filter_list_wedget)
 
         return filter_list_layout
 

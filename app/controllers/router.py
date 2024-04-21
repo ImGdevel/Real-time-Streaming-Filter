@@ -11,12 +11,17 @@ class Router:
         self.contentLayout = contentLayout
 
         # 페이지 추가
-        self.add_page(HomeView())
-        self.add_page(RealStreamView())
-        self.add_page(VideoView())
-        self.add_page(ImageView())
-        self.add_page(FilterSettingView())
-        self.add_page(SettingsView())
+        self.pages = [
+            HomeView(),
+            RealStreamView(),
+            VideoView(),
+            ImageView(),
+            FilterSettingView(),
+            SettingsView()
+        ]
+        
+        for page in self.pages:
+            self.add_page(page)
 
         # Menu의 페이지 변경 시그널 연결
         menu.page_changed.connect(self.change_page)
@@ -26,3 +31,8 @@ class Router:
         
     def change_page(self, index):
         self.contentLayout.setCurrentIndex(index)
+        
+        # 선택된 페이지의 render 메서드 호출
+        selected_page = self.pages[index]
+        selected_page.render()
+        

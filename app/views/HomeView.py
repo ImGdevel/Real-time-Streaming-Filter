@@ -15,3 +15,7 @@ class HomeView(QWidget):
 
 
         self.setLayout(self.layout)
+    
+    def render(self):
+        """페이지 refesh"""
+        pass

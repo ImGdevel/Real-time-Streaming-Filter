@@ -13,7 +13,7 @@ class MenuBar(QWidget):
 
     def initUI(self):
         self.layout = QVBoxLayout()  # 수직 레이아웃 사용
-
+        self.setContentsMargins(0,10,0,10)
         # page button 추가
         self.addMenuButton("Home", 0)
         self.addMenuButton("Stream", 1)
@@ -30,5 +30,6 @@ class MenuBar(QWidget):
     def addMenuButton(self, name, number):
         self.button = QPushButton(name)
         self.button.setStyleSheet(Style.menu_button_style)
+        self.button.setFixedSize(150, 50)
         self.button.clicked.connect(lambda: self.page_changed.emit(number)) 
         self.layout.addWidget(self.button)

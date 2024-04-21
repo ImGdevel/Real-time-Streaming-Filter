@@ -38,6 +38,11 @@ class VideoView(QWidget):
         
         self.setLayout(self.layout)
 
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
+        pass
+
     def initVideoWidget(self):
         '''비디오 위젯 및 레이아웃 초기화'''
         self.video_frame = QWidget()
