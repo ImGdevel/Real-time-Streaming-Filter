@@ -44,8 +44,8 @@ class RealStreamProcessor(QThread):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
         if not self.current_filter is None:
-            boxesList = self.filtering.filtering(frame, self.current_filter)
-            processed_frame = self.filtering.blur(frame, boxesList)
+            boxesList = self.filtering.video_filtering(frame, self.current_filter)    
+            processed_frame = self.filtering.elliptical_blur(frame, boxesList)
     
         return processed_frame
     

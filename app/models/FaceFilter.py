@@ -188,15 +188,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
 
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            print("==========distance==========")
-            print(distance)
+            # print("==========distance==========")
+            # print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    print(recognized_face, ":::::")
-    print(tolerance_used)
+    # print(recognized_face, ":::::")
+    # print(tolerance_used)
 
     return recognized_face, tolerance_used
 

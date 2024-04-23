@@ -6,11 +6,8 @@ from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QList
 from PyQt5.QtCore import Qt, pyqtSignal, QSize, QCoreApplication
 from PyQt5.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
-from models import register_person, Face
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
-from .file_view_widget import FileViewWidget
-from .image_viewer import ImageViewWidget
 
 
 class AddFaceDialog(QDialog):
@@ -115,9 +112,12 @@ class AddFaceDialog(QDialog):
         
         self.image_list_widget = QListWidget()
         self.image_list_widget.setViewMode(QListWidget.IconMode)
+        self.image_list_widget.setFixedSize(350, 350)
         self.image_list_widget.setIconSize(QSize(200, 200))  # 아이콘 크기 설정
-        self.image_list_widget.setResizeMode(QListWidget.Adjust)
         self.image_list_widget.setSpacing(10)  # 아이템 간 간격 설정
+        self.image_list_widget.setFlow(QListWidget.LeftToRight)
+        self.image_list_widget.setWrapping(True)
+        self.image_list_widget.setItemAlignment(Qt.AlignCenter)
         
         # 드래그 앤 드롭 기능 추가
         self.image_list_widget.setDragEnabled(True)
@@ -129,20 +129,7 @@ class AddFaceDialog(QDialog):
         self.image_list_widget.dragMoveEvent = self.drag_move_event
         self.image_list_widget.dropEvent = self.drop_event
 
-        # 선택된 아이템의 배경색 및 테두리 설정
-        self.image_list_widget.setStyleSheet("""
-            QListWidget::item:selected {
-                border: 3px solid white;
-            }
-        """)
-        
-        # 스크롤 뷰 설정
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(self.image_list_widget)
-        scroll_area.setFixedWidth(400)
-        
-        image_layout.addWidget(scroll_area)
+        image_layout.addWidget(self.image_list_widget)
 
         # 파일 탐색기 열기 버튼 추가
         upload_image_button = QPushButton("Upload Image")
