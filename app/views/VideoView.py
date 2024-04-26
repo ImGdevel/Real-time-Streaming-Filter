@@ -12,6 +12,7 @@ class VideoView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.video_processor = VideoProcessor()
+        self.video_processor.encodingVideoPathEvent.connect(self.get_encoding_video)
         self.origin_video_path : str = None
         self.encoding_video_path : str = None
         self.initUI()
@@ -58,8 +59,6 @@ class VideoView(QWidget):
         self.setting_widget.addSettingButton(self.button3)
     
     
-
-
     def openFileDialog(self):
         '''파일 대화상자를 통해 비디오 파일 선택'''
         options = QFileDialog.Options()
@@ -83,6 +82,7 @@ class VideoView(QWidget):
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
+        print("인코딩 영상 재생!!")
         self.encoding_video_path = video_path
         self.play_video(video_path)
     

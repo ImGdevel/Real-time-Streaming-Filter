@@ -60,7 +60,7 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-                    if is_known_person(known_faces_id, face_encode):
+                    if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
                         continue
                     else :
                         results.append(box)
