@@ -47,7 +47,7 @@ class FaceManager:
 
         for face in self.face_list:
             if face.face_name == face_name:
-                if  register_person(str(face.face_id), file_path):
+                if  register_person(str(face.face_id), file_path, self.path_manager.known_faces_path()):
                     max_face_number = find_max_face_number(face_name, face.encoding_list)
                     max_face_number += 1
                     face_code = face_name + "_" + str(max_face_number)
