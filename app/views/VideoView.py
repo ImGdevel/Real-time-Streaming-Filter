@@ -1,7 +1,7 @@
 import os
 import cv2
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
@@ -72,16 +72,19 @@ class VideoView(QWidget):
         
         self.video_player_bar_layout = QHBoxLayout()
 
-        self.play_button = QPushButton("Play")
+        self.play_button = QPushButton()
+        self.play_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
         self.play_button.clicked.connect(self.playVideo)
         
         self.video_player_bar_layout.addWidget(self.play_button)
 
-        self.pause_button = QPushButton("Pause")
+        self.pause_button = QPushButton()
+        self.pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
         self.pause_button.clicked.connect(self.pauseVideo)
         self.video_player_bar_layout.addWidget(self.pause_button)
 
-        self.stop_button = QPushButton("Stop")
+        self.stop_button = QPushButton()
+        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
         self.stop_button.clicked.connect(self.stopVideo)
         self.video_player_bar_layout.addWidget(self.stop_button)
 
@@ -102,7 +105,7 @@ class VideoView(QWidget):
     def initSettingWidget(self):
         '''설정 위젯 초기화'''
         self.setting_widget = SettingWidget()
-        self.setting_widget.incoding_button.clicked.connect(self.inCoding)
+        self.setting_widget.Encoding_button.clicked.connect(self.inCoding)
         self.setting_widget.setMinimumWidth(200)
         self.setting_widget.setMaximumWidth(240)
         # 설정 위젯에 버튼 추가
