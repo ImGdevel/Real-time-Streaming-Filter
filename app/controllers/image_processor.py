@@ -1,11 +1,12 @@
-from PyQt5.QtGui import QImage
-from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
-from models import Filtering, PathManager, FilterManager
-from models.ModelManager import ModelManager
 import os
-from datetime import datetime
 import numpy as np
+from datetime import datetime
+from models import Filtering, PathManager, FilterManager
+from PySide6.QtGui import QImage
+from PySide6.QtCore import QThread
+
+
 
 # 비디오 처리 스레드
 class ImageProcessor(QThread):

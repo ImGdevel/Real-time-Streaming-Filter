@@ -1,6 +1,6 @@
 from typing import Union
-from models import Filter
-from models.path_manager import PathManager
+from .filter_info import Filter
+from .path_manager import PathManager
 
 class FilterManager:
     _instance = None

@@ -1,4 +1,4 @@
-from models import Filter, FilterManager
+from models import FilterManager, Filter
 
 class FilterSettingController:
 
