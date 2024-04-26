@@ -127,6 +127,12 @@ class ImageView(QWidget):
         progress_dialog = QProgressDialog(task_name, "Cancel", 0, 100)
         progress_dialog.setWindowTitle("Progress")
         progress_dialog.setWindowModality(Qt.WindowModal)
+        progress_dialog.setStyleSheet('''
+            background-color: #333333; /* Dark gray background */
+            color: #FFFFFF; /* White text */
+            font-size: 16px; /* Font size */
+            padding: 20px; /* Padding */
+        ''')
 
         worker_thread = WorkerThread()
         worker_thread.progress_changed.connect(progress_dialog.setValue)
