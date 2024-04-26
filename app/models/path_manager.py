@@ -15,6 +15,7 @@ class PathManager:
         self.face_file = os.path.join(self.base_path, "face_data.bin")
         self.setting_file = os.path.join(self.base_path, "setting_data.bin")
         self.filter_file = os.path.join(self.base_path, "filter_data.bin")
+        self.known_faces = os.path.join(self.base_path, "known_faces.pickle")
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
@@ -61,7 +62,11 @@ class PathManager:
             return filter_data
         else:
             return []
-        
+
+
+    def known_faces_path(self):
+        """known_faces.pickle 경로"""
+        return self.known_faces
 
     def load_download_path(self):
         """임시 download_path 불러옴 (documents)"""
@@ -77,3 +82,5 @@ class PathManager:
         else:
             print("Documents 폴더를 찾을 수 없습니다.")
             return None
+        
+

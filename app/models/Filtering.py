@@ -4,6 +4,7 @@ from .ModelManager import ModelManager
 from .replace_manager import ReplaceManager
 from .face_manager import FaceManager
 from .filter_info import Filter
+from .path_manager import PathManager
 import cv2
 import numpy as np
 
@@ -28,6 +29,8 @@ class Filtering:
         self.modelManager = ModelManager()
         self.faceManager = FaceManager()
         self.replaceManager = ReplaceManager()
+        self.pathManeger = PathManager()
+        self.face_recog_frame = 0
 
     def filtering(self, img, filter_info = Filter("test")):
         """
@@ -44,7 +47,8 @@ class Filtering:
         if filter_info is None:
             filter_info = Filter("test")
         if filter_info.face_filter_on:
-            filter_info.object_filter.append("Human face")
+            if "Human face" not in filter_info.object_filter:
+                filter_info.object_filter.append("Human face")
         self.object.set_filter_classes(filter_info.object_filter)
         results = []
         known_faces_id = []
@@ -58,7 +62,6 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-
                     if is_known_person(known_faces_id, face_encode):
                         continue
                     else :
@@ -79,7 +82,8 @@ class Filtering:
         if filter_info is None:
             filter_info = Filter("test")
         if filter_info.face_filter_on:
-            filter_info.object_filter.append("Human face")
+            if "Human face" not in filter_info.object_filter:
+                filter_info.object_filter.append("Human face")
         self.object.set_filter_classes(filter_info.object_filter)
         results = []
         known_faces_id = []
@@ -90,16 +94,21 @@ class Filtering:
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            print(result[2])
+            # print(result[2])
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
-                    face_encode = face_encoding_box(img, box)
+                    self.face_recog_frame += 1
+                    if self.face_recog_frame == 1:
+                        face_encode = face_encoding_box(img, box)
 
-                    if is_known_person(known_faces_id, face_encode):
-                        known_face_boxes.append(result[0])
-                    results.append(result)
-                    continue
+                        if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
+                            known_face_boxes.append(result[0])
+                        results.append(result)
+                        continue
+                    if self.face_recog_frame == 10:
+                        self.face_recog_frame = 0
+                    
             if result[2] in filter_info.object_filter:
                 results.append(result)
 
@@ -176,26 +185,4 @@ class Filtering:
 
             # Replace original object region with blurred object
             img[y1:y2, x1:x2] = obj
-        return img
-    
-
-    def replace_with_image (self, img, boxesList, replace_image_id):
-        for box in boxesList:
-            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            w = x2-x1
-            h = y2-y1
-
-            # 정수로 변환
-            #roi = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
-
-            # 대체 이미지를 얼굴 크기에 맞게 리사이징
-            replace_image = self.replaceManager.load_img(replace_image_id)
-            
-            replace_image = cv2.resize(replace_image, (w,h))
-
-
-
-            # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
-            img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = replace_image
-            
         return img
