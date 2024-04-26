@@ -15,7 +15,7 @@ class ModelManager:
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
-            cls.orginModel = YOLO("models/yolov8n-oiv7.pt")
+            cls.orginModel = YOLO("models/yolov8m-oiv7.pt")
             cls.customModel = YOLO("models/bad.pt")
             cls.tracker = DeepSort(max_age=10)
         return cls._instance

@@ -124,7 +124,7 @@ class Filtering:
             boxes.append(box)
         return boxes
     
-    def blur(self,img, boxesList, blurRatio = 50):
+    def blur(self,img, boxesList, blurRatio = 100):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
