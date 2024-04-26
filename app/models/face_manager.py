@@ -1,8 +1,8 @@
-from models.face_info import Face
-from models import FaceFilter
+from .face_info import Face
+from .FaceFilter import *
 import cv2
-from models.path_manager import PathManager
-from PyQt5.QtGui import QImage, QPixmap
+from .path_manager import PathManager
+from PySide6.QtGui import QImage, QPixmap
 
 class FaceManager:
 
@@ -47,8 +47,8 @@ class FaceManager:
 
         for face in self.face_list:
             if face.face_name == face_name:
-                if  FaceFilter.register_person(str(face.face_id), file_path):
-                    max_face_number = FaceFilter.find_max_face_number(face_name, face.encoding_list)
+                if  register_person(str(face.face_id), file_path):
+                    max_face_number = find_max_face_number(face_name, face.encoding_list)
                     max_face_number += 1
                     face_code = face_name + "_" + str(max_face_number)
                     face.encoding_list[face_code] = face_encoding

@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QMessageBox 
-from PyQt5.QtGui import QDesktopServices, QPixmap
-from PyQt5.QtCore import QUrl, Qt, QFileInfo, pyqtSignal
+from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout, QMessageBox 
+from PySide6.QtGui import QDesktopServices, QPixmap
+from PySide6.QtCore import QUrl, Qt, QFileInfo, Signal
 import os
 
 class ImageItem(QWidget):
-    delet_signal = pyqtSignal(QWidget)
+    delet_signal = Signal(QWidget)
     def __init__(self, file_info):
         super().__init__()
         self.file_data = file_info
@@ -44,7 +44,7 @@ class ImageItem(QWidget):
         return self.file_data
     
 class FaceImageItem(QWidget):
-    delet_signal = pyqtSignal(QWidget)
+    delet_signal = Signal(QWidget)
     def __init__(self, file_info):
         super().__init__()
         self.file_data = file_info

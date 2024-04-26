@@ -1,4 +1,4 @@
-from controllers.path_finder import *
+from models.path_finder import *
 import pickle
 
 class PathManager:

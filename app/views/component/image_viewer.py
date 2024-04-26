@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
-from PyQt5.QtCore import Qt, QUrl, pyqtSignal
-from utils.colors import Colors
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
+from PySide6.QtCore import Qt, QUrl, Signal
 from .image_item import ImageItem
 import os
 
 class ImageViewWidget(QWidget):
     count = int
-    remove_image_event = pyqtSignal(QUrl)
-    add_image_event = pyqtSignal(list)
+    remove_image_event = Signal(QUrl)
+    add_image_event = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)

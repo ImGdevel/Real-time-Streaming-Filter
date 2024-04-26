@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
-from models.ModelManager import ModelManager
+from .ModelManager import ModelManager
 import cv2
 
 class ObjectDetect:

@@ -1,13 +1,11 @@
-from PyQt5.QtGui import QImage
-from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
+from PySide6.QtGui import QImage
+from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager
-
-from models.ModelManager import ModelManager
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
-    frame_ready = pyqtSignal(QImage)
+    frame_ready = Signal(QImage)
 
     def __init__(self):
         super().__init__()

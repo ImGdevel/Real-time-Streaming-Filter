@@ -1,14 +1,13 @@
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton
+from PySide6.QtCore import Signal
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors
 
 class ListWidget(QListWidget):
-    onClickItemEvent = pyqtSignal(str)
+    onClickItemEvent = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(f'background-color: {Colors.baseColor02};')
         self.setSpacing(10)
         self.itemClicked.connect(self.emit_button_clicked)
 

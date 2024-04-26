@@ -1,14 +1,13 @@
 import cv2
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtGui import QImage, QPixmap
-from models import Filtering, FilterManager, PathManager
 import shutil
+from PySide6.QtCore import QThread, Signal
+from models import Filtering, FilterManager, PathManager
 
 class VideoProcessor(QThread):
     '''비디오 재생을 위한 스레드 클래스'''
-    video_frame = pyqtSignal(object)  # 비디오 프레임 신호
-    current_frame = pyqtSignal(int)    # 현재 프레임 신호
-    fps_signal = pyqtSignal(float)     # FPS 신호
+    video_frame = Signal(object)  # 비디오 프레임 신호
+    current_frame = Signal(int)    # 현재 프레임 신호
+    fps_signal = Signal(float)     # FPS 신호
 
     def __init__(self):
         super().__init__()

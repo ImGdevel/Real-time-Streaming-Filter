@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import QTimer, Qt
-from utils import Colors
+from PySide6.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtCore import QTimer, Qt
 
 class HomeView(QWidget):
     def __init__(self, parent = None):

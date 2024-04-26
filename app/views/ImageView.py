@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QProgressDialog, QVBoxLayout
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from utils.colors import Colors
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtCore import Qt, QThread, Signal
 from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget
 from controllers import ImageProcessor
 
 
 class WorkerThread(QThread):
-    progress_changed = pyqtSignal(int)
+    progress_changed = Signal(int)
 
     def run(self):
         for i in range(101):
@@ -49,7 +48,7 @@ class ImageView(QWidget):
         self.file_view_widget.setMinimumSize(300, 150)
         self.file_view_widget.setMaximumWidth(1000)
         self.file_view_widget.setMaximumHeight(250)
-        self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
         self.file_view_widget.drop_signal.connect(self.addItemFileView)
@@ -64,7 +63,7 @@ class ImageView(QWidget):
 
         self.setting_widget.addWidget(self.filter_list_widget)
 
-        self.setting_frame.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        
         self.setting_frame.setMinimumSize(100, 150)
         self.setting_frame.setMaximumWidth(200)
         self.setting_layout = QVBoxLayout()

@@ -1,8 +1,8 @@
-from models.ObjectDetect import ObjectDetect
-from models.FaceFilter import *
-from models.ModelManager import ModelManager
-from models.face_manager import FaceManager
-from models.filter_info import Filter
+from .ObjectDetect import ObjectDetect
+from .FaceFilter import *
+from .ModelManager import ModelManager
+from .face_manager import FaceManager
+from .filter_info import Filter
 import cv2
 import numpy as np
 

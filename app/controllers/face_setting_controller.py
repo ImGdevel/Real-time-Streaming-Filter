@@ -1,5 +1,4 @@
-from models import Face, FaceManager
-from controllers.path_finder import *
+from models import FaceManager
 
 class PersonFaceSettingController:
 

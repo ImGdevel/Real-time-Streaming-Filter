@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QFileDialog, QVBoxLayout, QPushButton, QLabel, QSlider, QHBoxLayout, QLineEdit, QComboBox
-from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtCore import QTimer, Qt
-from utils import Colors
+from PySide6.QtWidgets import QWidget, QFileDialog, QVBoxLayout, QPushButton, QLabel, QSlider, QHBoxLayout, QLineEdit, QComboBox
+from PySide6.QtGui import QImage, QPixmap, QFont
+from PySide6.QtCore import QTimer, Qt
 
 class SettingsView(QWidget):
     def __init__(self, parent = None):
