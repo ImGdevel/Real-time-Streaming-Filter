@@ -67,6 +67,7 @@ class SettingsView(QWidget):
 
         #모자이크 모양 설정 
         # 레이아웃 설정
+        self.combo_box_Widget = QWidget()
         self.combo_box_layout = QHBoxLayout()
 
         # 라벨 생성
@@ -74,19 +75,21 @@ class SettingsView(QWidget):
         self.combo_box_layout.addWidget(self.combo_box_label)
 
         # 콤보 박스 생성
-        combo_box = QComboBox(self)
-        combo_box.addItem("Circle")
-        combo_box.addItem("Squar")
-        combo_box.addItem("Polygon")
-        self.combo_box_layout.addWidget(combo_box)
+        self.combo_box = QComboBox(self)
+        self.combo_box.addItem("Circle")
+        self.combo_box.addItem("Squar")
+        self.combo_box.addItem("Polygon")
+        self.combo_box_layout.addWidget(self.combo_box)
 
         # 콤보 박스에서 선택이 변경될 때의 동작 설정 (예: 선택된 옵션 출력)
-        combo_box.currentIndexChanged.connect(self.on_combobox_changed)
+        self.combo_box.currentIndexChanged.connect(self.on_combobox_changed)
+        self.combo_box_Widget.setLayout(self.combo_box_layout)
 
         # 레이아웃 설정
         self.layout.addWidget(self.page_title)
         self.layout.addWidget(self.download_folder_setting)
         self.layout.addWidget(self.mosaic_setting)
+        self.layout.addWidget(self.combo_box_Widget)
         self.setLayout(self.layout)
 
         # 창 설정
