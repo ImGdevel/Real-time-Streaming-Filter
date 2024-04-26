@@ -1,7 +1,7 @@
 from utils import Colors
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea
-from PySide6.QtGui import QPixmap, QFont
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame
+from PySide6.QtGui import QPixmap, QFont, QIcon
+from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import FilterListWidget
 
@@ -15,7 +15,7 @@ class RealStreamView(QWidget):
     def initUI(self):
         '''GUI 초기화 메서드'''
         self.stream_main_layout = QGridLayout()  # 레이아웃 설정
-        self.stream_main_layout.setContentsMargins(20, 20, 20, 20)  # 여백 추가
+        self.stream_main_layout.setContentsMargins(0, 0, 0, 0)  # 여백 추가
 
         self.setup_toolbar()  # 툴바 설정
         self.setup_video_layer()  # 비디오 레이어 설정
@@ -35,7 +35,7 @@ class RealStreamView(QWidget):
 
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
-        self.toolbar = QWidget()  # 툴바 위젯
+        self.toolbar = QFrame()  # 툴바 위젯
         self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
         self.stream_main_layout.addWidget(self.toolbar, 0, 0)
@@ -66,8 +66,10 @@ class RealStreamView(QWidget):
         core_buttons_layout = QHBoxLayout()
 
         # 실시간 영상 재생/중지 버튼
-        self.play_pause_button = QPushButton("Start\nWebcam")
+        self.play_pause_button = QPushButton()
         self.play_pause_button.setFixedSize(70,70)
+        self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        self.play_pause_button.setIconSize(QSize(70, 70))
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
@@ -153,19 +155,19 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
-                self.play_pause_button.setText("Stop\nWebcam")
+                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+                self.play_pause_button.setIconSize(QSize(70, 70))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
             if self.streaming_processor.isRunning():
-                self.streaming_processor.stop()
-                self.play_pause_button.setText("Start\nWebcam")
+                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
+                self.play_pause_button.setIconSize(QSize(70, 70))
                 self.timer.stop()
 
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
         if self.streaming_processor.isRunning():
             self.streaming_processor.stop()
-            self.play_pause_button.setText("Start Webcam")
             self.timer.stop()
     
     def open_new_window(self):
