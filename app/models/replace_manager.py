@@ -31,6 +31,19 @@ class ReplaceManager:
 
         self.path_manager.save_replace_images(replace_images)
         
+    def register_img_path(self, img_path):
+        """대체할 이미지를 등록 (imread시 알파채널까지 반드시 받아와야함 cv2.IMREAD_UNCHANGED)"""
+        replace_images = self.path_manager.load_replace_images()
+        max_img_number = -1
+        for key in replace_images.keys():
+
+            if key > max_img_number:
+                max_img_number = key
+
+        max_img_number += 1
+        replace_images[max_img_number] = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+
+        self.path_manager.save_replace_images(replace_images)    
 
     def load_img_to_id(self, img_id):
         replace_images = self.path_manager.load_replace_images()

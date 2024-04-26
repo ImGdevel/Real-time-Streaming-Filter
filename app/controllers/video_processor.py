@@ -36,7 +36,7 @@ class VideoProcessor(QThread):
 
             
             boxesList = self.filtering.filtering(frame, self.current_filter)
-            processed_frame = self.filtering.blur(frame, boxesList)
+            processed_frame = self.filtering.replace_face_img(frame, boxesList, -1)
             # 출력 동영상에 프레임 쓰기
             output_video.write(processed_frame)
 

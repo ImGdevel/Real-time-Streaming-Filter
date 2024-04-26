@@ -194,8 +194,16 @@ class Filtering:
             h = y2-y1
 
             replace_img = self.replaceManager.load_img_to_id(replace_img_id)
+            r_h,r_w = replace_img.shape[:2]
+            if w > h:
+                aspect_ratio = w / r_w
+            else:
+                aspect_ratio = h / r_h
 
-            replace_img_resized = cv2.resize(replace_img, (w,h))
+            n_w = r_w * aspect_ratio
+            n_h = r_h * aspect_ratio
+            
+            replace_img_resized = cv2.resize(replace_img, (n_w,n_h))
 
             for c in range(0, 3):
                 # 원본 이미지에서 얼굴 영역 추출
