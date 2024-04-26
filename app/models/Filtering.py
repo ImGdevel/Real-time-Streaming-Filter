@@ -100,7 +100,7 @@ class Filtering:
                     if self.face_recog_frame == 1:
                         face_encode = face_encoding_box(img, box)
 
-                        if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
+                        if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()): 
                             known_face_boxes.append(result[0])
                         results.append(result)
                         continue
