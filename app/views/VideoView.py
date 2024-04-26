@@ -7,7 +7,7 @@ from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
 from controllers import VideoProcessor
 from views.component import FilterListWidget
-
+from views.component import VideoPlayer
 
 class VideoInfo:
     '''비디오 파일 정보를 관리하는 클래스'''
@@ -18,7 +18,6 @@ class VideoInfo:
         self.video_size = os.path.getsize(video_path)
 
 class VideoView(QWidget):
-    
     '''PySide6를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -28,79 +27,20 @@ class VideoView(QWidget):
 
     def initUI(self):
         '''UI 초기화'''
-        self.layout = QHBoxLayout()  # 원래대로 QHBoxLayout을 사용합니다.
-        
-        # 비디오 위젯 및 레이아웃 설정
+        self.layout = QHBoxLayout()
         self.initVideoWidget()
-        
-        # 설정 위젯 설정
         self.initSettingWidget()
-        
         self.setLayout(self.layout)
 
     def render(self):
         """페이지 refresh"""
         self.filter_list_widget.update_filter_list()
-        pass
 
     def initVideoWidget(self):
         '''비디오 위젯 및 레이아웃 초기화'''
-        self.video_frame = QFrame()
-        self.video_layout = QVBoxLayout()  # 가운데 정렬을 위해 QVBoxLayout을 사용합니다.
-        
-        self.video_widget = QLabel(self)
-        self.video_widget.setScaledContents(True)
-        self.video_widget.setStyleSheet("background-color: black;")
-        self.video_widget.setAcceptDrops(True)
-        self.video_widget.dragEnterEvent = self.dragEnterEvent
-        self.video_widget.dropEvent = self.dropEvent
-
-        self.video_layout.addWidget(self.video_widget)
-        
-        # 비디오 바 및 하단 레이아웃 설정
-        self.initVideoBar()
-        self.video_layout.addWidget(self.video_player_bar_frame)  # video_player_bar_layout을 video_layout에 추가
-
-        self.video_frame.setLayout(self.video_layout)
-        self.layout.addWidget(self.video_frame)  # video_frame을 부모 위젯의 레이아웃에 추가
+        self.video_Player = VideoPlayer()
+        self.layout.addWidget(self.video_Player)
         self.layout.setAlignment(Qt.AlignCenter)  # 부모 위젯의 레이아웃을 가운데 정렬로 설정
-
-    def initVideoBar(self):
-        '''비디오 바 및 하단 레이아웃 초기화'''
-        self.video_player_bar_frame = QFrame()
-        self.video_player_bar_frame.setFixedHeight(50)
-        
-        self.video_player_bar_layout = QHBoxLayout()
-
-        self.play_button = QPushButton()
-        self.play_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
-        self.play_button.clicked.connect(self.playVideo)
-        
-        self.video_player_bar_layout.addWidget(self.play_button)
-
-        self.pause_button = QPushButton()
-        self.pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
-        self.pause_button.clicked.connect(self.pauseVideo)
-        self.video_player_bar_layout.addWidget(self.pause_button)
-
-        self.stop_button = QPushButton()
-        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
-        self.stop_button.clicked.connect(self.stopVideo)
-        self.video_player_bar_layout.addWidget(self.stop_button)
-
-        self.video_bar = QSlider(Qt.Horizontal)
-        self.video_bar.setEnabled(False)
-        self.video_bar.sliderMoved.connect(self.changeVideoPosition)
-        self.video_bar.sliderPressed.connect(self.pauseVideo)
-        self.video_player_bar_layout.addWidget(self.video_bar)
-
-        self.current_time_label = QLabel("00:00:00")
-        self.video_player_bar_layout.addWidget(self.current_time_label)
-
-        self.fps_label = QLabel("FPS: --")
-        self.video_player_bar_layout.addWidget(self.fps_label)
-        
-        self.video_player_bar_frame.setLayout(self.video_player_bar_layout)
 
     def initSettingWidget(self):
         '''설정 위젯 초기화'''
@@ -123,16 +63,21 @@ class VideoView(QWidget):
         self.button1.clicked.connect(self.button1Act)
         self.button2 = QPushButton("Test - download")
         self.button2.clicked.connect(self.button2Act)
+        self.button3 = QPushButton("Test - VideoUpload")
+        self.button3.clicked.connect(self.button3Act)
 
         self.setting_widget.addWidget(self.filter_list_widget)
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
+        self.setting_widget.addSettingButton(self.button3)
+    
+    def button3Act(self):
+        self.openFileDialog()
         
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
         self.video_processor.set_filter(index)
-        pass
 
 
     def openFileDialog(self):
@@ -140,7 +85,8 @@ class VideoView(QWidget):
         options = QFileDialog.Options()
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
-            self.loadVideo(filePath)
+            self.video_Player.set_video(filePath)
+            self.video_Player.start_video()
 
 
     def updateVideoFrame(self, frame):
@@ -198,7 +144,6 @@ class VideoView(QWidget):
         if files:
             file_path = files[0]  # 첫 번째 파일만 가져옴
             self.loadVideo(file_path)
-            self.video_widget.setAcceptDrops(False)  # 드롭 이벤트를 해제
 
 
     def loadVideo(self, file_path):
@@ -209,22 +154,7 @@ class VideoView(QWidget):
         self.video_processor.video_frame.connect(self.updateVideoFrame)
         self.video_processor.current_frame.connect(self.updateVideoBar)
         self.video_processor.fps_signal.connect(self.updateFPSLabel)  # FPS 신호 연결
-        self.video_bar.setEnabled(True)
         self.video_processor.start()
-
-
-    def changeVideoPosition(self, value):
-        '''비디오 재생 위치 변경'''
-        if hasattr(self, 'video_processor') and self.video_processor.is_video_ready:
-            total_frames = self.video_processor.video_frame_count
-            target_frame = int(value / 100 * total_frames)
-            self.video_processor.cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
-
-
-    def playVideo(self):
-        '''비디오 재생'''
-        self.video_processor.play_video()
-        self.video_bar.setValue(0)  # 슬라이더 값도 초기화
 
 
     def pauseVideo(self):
@@ -260,3 +190,4 @@ class VideoView(QWidget):
     
     def button2Act(self):
         self.video_processor.download_video()
+        
