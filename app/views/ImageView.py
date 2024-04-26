@@ -1,9 +1,18 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QProgressDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from utils.colors import Colors
 from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget
 from controllers import ImageProcessor
+
+
+class WorkerThread(QThread):
+    progress_changed = pyqtSignal(int)
+
+    def run(self):
+        for i in range(101):
+            self.progress_changed.emit(i)
+            self.msleep(100)
 
 class ImageView(QWidget):
     
@@ -48,7 +57,7 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.incoding_button.clicked.connect(self.Incoding)
+        self.setting_widget.incoding_button.clicked.connect(self.Encoding)
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
@@ -104,9 +113,10 @@ class ImageView(QWidget):
             print("in")
             self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
 
-    def Incoding(self):
+    def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
         if url_list:
+            self.show_progress_dialog("Encoding")
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
             print(self.filtered_image)
     
@@ -118,7 +128,23 @@ class ImageView(QWidget):
         
         return origin_urls
         
+    def show_progress_dialog(self, task_name):
+        progress_dialog = QProgressDialog(task_name, "Cancel", 0, 100)
+        progress_dialog.setWindowTitle("Progress")
+        progress_dialog.setWindowModality(Qt.WindowModal)
+        progress_dialog.setStyleSheet('''
+            background-color: #333333; /* Dark gray background */
+            color: #FFFFFF; /* White text */
+            font-size: 16px; /* Font size */
+            padding: 20px; /* Padding */
+        ''')
 
+        worker_thread = WorkerThread()
+        worker_thread.progress_changed.connect(progress_dialog.setValue)
+        worker_thread.start()
+
+        progress_dialog.exec_()
+        worker_thread.quit()
 
 
 

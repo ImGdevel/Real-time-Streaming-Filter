@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QFileDialog, QVBoxLayout, QPushButton, QLabel, QSlider, QHBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QWidget, QFileDialog, QVBoxLayout, QPushButton, QLabel, QSlider, QHBoxLayout, QLineEdit, QComboBox
 from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import QTimer, Qt
 from utils import Colors
@@ -65,10 +65,33 @@ class SettingsView(QWidget):
         self.mosaic_setting_layer.addWidget(self.mosaic_degree_widget)
         self.mosaic_setting.setLayout(self.mosaic_setting_layer)
 
+        #모자이크 모양 설정 
+        # 레이아웃 설정
+        self.combo_box_Widget = QWidget()
+        self.combo_box_layout = QHBoxLayout()
+
+        # 라벨 생성
+        self.combo_box_label = QLabel("Select an option:")
+        self.combo_box_label.setFont(nfont)
+        self.combo_box_layout.addWidget(self.combo_box_label)
+
+        # 콤보 박스 생성
+        self.combo_box = QComboBox(self)
+        self.combo_box.addItem("Circle")
+        self.combo_box.addItem("Squar")
+        self.combo_box.addItem("Polygon")
+        self.combo_box.setFont(nfont)
+        self.combo_box_layout.addWidget(self.combo_box)
+
+        # 콤보 박스에서 선택이 변경될 때의 동작 설정 (예: 선택된 옵션 출력)
+        self.combo_box.currentIndexChanged.connect(self.on_combobox_changed)
+        self.combo_box_Widget.setLayout(self.combo_box_layout)
+
         # 레이아웃 설정
         self.layout.addWidget(self.page_title)
         self.layout.addWidget(self.download_folder_setting)
         self.layout.addWidget(self.mosaic_setting)
+        self.layout.addWidget(self.combo_box_Widget)
         self.setLayout(self.layout)
 
         # 창 설정
@@ -90,3 +113,7 @@ class SettingsView(QWidget):
 
     def onSlide(self, value):
         self.mosaic_degree_count.setText(f'값: {value}')
+
+    def on_combobox_changed(self, index):
+        selected_option = self.sender().currentText()
+        print("Selected option:", selected_option)
