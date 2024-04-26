@@ -42,7 +42,8 @@ class Filtering:
         if filter_info is None:
             filter_info = Filter("test")
         if filter_info.face_filter_on:
-            filter_info.object_filter.append("Human face")
+            if "Human face" not in filter_info.object_filter:
+                filter_info.object_filter.append("Human face")
         self.object.set_filter_classes(filter_info.object_filter)
         results = []
         known_faces_id = []
@@ -175,3 +176,7 @@ class Filtering:
             # Replace original object region with blurred object
             img[y1:y2, x1:x2] = obj
         return img
+    
+    def tracking_id_init(self):
+        """object tracking으로 추적하고 있던 id 초기화"""
+        self.object.init_exclude_id()
