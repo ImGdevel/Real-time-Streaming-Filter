@@ -9,9 +9,10 @@ class Colors:
     textColor01 = '#ffffff'
     
     baseColor00 = '#000000'
-    baseColor01 = '#212121'
-    baseColor02 = '#2a2a2a'
+    baseColor01 = 'rgb(23, 26, 30)'
     
+    baseColor02 = '#2a2a2a'
+    baseColor04 = 'rgb(33, 37, 43)'
     # Button Colots Sheet
     btnTextColor01 = '#ffffff'
 
