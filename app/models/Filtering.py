@@ -59,16 +59,12 @@ class Filtering:
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
-                    if self.face_recog_frame == 0:
-                        face_encode = face_encoding_box(img, box)
-                        self.face_recog_frame += 1
-                        if self.face_recog_frame == 10:
-                            self.face_recog_frame = 0
-                        if is_known_person(known_faces_id, face_encode):
-                            continue
-                        else :
-                            results.append(box)
-                            continue
+                    face_encode = face_encoding_box(img, box)
+                    if is_known_person(known_faces_id, face_encode):
+                        continue
+                    else :
+                        results.append(box)
+                        continue
             if result[2] in filter_info.object_filter:
                 results.append(box)
 
@@ -100,12 +96,17 @@ class Filtering:
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
-                    face_encode = face_encoding_box(img, box)
+                    self.face_recog_frame += 1
+                    if self.face_recog_frame == 1:
+                        face_encode = face_encoding_box(img, box)
 
-                    if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
-                        known_face_boxes.append(result[0])
-                    results.append(result)
-                    continue
+                        if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
+                            known_face_boxes.append(result[0])
+                        results.append(result)
+                        continue
+                    if self.face_recog_frame == 10:
+                        self.face_recog_frame = 0
+                    
             if result[2] in filter_info.object_filter:
                 results.append(result)
 
