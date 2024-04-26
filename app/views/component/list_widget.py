@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton
 from PySide6.QtCore import Signal
 from controllers import FilterSettingController, PersonFaceSettingController
-from utils import Colors
+from utils import Colors, Style
 
 class ListWidget(QListWidget):
     onClickItemEvent = Signal(str)
@@ -13,7 +13,6 @@ class ListWidget(QListWidget):
 
     def add_item(self, item_name):
         button = QPushButton(item_name)
-        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
         button.setFixedSize(155, 40)
         item = QListWidgetItem()
         self.addItem(item)

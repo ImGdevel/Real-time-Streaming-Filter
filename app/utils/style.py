@@ -11,6 +11,8 @@ class Style:
     }}
     
     """
+    
+    
 
     menu_button_style = f"""
     QPushButton {{
