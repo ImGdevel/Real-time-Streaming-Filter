@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt, QTimer
 from utils import Colors
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea
+from PySide6.QtGui import QPixmap, QFont
+from PySide6.QtCore import Qt, QTimer
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import FilterListWidget
 
@@ -14,14 +14,14 @@ class RealStreamView(QWidget):
 
     def initUI(self):
         '''GUI 초기화 메서드'''
-        self.layout = QGridLayout()  # 레이아웃 설정
-        self.layout.setContentsMargins(20, 20, 20, 20)  # 여백 추가
+        self.stream_main_layout = QGridLayout()  # 레이아웃 설정
+        self.stream_main_layout.setContentsMargins(20, 20, 20, 20)  # 여백 추가
 
         self.setup_toolbar()  # 툴바 설정
         self.setup_video_layer()  # 비디오 레이어 설정
         self.setup_bottom_layer()  # 하단 레이어 설정
 
-        self.setLayout(self.layout)
+        self.setLayout(self.stream_main_layout)
 
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
@@ -38,7 +38,7 @@ class RealStreamView(QWidget):
         self.toolbar = QWidget()  # 툴바 위젯
         self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
-        self.layout.addWidget(self.toolbar, 0, 0)
+        self.stream_main_layout.addWidget(self.toolbar, 0, 0)
 
         # 툴바 레이아웃 설정
         toolbar_layout = QVBoxLayout()
@@ -130,7 +130,7 @@ class RealStreamView(QWidget):
         self.video_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_widget.setAlignment(Qt.AlignCenter)  # 정렬 설정
 
-        self.layout.addWidget(self.video_widget, 0, 1)
+        self.stream_main_layout.addWidget(self.video_widget, 0, 1)
 
 
 
@@ -144,7 +144,7 @@ class RealStreamView(QWidget):
         bottom_layout.setSpacing(10)
 
         self.bottom_widget.setLayout(bottom_layout)
-        self.layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
+        self.stream_main_layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
 
 
     # method

@@ -1,17 +1,17 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
-from PyQt5.QtCore import Qt, QUrl, pyqtSignal, QMimeDatabase
-from PyQt5.QtGui import QDragEnterEvent
 from utils.colors import Colors
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
+from PySide6.QtCore import Qt, QUrl, Signal, QMimeDatabase
+from PySide6.QtGui import QDragEnterEvent
 from .image_item import ImageItem
 import os
 from urllib.parse import urlparse
 
 class FileViewWidget(QWidget):
-    drop_signal = pyqtSignal(list)
+    drop_signal = Signal(list)
     count = int
-    remove_file = pyqtSignal(QUrl)
-    image_change = pyqtSignal(QUrl)
-    add_file = pyqtSignal(list)
+    remove_file = Signal(QUrl)
+    image_change = Signal(QUrl)
+    add_file = Signal(list)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()

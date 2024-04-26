@@ -1,7 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout, QListWidget
-from PyQt5.QtGui import QImage, QPixmap
-from utils import Colors
-
+from PySide6.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout, QListWidget
+from PySide6.QtGui import QImage, QPixmap
 
 
 class SettingWidget(QWidget):

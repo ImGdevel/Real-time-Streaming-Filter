@@ -1,9 +1,9 @@
 import os
 import cv2
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QUrl
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtCore import Qt, QThread, QUrl
+from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
 from controllers import VideoProcessor
 from views.component import FilterListWidget
@@ -19,7 +19,7 @@ class VideoInfo:
 
 class VideoView(QWidget):
     
-    '''PyQt5를 이용한 비디오 재생 화면 구성 클래스'''
+    '''PySide6를 이용한 비디오 재생 화면 구성 클래스'''
     def __init__(self, parent=None):
         super().__init__(parent)
         self.video_processor = VideoProcessor()

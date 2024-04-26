@@ -1,17 +1,17 @@
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget,
     QLineEdit, QLabel, QFileDialog, QScrollArea, QWidget
 )
-from PyQt5.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
-from PyQt5.QtCore import Qt, pyqtSignal, QSize, QCoreApplication
-from PyQt5.QtGui import QPixmap, QIcon
+from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
+from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
+from PySide6.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 
 
 class AddFaceDialog(QDialog):
-    added_face = pyqtSignal() 
+    added_face = Signal() 
     
     def __init__(self, parent=None):
         super().__init__(parent)

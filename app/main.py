@@ -51,10 +51,10 @@ class MainWindow(QMainWindow):
         widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SET PAGE
-        #widgets.streaming_layout.addWidget(StramingView())
-        #widgets.video_layout.addWidget(VideoView())
-        #widgets.image_layout.addWidget(ImageView())
-        #widgets.filter_setting_layout.addWidget(FilterSettingView())
+        widgets.streaming_layout.addWidget(StramingView())
+        widgets.video_layout.addWidget(VideoView())
+        widgets.image_layout.addWidget(ImageView())
+        widgets.filter_setting_layout.addWidget(FilterSettingView())
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)

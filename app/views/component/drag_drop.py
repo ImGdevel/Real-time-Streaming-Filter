@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QLabel, QHBoxLayout
-from PyQt5.QtCore import Qt, QMimeDatabase, pyqtSignal
-from PyQt5.QtGui import QPixmap, QDragEnterEvent, QImage
-from utils import Colors
+from PySide6.QtWidgets import QLabel, QHBoxLayout
+from PySide6.QtCore import Qt, QMimeDatabase, Signal
+from PySide6.QtGui import QPixmap, QDragEnterEvent, QImage
 from urllib.parse import urlparse
 
 
 class DragDropLabel(QLabel):
 
-    drop_signal = pyqtSignal(list)
+    drop_signal = Signal(list)
 
     def __init__(self, parent = None):
         super().__init__(parent)

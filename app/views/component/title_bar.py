@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
-from PyQt5.QtCore import Qt, QPoint
 from utils import Colors
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
+from PySide6.QtCore import Qt, QPoint
 
 class TitleBar(QWidget):
 
@@ -27,8 +27,8 @@ class TitleBar(QWidget):
 
         # 버튼 설정 및 스타일 적용
         btn_size = 35
-        self.btn_close = self.createButton("x", self.btn_close_clicked, btn_size, Colors.cancelBtnColor)
-        self.btn_min = self.createButton("-", self.btn_min_clicked, btn_size, Colors.titleBarBackgroundColor)
+        self.btn_close = self.createButton("x", self.btn_close_clicked, btn_size)
+        self.btn_min = self.createButton("-", self.btn_min_clicked, btn_size)
 
         # 레이아웃에 위젯 추가
         self.layout.addWidget(self.title)
@@ -56,7 +56,6 @@ class TitleBar(QWidget):
         button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {bg_color};
-                color: {Colors.btnTextColor01};
                 font-size: 18px;
                 border: none;
             }}
