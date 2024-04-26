@@ -2,11 +2,12 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QSlider, QFrame, QHBoxLayout, QLabel
 from PySide6.QtMultimedia import QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtCore import QUrl, Qt
-from PySide6.QtGui import QIcon
-
+from PySide6.QtGui import QIcon, QDragEnterEvent, QDropEvent
+from PySide6.QtCore import QUrl, Qt, Signal
 
 class VideoPlayer(QWidget):
+    setPlayVideo = Signal(str)
+    
     def __init__(self):
         super().__init__()
 
@@ -15,7 +16,13 @@ class VideoPlayer(QWidget):
         self.media_player = QMediaPlayer()
         self.video_widget = QVideoWidget()        
         self.video_widget.setMaximumHeight(768)
+        self.setAcceptDrops(True)
+        self.video_widget.dragEnterEvent = self.dragEnterEvent
+        self.video_widget.dropEvent = self.dropEvent
+        
+        
         self.video_player_bar_layout = QHBoxLayout()
+        
 
         self.start_button = QPushButton()
         self.start_button.setFixedSize(30,30)
@@ -53,14 +60,9 @@ class VideoPlayer(QWidget):
         layout.addLayout(self.video_player_bar_layout)
         self.setLayout(layout)
         
-        self.setAcceptDrops(True)
-
-
+    
     def set_video(self, video_path):
         self.media_player.setSource(QUrl.fromLocalFile(video_path))
-        
-    def set_current_time(self, time):
-        self.current_time_label.setText(time)
 
     def start_video(self):
         self.media_player.play()
@@ -76,21 +78,36 @@ class VideoPlayer(QWidget):
 
     def position_changed(self, position):
         self.slider.setValue(position)
+        self.set_current_time(position)
 
     def duration_changed(self, duration):
         self.slider.setRange(0, duration)
         
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        '''드래그 이벤트 오버라이드'''
         if event.mimeData().hasUrls():
-            event.acceptProposedAction()
+            event.accept()
+        else:
+            event.ignore()
 
-    def dropEvent(self, event):
-        print("드랍!")
-        for url in event.mimeData().urls():
-            path = url.toLocalFile()
-            if path.endswith(('.mp4', '.avi', '.mov')):
-                self.set_video(path)
-                break
+    def dropEvent(self, event: QDropEvent):
+        '''드롭 이벤트 오버라이드'''
+        files = [url.toLocalFile() for url in event.mimeData().urls()]
+        if files:
+            file_path = files[0]  # 첫 번째 파일만 가져옴
+            self.set_video(file_path)
+            self.setPlayVideo.emit(file_path)
+            
+    def set_current_time(self, time):
+        time_text = self.convertTime(time)
+        self.current_time_label.setText(time_text)
+            
+    def convertTime(self, time):
+        '''프레임 번호를 시간 형식으로 변환'''
+        seconds = time / 1000
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
         
 
 
