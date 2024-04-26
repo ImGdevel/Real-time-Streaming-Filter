@@ -1,6 +1,6 @@
 import os
 import cv2
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
@@ -28,7 +28,7 @@ class VideoView(QWidget):
 
     def initUI(self):
         '''UI 초기화'''
-        self.layout = QHBoxLayout()
+        self.layout = QHBoxLayout()  # 원래대로 QHBoxLayout을 사용합니다.
         
         # 비디오 위젯 및 레이아웃 설정
         self.initVideoWidget()
@@ -39,70 +39,65 @@ class VideoView(QWidget):
         self.setLayout(self.layout)
 
     def render(self):
-        """페이지 refesh"""
+        """페이지 refresh"""
         self.filter_list_widget.update_filter_list()
         pass
 
     def initVideoWidget(self):
         '''비디오 위젯 및 레이아웃 초기화'''
-        self.video_frame = QWidget()
-        self.video_layout = QVBoxLayout()
-
-        # 비디오 위젯 추가
+        self.video_frame = QFrame()
+        self.video_layout = QVBoxLayout()  # 가운데 정렬을 위해 QVBoxLayout을 사용합니다.
+        
         self.video_widget = QLabel(self)
-        self.video_widget.setScaledContents(True)  # 이미지 비율 유지
+        self.video_widget.setScaledContents(True)
         self.video_widget.setStyleSheet("background-color: black;")
-        self.video_widget.setAcceptDrops(True)  # 드롭 이벤트를 허용
+        self.video_widget.setAcceptDrops(True)
         self.video_widget.dragEnterEvent = self.dragEnterEvent
         self.video_widget.dropEvent = self.dropEvent
-        self.video_widget.mousePressEvent = self.openFileDialogOnClick
 
-        # QLabel을 수직 레이아웃에 추가
         self.video_layout.addWidget(self.video_widget)
-
-        # 파일 탐색기 버튼
-        self.file_dialog_button = QPushButton("Choose Video File")
-        self.file_dialog_button.clicked.connect(self.openFileDialog)
-        self.video_layout.addWidget(self.file_dialog_button)
-
+        
         # 비디오 바 및 하단 레이아웃 설정
         self.initVideoBar()
-        self.video_layout.addLayout(self.bottom_layout)
+        self.video_layout.addWidget(self.video_player_bar_frame)  # video_player_bar_layout을 video_layout에 추가
 
         self.video_frame.setLayout(self.video_layout)
-        self.layout.addWidget(self.video_frame)
+        self.layout.addWidget(self.video_frame)  # video_frame을 부모 위젯의 레이아웃에 추가
+        self.layout.setAlignment(Qt.AlignCenter)  # 부모 위젯의 레이아웃을 가운데 정렬로 설정
 
     def initVideoBar(self):
         '''비디오 바 및 하단 레이아웃 초기화'''
-        self.bottom_layout = QHBoxLayout()
+        self.video_player_bar_frame = QFrame()
+        self.video_player_bar_frame.setFixedHeight(50)
+        
+        self.video_player_bar_layout = QHBoxLayout()
 
-        # 재생, 일시정지, 정지 버튼
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.playVideo)
-        self.bottom_layout.addWidget(self.play_button)
+        
+        self.video_player_bar_layout.addWidget(self.play_button)
 
         self.pause_button = QPushButton("Pause")
         self.pause_button.clicked.connect(self.pauseVideo)
-        self.bottom_layout.addWidget(self.pause_button)
+        self.video_player_bar_layout.addWidget(self.pause_button)
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.clicked.connect(self.stopVideo)
-        self.bottom_layout.addWidget(self.stop_button)
+        self.video_player_bar_layout.addWidget(self.stop_button)
 
-        # 비디오 바
         self.video_bar = QSlider(Qt.Horizontal)
         self.video_bar.setEnabled(False)
         self.video_bar.sliderMoved.connect(self.changeVideoPosition)
         self.video_bar.sliderPressed.connect(self.pauseVideo)
-        self.bottom_layout.addWidget(self.video_bar)
+        self.video_player_bar_layout.addWidget(self.video_bar)
 
-        # 현재 재생 시간 표시 레이블
         self.current_time_label = QLabel("00:00:00")
-        self.bottom_layout.addWidget(self.current_time_label)
+        self.video_player_bar_layout.addWidget(self.current_time_label)
 
-        # FPS 값을 표시하는 레이블
         self.fps_label = QLabel("FPS: --")
-        self.bottom_layout.addWidget(self.fps_label)
+        self.video_player_bar_layout.addWidget(self.fps_label)
+        
+        self.video_player_bar_frame.setLayout(self.video_player_bar_layout)
 
     def initSettingWidget(self):
         '''설정 위젯 초기화'''
@@ -200,6 +195,7 @@ class VideoView(QWidget):
         if files:
             file_path = files[0]  # 첫 번째 파일만 가져옴
             self.loadVideo(file_path)
+            self.video_widget.setAcceptDrops(False)  # 드롭 이벤트를 해제
 
 
     def loadVideo(self, file_path):
