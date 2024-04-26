@@ -10,9 +10,10 @@ class SettingWidget(QWidget):
 
     def initUI(self):
         self.layout = QVBoxLayout()
-        self.incoding_button = QPushButton("Incoding")
-        
-        self.layout.addWidget(self.incoding_button)
+        self.Encoding_button = QPushButton("Encoding")
+        self.Encoding_button.setMaximumHeight(50)
+
+        self.layout.addWidget(self.Encoding_button)
         self.setLayout(self.layout)
 
     def addSettingButton(self, button):

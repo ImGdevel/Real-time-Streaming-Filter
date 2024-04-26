@@ -15,7 +15,7 @@ class DragDropLabel(QLabel):
     def initUI(self):
         self.layout = QHBoxLayout()
         self.dropbox_lable = QLabel()
-        self.dropbox_lable.setFixedSize(378, 412)
+        self.dropbox_lable.setFixedSize(378, 360)
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
         self.dropbox_lable.setText('Original')
         self.dropbox_lable.setStyleSheet('''
@@ -27,7 +27,7 @@ class DragDropLabel(QLabel):
         ''')
 
         self.filtered_label = QLabel()
-        self.filtered_label.setFixedSize(378, 412)
+        self.filtered_label.setFixedSize(378, 360)
         self.filtered_label.setAlignment(Qt.AlignCenter)
         self.filtered_label.setText('Filtered')
         self.filtered_label.setStyleSheet('''
