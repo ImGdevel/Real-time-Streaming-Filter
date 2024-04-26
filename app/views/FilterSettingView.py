@@ -50,7 +50,7 @@ class FilterSettingView(QWidget):
     def setup_left_layer(self):
         """왼쪽 레이어 설정 메서드"""
         left_layout = QVBoxLayout()
-        left_layout.setContentsMargins(10, 10, 10, 10)
+        left_layout.setContentsMargins(0, 0, 0, 0)
 
         # Filter List 라벨
         filter_label = QLabel("Filter List")
