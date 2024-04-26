@@ -1,3 +1,4 @@
+from utils import Style
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton
 from PySide6.QtCore import Signal
 
@@ -28,6 +29,7 @@ class MenuBar(QWidget):
 
     def addMenuButton(self, name, number):
         self.button = QPushButton(name)
+        self.button.setStyleSheet(Style.menu_button_style)
         self.button.setFixedSize(150, 50)
         self.button.clicked.connect(lambda: self.page_changed.emit(number)) 
         self.layout.addWidget(self.button)

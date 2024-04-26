@@ -1,3 +1,4 @@
+from utils import Colors
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtCore import Qt, QTimer
@@ -35,6 +36,7 @@ class RealStreamView(QWidget):
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
         self.toolbar = QWidget()  # 툴바 위젯
+        self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
         self.stream_main_layout.addWidget(self.toolbar, 0, 0)
 
@@ -125,6 +127,7 @@ class RealStreamView(QWidget):
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
         self.video_widget = QLabel()  # 비디오 플레이어 레이블
+        self.video_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_widget.setAlignment(Qt.AlignCenter)  # 정렬 설정
 
         self.stream_main_layout.addWidget(self.video_widget, 0, 1)
@@ -134,6 +137,7 @@ class RealStreamView(QWidget):
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
         self.bottom_widget = QWidget()  # 하단 위젯
+        self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()

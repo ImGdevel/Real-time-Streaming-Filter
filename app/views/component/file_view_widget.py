@@ -1,3 +1,4 @@
+from utils.colors import Colors
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
 from PySide6.QtCore import Qt, QUrl, Signal, QMimeDatabase
 from PySide6.QtGui import QDragEnterEvent
@@ -38,6 +39,7 @@ class FileViewWidget(QWidget):
         #button
         self.button_widget = QWidget()
         self.button_widget.setFixedSize(300, 50)
+        self.button_widget.setStyleSheet(f'background-color: {Colors.baseColor02};')
         self.button_layout = QHBoxLayout()
 
         self.remove_button = QPushButton("Del = OFF")
