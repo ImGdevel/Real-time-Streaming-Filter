@@ -2,7 +2,7 @@ from utils import Colors, Style
 from PySide6.QtWidgets import QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
-from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit
+from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget
 from controllers import FilterSettingController, PersonFaceSettingController
 
 class FilterSettingView(QWidget):
@@ -23,13 +23,12 @@ class FilterSettingView(QWidget):
 
         # 왼쪽 레이어 - Filter List
         self.left_layout = self.setup_left_layer()
-        self.left_widget = QFrame()
+        self.left_widget = ShadowWidget()
         self.left_widget.setLayout(self.left_layout)
-        self.left_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 왼쪽 레이어 배경색 설정
 
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
-        self.right_widget = QFrame()
+        self.right_widget = ShadowWidget()
         self.right_widget.setLayout(self.right_layout)
         self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 오른쪽 레이어 배경색 설정
 

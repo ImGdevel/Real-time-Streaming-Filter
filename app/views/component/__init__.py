@@ -8,3 +8,4 @@ from .file_view_widget import FileViewWidget
 from .list_widget import ListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, FilterListWidget
 from .title_edit import TitleEdit
 from .video_player import VideoPlayer
+from .shadow_frame import ShadowWidget

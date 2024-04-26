@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor, FilterSettingController
-from views.component import FilterListWidget
+from views.component import FilterListWidget, ShadowWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -35,7 +35,7 @@ class RealStreamView(QWidget):
 
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
-        self.toolbar = QFrame()  # 툴바 위젯
+        self.toolbar = ShadowWidget()  # 툴바 위젯
         self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
         self.stream_main_layout.addWidget(self.toolbar, 0, 0)
@@ -138,7 +138,7 @@ class RealStreamView(QWidget):
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
-        self.bottom_widget = QWidget()  # 하단 위젯
+        self.bottom_widget = ShadowWidget()  # 하단 위젯
         self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         
         # 버튼 레이아웃 설정
