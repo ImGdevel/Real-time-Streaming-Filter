@@ -28,6 +28,7 @@ class Filtering:
         self.modelManager = ModelManager()
         self.faceManager = FaceManager()
         self.pathManeger = PathManager()
+        self.face_recog_frame = 0
 
     def filtering(self, img, filter_info = Filter("test")):
         """
@@ -58,13 +59,16 @@ class Filtering:
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
-                    face_encode = face_encoding_box(img, box)
-
-                    if is_known_person(known_faces_id, face_encode):
-                        continue
-                    else :
-                        results.append(box)
-                        continue
+                    if self.face_recog_frame == 0:
+                        face_encode = face_encoding_box(img, box)
+                        self.face_recog_frame += 1
+                        if self.face_recog_frame == 10:
+                            self.face_recog_frame = 0
+                        if is_known_person(known_faces_id, face_encode):
+                            continue
+                        else :
+                            results.append(box)
+                            continue
             if result[2] in filter_info.object_filter:
                 results.append(box)
 
@@ -80,7 +84,8 @@ class Filtering:
         if filter_info is None:
             filter_info = Filter("test")
         if filter_info.face_filter_on:
-            filter_info.object_filter.append("Human face")
+            if "Human face" not in filter_info.object_filter:
+                filter_info.object_filter.append("Human face")
         self.object.set_filter_classes(filter_info.object_filter)
         results = []
         known_faces_id = []
@@ -91,7 +96,7 @@ class Filtering:
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            print(result[2])
+            # print(result[2])
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
