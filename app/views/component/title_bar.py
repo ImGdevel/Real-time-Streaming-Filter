@@ -1,4 +1,3 @@
-from utils import Colors
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 from PySide6.QtCore import Qt, QPoint
 
@@ -20,8 +19,6 @@ class TitleBar(QWidget):
         self.title.setFixedHeight(40)
         self.title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
         self.title.setStyleSheet(f"""
-            background-color: {Colors.titleBarBackgroundColor};
-            color: {Colors.textColor01};
             padding: 10px;
         """)
 
@@ -48,7 +45,6 @@ class TitleBar(QWidget):
         button.setFixedSize(size, size)
         button.setStyleSheet(f"""
             background-color: {bg_color};
-            color: {Colors.btnTextColor01};
             font-size: 18px;
             border: none;
         """)
