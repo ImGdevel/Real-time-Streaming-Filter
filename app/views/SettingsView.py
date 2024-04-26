@@ -72,6 +72,7 @@ class SettingsView(QWidget):
 
         # 라벨 생성
         self.combo_box_label = QLabel("Select an option:")
+        self.combo_box_label.setFont(nfont)
         self.combo_box_layout.addWidget(self.combo_box_label)
 
         # 콤보 박스 생성
@@ -79,6 +80,7 @@ class SettingsView(QWidget):
         self.combo_box.addItem("Circle")
         self.combo_box.addItem("Squar")
         self.combo_box.addItem("Polygon")
+        self.combo_box.setFont(nfont)
         self.combo_box_layout.addWidget(self.combo_box)
 
         # 콤보 박스에서 선택이 변경될 때의 동작 설정 (예: 선택된 옵션 출력)
