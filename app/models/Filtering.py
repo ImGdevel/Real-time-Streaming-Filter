@@ -188,9 +188,24 @@ class Filtering:
         return img
     
     def replace_face_img(self, img, boxesList, replace_img_id):
-        # for box in boxesList:
-        #     x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-        #     w = x2-x1
-        #     h = y2-y1
+        for box in boxesList:
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+            w = x2-x1
+            h = y2-y1
 
-        #     replace_img = self.replaceManager.load_img_
+            replace_img = self.replaceManager.load_img_to_id(replace_img_id)
+
+            replace_img_resized = cv2.resize(replace_img, (w,h))
+
+            for c in range(0, 3):
+                # 원본 이미지에서 얼굴 영역 추출
+                roi = img[y1:y2, x1:x2, c]
+                # 스티커 이미지 합성
+                img[y1:y2, x1:x2, c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
+            
+            # 알파채널 없이
+            # for c in range(0, 3):
+            #     # 스티커 이미지 합성
+            #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
+
+        return img
