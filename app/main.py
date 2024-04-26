@@ -51,10 +51,14 @@ class MainWindow(QMainWindow):
         widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SET PAGE
-        widgets.streaming_layout.addWidget(StramingView())
-        widgets.video_layout.addWidget(VideoView())
-        widgets.image_layout.addWidget(ImageView())
-        widgets.filter_setting_layout.addWidget(FilterSettingView())
+        self.streaming_widget = StramingView()
+        self.video_widget = VideoView()
+        self.image_widget = ImageView()
+        self.filter_setting_widget = FilterSettingView()
+        widgets.streaming_layout.addWidget(self.streaming_widget)
+        widgets.video_layout.addWidget(self.video_widget)
+        widgets.image_layout.addWidget(self.image_widget)
+        widgets.filter_setting_layout.addWidget(self.filter_setting_widget)
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
@@ -106,30 +110,35 @@ class MainWindow(QMainWindow):
         # SHOW WIDGETS PAGE
         if btnName == "btn_widgets":
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
+            
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
         # SHOW STREAMING PAGE
         if btnName == "btn_streaming":
             widgets.stackedWidget.setCurrentWidget(widgets.streaming_page) 
+            self.streaming_widget.render()
             UIFunctions.resetStyle(self, btnName) 
-            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
         # SHOW VIDEO PAGE
         if btnName == u"btn_video":
             widgets.stackedWidget.setCurrentWidget(widgets.video_page)
+            self.video_widget.render()
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         # SHOW IMAGE PAGE
         if btnName == "btn_image":
             widgets.stackedWidget.setCurrentWidget(widgets.image_page)
+            self.image_widget.render()
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         # SHOW FILTER SETTING PAGE
         if btnName == "btn_filter_setting":
-            widgets.stackedWidget.setCurrentWidget(widgets.filter_setting_page) 
+            widgets.stackedWidget.setCurrentWidget(widgets.filter_setting_page)
+            self.filter_setting_widget.render()
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
