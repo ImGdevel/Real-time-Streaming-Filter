@@ -3,6 +3,7 @@ from .FaceFilter import *
 from .ModelManager import ModelManager
 from .face_manager import FaceManager
 from .filter_info import Filter
+from .path_manager import PathManager
 import cv2
 import numpy as np
 
@@ -26,6 +27,7 @@ class Filtering:
         self.object = ObjectDetect()
         self.modelManager = ModelManager()
         self.faceManager = FaceManager()
+        self.pathManeger = PathManager()
 
     def filtering(self, img, filter_info = Filter("test")):
         """
@@ -95,7 +97,7 @@ class Filtering:
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
 
-                    if is_known_person(known_faces_id, face_encode):
+                    if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
                         known_face_boxes.append(result[0])
                     results.append(result)
                     continue

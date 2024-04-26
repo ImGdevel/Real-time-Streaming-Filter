@@ -3,6 +3,7 @@ import dlib
 import face_recognition
 import re
 import pickle
+
 #사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
 known_faces = {}
 
