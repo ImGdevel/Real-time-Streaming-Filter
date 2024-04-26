@@ -1,6 +1,7 @@
 from utils import Colors, Style
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
+from PySide6.QtWidgets import QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QIcon
 from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit
 from controllers import FilterSettingController, PersonFaceSettingController
 
@@ -22,22 +23,22 @@ class FilterSettingView(QWidget):
 
         # 왼쪽 레이어 - Filter List
         self.left_layout = self.setup_left_layer()
-        self.left_widget = QWidget()
+        self.left_widget = QFrame()
         self.left_widget.setLayout(self.left_layout)
         self.left_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 왼쪽 레이어 배경색 설정
 
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
-        self.right_widget = QWidget()
+        self.right_widget = QFrame()
         self.right_widget.setLayout(self.right_layout)
         self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 오른쪽 레이어 배경색 설정
 
-        self.empty_widget = QWidget()        
+        self.empty_widget = QFrame()
 
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
-        self.layout.addWidget(self.left_widget, 1)  # 왼쪽 레이어 크기를 1로 설정
-        self.layout.addWidget(self.right_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
-        self.layout.addWidget(self.empty_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
+        self.layout.addWidget(self.left_widget, 1) 
+        self.layout.addWidget(self.right_widget, 4)  
+        self.layout.addWidget(self.empty_widget, 4)  
         self.show_filter_setting_window(False)
 
         self.setLayout(self.layout)
@@ -61,16 +62,33 @@ class FilterSettingView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.filter_list_btn_event)
 
+        filter_list_button_layout = QHBoxLayout()
+
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
+        add_button.setFixedSize(50,50)
+        add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
+        filter_list_button_layout.addWidget(add_button)
+        
         delete_button = QPushButton("Delete Filter")
+        delete_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        delete_button.setFixedSize(50,50)
+        delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_filter)
+        filter_list_button_layout.addWidget(delete_button)
+
+        filter_list_button_layout.addWidget(add_button)
+        filter_list_button_layout.addSpacing(10)  # 버튼 사이 간격
+        filter_list_button_layout.addWidget(delete_button)
+
+        # 좌측 정렬을 위한 스페이싱 추가
+        filter_list_button_layout.addStretch(1)
 
         left_layout.addWidget(filter_label)
         left_layout.addWidget(self.filter_list_widget)
-        left_layout.addWidget(add_button)
-        left_layout.addWidget(delete_button)
+        left_layout.addLayout(filter_list_button_layout)
+
 
         return left_layout
 

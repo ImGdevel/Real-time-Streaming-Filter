@@ -4,6 +4,13 @@ class Style:
     #Title Bar Colors
 
     base_style01 = f'background-color: {Colors.baseColor02};'
+    
+    mini_button_style = f"""
+    QPushButton {{
+        border-radius: 5px;
+    }}
+    
+    """
 
     menu_button_style = f"""
     QPushButton {{
