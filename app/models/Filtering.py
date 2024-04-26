@@ -186,3 +186,11 @@ class Filtering:
             # Replace original object region with blurred object
             img[y1:y2, x1:x2] = obj
         return img
+    
+    def replace_face_img(self, img, boxesList, replace_img_id):
+        # for box in boxesList:
+        #     x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+        #     w = x2-x1
+        #     h = y2-y1
+
+        #     replace_img = self.replaceManager.load_img_
