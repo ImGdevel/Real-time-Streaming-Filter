@@ -36,7 +36,6 @@ class RealStreamView(QWidget):
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
         self.toolbar = ShadowWidget()  # 툴바 위젯
-        self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.toolbar.setFixedSize(300, 450)  # 크기 설정
         self.stream_main_layout.addWidget(self.toolbar, 0, 0)
 
@@ -67,9 +66,9 @@ class RealStreamView(QWidget):
 
         # 실시간 영상 재생/중지 버튼
         self.play_pause_button = QPushButton()
-        self.play_pause_button.setFixedSize(70,70)
+        self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
-        self.play_pause_button.setIconSize(QSize(70, 70))
+        self.play_pause_button.setIconSize(QSize(50, 50))
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
@@ -144,6 +143,45 @@ class RealStreamView(QWidget):
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
+        
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_01};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_02};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_03};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_04};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_05};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_06};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_07};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_08};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_X};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Y};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Z};')
+        bottom_layout.addWidget(layout_temp)
+        
+        
 
         self.bottom_widget.setLayout(bottom_layout)
         self.stream_main_layout.addWidget(self.bottom_widget, 1, 0, 1, 2)

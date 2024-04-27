@@ -43,6 +43,7 @@ class FilterSettingView(QWidget):
 
     def render(self):
         """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
         pass
 
     # 왼쪽 레이어
@@ -58,7 +59,6 @@ class FilterSettingView(QWidget):
 
         # Filter 목록
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.setMaximumWidth(200)
         self.filter_list_widget.set_items_event(self.filter_list_btn_event)
 
         filter_list_button_layout = QHBoxLayout()

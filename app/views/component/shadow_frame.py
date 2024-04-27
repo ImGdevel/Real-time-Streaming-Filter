@@ -1,11 +1,12 @@
 from PySide6.QtWidgets import QApplication, QWidget, QGraphicsDropShadowEffect, QVBoxLayout, QLabel
 from PySide6.QtGui import QColor
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QObject, Qt
 
 class ShadowWidget(QWidget):
+    
     def __init__(self):
         super().__init__()
-
+        
         # QGraphicsDropShadowEffect 생성
         shadow_effect = QGraphicsDropShadowEffect(self)
         shadow_effect.setBlurRadius(10)  # 흐림 정도 조절
