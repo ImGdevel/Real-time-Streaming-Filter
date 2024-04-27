@@ -4,6 +4,39 @@ class Style:
     #Title Bar Colors
 
     base_style01 = f'background-color: {Colors.baseColor02};'
+    
+    mini_button_style = f"""
+    QPushButton {{
+        border-radius: 5px;
+    }}
+    
+    """
+    
+    list_button_style = f"""
+    QPushButton {{
+        background-color: {Colors.base_color_06};
+        border-radius: 5px;
+        border: none;
+        text-align: center;
+        font-size: 16px;
+        margin-top: -2px;
+    }}
+
+    QPushButton:hover {{
+        background-color: {Colors.base_color_05}; 
+    }}
+
+    QPushButton:pressed {{
+        background-color: {Colors.base_color_04};
+    }}
+
+    QPushButton:focus {{
+        outline: none;
+    }}
+    
+    """
+
+    
 
     menu_button_style = f"""
     QPushButton {{

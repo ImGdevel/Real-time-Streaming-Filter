@@ -1,20 +1,28 @@
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QScrollArea, QGraphicsDropShadowEffect
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QColor
 from controllers import FilterSettingController, PersonFaceSettingController
-from utils import Colors
+from utils import Colors, Style
 
 class ListWidget(QListWidget):
     onClickItemEvent = Signal(str)
 
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setSpacing(10)
-        self.itemClicked.connect(self.emit_button_clicked)
+        super().__init__(parent) 
+        self.setSpacing(15)
+        self.setStyleSheet(f'background-color: {Colors.base_color_03};')
 
     def add_item(self, item_name):
         button = QPushButton(item_name)
-        button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
-        button.setFixedSize(155, 40)
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+        
+        shadow_effect = QGraphicsDropShadowEffect(self)
+        shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 200))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
+        button.setGraphicsEffect(shadow_effect) 
+        
         item = QListWidgetItem()
         self.addItem(item)
         self.setItemWidget(item, button)

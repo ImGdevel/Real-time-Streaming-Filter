@@ -2,31 +2,32 @@ from utils import Colors
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame
 from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt, QTimer, QSize
-from controllers import RealStreamProcessor, FilterSettingController
-from views.component import FilterListWidget
+from controllers import RealStreamProcessor
+from views.component import FilterListWidget, ShadowWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.filter_setting_processor = FilterSettingController()
+        self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
+        self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_video)
         self.initUI()
 
     def initUI(self):
         '''GUI 초기화 메서드'''
         self.stream_main_layout = QGridLayout()  # 레이아웃 설정
-        self.stream_main_layout.setContentsMargins(0, 0, 0, 0)  # 여백 추가
 
-        self.setup_toolbar()  # 툴바 설정
-        self.setup_video_layer()  # 비디오 레이어 설정
-        self.setup_bottom_layer()  # 하단 레이어 설정
+        self.setup_toolbar()
+        self.setup_video_layer()
+        self.setup_bottom_layer()
 
+        self.stream_main_layout.addWidget(self.toolbar, 0, 0)
+        self.stream_main_layout.addWidget(self.video_widget, 0, 1)
+        self.stream_main_layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
+        
         self.setLayout(self.stream_main_layout)
-
-        self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
-        self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_video)
 
     def render(self):
         """페이지 refesh"""
@@ -35,10 +36,8 @@ class RealStreamView(QWidget):
 
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
-        self.toolbar = QFrame()  # 툴바 위젯
-        self.toolbar.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.toolbar.setFixedSize(300, 450)  # 크기 설정
-        self.stream_main_layout.addWidget(self.toolbar, 0, 0)
+        self.toolbar = ShadowWidget()  # 툴바 위젯
+        self.toolbar.setMaximumSize(300, 450)  # 크기 설정
 
         # 툴바 레이아웃 설정
         toolbar_layout = QVBoxLayout()
@@ -67,9 +66,9 @@ class RealStreamView(QWidget):
 
         # 실시간 영상 재생/중지 버튼
         self.play_pause_button = QPushButton()
-        self.play_pause_button.setFixedSize(70,70)
+        self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
-        self.play_pause_button.setIconSize(QSize(70, 70))
+        self.play_pause_button.setIconSize(QSize(50, 50))
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
@@ -132,21 +131,58 @@ class RealStreamView(QWidget):
         self.video_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_widget.setAlignment(Qt.AlignCenter)  # 정렬 설정
 
-        self.stream_main_layout.addWidget(self.video_widget, 0, 1)
 
 
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
-        self.bottom_widget = QWidget()  # 하단 위젯
+        self.bottom_widget = ShadowWidget()  # 하단 위젯
         self.bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
+        
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_01};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_02};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_03};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_04};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_05};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_06};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_07};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_08};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_X};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Y};')
+        bottom_layout.addWidget(layout_temp)
+        layout_temp = QWidget()
+        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Z};')
+        bottom_layout.addWidget(layout_temp)
+        
+        
 
         self.bottom_widget.setLayout(bottom_layout)
-        self.stream_main_layout.addWidget(self.bottom_widget, 1, 0, 1, 2)
 
 
     # method

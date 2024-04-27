@@ -36,7 +36,7 @@ class ObjectDetect:
         self.originFilterClasses = []
         self.customFilterClasses = []    
         self.exclude_id = []
-        self.CONFIDENCE_THRESHOLD = 0.4
+        self.CONFIDENCE_THRESHOLD = 0.2
     
     def set_filter_classes(self, filter_classes:list):
         for key, value in self.orginNames.items():

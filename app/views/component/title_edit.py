@@ -16,12 +16,10 @@ class TitleEdit(QWidget):
         title_layout = QHBoxLayout()
         
         self.tiltle_label = QLabel(self.current_title)
-        self.tiltle_label.setStyleSheet('font-size: 24px;')
 
         self.filter_name_line_edit = QLineEdit(self.current_title)
         font_metrics = QFontMetrics(self.tiltle_label.font())
         self.filter_name_line_edit.setMinimumHeight(font_metrics.height() + 2)
-        self.filter_name_line_edit.setStyleSheet('font-size: 24px;')
 
         self.title_edit_button = QPushButton("edit")
         self.title_edit_button.setMaximumWidth(70)
