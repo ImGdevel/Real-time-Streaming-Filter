@@ -14,7 +14,7 @@ class ListWidget(QListWidget):
     def add_item(self, item_name):
         button = QPushButton(item_name)
         button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')
-        button.setFixedSize(155, 40)
+        button.setFixedSize(175, 40)
         item = QListWidgetItem()
         self.addItem(item)
         self.setItemWidget(item, button)

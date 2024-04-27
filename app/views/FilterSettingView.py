@@ -23,6 +23,7 @@ class FilterSettingView(QWidget):
         # 왼쪽 레이어 - Filter List
         self.left_layout = self.setup_left_layer()
         self.left_widget = QWidget()
+        self.left_widget.setMaximumWidth(200)
         self.left_widget.setLayout(self.left_layout)
         self.left_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 왼쪽 레이어 배경색 설정
 

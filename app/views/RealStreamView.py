@@ -74,12 +74,14 @@ class RealStreamView(QWidget):
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
         # 일시정지 버튼
-        self.stop_button = QPushButton("Stop")
+        self.stop_button = QPushButton()
+        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
         self.stop_button.setFixedSize(70,70)
         self.stop_button.clicked.connect(self.stop_webcam)
 
         # 새 창 버튼
-        self.new_window_button = QPushButton("New\nWindow")
+        self.new_window_button = QPushButton()
+        self.new_window_button.setIcon(QIcon('./resources/icons/cil-clone.png'))
         self.new_window_button.setFixedSize(70,70)
         self.new_window_button.clicked.connect(self.open_new_window)
 
