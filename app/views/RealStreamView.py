@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor
-from views.component import FilterListWidget, ShadowWidget
+from views.component import FilterListWidget, ShadowWidget, FrameWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -44,11 +44,11 @@ class RealStreamView(QWidget):
 
         # 상단 핵심 버튼 설정
         core_buttons_widget = self.setup_core_buttons()
-        toolbar_layout.addLayout(core_buttons_widget)
+        toolbar_layout.addWidget(core_buttons_widget)
 
         # 중단 설정 (웹캠 선택, 비디오 배율)
         video_options_widget = self.setup_video_options()
-        toolbar_layout.addLayout(video_options_widget)
+        toolbar_layout.addWidget(video_options_widget)
 
         # 하단 필터 리스트
         filter_list_layout = self.setup_filter_list()
@@ -62,52 +62,61 @@ class RealStreamView(QWidget):
 
     def setup_core_buttons(self):
         '''상단 핵심 버튼 설정 메서드'''
+        frame = QWidget()
+        frame.setStyleSheet(Style.frame_style)
+        
         core_buttons_layout = QHBoxLayout()
 
         # 실시간 영상 재생/중지 버튼
         self.play_pause_button = QPushButton()
         self.play_pause_button.setFixedSize(50, 50)
-        self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
-        self.play_pause_button.setIconSize(QSize(50, 50))
         self.play_pause_button.setStyleSheet(Style.mini_button_style)
+        self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
         # 일시정지 버튼
         self.stop_button = QPushButton()
+        self.stop_button.setFixedSize(50,50)
+        self.stop_button.setStyleSheet(Style.mini_button_style)
         self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
-        self.stop_button.setFixedSize(70,70)
         self.stop_button.clicked.connect(self.stop_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
+        self.new_window_button.setFixedSize(50,50)
+        self.new_window_button.setStyleSheet(Style.mini_button_style)
         self.new_window_button.setIcon(QIcon('./resources/icons/cil-clone.png'))
-        self.new_window_button.setFixedSize(70,70)
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
-        
         core_buttons_layout.addWidget(self.play_pause_button)
         core_buttons_layout.addWidget(self.stop_button)
         core_buttons_layout.addWidget(self.new_window_button)
         core_buttons_layout.setSpacing(10)  # 버튼 사이 간격 설정
-
-        return core_buttons_layout
+        
+        frame.setLayout(core_buttons_layout)
+        return frame
 
     def setup_video_options(self):
         '''중단 비디오 옵션 설정 메서드'''
+        frame = QWidget()
+        frame.setStyleSheet(Style.frame_style)
+        
         video_options_layout = QVBoxLayout()
 
         # 웹캠 선택 콤보박스
         webcam_combo_label = QLabel("Webcam:")
         self.webcam_combo = QComboBox()
+        self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.webcam_combo.addItems(["0", "1"])  # 임시 웹캠 목록
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
-
         
         # 비디오 배율 콤보박스
         aspect_ratio_combo_label = QLabel("Aspect Ratio:")
         self.aspect_ratio_combo = QComboBox()
+        self.aspect_ratio_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.aspect_ratio_combo.addItems(["16:9", "3:4", "4:3", "9:16"])
         self.aspect_ratio_combo.currentIndexChanged.connect(self.change_aspect_ratio)
 
@@ -116,7 +125,9 @@ class RealStreamView(QWidget):
         video_options_layout.addWidget(self.webcam_combo)
         video_options_layout.addWidget(aspect_ratio_combo_label)
         video_options_layout.addWidget(self.aspect_ratio_combo)
-        return video_options_layout
+        
+        frame.setLayout(video_options_layout)
+        return frame
 
     def setup_filter_list(self):
         '''필터 리스트 위젯'''
@@ -186,8 +197,6 @@ class RealStreamView(QWidget):
         layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Z};')
         bottom_layout.addWidget(layout_temp)
         
-        
-
         self.bottom_widget.setLayout(bottom_layout)
 
 
@@ -198,12 +207,10 @@ class RealStreamView(QWidget):
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
                 self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
-                self.play_pause_button.setIconSize(QSize(70, 70))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
             if self.streaming_processor.isRunning():
                 self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
-                self.play_pause_button.setIconSize(QSize(70, 70))
                 self.timer.stop()
 
     def stop_webcam(self):

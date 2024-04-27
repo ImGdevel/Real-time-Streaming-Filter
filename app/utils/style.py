@@ -6,10 +6,8 @@ class Style:
     base_style01 = f'background-color: {Colors.baseColor02};'
     
     frame_style = f"""
-    QFrame {{
         background-color: {Colors.base_color_06};
         border-radius: 5px;  
-    }}
     """
     
     
