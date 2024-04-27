@@ -193,8 +193,8 @@ class Filtering:
             w = x2-x1
             h = y2-y1
 
-            x_center = x1+x2//2
-            y_center = y1+y2//2
+            x_center = int((x1+x2)/2)
+            y_center = int((y1+y2)/2)
 
 
             replace_img = self.replaceManager.load_img_to_id(replace_img_id)
@@ -204,16 +204,34 @@ class Filtering:
             else:
                 aspect_ratio = h / r_h
 
-            n_w = r_w * aspect_ratio
-            n_h = r_h * aspect_ratio
-            
-            replace_img_resized = cv2.resize(replace_img, (n_w,n_h))
+            n_w = int(r_w * aspect_ratio)
+            n_h = int(r_h * aspect_ratio)
+            # print("n_w : ",n_w)
+            # print("n_h : ",n_h)
+
+
+            replace_img_resized = cv2.resize(replace_img, (n_w, n_h))
+            resize_x1 = x_center-int(n_w/2)
+            resize_x2 = x_center+int(n_w/2)+1
+            resize_y1 = y_center-int(n_h/2)
+            resize_y2 = y_center+int(n_h/2)+1
+            # print(replace_img_resized.shape)
+
+            # print("resize_x", resize_x1, " ", resize_x2)
+            # print("resize_y", resize_y1, " ", resize_y2)
+
+            if resize_y2-resize_y1 != n_h:
+                resize_y2 -= 1
+            if resize_x2-resize_x1 != n_w:
+                resize_x2 -= 1
 
             for c in range(0, 3):
                 # 원본 이미지에서 얼굴 영역 추출
-                roi = img[y_center-(n_h//2):y_center+(n_h//2), x_center-(n_w//2):x_center+(n_w//2), c]
+
+                roi = img[resize_y1:resize_y2, resize_x1:resize_x2, c]
+                # print(roi.shape)
                 # 스티커 이미지 합성
-                img[y_center-(n_h//2):y_center+(n_h//2), x_center-(n_w//2):x_center+(n_w//2), c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
+                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
             
             # 알파채널 없이
             # for c in range(0, 3):
