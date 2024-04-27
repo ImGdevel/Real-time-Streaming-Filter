@@ -142,12 +142,12 @@ class ImageView(QWidget):
             padding: 20px; /* Padding */
         ''')
 
-        # worker_thread = WorkerThread()
-        # worker_thread.progress_changed.connect(progress_dialog.setValue)
-        # worker_thread.start()
+        worker_thread = WorkerThread()
+        worker_thread.progress_changed.connect(progress_dialog.setValue)
+        worker_thread.start()
 
         progress_dialog.show()
-        # worker_thread.quit()
+        worker_thread.quit()
 
 
 
