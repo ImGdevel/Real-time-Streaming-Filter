@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QFontMetrics
+from utils import Colors, Style
 
 class TitleEdit(QWidget):
     onEditEvent = Signal(str)
@@ -18,8 +19,7 @@ class TitleEdit(QWidget):
         self.tiltle_label = QLabel(self.current_title)
 
         self.filter_name_line_edit = QLineEdit(self.current_title)
-        font_metrics = QFontMetrics(self.tiltle_label.font())
-        self.filter_name_line_edit.setMinimumHeight(font_metrics.height() + 2)
+        self.filter_name_line_edit.setStyleSheet(Style.line_edit_style)
 
         self.title_edit_button = QPushButton("edit")
         self.title_edit_button.setMaximumWidth(70)

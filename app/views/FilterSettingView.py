@@ -9,17 +9,18 @@ class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.current_filter = None
-        self.selected_filtering_object = [] 
         self.filter_setting_processor = FilterSettingController()
         self.face_setting_processor = PersonFaceSettingController()
         self.face_setting_processor.load_person_faces()
+        
+        self.current_filter = None
+        self.selected_filtering_object = [] 
 
         self.initUI()
 
     def initUI(self):
         # 전체 레이아웃 설정
-        self.layout = QHBoxLayout()
+        layout = QHBoxLayout()
 
         # 왼쪽 레이어 - Filter List
         self.left_layout = self.setup_left_layer()
@@ -29,28 +30,23 @@ class FilterSettingView(QWidget):
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
         self.right_widget = ShadowWidget()
+        self.right_widget.setStyleSheet(Style.frame_style)
         self.right_widget.setLayout(self.right_layout)
 
         self.empty_widget = QFrame()
 
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
-        self.layout.addWidget(self.left_widget, 1) 
-        self.layout.addWidget(self.right_widget, 4)  
-        self.layout.addWidget(self.empty_widget, 4)  
+        layout.addWidget(self.left_widget, 1) 
+        layout.addWidget(self.right_widget, 4)  
+        layout.addWidget(self.empty_widget, 4)  
         self.show_filter_setting_window(False)
 
-        self.setLayout(self.layout)
-
-    def render(self):
-        """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
-        pass
+        self.setLayout(layout)
 
     # 왼쪽 레이어
     def setup_left_layer(self):
         """왼쪽 레이어 설정 메서드"""
         left_layout = QVBoxLayout()
-        left_layout.setContentsMargins(0, 0, 0, 0)
         
         # Filter 목록
         list_frame = QWidget()
@@ -66,7 +62,6 @@ class FilterSettingView(QWidget):
         list_frame_layout.addWidget(list_label)
         list_frame_layout.addWidget(self.filter_list_widget)
         list_frame.setLayout(list_frame_layout)
-
 
         filter_list_button_layout = QHBoxLayout()
 
@@ -95,8 +90,10 @@ class FilterSettingView(QWidget):
     # 오른쪽 레이어
     def setup_right_layer(self):
         """오른쪽 레이어 설정 메서드"""
+        
+        layout = QVBoxLayout()
+        frame = QFrame()
         right_layout = QVBoxLayout()
-        right_layout.setContentsMargins(10, 10, 10, 10)  # 여백 설정
 
         # QSplitter 생성
         splitter = QSplitter(Qt.Vertical)
@@ -132,15 +129,14 @@ class FilterSettingView(QWidget):
         right_layout.addWidget(self.filter_name_widget)
         right_layout.addWidget(splitter)
         right_layout.addLayout(apply_layout)
-
-        # splitter.setSizes를 이 위치로 이동
-        def set_splitter_sizes():
-            splitter.setSizes([int(self.width() * 5 / 9), int(self.width() * 4 / 9)])
         
-        # widget이 나타난 후에 호출되도록 QTimer를 사용
-        QTimer.singleShot(0, set_splitter_sizes)
+        right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
+        right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
+        right_layout.setStretch(2, 4)  # 하단 필터 리스트 높이 비율
         
-        return right_layout
+        frame.setLayout(right_layout)
+        layout.addWidget(frame)
+        return layout
 
 
     # 얼굴 레이어
@@ -362,4 +358,10 @@ class FilterSettingView(QWidget):
         updated_filtering_object = self.selected_filtering_object
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
+        
+        
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
+        pass
         

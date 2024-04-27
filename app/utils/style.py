@@ -5,6 +5,14 @@ class Style:
 
     base_style01 = f'background-color: {Colors.baseColor02};'
     
+    frame_style = f"""
+    QFrame {{
+        background-color: {Colors.base_color_06};
+        border-radius: 5px;  
+    }}
+    """
+    
+    
     mini_button_style = f"""
     QPushButton {{
         background-color: {Colors.base_color_06};
@@ -12,6 +20,24 @@ class Style:
     }}
     
     """
+    
+    line_edit_style = f"""
+    QLineEdit {{
+        background-color: rgb(33, 37, 43);
+        border-radius: 5px;
+        border: 2px solid rgb(33, 37, 43);
+        padding-left: 10px;
+        selection-color: rgb(255, 255, 255);
+        selection-background-color: rgb(255, 121, 198);
+    }}
+    QLineEdit:hover {{
+        border: 2px solid rgb(64, 71, 88);
+    }}
+    QLineEdit:focus {{
+        border: 2px solid rgb(91, 101, 124);
+    }}
+    """
+    
     
     list_button_style = f"""
     QPushButton {{
