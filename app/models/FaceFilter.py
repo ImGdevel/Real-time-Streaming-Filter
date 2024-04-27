@@ -171,7 +171,7 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
 
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
-def recognize_face(known_faces, face_encoding, tolerance=0.1):
+def recognize_face(known_faces, face_encoding, tolerance=0.35):
     """
     얼굴을 인식하여 인식된 사람과 일치하는지 확인합니다.
     
