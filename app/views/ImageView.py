@@ -3,7 +3,7 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QThread, Signal
 from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget
 from controllers import ImageProcessor
-
+from utils import Colors
 
 class WorkerThread(QThread):
     progress_changed = Signal(int)
@@ -34,7 +34,6 @@ class ImageView(QWidget):
         self.layout = QVBoxLayout()
 
         self.top_widget = QWidget()
-        self.top_widget.setMaximumWidth(1200)
         self.top_layout = QHBoxLayout()
         self.top_layout.setSpacing(1)
 
@@ -45,7 +44,6 @@ class ImageView(QWidget):
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
         self.file_view_widget.setMinimumSize(300, 150)
-        self.file_view_widget.setMaximumWidth(1100)
         self.file_view_widget.setMaximumHeight(250)
         
         self.file_view_widget.remove_file.connect(self.removeUrl)
@@ -59,12 +57,16 @@ class ImageView(QWidget):
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
-        self.filter_list_widget.setMaximumHeight(275)
+        self.filter_list_widget.setMinimumHeight(275)
         self.setting_widget.addWidget(self.filter_list_widget)
 
+        self.download_button = QPushButton("Download")
+        self.download_button.setFixedHeight(50)
+        self.download_button.clicked.connect(self.Download)
+        self.setting_widget.addWidget(self.download_button)
         
         self.setting_frame.setMinimumSize(100, 150)
-        self.setting_frame.setMaximumWidth(215)
+        self.setting_frame.setMaximumWidth(235)
         self.setting_layout = QVBoxLayout()
         self.setting_layout.addWidget(self.setting_widget)
         self.setting_frame.setLayout(self.setting_layout)
@@ -118,6 +120,9 @@ class ImageView(QWidget):
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
             print(self.filtered_image)
     
+    def Download(self):
+        print("Download")
+
     def UrlListConverter(self, urls):
         origin_urls =list()
         if urls:
@@ -137,12 +142,12 @@ class ImageView(QWidget):
             padding: 20px; /* Padding */
         ''')
 
-        # worker_thread = WorkerThread()
-        # worker_thread.progress_changed.connect(progress_dialog.setValue)
-        # worker_thread.start()
+        worker_thread = WorkerThread()
+        worker_thread.progress_changed.connect(progress_dialog.setValue)
+        worker_thread.start()
 
         progress_dialog.show()
-        # worker_thread.quit()
+        worker_thread.quit()
 
 
 

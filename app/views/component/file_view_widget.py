@@ -41,7 +41,7 @@ class FileViewWidget(QWidget):
         self.button_widget.setFixedSize(300, 50)
         self.button_layout = QHBoxLayout()
 
-        self.remove_button = QPushButton("Del = OFF")
+        self.remove_button = QPushButton("Del")
         self.remove_button.clicked.connect(self.setRemoveMode)
         
         self.file_explorer_button = QPushButton("Search")
@@ -61,10 +61,10 @@ class FileViewWidget(QWidget):
         if self.remove_mode:
             print("off")
             self.remove_mode = False
-            self.remove_button.setText("Del = OFF")
+            self.remove_button.setStyleSheet(f"background-color:{Colors.base_color_05}")
         else :
             self.remove_mode = True
-            self.remove_button.setText("Del = ON")
+            self.remove_button.setStyleSheet(f"background-color:{Colors.buttonColor_01_select}")
             print("on")
 
     def openFileExplorer(self):
