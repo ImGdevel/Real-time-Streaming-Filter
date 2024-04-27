@@ -18,7 +18,7 @@ class Colors:
 
     buttonColor_01_base = '#212121'
     buttonColor_01_hover = '#111111'
-    buttonColor_01_select = '#111111'
+    buttonColor_01_select = '#C583F4'
     
     buttonColor_02_base = 'rgb(44, 49, 60)'
 

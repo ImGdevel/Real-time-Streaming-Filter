@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QPushButton, QLabel, QGridLayout, QListWidget
 from PySide6.QtGui import QImage, QPixmap
-
+from utils import Colors
 
 class SettingWidget(QWidget):
     def __init__(self, parent = None):
