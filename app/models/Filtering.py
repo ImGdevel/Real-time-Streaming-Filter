@@ -1,6 +1,7 @@
 from .ObjectDetect import ObjectDetect
 from .FaceFilter import *
 from .ModelManager import ModelManager
+from .replace_manager import ReplaceManager
 from .face_manager import FaceManager
 from .filter_info import Filter
 from .path_manager import PathManager
@@ -27,6 +28,7 @@ class Filtering:
         self.object = ObjectDetect()
         self.modelManager = ModelManager()
         self.faceManager = FaceManager()
+        self.replaceManager = ReplaceManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
@@ -185,6 +187,55 @@ class Filtering:
             img[y1:y2, x1:x2] = obj
         return img
     
-    def tracking_id_init(self):
-        """object tracking으로 추적하고 있던 id 초기화"""
-        self.object.init_exclude_id()
+    def replace_face_img(self, img, boxesList, replace_img_id):
+        for box in boxesList:
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+            w = x2-x1
+            h = y2-y1
+
+            x_center = int((x1+x2)/2)
+            y_center = int((y1+y2)/2)
+
+
+            replace_img = self.replaceManager.load_img_to_id(replace_img_id)
+            r_h,r_w = replace_img.shape[:2]
+            if w > h:
+                aspect_ratio = w / r_w
+            else:
+                aspect_ratio = h / r_h
+
+            n_w = int(r_w * aspect_ratio)
+            n_h = int(r_h * aspect_ratio)
+            # print("n_w : ",n_w)
+            # print("n_h : ",n_h)
+
+
+            replace_img_resized = cv2.resize(replace_img, (n_w, n_h))
+            resize_x1 = x_center-int(n_w/2)
+            resize_x2 = x_center+int(n_w/2)+1
+            resize_y1 = y_center-int(n_h/2)
+            resize_y2 = y_center+int(n_h/2)+1
+            # print(replace_img_resized.shape)
+
+            # print("resize_x", resize_x1, " ", resize_x2)
+            # print("resize_y", resize_y1, " ", resize_y2)
+
+            if resize_y2-resize_y1 != n_h:
+                resize_y2 -= 1
+            if resize_x2-resize_x1 != n_w:
+                resize_x2 -= 1
+
+            for c in range(0, 3):
+                # 원본 이미지에서 얼굴 영역 추출
+
+                roi = img[resize_y1:resize_y2, resize_x1:resize_x2, c]
+                # print(roi.shape)
+                # 스티커 이미지 합성
+                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
+            
+            # 알파채널 없이
+            # for c in range(0, 3):
+            #     # 스티커 이미지 합성
+            #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
+
+        return img
