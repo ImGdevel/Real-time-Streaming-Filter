@@ -34,7 +34,6 @@ class Colors:
     base_color_07 = 'rgb(52, 59, 72)'
     base_color_08 = 'rgb(64, 71, 88)'
     base_color_09 = 'rgb(91, 101, 124)'
-    base_color_09 = ''
     
     base_color_X = 'rgb(189, 147, 249)'
     base_color_Y = 'rgb(255, 121, 198)'

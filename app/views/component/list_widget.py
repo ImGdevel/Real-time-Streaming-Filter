@@ -1,16 +1,20 @@
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QScrollArea, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QScrollArea, QGraphicsDropShadowEffect, QWidget
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QColor
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
 
 class ListWidget(QListWidget):
+    
+
+        
     onClickItemEvent = Signal(str)
 
     def __init__(self, parent=None):
-        super().__init__(parent) 
+        super().__init__(parent)
         self.setSpacing(15)
-        self.setStyleSheet(f'background-color: {Colors.base_color_03};')
+        self.setStyleSheet(Style.list_widget_style)
+
 
     def add_item(self, item_name):
         button = QPushButton(item_name)
@@ -115,6 +119,7 @@ class FilterListWidget(ListWidget):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
         self.update_filter_list()
+
     
     def update_filter_list(self):
         self.clear()
