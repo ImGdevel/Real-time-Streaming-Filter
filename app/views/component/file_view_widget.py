@@ -61,7 +61,7 @@ class FileViewWidget(QWidget):
         if self.remove_mode:
             print("off")
             self.remove_mode = False
-            self.remove_button.setStyleSheet(f"background-color:{Colors.baseColor02}")
+            self.remove_button.setStyleSheet(f"background-color:{Colors.base_color_05}")
         else :
             self.remove_mode = True
             self.remove_button.setStyleSheet(f"background-color:{Colors.buttonColor_01_select}")

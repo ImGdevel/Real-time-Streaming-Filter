@@ -66,13 +66,14 @@ class FilterSettingView(QWidget):
         filter_list_button_layout = QHBoxLayout()
 
         # Add Filter, Delete Filter 버튼
-        add_button = QPushButton("Add")
+        add_button = QPushButton()
+        add_button.setIcon(QIcon('./resources/icons/cil-plus.png'))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
         
-        delete_button = QPushButton("Delete")
-        delete_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        delete_button = QPushButton()
+        delete_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_filter)

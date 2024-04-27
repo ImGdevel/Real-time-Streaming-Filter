@@ -42,6 +42,16 @@ class ListWidget(QListWidget):
                 return widget.text()
         return None
     
+    def get_item_widget(self, index: int):
+        """아이템 인덱스를 통해 위젯 내의 버튼을 반환하는 메서드"""
+        item = self.item(index)
+        if item:
+            widget = self.itemWidget(item)
+            if isinstance(widget, QPushButton):
+                return widget
+        return None
+
+
     def is_in_item(self, index: str):
         """현재 아이템 리스트에 있는지 확인"""
         for i in range(self.count()):
