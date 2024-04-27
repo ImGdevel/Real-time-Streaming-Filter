@@ -14,6 +14,7 @@ class ShadowWidget(QWidget):
 
         # QGraphicsDropShadowEffect를 위젯에 적용
         self.setGraphicsEffect(shadow_effect)
+        
 
 if __name__ == "__main__":
     app = QApplication([])
