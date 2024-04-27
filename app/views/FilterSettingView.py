@@ -100,7 +100,7 @@ class FilterSettingView(QWidget):
 
         # 필터 이름 표시 및 수정
         self.filter_name_widget = TitleEdit()
-        self.filter_name_widget.setMaximumHeight(45)
+        self.filter_name_widget.setMaximumHeight(50)
         self.filter_name_widget.onEditEvent.connect(self.change_filter_name)
 
         # 얼굴 인식 필터 설정 영역
@@ -341,15 +341,18 @@ class FilterSettingView(QWidget):
 
     def change_filter_name(self, text):
         """필터 이름 변경"""
-        if not self.filter_setting_processor.get_filter(text):
+        if self.current_filter == text or text == "" or text == None:
+            #잘못된 입력, 돌아감
+            pass
+        elif self.filter_setting_processor.get_filter(text):
+            #필터 이름 중복
+            QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+        else:
+            #필터 이름 변경
             filter = self.filter_setting_processor.get_filter(self.current_filter)
             self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
             self.set_current_filter(text)
-        else:
-            print("중복되는 이름입니다.")
-            #self.filter_name_widget.toggle_edit_mode()
-            QMessageBox.warning(None, "경고", "중복되는 이름입니다.", QMessageBox.Ok)
-            
+
 
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
