@@ -4,8 +4,8 @@ from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from .component import SettingWidget
 from controllers import VideoProcessor
-from views.component import FilterListWidget
-from views.component import VideoPlayer
+from views.component import FilterListWidget, VideoPlayer
+from utils import Colors, Style
 
 class VideoView(QWidget):
     '''PySide6를 이용한 비디오 재생 화면 구성 클래스'''
@@ -43,8 +43,7 @@ class VideoView(QWidget):
 
     def initSettingButtons(self):
         '''설정 위젯에 버튼 추가'''
-        self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
+        list_frame = self.setup_filter_list()
 
         self.button1 = QPushButton("Test - 인코딩")
         self.button1.clicked.connect(self.do_video_encoding)
@@ -53,10 +52,29 @@ class VideoView(QWidget):
         self.button3 = QPushButton("Test - VideoUpload")
         self.button3.clicked.connect(self.openFileDialog)
 
-        self.setting_widget.addWidget(self.filter_list_widget)
+        self.setting_widget.addWidget(list_frame)
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
         self.setting_widget.addSettingButton(self.button3)
+        
+    def setup_filter_list(self):
+        '''필터 리스트 위젯'''
+        # Filter 목록
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
+        
+        list_label = QLabel("필터 목록")
+        list_label.setStyleSheet(Style.list_frame_label)
+        
+        self.filter_list_widget = FilterListWidget()
+        self.filter_list_widget.set_items_event(self.set_filter_option)
+        
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.filter_list_widget)
+        list_frame.setLayout(list_frame_layout)
+
+        return list_frame
     
     
     def openFileDialog(self):

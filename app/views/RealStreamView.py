@@ -1,4 +1,4 @@
-from utils import Colors
+from utils import Colors, Style
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame
 from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt, QTimer, QSize
@@ -52,7 +52,7 @@ class RealStreamView(QWidget):
 
         # 하단 필터 리스트
         filter_list_layout = self.setup_filter_list()
-        toolbar_layout.addLayout(filter_list_layout)
+        toolbar_layout.addWidget(filter_list_layout)
 
         toolbar_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         toolbar_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -69,17 +69,20 @@ class RealStreamView(QWidget):
         self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
         self.play_pause_button.setIconSize(QSize(50, 50))
+        self.play_pause_button.setStyleSheet(Style.mini_button_style)
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
         # 일시정지 버튼
         self.stop_button = QPushButton("Stop")
-        self.stop_button.setFixedSize(70,70)
+        self.stop_button.setFixedSize(50,50)
+        self.stop_button.setStyleSheet(Style.mini_button_style)
         self.stop_button.clicked.connect(self.stop_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton("New\nWindow")
-        self.new_window_button.setFixedSize(70,70)
+        self.new_window_button.setFixedSize(50,50)
+        self.new_window_button.setStyleSheet(Style.mini_button_style)
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
@@ -116,23 +119,29 @@ class RealStreamView(QWidget):
         return video_options_layout
 
     def setup_filter_list(self):
-        '''하단 필터 리스트 설정 메서드'''
-        filter_list_layout = QVBoxLayout()
-
+        '''필터 리스트 위젯'''
+        # Filter 목록
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
+        
+        list_label = QLabel("필터 목록")
+        list_label.setStyleSheet(Style.list_frame_label)
+        
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
-        filter_list_layout.addWidget(self.filter_list_widget)
+        
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.filter_list_widget)
+        list_frame.setLayout(list_frame_layout)
 
-        return filter_list_layout
+        return list_frame
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
         self.video_widget = QLabel()  # 비디오 플레이어 레이블
         self.video_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_widget.setAlignment(Qt.AlignCenter)  # 정렬 설정
-
-
-
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''

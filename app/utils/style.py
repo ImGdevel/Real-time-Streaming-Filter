@@ -7,7 +7,8 @@ class Style:
     
     mini_button_style = f"""
     QPushButton {{
-        border-radius: 5px;
+        background-color: {Colors.base_color_06};
+        border-radius: 5px;  
     }}
     
     """
@@ -36,11 +37,28 @@ class Style:
     
     """
 
+    list_widget_style = f"""
+    background-color: {Colors.base_color_03};
+    border-radius: 5px;
+    padding: 0px;
+    """
+
+    list_frame_style = f"""
+    background-color: {Colors.base_color_06};
+    border-radius: 5px;
+    padding: 10px 20px;
+    """
     
+    list_frame_label = f"""
+    color: white; 
+    font-size: 18px; 
+    font-weight: bold; 
+    padding: 5px 10px;
+    """
 
     menu_button_style = f"""
     QPushButton {{
-        background-color: {Colors.buttonColor_01_base}; /* 배경색 */
+        background-color: {Colors.buttonColor_01_base};
         border: 2px solid #000000;
         border-radius: 5px;
         color: white;

@@ -51,15 +51,22 @@ class FilterSettingView(QWidget):
         """왼쪽 레이어 설정 메서드"""
         left_layout = QVBoxLayout()
         left_layout.setContentsMargins(0, 0, 0, 0)
-
-        # Filter List 라벨
-        filter_label = QLabel("Filter List")
-        filter_label.setAlignment(Qt.AlignCenter)
-        filter_label.setStyleSheet("font-weight: bold;")
-
+        
         # Filter 목록
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
+        
+        list_label = QLabel("필터 목록")
+        list_label.setStyleSheet(Style.list_frame_label)
+        
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.filter_list_btn_event)
+        
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.filter_list_widget)
+        list_frame.setLayout(list_frame_layout)
+
 
         filter_list_button_layout = QHBoxLayout()
 
@@ -68,26 +75,20 @@ class FilterSettingView(QWidget):
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
-        filter_list_button_layout.addWidget(add_button)
         
         delete_button = QPushButton("Delete Filter")
         delete_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_filter)
-        filter_list_button_layout.addWidget(delete_button)
 
+        filter_list_button_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         filter_list_button_layout.addWidget(add_button)
         filter_list_button_layout.addSpacing(10)  # 버튼 사이 간격
         filter_list_button_layout.addWidget(delete_button)
 
-        # 좌측 정렬을 위한 스페이싱 추가
-        filter_list_button_layout.addStretch(1)
-
-        left_layout.addWidget(filter_label)
-        left_layout.addWidget(self.filter_list_widget)
+        left_layout.addWidget(list_frame)
         left_layout.addLayout(filter_list_button_layout)
-
 
         return left_layout
 
