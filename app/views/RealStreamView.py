@@ -1,6 +1,6 @@
 from utils import Colors, Style
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame
-from PySide6.QtGui import QPixmap, QFont, QIcon
+from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor
 from views.component import FilterListWidget, ShadowWidget, FrameWidget
@@ -153,7 +153,7 @@ class RealStreamView(QWidget):
         
         self.video_box = QLabel()  # 비디오 플레이어 레이블
         self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.video_box.setAlignment(Qt.AlignCenter)  # 정렬 설정
+        self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         video_layout.addWidget(self.video_box)
         frame.setLayout(video_layout)
         
@@ -219,7 +219,9 @@ class RealStreamView(QWidget):
         else:
             if self.streaming_processor.isRunning():
                 self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
+                self.streaming_processor.stop()
                 self.timer.stop()
+                
 
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
