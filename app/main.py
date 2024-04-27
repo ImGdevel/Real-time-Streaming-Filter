@@ -63,7 +63,6 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
-        widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_streaming.clicked.connect(self.buttonClick)
         widgets.btn_video.clicked.connect(self.buttonClick)
         widgets.btn_image.clicked.connect(self.buttonClick)

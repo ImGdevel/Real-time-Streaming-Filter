@@ -23,14 +23,13 @@ class ImageView(QWidget):
 
         super().__init__(parent)
 
-        self.image_processor = ImageProcessor()
+        self.filter_image_processor = ImageProcessor()
 
         self.initUI()
 
     def initUI(self):
         self.setAcceptDrops(True)
         self.count = 0
-        self.filter_image_processor = ImageProcessor()
         # 전체 레이아웃 설정
         self.layout = QVBoxLayout()
 
@@ -88,7 +87,7 @@ class ImageView(QWidget):
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
-        self.image_processor.set_filter(index)
+        self.filter_image_processor.set_filter(index)
         pass
 
     def addItemFileView(self, urls):
@@ -136,12 +135,12 @@ class ImageView(QWidget):
             padding: 20px; /* Padding */
         ''')
 
-        worker_thread = WorkerThread()
-        worker_thread.progress_changed.connect(progress_dialog.close)
-        worker_thread.start()
+        # worker_thread = WorkerThread()
+        # worker_thread.progress_changed.connect(progress_dialog.setValue)
+        # worker_thread.start()
 
-        progress_dialog.exec_()
-        worker_thread.quit()
+        progress_dialog.show()
+        # worker_thread.quit()
 
 
 

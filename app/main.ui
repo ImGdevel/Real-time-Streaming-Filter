@@ -76,7 +76,7 @@ Left Menu */
 	background-position: centered;
 	background-repeat: no-repeat;
 }
-#titleLeftApp { font: 63 12pt &quot;Segoe UI Semibold&quot;; }
+#titleLeftApp { font: 63 12pt &quot;Segoe UI&quot;; }
 #titleLeftDescription { font: 8pt &quot;Segoe UI&quot;; color: rgb(189, 147, 249); }
 
 /* MENUS */
@@ -675,7 +675,7 @@ Button */
              </property>
              <property name="font">
               <font>
-               <family>Segoe UI Semibold</family>
+               <family>Segoe UI</family>
                <pointsize>12</pointsize>
                <italic>false</italic>
                <fontweight></fontweight>
@@ -870,42 +870,6 @@ Button */
                   </property>
                   <property name="text">
                    <string>홈</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="btn_widgets">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>45</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Segoe UI</family>
-                    <pointsize>12</pointsize>
-                    <italic>false</italic>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LayoutDirection::LeftToRight</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/resources/icons/cil-gamepad.png);</string>
-                  </property>
-                  <property name="text">
-                   <string>Widgets</string>
                   </property>
                  </widget>
                 </item>
@@ -1898,7 +1862,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                       <string notr="true">background: transparent;</string>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>5</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2748,20 +2712,24 @@ background-repeat: no-repeat;</string>
                       </layout>
                      </widget>
                      <widget class="QWidget" name="streaming_page">
-                      <layout class="QVBoxLayout" name="streaming_layout">
-                      </layout>
+                      <layout class="QVBoxLayout" name="streaming_layout"/>
                      </widget>
                      <widget class="QWidget" name="video_page">
-                      <layout class="QVBoxLayout" name="video_layout">
-                      </layout>
+                      <layout class="QVBoxLayout" name="video_layout"/>
                      </widget>
                      <widget class="QWidget" name="image_page">
-                      <layout class="QVBoxLayout" name="image_layout">
-                      </layout>
+                      <layout class="QVBoxLayout" name="image_layout"/>
                      </widget>
                      <widget class="QWidget" name="filter_setting_page">
-                      <layout class="QVBoxLayout" name="filter_setting_layout">
-                      </layout>
+                      <property name="font">
+                       <font>
+                        <family>Segoe UI</family>
+                        <pointsize>12</pointsize>
+                        <italic>false</italic>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <layout class="QVBoxLayout" name="filter_setting_layout"/>
                      </widget>
                     </widget>
                    </item>

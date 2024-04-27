@@ -3,6 +3,7 @@ import dlib
 import face_recognition
 import re
 import pickle
+
 #사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
 known_faces = {}
 
@@ -170,7 +171,7 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
 
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
-def recognize_face(known_faces, face_encoding, tolerance=0.5):
+def recognize_face(known_faces, face_encoding, tolerance=0.1):
     """
     얼굴을 인식하여 인식된 사람과 일치하는지 확인합니다.
     
@@ -188,15 +189,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.5):
 
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            # print("==========distance==========")
-            # print(distance)
+            print("==========distance==========")
+            print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    # print(recognized_face, ":::::")
-    # print(tolerance_used)
+    print(recognized_face, ":::::")
+    print(tolerance_used)
 
     return recognized_face, tolerance_used
 

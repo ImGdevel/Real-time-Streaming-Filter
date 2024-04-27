@@ -1,92 +1,106 @@
 from utils import Colors, Style
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
+from PySide6.QtWidgets import QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
 from PySide6.QtCore import Qt, QTimer
-from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit
+from PySide6.QtGui import QIcon
+from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget
 from controllers import FilterSettingController, PersonFaceSettingController
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.current_filter = None
-        self.selected_filtering_object = [] 
         self.filter_setting_processor = FilterSettingController()
         self.face_setting_processor = PersonFaceSettingController()
         self.face_setting_processor.load_person_faces()
+        
+        self.current_filter = None
+        self.selected_filtering_object = [] 
 
         self.initUI()
 
     def initUI(self):
         # 전체 레이아웃 설정
-        self.layout = QHBoxLayout()
+        layout = QHBoxLayout()
 
         # 왼쪽 레이어 - Filter List
         self.left_layout = self.setup_left_layer()
-        self.left_widget = QWidget()
-        self.left_widget.setMaximumWidth(200)
+        self.left_widget = ShadowWidget()
         self.left_widget.setLayout(self.left_layout)
-        self.left_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 왼쪽 레이어 배경색 설정
 
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
-        self.right_widget = QWidget()
+        self.right_widget = ShadowWidget()
+        self.right_widget.setStyleSheet(Style.frame_style)
         self.right_widget.setLayout(self.right_layout)
-        self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 오른쪽 레이어 배경색 설정
 
-        self.empty_widget = QWidget()        
+        self.empty_widget = QFrame()
 
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
-        self.layout.addWidget(self.left_widget, 1)  # 왼쪽 레이어 크기를 1로 설정
-        self.layout.addWidget(self.right_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
-        self.layout.addWidget(self.empty_widget, 4)  # 오른쪽 레이어 크기를 4로 설정
+        layout.addWidget(self.left_widget, 1) 
+        layout.addWidget(self.right_widget, 4)  
+        layout.addWidget(self.empty_widget, 4)  
         self.show_filter_setting_window(False)
 
-        self.setLayout(self.layout)
-
-    def render(self):
-        """페이지 refesh"""
-        pass
+        self.setLayout(layout)
 
     # 왼쪽 레이어
     def setup_left_layer(self):
         """왼쪽 레이어 설정 메서드"""
         left_layout = QVBoxLayout()
-        left_layout.setContentsMargins(0, 0, 0, 0)
-
-        # Filter List 라벨
-        filter_label = QLabel("Filter List")
-        filter_label.setAlignment(Qt.AlignCenter)
-        filter_label.setStyleSheet("font-weight: bold;")
-
+        
         # Filter 목록
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
+        
+        list_label = QLabel("필터 목록")
+        list_label.setStyleSheet(Style.list_frame_label)
+        
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.filter_list_btn_event)
+        
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.filter_list_widget)
+        list_frame.setLayout(list_frame_layout)
+
+        filter_list_button_layout = QHBoxLayout()
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton("Add Filter")
+        add_button.setFixedSize(50,50)
+        add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
+        
         delete_button = QPushButton("Delete Filter")
+        delete_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        delete_button.setFixedSize(50,50)
+        delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_filter)
 
-        left_layout.addWidget(filter_label)
-        left_layout.addWidget(self.filter_list_widget)
-        left_layout.addWidget(add_button)
-        left_layout.addWidget(delete_button)
+        filter_list_button_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        filter_list_button_layout.addWidget(add_button)
+        filter_list_button_layout.addSpacing(10)  # 버튼 사이 간격
+        filter_list_button_layout.addWidget(delete_button)
+
+        left_layout.addWidget(list_frame)
+        left_layout.addLayout(filter_list_button_layout)
 
         return left_layout
 
     # 오른쪽 레이어
     def setup_right_layer(self):
         """오른쪽 레이어 설정 메서드"""
+        
+        layout = QVBoxLayout()
+        frame = QFrame()
         right_layout = QVBoxLayout()
-        right_layout.setContentsMargins(10, 10, 10, 10)  # 여백 설정
 
         # QSplitter 생성
         splitter = QSplitter(Qt.Vertical)
 
         # 필터 이름 표시 및 수정
         self.filter_name_widget = TitleEdit()
-        self.filter_name_widget.setMaximumHeight(45)
+        self.filter_name_widget.setMaximumHeight(50)
         self.filter_name_widget.onEditEvent.connect(self.change_filter_name)
 
         # 얼굴 인식 필터 설정 영역
@@ -103,7 +117,6 @@ class FilterSettingView(QWidget):
 
         # todo: 하단 오른 쪽 끝에 적용 버튼 추가
         apply_button = QPushButton("적용")
-        apply_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
         apply_button.clicked.connect(self.apply_filter_settings)
         apply_button.setFixedSize(60, 30)  # 높이 설정
 
@@ -116,15 +129,14 @@ class FilterSettingView(QWidget):
         right_layout.addWidget(self.filter_name_widget)
         right_layout.addWidget(splitter)
         right_layout.addLayout(apply_layout)
-
-        # splitter.setSizes를 이 위치로 이동
-        def set_splitter_sizes():
-            splitter.setSizes([int(self.width() * 5 / 9), int(self.width() * 4 / 9)])
         
-        # widget이 나타난 후에 호출되도록 QTimer를 사용
-        QTimer.singleShot(0, set_splitter_sizes)
+        right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
+        right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
+        right_layout.setStretch(2, 4)  # 하단 필터 리스트 높이 비율
         
-        return right_layout
+        frame.setLayout(right_layout)
+        layout.addWidget(frame)
+        return layout
 
 
     # 얼굴 레이어
@@ -133,7 +145,6 @@ class FilterSettingView(QWidget):
         face_layout = QVBoxLayout()
         
         face_label = QLabel("Face Filtering")
-        face_label.setStyleSheet("font-weight: bold;")
         face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
@@ -152,14 +163,12 @@ class FilterSettingView(QWidget):
         
         face_setting_widget = QWidget()
         face_setting_widget.setLayout(face_register_layout)
-        face_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
         
         face_layout.addWidget(face_label)
         face_layout.addWidget(face_setting_widget)
 
         # Add 버튼 추가
         add_face_button = QPushButton("Add")
-        add_face_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')
         add_face_button.setFixedSize(60, 30)
         add_face_button.clicked.connect(self.show_add_face_dialog)
         face_layout.addWidget(add_face_button)
@@ -176,7 +185,6 @@ class FilterSettingView(QWidget):
         object_label.setFixedHeight(30)  # 높이 설정
         
         self.object_setting_widget = QWidget()
-        self.object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
 
         # QVBoxLayout을 self.object_setting_widget 위젯에 설정
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
@@ -235,10 +243,8 @@ class FilterSettingView(QWidget):
 
         # 버튼의 스타일 변경
         if button_name in self.selected_filtering_object:
-            sender_button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택되지 않은 상태의 스타일
             self.selected_filtering_object.remove(button_name)  # 리스트에서 제거
         else:
-            sender_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 선택된 상태의 스타일
             self.selected_filtering_object.append(button_name)  # 리스트에 추가
     
 
@@ -313,10 +319,8 @@ class FilterSettingView(QWidget):
         for i in range(self.object_setting_layout.count()):
             button = self.object_setting_layout.itemAt(i).widget()
             if button.objectName() in filtering_object_datas:
-                button.setStyleSheet(f'background-color: {Colors.baseColor01}; color: white;')  # 선택된 상태의 스타일
                 button.setChecked(True)  # 버튼을 체크 상태로 설정
             else:
-                button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 선택되지 않은 상태의 스타일
                 button.setChecked(False)  # 버튼을 체크 해제 상태로 설정
 
         # selected_filtering_object 업데이트
@@ -337,15 +341,18 @@ class FilterSettingView(QWidget):
 
     def change_filter_name(self, text):
         """필터 이름 변경"""
-        if not self.filter_setting_processor.get_filter(text):
+        if self.current_filter == text or text == "" or text == None:
+            #잘못된 입력, 돌아감
+            pass
+        elif self.filter_setting_processor.get_filter(text):
+            #필터 이름 중복
+            QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+        else:
+            #필터 이름 변경
             filter = self.filter_setting_processor.get_filter(self.current_filter)
             self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
             self.set_current_filter(text)
-        else:
-            print("중복되는 이름입니다.")
-            #self.filter_name_widget.toggle_edit_mode()
-            QMessageBox.warning(None, "경고", "중복되는 이름입니다.", QMessageBox.Ok)
-            
+
 
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
@@ -354,4 +361,10 @@ class FilterSettingView(QWidget):
         updated_filtering_object = self.selected_filtering_object
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
+        
+        
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_filter_list()
+        pass
         
