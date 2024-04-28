@@ -1,5 +1,5 @@
 from utils import Colors, Style
-from PySide6.QtWidgets import QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
+from PySide6.QtWidgets import QWidget, QFrame, QScrollArea , QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
 from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget
@@ -95,41 +95,52 @@ class FilterSettingView(QWidget):
         layout = QVBoxLayout()
         frame = QFrame()
         right_layout = QVBoxLayout()
-
-        # QSplitter 생성
-        splitter = QSplitter(Qt.Vertical)
-
+        
         # 필터 이름 표시 및 수정
         self.filter_name_widget = TitleEdit()
         self.filter_name_widget.setMaximumHeight(50)
         self.filter_name_widget.onEditEvent.connect(self.change_filter_name)
 
+        # 내용
+        content_frame = QFrame()
+        content_frame.setStyleSheet(Style.list_widget_style)
+        content_layout = QVBoxLayout()
+
         # 얼굴 인식 필터 설정 영역
         face_widget = QWidget()
+        face_widget.setStyleSheet(Style.frame_style_none_line)
         face_widget.setLayout(self.setup_face_layout())
         
         # 객체 필터링 설정 영역
-        object_widget = QWidget()
+        object_widget = QScrollArea()
+        object_widget.setStyleSheet(Style.frame_style_none_line)
         object_widget.setLayout(self.setup_object_layout())
         
         # QSplitter에 위젯 추가
-        splitter.addWidget(face_widget)
-        splitter.addWidget(object_widget)
-
+        content_layout.addWidget(face_widget)
+        content_layout.addWidget(object_widget)
+        content_frame.setLayout(content_layout)
+        
         # todo: 하단 오른 쪽 끝에 적용 버튼 추가
         apply_button = QPushButton("적용")
         apply_button.clicked.connect(self.apply_filter_settings)
         apply_button.setFixedSize(60, 30)  # 높이 설정
+        
+        # todo: 하단 오른 쪽 끝에 적용 버튼 추가
+        cancel_button = QPushButton("취소")
+        cancel_button.clicked.connect(self.apply_filter_settings)
+        cancel_button.setFixedSize(60, 30)  # 높이 설정
 
         # 수평 레이아웃 생성 및 오른쪽 정렬
-        apply_layout = QHBoxLayout()
-        apply_layout.addStretch(1)
-        apply_layout.addWidget(apply_button)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch(1)
+        button_layout.addWidget(apply_button)
+        button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_name_widget)
-        right_layout.addWidget(splitter)
-        right_layout.addLayout(apply_layout)
+        right_layout.addWidget(content_frame)
+        right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -190,36 +201,36 @@ class FilterSettingView(QWidget):
         # QVBoxLayout을 self.object_setting_widget 위젯에 설정
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
         
-        # 토글 버튼(체크박스 스타일) 추가
-        self.toggle_button1 = QPushButton("담배 필터")
-        self.toggle_button1.userData = "smoke"
-        self.toggle_button2 = QPushButton("칼 필터")
-        self.toggle_button2.userData = "2"
-        self.toggle_button3 = QPushButton("소주/주류 필터")
-        self.toggle_button3.userData = "3"
-        self.toggle_button4 = QPushButton("선정성 컨텐츠 필터")
-        self.toggle_button4.userData = "4"
+        # QCheckBox로 변경
+        self.toggle_checkbox1 = QCheckBox("담배 필터")
+        self.toggle_checkbox1.userData = "smoke"
+        self.toggle_checkbox2 = QCheckBox("칼 필터")
+        self.toggle_checkbox2.userData = "2"
+        self.toggle_checkbox3 = QCheckBox("소주/주류 필터")
+        self.toggle_checkbox3.userData = "3"
+        self.toggle_checkbox4 = QCheckBox("선정성 컨텐츠 필터")
+        self.toggle_checkbox4.userData = "4"
         
         # 버튼에 고유한 식별자 부여
-        self.toggle_button1.setObjectName("Tobacco")
-        self.toggle_button2.setObjectName("Knife")
-        self.toggle_button3.setObjectName("Bloodshed")
-        self.toggle_button4.setObjectName("Explicit_Content")
+        self.toggle_checkbox1.setObjectName("Tobacco")
+        self.toggle_checkbox2.setObjectName("Knife")
+        self.toggle_checkbox3.setObjectName("Bloodshed")
+        self.toggle_checkbox4.setObjectName("Explicit_Content")
         
         # 버튼 클릭 이벤트 연결
-        self.toggle_button1.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button2.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button3.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button4.clicked.connect(self.toggle_button_clicked)
+        self.toggle_checkbox1.clicked.connect(self.toggle_checkbox_clicked)
+        self.toggle_checkbox2.clicked.connect(self.toggle_checkbox_clicked)
+        self.toggle_checkbox3.clicked.connect(self.toggle_checkbox_clicked)
+        self.toggle_checkbox4.clicked.connect(self.toggle_checkbox_clicked)
 
         # 현재 선택된 객체 필터링 설정
         self.selected_filtering_object = []
 
         # 버튼 위젯들을 QVBoxLayout에 추가
-        self.object_setting_layout.addWidget(self.toggle_button1)
-        self.object_setting_layout.addWidget(self.toggle_button2)
-        self.object_setting_layout.addWidget(self.toggle_button3)
-        self.object_setting_layout.addWidget(self.toggle_button4)
+        self.object_setting_layout.addWidget(self.toggle_checkbox1)
+        self.object_setting_layout.addWidget(self.toggle_checkbox2)
+        self.object_setting_layout.addWidget(self.toggle_checkbox3)
+        self.object_setting_layout.addWidget(self.toggle_checkbox4)
 
         object_layout.addWidget(object_label)
         object_layout.addWidget(self.object_setting_widget)
@@ -237,16 +248,16 @@ class FilterSettingView(QWidget):
             self.empty_widget.show()
 
 
-    def toggle_button_clicked(self):
-        """토글 버튼(체크박스 스타일) 클릭 이벤트 핸들러"""
-        sender_button = self.sender()  # 이벤트를 발생시킨 버튼 가져오기
-        button_name = sender_button.userData  # 버튼의 고유한 식별자 가져오기
+    def toggle_checkbox_clicked(self):
+        """토글 체크 박스 클릭 이벤트 핸들러"""
+        sender_checkbox = self.sender()  # 이벤트를 발생시킨 체크 박스 가져오기
+        checkbox_name = sender_checkbox.userData  # 체크 박스의 고유한 식별자 가져오기
 
-        # 버튼의 스타일 변경
-        if button_name in self.selected_filtering_object:
-            self.selected_filtering_object.remove(button_name)  # 리스트에서 제거
+        # 체크 박스 상태에 따라 리스트 업데이트
+        if sender_checkbox.isChecked():
+            self.selected_filtering_object.append(checkbox_name)  # 리스트에 추가
         else:
-            self.selected_filtering_object.append(button_name)  # 리스트에 추가
+            self.selected_filtering_object.remove(checkbox_name)  # 리스트에서 제거
     
 
     def register_face(self, person_name):
@@ -314,15 +325,15 @@ class FilterSettingView(QWidget):
 
 
     def update_object_setting_list(self, filtering_object_datas):
-        """_object_setting_list 업데이트 메서드"""
+        """객체 필터링 설정 업데이트 메서드"""
         
-        # 기존 버튼들의 스타일만 업데이트
+        # 기존 체크 박스들의 상태 업데이트
         for i in range(self.object_setting_layout.count()):
-            button = self.object_setting_layout.itemAt(i).widget()
-            if button.objectName() in filtering_object_datas:
-                button.setChecked(True)  # 버튼을 체크 상태로 설정
+            checkbox = self.object_setting_layout.itemAt(i).widget()
+            if checkbox.userData in filtering_object_datas:
+                checkbox.setChecked(True)  # 체크 박스를 체크 상태로 설정
             else:
-                button.setChecked(False)  # 버튼을 체크 해제 상태로 설정
+                checkbox.setChecked(False)  # 체크 박스를 체크 해제 상태로 설정
 
         # selected_filtering_object 업데이트
         self.selected_filtering_object = filtering_object_datas.copy()

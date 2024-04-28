@@ -5,11 +5,27 @@ class Style:
 
     base_style01 = f'background-color: {Colors.baseColor02};'
     
+
+    
     frame_style = f"""
         background-color: {Colors.base_color_06};
         border-radius: 5px;  
+        padding: 0px;
     """
     
+    frame_style_none_line = f"""
+        background-color: {Colors.base_color_06};
+        border-radius: 5px;  
+        border: none;
+        padding: 0px;
+    """
+    
+    
+    frame_inner_style = f"""
+        background-color: {Colors.base_color_03}; 
+        padding: 5px;
+        
+    """
     
     mini_button_style = f"""
     QPushButton {{
@@ -64,8 +80,8 @@ class Style:
     list_widget_style = f"""
         background-color: {Colors.base_color_03};
         border-radius: 5px;
-        border-left: 3px solid {Colors.base_color_01}; /* Add left border */
-        border-top: 3px solid {Colors.base_color_01}; /* Add top border */
+        border-left: 3px solid {Colors.base_color_01};
+        border-top: 3px solid {Colors.base_color_01};
         padding: 0px;
     """
 
