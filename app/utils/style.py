@@ -17,7 +17,8 @@ class Style:
         background-color: {Colors.base_color_06};
         border-radius: 5px;  
         border: none;
-        padding: 0px;
+        margin: 0px;
+        padding: 5px;
     """
     
     

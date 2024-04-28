@@ -2,7 +2,7 @@ from utils import Colors, Style
 from PySide6.QtWidgets import QWidget, QFrame, QScrollArea , QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
-from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget
+from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget, ObjectFilterSettngWidget
 from controllers import FilterSettingController, PersonFaceSettingController
 
 class FilterSettingView(QWidget):
@@ -112,13 +112,13 @@ class FilterSettingView(QWidget):
         face_widget.setLayout(self.setup_face_layout())
         
         # 객체 필터링 설정 영역
-        object_widget = QScrollArea()
-        object_widget.setStyleSheet(Style.frame_style_none_line)
-        object_widget.setLayout(self.setup_object_layout())
+        self.object_filter_widget = ObjectFilterSettngWidget()
+        self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
+        self.object_filter_widget.setStyleSheet(Style.frame_style_none_line)
         
         # QSplitter에 위젯 추가
         content_layout.addWidget(face_widget)
-        content_layout.addWidget(object_widget)
+        content_layout.addWidget(self.object_filter_widget)
         content_frame.setLayout(content_layout)
         
         # todo: 하단 오른 쪽 끝에 적용 버튼 추가
@@ -186,56 +186,6 @@ class FilterSettingView(QWidget):
         face_layout.addWidget(add_face_button)
         
         return face_layout
-
-    # 오브젝트 레이어
-    def setup_object_layout(self):
-        """객체 필터링 설정 영역 레이아웃 생성"""
-        object_layout = QVBoxLayout()
-        
-        object_label = QLabel("Object Filtering")
-        object_label.setStyleSheet("font-weight: bold;")
-        object_label.setFixedHeight(30)  # 높이 설정
-        
-        self.object_setting_widget = QWidget()
-
-        # QVBoxLayout을 self.object_setting_widget 위젯에 설정
-        self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
-        
-        # QCheckBox로 변경
-        self.toggle_checkbox1 = QCheckBox("담배 필터")
-        self.toggle_checkbox1.userData = "smoke"
-        self.toggle_checkbox2 = QCheckBox("칼 필터")
-        self.toggle_checkbox2.userData = "2"
-        self.toggle_checkbox3 = QCheckBox("소주/주류 필터")
-        self.toggle_checkbox3.userData = "3"
-        self.toggle_checkbox4 = QCheckBox("선정성 컨텐츠 필터")
-        self.toggle_checkbox4.userData = "4"
-        
-        # 버튼에 고유한 식별자 부여
-        self.toggle_checkbox1.setObjectName("Tobacco")
-        self.toggle_checkbox2.setObjectName("Knife")
-        self.toggle_checkbox3.setObjectName("Bloodshed")
-        self.toggle_checkbox4.setObjectName("Explicit_Content")
-        
-        # 버튼 클릭 이벤트 연결
-        self.toggle_checkbox1.clicked.connect(self.toggle_checkbox_clicked)
-        self.toggle_checkbox2.clicked.connect(self.toggle_checkbox_clicked)
-        self.toggle_checkbox3.clicked.connect(self.toggle_checkbox_clicked)
-        self.toggle_checkbox4.clicked.connect(self.toggle_checkbox_clicked)
-
-        # 현재 선택된 객체 필터링 설정
-        self.selected_filtering_object = []
-
-        # 버튼 위젯들을 QVBoxLayout에 추가
-        self.object_setting_layout.addWidget(self.toggle_checkbox1)
-        self.object_setting_layout.addWidget(self.toggle_checkbox2)
-        self.object_setting_layout.addWidget(self.toggle_checkbox3)
-        self.object_setting_layout.addWidget(self.toggle_checkbox4)
-
-        object_layout.addWidget(object_label)
-        object_layout.addWidget(self.object_setting_widget)
-        
-        return object_layout
     
 
     def show_filter_setting_window(self, is_show):
@@ -246,18 +196,6 @@ class FilterSettingView(QWidget):
         else:
             self.right_widget.hide()
             self.empty_widget.show()
-
-
-    def toggle_checkbox_clicked(self):
-        """토글 체크 박스 클릭 이벤트 핸들러"""
-        sender_checkbox = self.sender()  # 이벤트를 발생시킨 체크 박스 가져오기
-        checkbox_name = sender_checkbox.userData  # 체크 박스의 고유한 식별자 가져오기
-
-        # 체크 박스 상태에 따라 리스트 업데이트
-        if sender_checkbox.isChecked():
-            self.selected_filtering_object.append(checkbox_name)  # 리스트에 추가
-        else:
-            self.selected_filtering_object.remove(checkbox_name)  # 리스트에서 제거
     
 
     def register_face(self, person_name):
@@ -307,12 +245,16 @@ class FilterSettingView(QWidget):
         if filter_data:
             self.filter_list_widget.update_filter_list()
             self.update_registered_faces_list_widget(filter_data.face_filter)
-            self.update_object_setting_list(filter_data.object_filter)
+            self.object_filter_widget.setup_object_filter_widget(filter_data.object_filter)
             self.filter_name_widget.set_title(filter_name)      
             self.show_filter_setting_window(True)
         else:
             print(f"Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
+            
+    def update_object_filter(self, list):
+        """콜백 오브젝트 리스트 업데이트"""
+        self.selected_filtering_object = list
     
     
     def update_registered_faces_list_widget(self, face_filter_data):
@@ -323,28 +265,11 @@ class FilterSettingView(QWidget):
         for face_name in face_filter_data:
             self.registered_faces_list_widget.add_item(face_name)
 
-
-    def update_object_setting_list(self, filtering_object_datas):
-        """객체 필터링 설정 업데이트 메서드"""
-        
-        # 기존 체크 박스들의 상태 업데이트
-        for i in range(self.object_setting_layout.count()):
-            checkbox = self.object_setting_layout.itemAt(i).widget()
-            if checkbox.userData in filtering_object_datas:
-                checkbox.setChecked(True)  # 체크 박스를 체크 상태로 설정
-            else:
-                checkbox.setChecked(False)  # 체크 박스를 체크 해제 상태로 설정
-
-        # selected_filtering_object 업데이트
-        self.selected_filtering_object = filtering_object_datas.copy()
-
-
     def show_add_face_dialog(self):
         """얼굴 추가 다이얼로그 표시 메서드"""
         dialog = AddFaceDialog(self)
         dialog.added_face.connect(self.update_available_faces)
         dialog.exec_()
-
 
     def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor
-from views.component import FilterListWidget, ShadowWidget, FrameWidget
+from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -172,6 +172,10 @@ class RealStreamView(QWidget):
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
         
+        #self.object_filter_widget = ObjectFilterSettngWidget()
+        #self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
+        #bottom_layout.addWidget(self.object_filter_widget)
+        
         
         bottom_widget.setLayout(bottom_layout)
         layout.addWidget(bottom_widget)
@@ -220,7 +224,15 @@ class RealStreamView(QWidget):
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
         self.streaming_processor.set_filter(index)
+        #self.object_filter_widget.setup_object_filter_widget(self.selected_filtering_object)
         pass
+
+    def update_object_filter(self, list):
+        """콜백 오브젝트 리스트 업데이트"""
+        self.selected_filtering_object = list
+        pass
+        
+        
 
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
