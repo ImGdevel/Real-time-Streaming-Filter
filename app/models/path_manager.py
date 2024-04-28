@@ -16,6 +16,7 @@ class PathManager:
         self.setting_file = os.path.join(self.base_path, "setting_data.bin")
         self.filter_file = os.path.join(self.base_path, "filter_data.bin")
         self.known_faces = os.path.join(self.base_path, "known_faces.pickle")
+        self.replace_images = os.path.join(self.base_path, "replace_images.bin")
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
@@ -67,6 +68,20 @@ class PathManager:
     def known_faces_path(self):
         """known_faces.pickle 경로"""
         return self.known_faces
+
+
+    def save_replace_images(self, images):
+        """대체 이미지를 저장"""
+        with open(self.replace_images, 'wb') as file:
+            pickle.dump(images, file)
+
+    def load_replace_images(self):
+        if os.path.exists(self.replace_images):
+            with open(self.replace_images, 'rb') as file:
+                replace_images = pickle.load(file)
+            return replace_images
+        else:
+            return {}
 
     def load_download_path(self):
         """임시 download_path 불러옴 (documents)"""
