@@ -165,43 +165,15 @@ class RealStreamView(QWidget):
         bottom_widget = ShadowWidget()  # 하단 위젯
         bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         
+        layout = QHBoxLayout()
+        frame = QWidget()
+    
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
         
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_01};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_02};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_03};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_04};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_05};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_06};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_07};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_08};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_X};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Y};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Z};')
-        bottom_layout.addWidget(layout_temp)
+        frame.setLayout(bottom_layout)
+        layout.addWidget(frame)
         
         bottom_widget.setLayout(bottom_layout)
         
