@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QWidget, QGraphicsDropShadowEffect, QVBoxLayout, QLabel
 from PySide6.QtGui import QColor
 from PySide6.QtCore import QObject, Qt
+from utils import Style
 
 class ShadowWidget(QWidget):
     
@@ -15,6 +16,7 @@ class ShadowWidget(QWidget):
 
         # QGraphicsDropShadowEffect를 위젯에 적용
         self.setGraphicsEffect(shadow_effect)
+        self.setStyleSheet(Style.frame_style)
         
 
 if __name__ == "__main__":

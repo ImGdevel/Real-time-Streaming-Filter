@@ -191,13 +191,13 @@ class FilterSettingView(QWidget):
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
         
         # 토글 버튼(체크박스 스타일) 추가
-        self.toggle_button1 = QPushButton("담배")
+        self.toggle_button1 = QPushButton("담배 필터")
         self.toggle_button1.userData = "smoke"
-        self.toggle_button2 = QPushButton("칼")
+        self.toggle_button2 = QPushButton("칼 필터")
         self.toggle_button2.userData = "2"
-        self.toggle_button3 = QPushButton("?")
+        self.toggle_button3 = QPushButton("소주/주류 필터")
         self.toggle_button3.userData = "3"
-        self.toggle_button4 = QPushButton("선정성 컨텐츠")
+        self.toggle_button4 = QPushButton("선정성 컨텐츠 필터")
         self.toggle_button4.userData = "4"
         
         # 버튼에 고유한 식별자 부여

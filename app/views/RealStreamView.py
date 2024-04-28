@@ -162,22 +162,23 @@ class RealStreamView(QWidget):
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
-        bottom_widget = ShadowWidget()  # 하단 위젯
-        bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
+        frame = ShadowWidget()  # 하단 위젯
         
         layout = QHBoxLayout()
-        frame = QWidget()
+        bottom_widget = QWidget()
+        bottom_widget.setStyleSheet(Style.frame_style)  # 배경색 및 테두리 설정
     
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
         
-        frame.setLayout(bottom_layout)
-        layout.addWidget(frame)
         
         bottom_widget.setLayout(bottom_layout)
+        layout.addWidget(bottom_widget)
         
-        return bottom_widget
+        frame.setLayout(layout)
+        
+        return frame
 
 
     # method
