@@ -4,12 +4,12 @@ import numpy as np
 from datetime import datetime
 from models import Filtering, PathManager, FilterManager
 from PySide6.QtGui import QImage
-from PySide6.QtCore import QThread
+from PySide6.QtWidgets import QApplication
 
 
 
 # 비디오 처리 스레드
-class ImageProcessor(QThread):
+class ImageProcessor():
 
     def __init__(self):
         super().__init__()
@@ -44,9 +44,16 @@ class ImageProcessor(QThread):
         return processed_images
 
     #원본 사진을 받아서 임시로 이미지 처리
-    def filtering_images_to_dict(self, image_paths):
+    def filtering_images_to_dict(self, image_paths, progress_dialog):
+        total_elements = len(image_paths)
         processed_images_dict = {}
-        for image_path in image_paths:
+        for i, image_path in enumerate(image_paths):
+            #다이얼로그 처리
+            progress = ((i + 1) / total_elements) * 100
+            progress_dialog.setValue(progress)
+            QApplication.processEvents()
+            if progress_dialog.wasCanceled():
+                return dict()
             # 이미지 읽어오기
             image = cv2.imread(image_path)
             
