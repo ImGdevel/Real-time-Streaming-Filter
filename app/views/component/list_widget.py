@@ -13,7 +13,7 @@ class ListWidget(QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.button_group = QButtonGroup()
-        self.button_group.setExclusive(False)
+        self.button_group.setExclusive(True)
         self.setSpacing(15)
         self.setStyleSheet(Style.list_widget_style)
 
