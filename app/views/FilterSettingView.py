@@ -217,7 +217,6 @@ class FilterSettingView(QWidget):
             filter_name = f"New Filter {i}"
             if not self.filter_setting_processor.get_filter(filter_name):
                 break
-        print(filter_name)
         self.filter_setting_processor.add_filter(filter_name)
         self.filter_list_widget.add_item(filter_name)
         self.set_current_filter(filter_name)
@@ -243,10 +242,10 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
         print("[Log] : 선택된 필터 > ", filter_data)
         if filter_data:
-            self.filter_list_widget.update_list()
+            #self.filter_list_widget.update_list() # 문제 발생시 주석 해제
             self.update_registered_faces_list_widget(filter_data.face_filter)
             self.object_filter_widget.setup_object_filter_widget(filter_data.object_filter)
-            self.filter_name_widget.set_title(filter_name)      
+            self.filter_name_widget.set_title(filter_name)
             self.show_filter_setting_window(True)
         else:
             print(f"Filter '{filter_name}' not found")
