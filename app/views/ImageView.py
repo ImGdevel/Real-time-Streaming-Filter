@@ -81,7 +81,7 @@ class ImageView(QWidget):
 
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
+        self.filter_list_widget.update_list()
         pass
     
     def removeUrl(self, url):

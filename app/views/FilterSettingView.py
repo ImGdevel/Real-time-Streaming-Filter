@@ -243,7 +243,7 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
         print("[Log] : 선택된 필터 > ", filter_data)
         if filter_data:
-            self.filter_list_widget.update_filter_list()
+            self.filter_list_widget.update_list()
             self.update_registered_faces_list_widget(filter_data.face_filter)
             self.object_filter_widget.setup_object_filter_widget(filter_data.object_filter)
             self.filter_name_widget.set_title(filter_name)      
@@ -302,6 +302,6 @@ class FilterSettingView(QWidget):
         
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
+        self.filter_list_widget.update_list()
         pass
         

@@ -75,7 +75,11 @@ class Style:
     QPushButton:focus {{
         outline: none;
     }}
-    
+
+    QPushButton:checked {{
+        background-color: {Colors.base_color_Y};
+    }}
+
     """
 
     list_widget_style = f"""
