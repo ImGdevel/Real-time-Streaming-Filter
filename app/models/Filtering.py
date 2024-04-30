@@ -126,7 +126,7 @@ class Filtering:
             boxes.append(box)
         return boxes
     
-    def blur(self,img, boxesList, blurRatio = 100):
+    def blur(self,img, boxesList, blurRatio = 40):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
@@ -140,19 +140,23 @@ class Filtering:
         """
         for box in boxesList:
 
-            
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             # 정수로 변환
             roi = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
 
+            # Calculate blur region size
+            blur_w = int((x2 - x1)*blurRatio/150) 
+            blur_h = int((y2 - y1)*blurRatio/150)  
+
             # ROI에 blur 적용
-            blurred_roi = cv2.blur(roi, (blurRatio, blurRatio))
+            blurred_roi = cv2.blur(roi, (blur_w, blur_h))
             
             # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
             img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blurred_roi
             
         return img
 
-    def elliptical_blur(self, img, boxesList):
+    def elliptical_blur(self, img, boxesList, blurRatio = 40):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             if x1 > 640 or y1 > 480 or x2 < 0 or y2 < 0:
@@ -164,8 +168,11 @@ class Filtering:
             obj = img[y1:y2, x1:x2]
 
             # Calculate blur region size
-            blur_w = int((x2 - x1) * 0.5)  # 가로 길이의 절반
-            blur_h = int((y2 - y1) * 0.5)  # 세로 길이의 절반
+            # Calculate blur region size
+            blur_w = int((x2 - x1)*blurRatio/150) 
+            blur_h = int((y2 - y1)*blurRatio/150)  
+
+            # ROI에 blur 적용
 
             if blur_w <= 0 or blur_h <= 0:
                 return
@@ -187,7 +194,7 @@ class Filtering:
             img[y1:y2, x1:x2] = obj
         return img
     
-    def replace_face_img(self, img, boxesList, replace_img_id):
+    def face_sticker(self, img, boxesList, replace_img_id):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             w = x2-x1

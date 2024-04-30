@@ -65,6 +65,7 @@ class ImageProcessor(QThread):
 
             processed_images_dict[image_path] = q_img
 
+
         return processed_images_dict
 
     def QImage_to_cv2(qimage):
@@ -103,6 +104,8 @@ class ImageProcessor(QThread):
             cv2.imwrite(output_path, img)
             # print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1
+
+
 
     def set_filter(self, filter):
         """필터 설정"""
