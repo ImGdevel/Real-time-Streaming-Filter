@@ -18,10 +18,10 @@ class FilterSettingView(QWidget):
         self.face_setting_processor.load_person_faces()
         
         self.current_filter = None
-
-        
-        self.selected_filtering_object = [] 
-        self.selected_face_data = None
+        self.current_filter_object_list = [] 
+        self.current_filter_face_list = None
+        self.current_filter_mosaic_strength = None
+        self.current_filter_mosaic_shape = None
 
         self.initUI()
 
@@ -194,11 +194,11 @@ class FilterSettingView(QWidget):
 
         if buttonName == "setting01" or index == 0:
             self.settings_content.setCurrentIndex(0)
-            self.update_registered_faces_list_widget(self.selected_face_data)
+            self.update_registered_faces_list_widget(self.current_filter_face_list)
 
         if buttonName == "setting02" or index == 1:
             self.settings_content.setCurrentIndex(1)
-            self.object_filter_widget.setup_object_filter_widget(self.selected_filtering_object)
+            self.object_filter_widget.setup_object_filter_widget(self.current_filter_object_list)
 
         if buttonName == "setting03" or index == 2:
             self.settings_content.setCurrentIndex(2)
@@ -242,12 +242,16 @@ class FilterSettingView(QWidget):
         return face_layout
     
     def mosaic_setting_layout(self):
-        
-        # 내무에는 
+        """모자이크 설정 레이아웃"""
+        layout = QVBoxLayout()
+
+        # 모자이크 설정 레이아웃은 두부분으로 나누어진다.
+        # 상단 부분은 전체 모자이크의 설정을 다룰 수 있다.
+
         # 
 
 
-        pass
+        return layout
 
 
 
@@ -300,8 +304,8 @@ class FilterSettingView(QWidget):
             print("[Log] : 선택된 필터 > ", filter_data)
             self.current_filter = filter_name
             self.filter_name_widget.set_title(filter_name)
-            self.selected_face_data = filter_data.face_filter
-            self.selected_filtering_object = filter_data.object_filter
+            self.current_filter_face_list = filter_data.face_filter
+            self.current_filter_object_list = filter_data.object_filter
             self.setup_setting_page(0)
 
             self.show_filter_setting_window(True)
@@ -326,7 +330,7 @@ class FilterSettingView(QWidget):
 
     def update_object_filter(self, list):
         """콜백 오브젝트 리스트 업데이트"""
-        self.selected_filtering_object = list
+        self.current_filter_object_list = list
 
     def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""
@@ -351,7 +355,7 @@ class FilterSettingView(QWidget):
         """세팅된 필터링 정보 저장"""
         # registered_faces_list_widget의 내용 가져오기
         updated_face_filter = self.registered_faces_list_widget.get_items_text()
-        updated_filtering_object = self.selected_filtering_object
+        updated_filtering_object = self.current_filter_object_list
 
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
