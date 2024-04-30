@@ -1,3 +1,4 @@
+import os
 import cv2
 import shutil
 from PySide6.QtCore import QThread, Signal
@@ -21,7 +22,7 @@ class VideoProcessor(QThread):
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
         # 새 동영상 파일 경로 및 설정
-        self.temp_video_path = 'output_video.mp4'
+        self.temp_video_path = os.path.join(self.path_manager.load_TempData_path(),'output_video.mp4')
 
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))

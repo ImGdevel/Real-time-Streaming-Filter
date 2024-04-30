@@ -199,7 +199,7 @@ class Filtering:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             w = x2-x1
             h = y2-y1
-
+            
             x_center = int((x1+x2)/2)
             y_center = int((y1+y2)/2)
 

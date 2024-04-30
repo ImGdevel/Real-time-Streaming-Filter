@@ -17,6 +17,7 @@ class PathManager:
         self.filter_file = os.path.join(self.base_path, "filter_data.bin")
         self.known_faces = os.path.join(self.base_path, "known_faces.pickle")
         self.replace_images = os.path.join(self.base_path, "replace_images.bin")
+        self.tempdata_dir = os.path.join(self.base_path, "TempData/")
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
@@ -98,4 +99,17 @@ class PathManager:
             print("Documents 폴더를 찾을 수 없습니다.")
             return None
         
-
+    def load_TempData_path(self):
+        """임시 TempData_path 불러옴 (appdata)"""
+        appdata_folder = get_appdata_folder()
+        if appdata_folder:
+           
+            tempdata_folder = os.path.join(appdata_folder, 'mosaic/TempData')
+            
+            if not os.path.exists(tempdata_folder):
+                os.makedirs(tempdata_folder)
+                print("tempdata_folder 폴더를 생성했습니다.")
+            return tempdata_folder
+        else:
+            print("Documents 폴더를 찾을 수 없습니다.")
+            return None
