@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QScrollArea, QVBoxLayout, QHBoxLayout, QGridLayout, 
     QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, 
-    QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget
+    QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
@@ -203,14 +203,14 @@ class FilterSettingView(QWidget):
         if buttonName == "setting03" or index == 2:
             self.settings_content.setCurrentIndex(2)
 
-        print("선택된 페이지:", self.settings_content.currentIndex())
 
     # 얼굴 레이어
     def setup_face_layout(self):
         """얼굴 인식 필터 설정 영역 레이아웃 생성"""
         face_layout = QVBoxLayout()
+        face_layout.setAlignment(Qt.AlignRight)
         
-        face_label = QLabel("Face Filtering")
+        face_label = QLabel("필터링 인물 설정")
         face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
@@ -234,13 +234,22 @@ class FilterSettingView(QWidget):
         face_layout.addWidget(face_setting_widget)
 
         # Add 버튼 추가
-        add_face_button = QPushButton("Add")
+        add_face_button = QPushButton("등록")
         add_face_button.setFixedSize(60, 30)
         add_face_button.clicked.connect(self.show_add_face_dialog)
         face_layout.addWidget(add_face_button)
         
         return face_layout
     
+    def mosaic_setting_layout(self):
+        
+        # 내무에는 
+        # 
+
+
+        pass
+
+
 
     def show_filter_setting_window(self, is_show):
         """윈도우 디스플레이 결정"""
@@ -294,13 +303,10 @@ class FilterSettingView(QWidget):
             self.selected_face_data = filter_data.face_filter
             self.selected_filtering_object = filter_data.object_filter
             self.setup_setting_page(0)
-            #self.filter_list_widget.update_list() # 문제 발생시 주석 해제
-            #selfupdate_registered_faces_list_widget(filter_data.face_filter)
-            #self.object_filter_widget.setup_object_filter_widget(filter_data.object_filter)
-            
+
             self.show_filter_setting_window(True)
         else:
-            print(f"Filter '{filter_name}' not found")
+            print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
             
     
@@ -315,7 +321,7 @@ class FilterSettingView(QWidget):
     def show_add_face_dialog(self):
         """얼굴 추가 다이얼로그 표시 메서드"""
         dialog = AddFaceDialog(self)
-        dialog.added_face.connect(self.update_available_faces)
+        dialog.updateEvent.connect(self.update_available_faces)
         dialog.exec_()
 
     def update_object_filter(self, list):

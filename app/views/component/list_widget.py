@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import ( 
+    QHBoxLayout,
     QListWidget, QListWidgetItem, QPushButton, 
     QGraphicsDropShadowEffect, QButtonGroup
 )
@@ -142,8 +143,44 @@ class FilterListWidget(ListWidget):
 
     
 class RegisteredFacesListWidget(ListWidget):
+    
+    
     def __init__(self, parent=None):
         super().__init__(parent)
+
+    def add_item(self, item_name):
+        item = QListWidgetItem()
+        self.addItem(item)
+        button = self.create_button(item_name)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+
+    def create_button(self, item_name):
+
+        line = QHBoxLayout()
+
+        button = QPushButton(item_name)
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+
+        
+
+        shadow_effect = QGraphicsDropShadowEffect(self)
+        shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
+        button.setGraphicsEffect(shadow_effect) 
+
+        
+        button.clicked.connect(self.emit_button_clicked)
+
+
+
+        return button
+    
+
+
+
 
 class AvailableFacesListWidget(ListWidget):
     def __init__(self, parent=None):

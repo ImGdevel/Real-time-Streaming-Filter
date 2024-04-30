@@ -8,35 +8,36 @@ from PySide6.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
+from utils import Style
 
 
 class AddFaceDialog(QDialog):
-    added_face = Signal() 
+    updateEvent = Signal() 
     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.face_setting_processor = PersonFaceSettingController()
         self.current_person = None
+        self.setStyleSheet(Style.frame_style)
         
         self._initUI()
 
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(600, 600)
+        self.setFixedSize(600, 800)
 
         main_layout = QHBoxLayout()
 
-        self.registered_person_list_layout = self._setup_registered_person_list_layout()
         self.face_registration_layout = self._setup_face_registration_layout()
 
         self.face_registration_widget = QWidget()
         self.face_registration_widget.setLayout(self.face_registration_layout)
         self.empty_widget = QWidget()
 
-        main_layout.addLayout(self.registered_person_list_layout)
+        main_layout.addWidget(self._setup_registered_person_list_layout())
         main_layout.addWidget(self.face_registration_widget)
-        main_layout.addWidget(self.empty_widget)
+        main_layout.addWidget(QWidget())
         self.show_window(False)
 
         self.setLayout(main_layout)
@@ -44,25 +45,45 @@ class AddFaceDialog(QDialog):
 
     def _setup_registered_person_list_layout(self):
         """registered_person_list 메서드"""
-        scroll_layout = QVBoxLayout()
-        self.available_faces_list_label = QLabel("FilterList")
-
+        # Filter 목록
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
+        
+        list_label = QLabel("인물 등록")
+        list_label.setStyleSheet(Style.list_frame_label)
+        
         self.registered_person_list = AvailableFacesListWidget()
-        self.registered_person_list.onClickItemEvent.connect(self.change_current_registered_person)
+        self.registered_person_list.set_items_event(self.change_current_registered_person)
         self.registered_person_list.setFixedWidth(200)
+       
+        # Add Filter, Delete Filter 버튼
+        filter_list_button_layout = QHBoxLayout()
 
         # Add Filter, Delete Filter 버튼
-        add_button = QPushButton("Add")
+        add_button = QPushButton()
+        add_button.setIcon(QIcon('./resources/icons/cil-plus.png'))
+        add_button.setFixedSize(50,50)
+        add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_person)
-        #delete_button = QPushButton("Delete Filter")
-        #delete_button.clicked.connect(self.delete_person)
         
-        scroll_layout.addWidget(self.available_faces_list_label)
-        scroll_layout.addWidget(self.registered_person_list)
-        scroll_layout.addWidget(add_button)
-        #scroll_layout.addWidget(delete_button)
+        delete_button = QPushButton()
+        delete_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
+        delete_button.setFixedSize(50,50)
+        delete_button.setStyleSheet(Style.mini_button_style)
+        delete_button.clicked.connect(self.delete_person)
+
+        filter_list_button_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        filter_list_button_layout.addWidget(add_button)
+        filter_list_button_layout.addSpacing(10)  # 버튼 사이 간격
+        filter_list_button_layout.addWidget(delete_button)
         
-        return scroll_layout
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.registered_person_list)
+        list_frame_layout.addLayout(filter_list_button_layout)
+        list_frame.setLayout(list_frame_layout)
+        
+        return list_frame
 
 
     def _setup_face_registration_layout(self):
@@ -143,7 +164,15 @@ class AddFaceDialog(QDialog):
         self.registered_person_list.add_item("defalut")
         self.face_setting_processor.add_person_face("defalut")
         self.change_current_registered_person("defalut")
-        self.added_face.emit()
+        self.updateEvent.emit()
+
+    def delete_person(self):
+        """사람 추가"""
+        #self.registered_person_list.delete_item()
+        #self.face_setting_processor.delete_person_face()
+        #self.change_current_registered_person()
+        #self.updateEvent.emit()
+        pass
         
 
     def open_file_dialog(self):
@@ -231,4 +260,4 @@ class AddFaceDialog(QDialog):
         print(self.current_person)
         if self.current_person and self.current_person.face_name:
             self.face_setting_processor.update_person_face(self.current_person.face_name, self.current_person.encoding_list)
-            self.added_face.emit()
+            self.updateEvent.emit()

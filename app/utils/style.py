@@ -23,9 +23,9 @@ class Style:
     
     
     frame_inner_style = f"""
-        background-color: {Colors.base_color_03}; 
+        background-color: {Colors.base_color_03};
         padding: 5px;
-        
+
     """
     
     mini_button_style = f"""
@@ -103,14 +103,24 @@ class Style:
     padding: 5px 10px;
     """
 
+
+
     setting_list_button_style = f"""
+    QWidget{{
+        background-color: {Colors.base_color_06};
+        border: 1px solid rgb(00, 00, 00);
+        padding: 0px;
+        margin: 0px;
+    }}
+
     QPushButton {{
         background-color: {Colors.base_color_06};
-        border-radius: 5px;
+        padding: 5px;
+        margin: 0px;
+        border-radius: 0px;
         border: none;
         text-align: center;
         font-size: 16px;
-        margin-top: -2px;
     }}
 
     QPushButton:hover {{
@@ -126,11 +136,10 @@ class Style:
     }}
 
     QPushButton:checked {{
-        background-color: {Colors.base_color_X};
+        background-color: {Colors.base_color_04};
     }}
 
     QPushButton:selected {{
-        background-color: {Colors.base_color_X};
+        background-color: {Colors.base_color_04};
     }}
-
     """
