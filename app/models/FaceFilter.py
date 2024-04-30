@@ -93,8 +93,17 @@ def load_known_faces(data_path):
     Returns:
     - 불러온 사람별 얼굴 특징을 나타내는 딕셔너리
     """
-    with open(data_path, 'rb') as f:
-        loaded_data = pickle.load(f)
+    # 파일이 존재하는지 확인
+    if os.path.exists(data_path):
+        # 파일이 있으면 로드
+        with open(data_path, 'rb') as f:
+            loaded_data = pickle.load(f)
+    else:
+        # 파일이 없으면 빈 딕셔너리 생성
+        loaded_data = {}
+        # 생성된 빈 딕셔너리를 파일에 저장
+        with open(data_path, 'wb') as f:
+            pickle.dump(loaded_data, f)
     return loaded_data
 
 # frame 내의 얼굴 위치를 받아 encoding 값을 반환하는 함수
