@@ -8,3 +8,5 @@ class Filter:
     face_filter: list = field(default_factory=list)
     object_filter: list = field(default_factory=list)
     
+    mosaic_blur_strength: float = 50
+    mosaic_blur_shape: str = "rect"

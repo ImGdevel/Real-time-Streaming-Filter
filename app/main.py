@@ -122,10 +122,10 @@ class MainWindow(QMainWindow):
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
         # SHOW VIDEO PAGE
-        if btnName == u"btn_video":
+        if btnName == "btn_video":
             widgets.stackedWidget.setCurrentWidget(widgets.video_page)
             self.video_widget.render()
-            UIFunctions.resetStyle(self, btnName) 
+            UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         # SHOW IMAGE PAGE

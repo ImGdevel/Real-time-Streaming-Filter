@@ -8,3 +8,4 @@ from .title_edit import TitleEdit
 from .video_player import VideoPlayer
 from .shadow_frame import ShadowWidget
 from .frame_widget import FrameWidget
+from .object_filters_widget import ObjectFilterSettngWidget

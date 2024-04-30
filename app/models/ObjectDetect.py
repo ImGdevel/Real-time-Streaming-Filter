@@ -102,13 +102,18 @@ class ObjectDetect:
         for track, result in zip(tracks,results):
             if not track.is_confirmed():
                 continue
+            ltrb = track.to_ltrb(orig=True)
+            xmin, ymin, xmax, ymax = int(ltrb[0]), int(ltrb[1]), int(ltrb[2]), int(ltrb[3])
+            box = [xmin, ymin, xmax, ymax]
 
+            
             track_id = track.track_id
-            if result[0] in known_faces:
+
+            if box in known_faces:
                 if track_id not in self.exclude_id:
                     self.exclude_id.append(track_id)
             if track_id not in self.exclude_id:
-                last_results.append(result)
+                last_results.append(box)
 
         return last_results
     

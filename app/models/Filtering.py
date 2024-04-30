@@ -98,33 +98,26 @@ class Filtering:
             if filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
-                    self.face_recog_frame += 1
-                    if self.face_recog_frame == 1:
-                        face_encode = face_encoding_box(img, box)
-
-                        if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()): 
-                            known_face_boxes.append(result[0])
-                        results.append(result)
-                        continue
-                    if self.face_recog_frame == 10:
-                        self.face_recog_frame = 0
+                    face_encode = face_encoding_box(img, box)
+                    cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                    is_known = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
+                    if is_known: 
+                        known_face_boxes.append(box)
+                    results.append(result)
+                    continue
                     
             if result[2] in filter_info.object_filter:
                 results.append(result)
+        results = self.object.object_track(img, results, known_face_boxes)
 
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in filter_info.object_filter:
-                results.append(result)
+                box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
+                results.append(box)
         
-        results = self.object.object_track(img, results, known_face_boxes)
 
-
-        boxes = []
-        for result in results:
-            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            boxes.append(box)
-        return boxes
+        return results
     
     def blur(self,img, boxesList, blurRatio = 100):
         """
@@ -152,15 +145,9 @@ class Filtering:
             
         return img
 
-    def elliptical_blur(self, img, boxesList):
+    def elliptical_blur(self, img, boxesList, blurRatio = 75):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            if x1 > 640 or y1 > 480 or x2 < 0 or y2 < 0:
-                return
-            if x1 < 0:
-                x1 = 0
-            if y1 < 0:
-                y1 = 0
             obj = img[y1:y2, x1:x2]
 
             # Calculate blur region size
@@ -239,3 +226,6 @@ class Filtering:
             #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
 
         return img
+
+    def tracking_id_init(self):
+        self.object.init_exclude_id()

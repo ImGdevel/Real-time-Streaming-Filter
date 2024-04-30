@@ -1,9 +1,13 @@
-from utils import Colors, Style
-from PySide6.QtWidgets import QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit, QApplication, QMessageBox
+from PySide6.QtWidgets import ( 
+    QWidget, QFrame, QScrollArea, QVBoxLayout, QHBoxLayout, QGridLayout, 
+    QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, 
+    QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy
+)
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon
-from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget
+from PySide6.QtGui import QIcon, QFont
+from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget, ObjectFilterSettngWidget
 from controllers import FilterSettingController, PersonFaceSettingController
+from utils import Colors, Style
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
@@ -14,7 +18,10 @@ class FilterSettingView(QWidget):
         self.face_setting_processor.load_person_faces()
         
         self.current_filter = None
-        self.selected_filtering_object = [] 
+        self.current_filter_object_list = [] 
+        self.current_filter_face_list = None
+        self.current_filter_mosaic_strength = None
+        self.current_filter_mosaic_shape = None
 
         self.initUI()
 
@@ -57,7 +64,7 @@ class FilterSettingView(QWidget):
         list_label.setStyleSheet(Style.list_frame_label)
         
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.set_items_event(self.filter_list_btn_event)
+        self.filter_list_widget.set_items_event(self.set_current_filter)
         
         list_frame_layout.addWidget(list_label)
         list_frame_layout.addWidget(self.filter_list_widget)
@@ -95,41 +102,34 @@ class FilterSettingView(QWidget):
         layout = QVBoxLayout()
         frame = QFrame()
         right_layout = QVBoxLayout()
-
-        # QSplitter 생성
-        splitter = QSplitter(Qt.Vertical)
-
+        
         # 필터 이름 표시 및 수정
         self.filter_name_widget = TitleEdit()
         self.filter_name_widget.setMaximumHeight(50)
-        self.filter_name_widget.onEditEvent.connect(self.change_filter_name)
+        self.filter_name_widget.onEditEvent.connect(self.update_filter_name)
 
-        # 얼굴 인식 필터 설정 영역
-        face_widget = QWidget()
-        face_widget.setLayout(self.setup_face_layout())
+        # 설정 내용
+        content_frame = QFrame()
+        content_frame.setLayout(self.setting_page())
         
-        # 객체 필터링 설정 영역
-        object_widget = QWidget()
-        object_widget.setLayout(self.setup_object_layout())
-        
-        # QSplitter에 위젯 추가
-        splitter.addWidget(face_widget)
-        splitter.addWidget(object_widget)
-
-        # todo: 하단 오른 쪽 끝에 적용 버튼 추가
         apply_button = QPushButton("적용")
         apply_button.clicked.connect(self.apply_filter_settings)
         apply_button.setFixedSize(60, 30)  # 높이 설정
+        
+        cancel_button = QPushButton("취소")
+        cancel_button.clicked.connect(self.apply_filter_settings)
+        cancel_button.setFixedSize(60, 30)  # 높이 설정
 
         # 수평 레이아웃 생성 및 오른쪽 정렬
-        apply_layout = QHBoxLayout()
-        apply_layout.addStretch(1)
-        apply_layout.addWidget(apply_button)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch(1)
+        button_layout.addWidget(apply_button)
+        button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_name_widget)
-        right_layout.addWidget(splitter)
-        right_layout.addLayout(apply_layout)
+        right_layout.addWidget(content_frame)
+        right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -138,14 +138,83 @@ class FilterSettingView(QWidget):
         frame.setLayout(right_layout)
         layout.addWidget(frame)
         return layout
+    
+    def setting_page(self):
+
+        #설정창 들
+        face_widget = QWidget()
+        face_widget.setStyleSheet(Style.frame_style_none_line)
+        face_widget.setLayout(self.setup_face_layout())
+
+        self.object_filter_widget = ObjectFilterSettngWidget()
+        self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
+        
+
+        mos_widget = QWidget()
+        mos_widget.setLayout(self.mosaic_setting_layout())
+
+        # 설정창 스택
+        self.settings_content = QStackedWidget(self)
+        self.settings_content.addWidget(face_widget)
+        self.settings_content.addWidget(self.object_filter_widget)
+        self.settings_content.addWidget(mos_widget)
+
+        # 설정 목록에 들어갈 버튼 생성
+        button1 = QPushButton("필터링 인물 설정")
+        button1.setObjectName("setting01")
+        button2 = QPushButton("유해매체 필터 설정")
+        button2.setObjectName("setting02")
+        button3 = QPushButton("모자아크 설정")
+        button3.setObjectName("setting03")
+
+        #버튼 연결
+        button1.clicked.connect(self.setup_setting_page)
+        button2.clicked.connect(self.setup_setting_page)
+        button3.clicked.connect(self.setup_setting_page)
+
+        # 버튼을 수직으로 정렬하는 레이아웃 생성
+        vbox = QVBoxLayout()
+        vbox.setAlignment(Qt.AlignTop)
+        vbox.addWidget(button1)
+        vbox.addWidget(button2)
+        vbox.addWidget(button3)
+
+        # 설정 목록 위젯 생성 및 레이아웃 설정
+        settings_list = QWidget()
+        settings_list.setStyleSheet(Style.setting_list_button_style)
+        settings_list.setMaximumWidth(200)
+        settings_list.setLayout(vbox)
+
+        # 메인 윈도우 레이아웃 설정
+        layout = QHBoxLayout()
+        layout.addWidget(settings_list, 2)
+        layout.addWidget(self.settings_content, 5)
+
+        return layout
+
+    def setup_setting_page(self, index):
+        button = self.sender()
+        buttonName = button.objectName()
+
+        if buttonName == "setting01" or index == 0:
+            self.settings_content.setCurrentIndex(0)
+            self.update_registered_faces_list_widget(self.current_filter_face_list)
+
+        if buttonName == "setting02" or index == 1:
+            self.settings_content.setCurrentIndex(1)
+            self.object_filter_widget.setup_object_filter_widget(self.current_filter_object_list)
+
+        if buttonName == "setting03" or index == 2:
+            self.settings_content.setCurrentIndex(2)
 
 
     # 얼굴 레이어
     def setup_face_layout(self):
         """얼굴 인식 필터 설정 영역 레이아웃 생성"""
         face_layout = QVBoxLayout()
+        face_layout.setAlignment(Qt.AlignRight)
         
-        face_label = QLabel("Face Filtering")
+        face_label = QLabel("필터링 인물 설정")
         face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
@@ -169,63 +238,47 @@ class FilterSettingView(QWidget):
         face_layout.addWidget(face_setting_widget)
 
         # Add 버튼 추가
-        add_face_button = QPushButton("Add")
+        add_face_button = QPushButton("등록")
         add_face_button.setFixedSize(60, 30)
         add_face_button.clicked.connect(self.show_add_face_dialog)
         face_layout.addWidget(add_face_button)
         
         return face_layout
-
-    # 오브젝트 레이어
-    def setup_object_layout(self):
-        """객체 필터링 설정 영역 레이아웃 생성"""
-        object_layout = QVBoxLayout()
-        
-        object_label = QLabel("Object Filtering")
-        object_label.setStyleSheet("font-weight: bold;")
-        object_label.setFixedHeight(30)  # 높이 설정
-        
-        self.object_setting_widget = QWidget()
-
-        # QVBoxLayout을 self.object_setting_widget 위젯에 설정
-        self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
-        
-        # 토글 버튼(체크박스 스타일) 추가
-        self.toggle_button1 = QPushButton("담배")
-        self.toggle_button1.userData = "smoke"
-        self.toggle_button2 = QPushButton("칼")
-        self.toggle_button2.userData = "2"
-        self.toggle_button3 = QPushButton("?")
-        self.toggle_button3.userData = "3"
-        self.toggle_button4 = QPushButton("선정성 컨텐츠")
-        self.toggle_button4.userData = "4"
-        
-        # 버튼에 고유한 식별자 부여
-        self.toggle_button1.setObjectName("Tobacco")
-        self.toggle_button2.setObjectName("Knife")
-        self.toggle_button3.setObjectName("Bloodshed")
-        self.toggle_button4.setObjectName("Explicit_Content")
-        
-        # 버튼 클릭 이벤트 연결
-        self.toggle_button1.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button2.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button3.clicked.connect(self.toggle_button_clicked)
-        self.toggle_button4.clicked.connect(self.toggle_button_clicked)
-
-        # 현재 선택된 객체 필터링 설정
-        self.selected_filtering_object = []
-
-        # 버튼 위젯들을 QVBoxLayout에 추가
-        self.object_setting_layout.addWidget(self.toggle_button1)
-        self.object_setting_layout.addWidget(self.toggle_button2)
-        self.object_setting_layout.addWidget(self.toggle_button3)
-        self.object_setting_layout.addWidget(self.toggle_button4)
-
-        object_layout.addWidget(object_label)
-        object_layout.addWidget(self.object_setting_widget)
-        
-        return object_layout
     
+    def mosaic_setting_layout(self):
+        """모자이크 설정 레이아웃"""
+
+        layout = QGridLayout()  # 그리드 레이아웃으로 변경
+        layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
+
+        # 모자이크 강도 설정 라벨과 슬라이더를 그리드에 추가
+        intensity_label = QLabel("모자이크 강도 ")
+        intensity_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
+        intensity_slider = QSlider(Qt.Horizontal)  # 수평 슬라이더 생성
+        intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # 크기 정책 설정
+        intensity_slider.setMaximumWidth(500)  # 최대 너비 설정
+        intensity_slider.setMinimumWidth(400)
+        layout.addWidget(intensity_label, 0, 0)  # 라벨을 (0, 0) 위치에 추가
+        layout.addWidget(intensity_slider, 0, 1, alignment=Qt.AlignRight)  # 슬라이더를 (0, 1) 위치에 추가, 우측 정렬 적용
+
+        # 모자이크 모양 설정 라벨과 드롭다운을 그리드에 추가
+        shape_label = QLabel("모자이크 모양 ")
+        shape_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
+        shape_combobox = QComboBox()
+        shape_combobox.setMaximumWidth(300)  # 최대 너비 설정
+        shape_combobox.setMinimumWidth(200)
+        shape_combobox.addItems(["사각형", "원형"])
+        layout.addWidget(shape_label, 1, 0)  # 라벨을 (1, 0) 위치에 추가
+        layout.addWidget(shape_combobox, 1, 1,  alignment=Qt.AlignRight)  # 드롭다운을 (1, 1) 위치에 추가
+        
+        layout.setColumnStretch(0, 1)  # 첫 번째 열의 너비를 1배로 설정
+
+        # 그리드 레이아웃을 우측으로 정렬
+        layout.setAlignment(Qt.AlignRight)
+
+        return layout
+
+
 
     def show_filter_setting_window(self, is_show):
         """윈도우 디스플레이 결정"""
@@ -235,18 +288,6 @@ class FilterSettingView(QWidget):
         else:
             self.right_widget.hide()
             self.empty_widget.show()
-
-
-    def toggle_button_clicked(self):
-        """토글 버튼(체크박스 스타일) 클릭 이벤트 핸들러"""
-        sender_button = self.sender()  # 이벤트를 발생시킨 버튼 가져오기
-        button_name = sender_button.userData  # 버튼의 고유한 식별자 가져오기
-
-        # 버튼의 스타일 변경
-        if button_name in self.selected_filtering_object:
-            self.selected_filtering_object.remove(button_name)  # 리스트에서 제거
-        else:
-            self.selected_filtering_object.append(button_name)  # 리스트에 추가
     
 
     def register_face(self, person_name):
@@ -254,6 +295,7 @@ class FilterSettingView(QWidget):
         if self.registered_faces_list_widget.is_in_item(person_name): #중복 체크
             print(f"'{person_name}' is already registered.")
             return
+        
         self.registered_faces_list_widget.add_item(person_name) # 등록
     
 
@@ -268,7 +310,6 @@ class FilterSettingView(QWidget):
             filter_name = f"New Filter {i}"
             if not self.filter_setting_processor.get_filter(filter_name):
                 break
-        print(filter_name)
         self.filter_setting_processor.add_filter(filter_name)
         self.filter_list_widget.add_item(filter_name)
         self.set_current_filter(filter_name)
@@ -278,31 +319,25 @@ class FilterSettingView(QWidget):
         """Filter 삭제 메서드"""
         self.filter_setting_processor.delete_filter(self.current_filter)
         self.filter_list_widget.delete_item(self.current_filter)
-        print(self.filter_list_widget.get_current_item_text())
         self.set_current_filter(self.filter_list_widget.get_current_item_text())
-
-
-    def filter_list_btn_event(self, filter_name):
-        """Filter 버튼 클릭 이벤트 메서드"""
-        if filter_name:
-            self.set_current_filter(filter_name)
-
 
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
-        self.current_filter = filter_name
         filter_data = self.filter_setting_processor.get_filter(filter_name)
-        print("[Log] : 선택된 필터 > ", filter_data)
+
         if filter_data:
-            self.filter_list_widget.update_filter_list()
-            self.update_registered_faces_list_widget(filter_data.face_filter)
-            self.update_object_setting_list(filter_data.object_filter)
-            self.filter_name_widget.set_title(filter_name)      
+            print("[Log] : 선택된 필터 > ", filter_data)
+            self.current_filter = filter_name
+            self.filter_name_widget.set_title(filter_name)
+            self.current_filter_face_list = filter_data.face_filter
+            self.current_filter_object_list = filter_data.object_filter
+            self.setup_setting_page(0)
+
             self.show_filter_setting_window(True)
         else:
-            print(f"Filter '{filter_name}' not found")
+            print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
-    
+            
     
     def update_registered_faces_list_widget(self, face_filter_data):
         """registered_faces_list_widget 업데이트 메서드"""
@@ -312,35 +347,21 @@ class FilterSettingView(QWidget):
         for face_name in face_filter_data:
             self.registered_faces_list_widget.add_item(face_name)
 
-
-    def update_object_setting_list(self, filtering_object_datas):
-        """_object_setting_list 업데이트 메서드"""
-        
-        # 기존 버튼들의 스타일만 업데이트
-        for i in range(self.object_setting_layout.count()):
-            button = self.object_setting_layout.itemAt(i).widget()
-            if button.objectName() in filtering_object_datas:
-                button.setChecked(True)  # 버튼을 체크 상태로 설정
-            else:
-                button.setChecked(False)  # 버튼을 체크 해제 상태로 설정
-
-        # selected_filtering_object 업데이트
-        self.selected_filtering_object = filtering_object_datas.copy()
-
-
     def show_add_face_dialog(self):
         """얼굴 추가 다이얼로그 표시 메서드"""
         dialog = AddFaceDialog(self)
-        dialog.added_face.connect(self.update_available_faces)
+        dialog.updateEvent.connect(self.update_available_faces)
         dialog.exec_()
 
+    def update_object_filter(self, list):
+        """콜백 오브젝트 리스트 업데이트"""
+        self.current_filter_object_list = list
 
     def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""
         self.available_faces_list_widget.update_list()
 
-
-    def change_filter_name(self, text):
+    def update_filter_name(self, text):
         """필터 이름 변경"""
         if self.current_filter == text or text == "" or text == None:
             #잘못된 입력, 돌아감
@@ -359,13 +380,14 @@ class FilterSettingView(QWidget):
         """세팅된 필터링 정보 저장"""
         # registered_faces_list_widget의 내용 가져오기
         updated_face_filter = self.registered_faces_list_widget.get_items_text()
-        updated_filtering_object = self.selected_filtering_object
+        updated_filtering_object = self.current_filter_object_list
+
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
         
         
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
+        self.filter_list_widget.update_list()
         pass
         
