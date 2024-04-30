@@ -100,18 +100,11 @@ class Filtering:
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
                     cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known, tol = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
+                    is_known = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
                     if is_known: 
-                        cv2.putText(img, str(tol)+' '+str(round(result[1], 3)) + '%', (box[0], box[1]), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
                         known_face_boxes.append(box)
-                    else:
-                        cv2.putText(img, 'unknow '+str(round(result[1], 3)) + '%', (box[0], box[1]), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
-
                     results.append(result)
-
                     continue
-                    if self.face_recog_frame == 10:
-                        self.face_recog_frame = 0
                     
             if result[2] in filter_info.object_filter:
                 results.append(result)
@@ -152,15 +145,9 @@ class Filtering:
             
         return img
 
-    def elliptical_blur(self, img, boxesList):
+    def elliptical_blur(self, img, boxesList, blurRatio = 75):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            if x1 > 640 or y1 > 480 or x2 < 0 or y2 < 0:
-                return
-            if x1 < 0:
-                x1 = 0
-            if y1 < 0:
-                y1 = 0
             obj = img[y1:y2, x1:x2]
 
             # Calculate blur region size

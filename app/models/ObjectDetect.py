@@ -106,8 +106,6 @@ class ObjectDetect:
             xmin, ymin, xmax, ymax = int(ltrb[0]), int(ltrb[1]), int(ltrb[2]), int(ltrb[3])
             box = [xmin, ymin, xmax, ymax]
 
-            cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0,255,0), 2)
-            cv2.putText(img, str(track.track_id), (xmin, ymin-20), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
             
             track_id = track.track_id
 

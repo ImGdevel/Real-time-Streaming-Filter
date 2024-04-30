@@ -272,7 +272,7 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
     person_name, tolerance = recognize_face(except_faces, face_encoding)
 
     if person_name == "unknown":
-        return False, -1
+        return False
     else:
         return True, tolerance
     
