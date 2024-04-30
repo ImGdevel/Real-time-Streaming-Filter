@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QScrollArea, QVBoxLayout, QHBoxLayout, QGridLayout, 
-    QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, 
+    QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, 
     QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy
 )
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QFont
 from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget, ObjectFilterSettngWidget
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
@@ -149,11 +149,15 @@ class FilterSettingView(QWidget):
         self.object_filter_widget = ObjectFilterSettngWidget()
         self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
         
+
+        mos_widget = QWidget()
+        mos_widget.setLayout(self.mosaic_setting_layout())
+
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
         self.settings_content.addWidget(face_widget)
         self.settings_content.addWidget(self.object_filter_widget)
-        self.settings_content.addWidget(QWidget())
+        self.settings_content.addWidget(mos_widget)
 
         # 설정 목록에 들어갈 버튼 생성
         button1 = QPushButton("필터링 인물 설정")
@@ -243,13 +247,34 @@ class FilterSettingView(QWidget):
     
     def mosaic_setting_layout(self):
         """모자이크 설정 레이아웃"""
-        layout = QVBoxLayout()
 
-        # 모자이크 설정 레이아웃은 두부분으로 나누어진다.
-        # 상단 부분은 전체 모자이크의 설정을 다룰 수 있다.
+        layout = QGridLayout()  # 그리드 레이아웃으로 변경
+        layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
 
-        # 
+        # 모자이크 강도 설정 라벨과 슬라이더를 그리드에 추가
+        intensity_label = QLabel("모자이크 강도 ")
+        intensity_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
+        intensity_slider = QSlider(Qt.Horizontal)  # 수평 슬라이더 생성
+        intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # 크기 정책 설정
+        intensity_slider.setMaximumWidth(500)  # 최대 너비 설정
+        intensity_slider.setMinimumWidth(400)
+        layout.addWidget(intensity_label, 0, 0)  # 라벨을 (0, 0) 위치에 추가
+        layout.addWidget(intensity_slider, 0, 1, alignment=Qt.AlignRight)  # 슬라이더를 (0, 1) 위치에 추가, 우측 정렬 적용
 
+        # 모자이크 모양 설정 라벨과 드롭다운을 그리드에 추가
+        shape_label = QLabel("모자이크 모양 ")
+        shape_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
+        shape_combobox = QComboBox()
+        shape_combobox.setMaximumWidth(300)  # 최대 너비 설정
+        shape_combobox.setMinimumWidth(200)
+        shape_combobox.addItems(["사각형", "원형"])
+        layout.addWidget(shape_label, 1, 0)  # 라벨을 (1, 0) 위치에 추가
+        layout.addWidget(shape_combobox, 1, 1,  alignment=Qt.AlignRight)  # 드롭다운을 (1, 1) 위치에 추가
+        
+        layout.setColumnStretch(0, 1)  # 첫 번째 열의 너비를 1배로 설정
+
+        # 그리드 레이아웃을 우측으로 정렬
+        layout.setAlignment(Qt.AlignRight)
 
         return layout
 
