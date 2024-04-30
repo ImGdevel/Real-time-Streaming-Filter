@@ -171,7 +171,7 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
 
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
-def recognize_face(known_faces, face_encoding, tolerance=0.35):
+def recognize_face(known_faces, face_encoding, tolerance=0.3):
     """
     얼굴을 인식하여 인식된 사람과 일치하는지 확인합니다.
     
@@ -189,15 +189,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.35):
 
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            print("==========distance==========")
-            print(distance)
+            # print("==========distance==========")
+            # print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    print(recognized_face, ":::::")
-    print(tolerance_used)
+    # print(recognized_face, ":::::")
+    # print(tolerance_used)
 
     return recognized_face, tolerance_used
 
@@ -272,9 +272,9 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
     person_name, tolerance = recognize_face(except_faces, face_encoding)
 
     if person_name == "unknown":
-        return False
+        return False, -1
     else:
-        return True
+        return True, tolerance
     
 
 

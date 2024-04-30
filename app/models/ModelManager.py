@@ -17,7 +17,7 @@ class ModelManager:
             cls._instance = super().__new__(cls, *args, **kwargs)
             cls.orginModel = YOLO("models/yolov8n-oiv7.pt")
             cls.customModel = YOLO("models/bad.pt")
-            cls.tracker = DeepSort(max_age=10)
+            cls.tracker = DeepSort(max_age=0)
         return cls._instance
     
     def get_label(self):

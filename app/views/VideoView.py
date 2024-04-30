@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
@@ -95,7 +95,11 @@ class VideoView(QWidget):
 
     def do_video_encoding(self):
         """비디오 인코딩"""
-        self.video_processor.filtering_video(self.origin_video_path)
+        #다이얼로그 구문 
+        progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+        progress_dialog.setWindowModality(Qt.WindowModal)
+        progress_dialog.show()
+        self.video_processor.filtering_video(self.origin_video_path, progress_dialog)
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
