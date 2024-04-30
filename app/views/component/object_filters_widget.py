@@ -27,6 +27,7 @@ class ObjectFilterSettngWidget(QWidget):
 
         # QVBoxLayout을 self.object_setting_widget 위젯에 설정
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
+        self.object_setting_layout.setAlignment(Qt.AlignTop)
         
         # QCheckBox로 변경
         self.toggle_checkbox1 = QCheckBox("담배 필터")
