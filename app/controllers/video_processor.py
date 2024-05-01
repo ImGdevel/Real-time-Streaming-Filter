@@ -1,3 +1,4 @@
+import os
 import cv2
 import shutil
 from PySide6.QtCore import QThread, Signal
@@ -14,7 +15,6 @@ class VideoProcessor(QThread):
         self.filter_manager = FilterManager()
         self.path_manager = PathManager()
         self.temp_video_path = str
-        self.current_filter = None
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path, progress_dialog):
@@ -23,7 +23,7 @@ class VideoProcessor(QThread):
         fps = cap.get(cv2.CAP_PROP_FPS)
         total_elements = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         # 새 동영상 파일 경로 및 설정
-        self.temp_video_path = 'output_video.mp4'
+        self.temp_video_path = os.path.join(self.path_manager.load_TempData_path(),'output_video.mp4')
 
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -44,7 +44,7 @@ class VideoProcessor(QThread):
                 break  # 동영상 끝에 도달하면 반복 중지
 
             
-            boxesList = self.filtering.filtering(frame, self.current_filter)
+            boxesList = self.filtering.filtering(frame)
             processed_frame = self.filtering.blur(frame, boxesList)
             # 출력 동영상에 프레임 쓰기
             output_video.write(processed_frame)
@@ -64,5 +64,7 @@ class VideoProcessor(QThread):
     def set_filter(self, filter):
         """필터 설정"""
         if not filter is None:
-            self.current_filter = self.filter_manager.get_filter(filter)
-            print("현제 적용 필터 :",  self.current_filter)
+            current_filter = self.filter_manager.get_filter(filter)
+            print("현제 적용 필터 :",  current_filter)
+            self.filtering.set_filter(current_filter)
+            

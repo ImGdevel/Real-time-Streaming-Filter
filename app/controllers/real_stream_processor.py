@@ -14,7 +14,6 @@ class RealStreamProcessor(QThread):
         self.filtering = Filtering()
         self.filter_manager = FilterManager()
 
-        self.current_filter = None
         
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = False  # 화면 좌우 뒤집기 상태
@@ -45,17 +44,17 @@ class RealStreamProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        if not self.current_filter is None:
-            boxesList = self.filtering.video_filtering(frame, self.current_filter)    
-            processed_frame = self.filtering.elliptical_blur(frame, boxesList)
+        boxesList = self.filtering.video_filtering(frame)    
+        processed_frame = self.filtering.elliptical_blur(frame, boxesList)
     
         return processed_frame
     
     def set_filter(self, filter):
         """필터 설정"""
         if not filter is None:
-            self.current_filter = self.filter_manager.get_filter(filter)
-            print("현제 적용 필터 :",  self.current_filter)
+            current_filter = self.filter_manager.get_filter(filter)
+            print("현제 적용 필터 :",  current_filter)
+            self.filtering.set_filter(current_filter)
             self.filtering.tracking_id_init()
 
     def flip_horizontal(self):

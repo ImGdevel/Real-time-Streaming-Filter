@@ -16,7 +16,6 @@ class ImageProcessor():
         self.filtering = Filtering()
         self.path_manager = PathManager()
         self.filter_manager = FilterManager()
-        self.current_filter = None
 
 
     #원본 사진을 받아서 임시로 이미지 처리
@@ -29,7 +28,7 @@ class ImageProcessor():
             # 이미지 처리 
             #blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image, self.current_filter)
+            boxesList = self.filtering.filtering(image)
             processed_image = self.filtering.blur(image, boxesList)
             
 
@@ -60,7 +59,7 @@ class ImageProcessor():
             # 이미지 처리 
             blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image, self.current_filter)
+            boxesList = self.filtering.filtering(image)
             processed_image = self.filtering.blur(image, boxesList)
             
 
@@ -71,6 +70,7 @@ class ImageProcessor():
             q_img = QImage(processed_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
 
             processed_images_dict[image_path] = q_img
+
 
         return processed_images_dict
 
@@ -111,10 +111,25 @@ class ImageProcessor():
             # print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1
 
+    def create_filtered_image_dict(self, QImage_dict):
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        download_directory = self.path_manager.load_download_path()
+        print("down images to : " + self.output_video_path)
+        sequence_number = 1
+        for key, qimage in QImage_dict.items():
+            img = self.QImage_to_cv2(qimage)
+            # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
+            image_name = f"{current_time}_{sequence_number}.jpg"
+            output_path = os.path.join(download_directory, image_name)
+            cv2.imwrite(output_path, img)
+            # print(f"이미지 처리 및 저장 완료: {output_path}")
+            sequence_number += 1
+
     def set_filter(self, filter):
         """필터 설정"""
         if not filter is None:
-            self.current_filter = self.filter_manager.get_filter(filter)
-            print("현제 적용 필터 :",  self.current_filter)
+            current_filter = self.filter_manager.get_filter(filter)
+            print("현제 적용 필터 :",  current_filter)
+            self.filtering.set_filter(current_filter)
 
             
