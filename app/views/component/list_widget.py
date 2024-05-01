@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import ( 
-    QHBoxLayout,
+    QWidget, QHBoxLayout,  QVBoxLayout,
     QListWidget, QListWidgetItem, QPushButton, 
     QGraphicsDropShadowEffect, QButtonGroup
 )
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QPropertyAnimation
 from PySide6.QtGui import QColor
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
@@ -13,8 +13,6 @@ class ListWidget(QListWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.button_group = QButtonGroup()
-        self.button_group.setExclusive(True)
         self.setSpacing(15)
         self.setStyleSheet(Style.list_widget_style)
 
@@ -27,6 +25,7 @@ class ListWidget(QListWidget):
 
     def create_button(self, item_name):
         button = QPushButton(item_name)
+        button.setObjectName("List Button")
         button.setStyleSheet(Style.list_button_style)
         button.setMinimumHeight(40)
 
@@ -128,7 +127,7 @@ class FilterListWidget(ListWidget):
         shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
         shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
         shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
-        button.setGraphicsEffect(shadow_effect) 
+        button.setGraphicsEffect(shadow_effect)
 
         button.clicked.connect(self.emit_button_clicked)
 
@@ -145,6 +144,78 @@ class FilterListWidget(ListWidget):
 class RegisteredFacesListWidget(ListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.button_group = QButtonGroup()
+        self.button_group.setExclusive(True)
+
+    def add_item(self, item_name):
+        item = QListWidgetItem()
+        self.addItem(item)
+        button = self.create_button(item_name)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+
+    def create_button(self, item_name):
+        """버튼을 추가하는 경우"""
+
+        button = QPushButton(item_name)
+        button.setObjectName("List Button")
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+        button.clicked.connect(self.emit_button_clicked)
+
+        shadow_effect = QGraphicsDropShadowEffect(self)
+        shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
+        button.setGraphicsEffect(shadow_effect) 
+
+        return button
+    
+    def button_widget_open(self):
+        """버튼을 클릭하면 해당 버튼이 확장 또는 축소됨"""
+        button = self.sender()
+
+        if button:
+            object_name = button.objectName()
+            print("ObjectName:", object_name)
+
+            # 현재 버튼의 최대 높이 가져오기
+            current_max_height = button.maximumHeight()
+
+            # 버튼이 확장되어 있는지 여부 확인
+            is_expanded = current_max_height > button.minimumHeight()
+
+            # 애니메이션 객체 생성
+            animation = QPropertyAnimation(button, b"maximumHeight")
+            # 애니메이션 지속 시간 설정
+            animation.setDuration(300)
+
+            if not is_expanded:
+                # 버튼이 확장되지 않은 상태라면
+                # 애니메이션의 시작값과 끝값 설정
+                animation.setStartValue(button.minimumHeight())
+                animation.setEndValue(200)  # 확장될 높이로 조절
+
+            else:
+                # 버튼이 확장된 상태라면
+                # 애니메이션의 시작값과 끝값 설정
+                animation.setStartValue(current_max_height)
+                animation.setEndValue(button.minimumHeight())
+
+
+            print("확장 시작")
+            # 애니메이션 시작
+            animation.start()
+
+
+    def emit_button_clicked(self):
+        """아이템 클릭 시그널을 발생시키는 메서드"""
+        button = self.sender()
+
+        self.button_widget_open()
+        
+        if button:
+            self.onClickItemEvent.emit(button.text())  # 시그널 발생
 
 
 
@@ -166,9 +237,10 @@ class AvailableFacesListWidget(ListWidget):
         for people in self.face_setting_processor.get_person_faces():
             self.add_item(people.face_name)
 
+
+
 class MosaicStickerList(ListWidget):
     onClickItemEvent = Signal(str)
 
-    
     def __init__(self, parent=None):
         super().__init__(parent)
