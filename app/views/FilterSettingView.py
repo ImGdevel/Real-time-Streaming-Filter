@@ -5,7 +5,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QFont
-from views.component import AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, TitleEdit, ShadowWidget, ObjectFilterSettngWidget
+from views.component import (
+    AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
+    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicStickerList
+)
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
 
@@ -215,6 +218,7 @@ class FilterSettingView(QWidget):
         face_layout.setAlignment(Qt.AlignRight)
         
         face_label = QLabel("필터링 인물 설정")
+        face_label.setStyleSheet("font-weight: bold; font-size: 20px;")
         face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
@@ -247,9 +251,14 @@ class FilterSettingView(QWidget):
     
     def mosaic_setting_layout(self):
         """모자이크 설정 레이아웃"""
+        layout = QVBoxLayout()
 
-        layout = QGridLayout()  # 그리드 레이아웃으로 변경
-        layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
+        default_mosaic_layout  = QGridLayout()  # 그리드 레이아웃으로 변경
+        default_mosaic_layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
+
+        default_mosaic_layout_label = QLabel("기본 모자이크 설정")
+        default_mosaic_layout_label.setStyleSheet("font-weight: bold; font-size: 20px;")
+        default_mosaic_layout.addWidget(default_mosaic_layout_label,0,0)
 
         # 모자이크 강도 설정 라벨과 슬라이더를 그리드에 추가
         intensity_label = QLabel("모자이크 강도 ")
@@ -258,8 +267,8 @@ class FilterSettingView(QWidget):
         intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # 크기 정책 설정
         intensity_slider.setMaximumWidth(500)  # 최대 너비 설정
         intensity_slider.setMinimumWidth(400)
-        layout.addWidget(intensity_label, 0, 0)  # 라벨을 (0, 0) 위치에 추가
-        layout.addWidget(intensity_slider, 0, 1, alignment=Qt.AlignRight)  # 슬라이더를 (0, 1) 위치에 추가, 우측 정렬 적용
+        default_mosaic_layout .addWidget(intensity_label, 1, 0)  # 라벨을 (0, 0) 위치에 추가
+        default_mosaic_layout .addWidget(intensity_slider, 1, 1, alignment=Qt.AlignRight)  # 슬라이더를 (0, 1) 위치에 추가, 우측 정렬 적용
 
         # 모자이크 모양 설정 라벨과 드롭다운을 그리드에 추가
         shape_label = QLabel("모자이크 모양 ")
@@ -268,13 +277,36 @@ class FilterSettingView(QWidget):
         shape_combobox.setMaximumWidth(300)  # 최대 너비 설정
         shape_combobox.setMinimumWidth(200)
         shape_combobox.addItems(["사각형", "원형"])
-        layout.addWidget(shape_label, 1, 0)  # 라벨을 (1, 0) 위치에 추가
-        layout.addWidget(shape_combobox, 1, 1,  alignment=Qt.AlignRight)  # 드롭다운을 (1, 1) 위치에 추가
+        default_mosaic_layout.addWidget(shape_label, 2, 0)  # 라벨을 (1, 0) 위치에 추가
+        default_mosaic_layout.addWidget(shape_combobox, 2, 1,  alignment=Qt.AlignRight)  # 드롭다운을 (1, 1) 위치에 추가
         
-        layout.setColumnStretch(0, 1)  # 첫 번째 열의 너비를 1배로 설정
+        default_mosaic_layout.setColumnStretch(0, 1)  # 첫 번째 열의 너비를 1배로 설정
+        default_mosaic_layout.setColumnStretch(1, 4)  # 첫 번째 열의 너비를 4배로 설정
 
-        # 그리드 레이아웃을 우측으로 정렬
-        layout.setAlignment(Qt.AlignRight)
+        default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
+
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)  # 수평 구분선
+        separator.setFrameShadow(QFrame.Sunken)  # 음각형태로 그림자 표시
+
+
+        custom_mosaic_layout = QVBoxLayout()
+        custom_mosaic_layout_label = QLabel("커스텀 모자이크 설정")
+        custom_mosaic_layout_label.setFont(QFont("Arial", 18))  # 폰트 크기 조정
+        
+
+        custom_mosaic_list_widget = MosaicStickerList()
+        
+
+
+        custom_mosaic_layout.addWidget(separator)
+        custom_mosaic_layout.addWidget(custom_mosaic_layout_label)
+        custom_mosaic_layout.addWidget(custom_mosaic_list_widget)
+
+        custom_mosaic_layout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        
+        layout.addLayout(default_mosaic_layout)
+        layout.addLayout(custom_mosaic_layout)
 
         return layout
 

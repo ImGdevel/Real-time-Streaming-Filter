@@ -19,8 +19,8 @@ class ObjectFilterSettngWidget(QWidget):
         """객체 필터링 설정 영역 레이아웃 생성"""
         object_layout = QVBoxLayout()
         
-        object_label = QLabel("Object Filtering")
-        object_label.setStyleSheet("font-weight: bold;")
+        object_label = QLabel("유해 매체 필터링")
+        object_label.setStyleSheet("font-weight: bold; font-size: 20px;")
         object_label.setFixedHeight(30)  # 높이 설정
         
         self.object_setting_widget = QWidget()
