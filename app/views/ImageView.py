@@ -5,14 +5,6 @@ from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, 
 from controllers import ImageProcessor
 from utils import Colors
 
-class WorkerThread(QThread):
-    progress_changed = Signal(int)
-
-    def run(self):
-        for i in range(101):
-            self.progress_changed.emit(i)
-            self.msleep(100)
-
 class ImageView(QWidget):
     
     count = int
@@ -81,7 +73,7 @@ class ImageView(QWidget):
 
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
+        self.filter_list_widget.update_list()
         pass
     
     def removeUrl(self, url):
@@ -116,8 +108,16 @@ class ImageView(QWidget):
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
         if url_list:
-            self.show_progress_dialog("Encoding")
-            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
+            progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+            progress_dialog.setWindowModality(Qt.WindowModal)
+            # progress_dialog.setStyleSheet('''
+            #     background-color: #333333; /* Dark gray background */
+            #     color: #FFFFFF; /* White text */
+            #     font-size: 16px; /* Font size */
+            #     padding: 20px; /* Padding */
+            # ''')
+            progress_dialog.show()
+            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
             print(self.filtered_image)
     
     def Download(self):
@@ -131,24 +131,5 @@ class ImageView(QWidget):
         
         return origin_urls
         
-    def show_progress_dialog(self, task_name):
-        progress_dialog = QProgressDialog(task_name, "Cancel", 0, 100)
-        progress_dialog.setWindowTitle("Progress")
-        progress_dialog.setWindowModality(Qt.WindowModal)
-        progress_dialog.setStyleSheet('''
-            background-color: #333333; /* Dark gray background */
-            color: #FFFFFF; /* White text */
-            font-size: 16px; /* Font size */
-            padding: 20px; /* Padding */
-        ''')
-
-        # worker_thread = WorkerThread()
-        # worker_thread.progress_changed.connect(progress_dialog.setValue)
-        # worker_thread.start()
-
-        # progress_dialog.show()
-        # worker_thread.quit()
-
-
 
    

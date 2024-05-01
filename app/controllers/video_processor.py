@@ -3,6 +3,7 @@ import cv2
 import shutil
 from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager, PathManager
+from PySide6.QtWidgets import QApplication
 
 class VideoProcessor(QThread):
     '''비디오 재생을 위한 스레드 클래스'''
@@ -17,10 +18,11 @@ class VideoProcessor(QThread):
         self.current_filter = None
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
-    def filtering_video(self, video_path):
+    def filtering_video(self, video_path, progress_dialog):
 
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
+        total_elements = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         # 새 동영상 파일 경로 및 설정
         self.temp_video_path = os.path.join(self.path_manager.load_TempData_path(),'output_video.mp4')
 
@@ -30,8 +32,15 @@ class VideoProcessor(QThread):
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         output_video = cv2.VideoWriter(self.temp_video_path, fourcc, fps, (frame_width, frame_height))
 
+        i = 0
         while True:
+            i += 1
+            progress = ((i + 1) / total_elements) * 100
+            progress_dialog.setValue(progress)
+            QApplication.processEvents()
             ret, frame = cap.read()  # 프레임 읽기
+            if progress_dialog.wasCanceled():
+                return
             if not ret:
                 break  # 동영상 끝에 도달하면 반복 중지
 

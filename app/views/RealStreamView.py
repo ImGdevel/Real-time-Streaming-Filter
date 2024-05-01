@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from controllers import RealStreamProcessor
-from views.component import FilterListWidget, ShadowWidget, FrameWidget
+from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -162,50 +162,27 @@ class RealStreamView(QWidget):
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
-        bottom_widget = ShadowWidget()  # 하단 위젯
-        bottom_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
+        frame = ShadowWidget()  # 하단 위젯
         
+        layout = QHBoxLayout()
+        bottom_widget = QWidget()
+        bottom_widget.setStyleSheet(Style.frame_style)  # 배경색 및 테두리 설정
+    
         # 버튼 레이아웃 설정
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(10)
         
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_01};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_02};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_03};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_04};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_05};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_06};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_07};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_08};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_X};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Y};')
-        bottom_layout.addWidget(layout_temp)
-        layout_temp = QWidget()
-        layout_temp.setStyleSheet(f'background-color: {Colors.base_color_Z};')
-        bottom_layout.addWidget(layout_temp)
+        #self.object_filter_widget = ObjectFilterSettngWidget()
+        #self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
+        #bottom_layout.addWidget(self.object_filter_widget)
+        
         
         bottom_widget.setLayout(bottom_layout)
+        layout.addWidget(bottom_widget)
         
-        return bottom_widget
+        frame.setLayout(layout)
+        
+        return frame
 
 
     # method
@@ -247,7 +224,15 @@ class RealStreamView(QWidget):
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
         self.streaming_processor.set_filter(index)
+        #self.object_filter_widget.setup_object_filter_widget(self.selected_filtering_object)
         pass
+
+    def update_object_filter(self, list):
+        """콜백 오브젝트 리스트 업데이트"""
+        self.selected_filtering_object = list
+        pass
+        
+        
 
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
@@ -258,7 +243,7 @@ class RealStreamView(QWidget):
 
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_filter_list()
+        self.filter_list_widget.update_list()
         pass
 
     def closeEvent(self, event):

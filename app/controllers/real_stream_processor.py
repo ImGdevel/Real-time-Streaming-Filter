@@ -40,7 +40,7 @@ class RealStreamProcessor(QThread):
             # self.msleep(16)  # 약 60fps
             end = time.time()
             result = end - start
-            print("time: "+ str(result))
+            # print("time: "+ str(result))
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''

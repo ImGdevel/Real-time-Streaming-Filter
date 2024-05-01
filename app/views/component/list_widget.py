@@ -1,37 +1,45 @@
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QScrollArea, QGraphicsDropShadowEffect, QWidget
+from PySide6.QtWidgets import ( 
+    QHBoxLayout,
+    QListWidget, QListWidgetItem, QPushButton, 
+    QGraphicsDropShadowEffect, QButtonGroup
+)
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QColor
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
 
 class ListWidget(QListWidget):
-    
-
-        
     onClickItemEvent = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.button_group = QButtonGroup()
+        self.button_group.setExclusive(True)
         self.setSpacing(15)
         self.setStyleSheet(Style.list_widget_style)
 
-
     def add_item(self, item_name):
+        item = QListWidgetItem()
+        self.addItem(item)
+        button = self.create_button(item_name)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+
+    def create_button(self, item_name):
         button = QPushButton(item_name)
         button.setStyleSheet(Style.list_button_style)
         button.setMinimumHeight(40)
-        
+
         shadow_effect = QGraphicsDropShadowEffect(self)
         shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
-        shadow_effect.setColor(QColor(0, 0, 0, 200))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
         shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
         button.setGraphicsEffect(shadow_effect) 
-        
-        item = QListWidgetItem()
-        self.addItem(item)
-        self.setItemWidget(item, button)
-        item.setSizeHint(button.sizeHint())
+
         button.clicked.connect(self.emit_button_clicked)
+
+        return button
+        
 
     def get_item_text(self, index: int):
         """아이템 인덱스를 통해 위젯 내의 버튼의 텍스트를 반환하는 메서드"""
@@ -69,6 +77,7 @@ class ListWidget(QListWidget):
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
         button = self.sender()
+        # todo : 선택된 아이템을 선택 했을때
         if button:
             self.onClickItemEvent.emit(button.text())  # 시그널 발생
     
@@ -82,13 +91,11 @@ class ListWidget(QListWidget):
         current_row = self.currentRow()
         
         if current_row != -1:
-            print("다음",current_row)
             self.setCurrentRow(max(0, current_row - 1))
 
     def get_current_item_text(self):
         """현재 선택된 아이템의 텍스트를 반환하는 메서드"""
         current_item = self.currentItem()
-        print("현제", current_item)
         if current_item:
             widget = self.itemWidget(current_item)
             if isinstance(widget, QPushButton):
@@ -102,10 +109,78 @@ class ListWidget(QListWidget):
         self.onClickItemEvent.connect(event)
 
 
-    
-class RegisteredFacesListWidget(ListWidget):
+class FilterListWidget(ListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.button_group = QButtonGroup()
+        self.button_group.setExclusive(True)
+        self.filter_setting_processor = FilterSettingController()
+        self.update_list()
+
+    def create_button(self, item_name):
+        button = QPushButton(item_name)
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+        button.setCheckable(True)
+        self.button_group.addButton(button)
+
+        shadow_effect = QGraphicsDropShadowEffect(self)
+        shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
+        button.setGraphicsEffect(shadow_effect) 
+
+        button.clicked.connect(self.emit_button_clicked)
+
+        return button
+        
+    
+    def update_list(self):
+        self.clear()
+        lists = self.filter_setting_processor.get_filters()
+        for filter in lists:
+            self.add_item(filter.name)
+
+    
+class RegisteredFacesListWidget(ListWidget):
+    
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def add_item(self, item_name):
+        item = QListWidgetItem()
+        self.addItem(item)
+        button = self.create_button(item_name)
+        self.setItemWidget(item, button)
+        item.setSizeHint(button.sizeHint())
+
+    def create_button(self, item_name):
+
+        line = QHBoxLayout()
+
+        button = QPushButton(item_name)
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+
+        
+
+        shadow_effect = QGraphicsDropShadowEffect(self)
+        shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
+        shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
+        shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
+        button.setGraphicsEffect(shadow_effect) 
+
+        
+        button.clicked.connect(self.emit_button_clicked)
+
+
+
+        return button
+    
+
+
+
 
 class AvailableFacesListWidget(ListWidget):
     def __init__(self, parent=None):
@@ -123,16 +198,3 @@ class AvailableFacesListWidget(ListWidget):
         print("필터 업데이트!")
         for people in self.face_setting_processor.get_person_faces():
             self.add_item(people.face_name)
-
-class FilterListWidget(ListWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.filter_setting_processor = FilterSettingController()
-        self.update_filter_list()
-
-    
-    def update_filter_list(self):
-        self.clear()
-        lists = self.filter_setting_processor.get_filters()
-        for filter in lists:
-            self.add_item(filter.name)

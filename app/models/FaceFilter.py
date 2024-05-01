@@ -93,8 +93,17 @@ def load_known_faces(data_path):
     Returns:
     - 불러온 사람별 얼굴 특징을 나타내는 딕셔너리
     """
-    with open(data_path, 'rb') as f:
-        loaded_data = pickle.load(f)
+    # 파일이 존재하는지 확인
+    if os.path.exists(data_path):
+        # 파일이 있으면 로드
+        with open(data_path, 'rb') as f:
+            loaded_data = pickle.load(f)
+    else:
+        # 파일이 없으면 빈 딕셔너리 생성
+        loaded_data = {}
+        # 생성된 빈 딕셔너리를 파일에 저장
+        with open(data_path, 'wb') as f:
+            pickle.dump(loaded_data, f)
     return loaded_data
 
 # frame 내의 얼굴 위치를 받아 encoding 값을 반환하는 함수
@@ -171,7 +180,7 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
 
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
-def recognize_face(known_faces, face_encoding, tolerance=0.1):
+def recognize_face(known_faces, face_encoding, tolerance=0.3):
     """
     얼굴을 인식하여 인식된 사람과 일치하는지 확인합니다.
     
@@ -189,15 +198,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.1):
 
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            print("==========distance==========")
-            print(distance)
+            # print("==========distance==========")
+            # print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    print(recognized_face, ":::::")
-    print(tolerance_used)
+    # print(recognized_face, ":::::")
+    # print(tolerance_used)
 
     return recognized_face, tolerance_used
 
@@ -274,7 +283,7 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
     if person_name == "unknown":
         return False
     else:
-        return True
+        return True, tolerance
     
 
 
