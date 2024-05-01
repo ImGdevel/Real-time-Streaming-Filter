@@ -76,27 +76,6 @@ class ListWidget(QListWidget):
             if self.get_item_object_name(i) == object_name:
                 return True
         return False
-    
-    def delete_item(self, object_name):
-        """선택된 오브젝트 네임에 해당하는 항목 삭제"""
-        for i in range(self.count()):
-            if self.get_item_object_name(i) == object_name:
-                self.takeItem(i)
-                break
-
-        current_row = self.currentRow()
-        
-        if current_row != -1:
-            self.setCurrentRow(max(0, current_row - 1))
-
-    def get_current_item_object_name(self):
-        """현재 선택된 아이템의 오브젝트 네임을 반환하는 메서드"""
-        current_item = self.currentItem()
-        if current_item:
-            widget = self.itemWidget(current_item)
-            if widget:
-                return widget.objectName()
-        return None
 
     def get_items_object_name(self):
         return [self.get_item_object_name(i) for i in range(self.count())]
