@@ -78,13 +78,15 @@ class Filtering:
             
         return results
     
-    def video_filtering(self, img, filter_info = Filter("test")):
+    def video_filtering(self, img, filter_info:filter = None):
         if filter_info is None:
             filter_info = Filter("test")
+        # 필터 세팅을 여기서 하는게 아니라 따로 필터 세팅 함수로 빼야 함
         if filter_info.face_filter_on:
             if "Human face" not in filter_info.object_filter:
-                filter_info.object_filter.append("Human face")
-        self.object.set_filter_classes(filter_info.object_filter)
+                filter_info.object_filter.append("Human face") # 이거는 따로 메소드 떼서 여러번 실행안하게 바꿔야함
+        self.object.set_filter_classes(filter_info.object_filter) 
+
         results = []
         known_faces_id = []
         known_face_boxes = []
@@ -99,7 +101,7 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-                    cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
                     is_known = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
                     if is_known: 
                         known_face_boxes.append(box)
@@ -110,6 +112,8 @@ class Filtering:
                 results.append(result)
         results = self.object.object_track(img, results, known_face_boxes)
 
+
+
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in filter_info.object_filter:
@@ -117,7 +121,7 @@ class Filtering:
                 results.append(box)
         
 
-        return results
+        return results, customs
     
     def blur(self,img, boxesList, blurRatio = 100):
         """

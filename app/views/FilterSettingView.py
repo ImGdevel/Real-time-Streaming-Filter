@@ -317,12 +317,13 @@ class FilterSettingView(QWidget):
     # 필터 추가
     def add_filter(self):
         """Filter 추가 메서드"""
-        filter_name = "New Filter"
-        for i in range(1, self.filter_list_widget.count() + 2):
-            filter_name = f"New Filter {i}"
-            if not self.filter_setting_processor.get_filter(filter_name):
-                break
-        self.filter_setting_processor.add_filter(filter_name)
+        # filter_name = "New Filter"
+        # for i in range(1, self.filter_list_widget.count() + 2):
+        #     filter_name = f"New Filter {i}"
+        #     if not self.filter_setting_processor.get_filter(filter_name):
+        #         break
+        filter_name = self.filter_setting_processor.add_filter()
+        print(" add filter : "+filter_name)
         self.filter_list_widget.add_item(filter_name)
         self.set_current_filter(filter_name)
 

@@ -117,7 +117,7 @@ class AddFaceDialog(QDialog):
     def change_current_registered_person(self, index: str):
         """등록된 사람 선택하는 메서드"""
         self.show_window(True)
-        person_info = self.face_setting_processor.get_person_face(index) # 등록된 사람 가져오기 -> Face 객체
+        person_info = self.face_setting_processor.get_person_face_by_name(index) # 등록된 사람 가져오기 -> Face 객체
 
         if not person_info is None:
             self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
@@ -161,9 +161,9 @@ class AddFaceDialog(QDialog):
     
     def add_person(self):
         """사람 추가"""
-        self.registered_person_list.add_item("defalut")
-        self.face_setting_processor.add_person_face("defalut")
-        self.change_current_registered_person("defalut")
+        self.face_setting_processor.add_person_face()
+        # self.registered_person_list.add_item("defalut")
+        # self.change_current_registered_person("defalut")
         self.updateEvent.emit()
 
     def delete_person(self):
@@ -214,7 +214,8 @@ class AddFaceDialog(QDialog):
 
         for idx, file_path in enumerate(image_files):
             if not self.current_person.face_name is None:
-                if self.face_setting_processor.add_person_encoding(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
+                print("인코딩 시작")
+                if self.face_setting_processor.add_person_encoding_by_name(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
                     pixmap = QPixmap(file_path)
                     pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
                     icon = QIcon(pixmap)
@@ -232,7 +233,7 @@ class AddFaceDialog(QDialog):
         """이미지 리스트 업데이트 메서드"""
         self.image_list_widget.clear()  # 기존 아이템 삭제
 
-        image_list = self.face_setting_processor.get_person_encodings(self.current_person.face_name)
+        image_list = self.face_setting_processor.get_person_encodings_by_name(self.current_person.face_name)
         if self.current_person:
             for encoding_value in image_list:
                 pixmap = QPixmap(encoding_value)  # 이미지 경로를 QPixmap으로 변환
@@ -245,7 +246,7 @@ class AddFaceDialog(QDialog):
     def change_person_name(self, new_name):
         """이름 변경"""
         if self.current_person:
-            if self.face_setting_processor.update_person_name(self.current_person.face_name , new_name):
+            if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
                 self.text_layout.set_title(new_name) #title 변경
                 self.current_person.face_name = new_name
                 self.registered_person_list.update_list()
@@ -255,5 +256,5 @@ class AddFaceDialog(QDialog):
         """사람 등록"""
         print(self.current_person)
         if self.current_person and self.current_person.face_name:
-            self.face_setting_processor.update_person_face(self.current_person.face_name, self.current_person.encoding_list)
+            self.face_setting_processor.update_person_face_by_name(self.current_person.face_name, self.current_person.encoding_list)
             self.updateEvent.emit()
