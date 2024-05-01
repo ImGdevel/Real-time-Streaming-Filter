@@ -49,7 +49,112 @@ class FilterManager:
                 filter.object_filter = filterinfo.object_filter
                 self.save_filters()
                 return True
-        raise ValueError("존재하지 않는 filtername입니다")
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_filter_name(self, filtername: str, newname: str):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.name = newname
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.face_filter_on = face_filter_on
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def add_face_in_face_filter(self, filtername: str, face_id: int):
+        """필터 프리셋에 얼굴 추가
+        기본값으로 블러 예외 처리가 선택됨
+        """
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                for face in filter.face_filter.keys():
+                    if face == face_id:
+                        self.save_filters()
+                        return
+                filter.face_filter[face_id] = -1
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def delete_face_in_face_filter(self, filtername: str, face_id: int):
+        """필터 프리셋에서 얼굴 제거"""
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                for face in filter.face_filter.keys():
+                    if face == face_id:
+                        del filter.face_filter[face_id]
+                        return
+                raise ValueError("존재하지 않는 face_id입니다.")
+        raise ValueError("존재하지 않는 filtername입니다.")
+    
+    def init_face_in_face_filter(self, filtername:str):
+        """필터 프리셋의 얼굴 필터 리스트 초기화"""
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.face_filter = dict()
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+    
+    def add_object_in_object_filter(self, filtername: str, object_name: str):
+        """필터 프리셋에 객체 추가"""
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                for face in filter.object_filter:
+                    if face == object_name:
+                        return
+                filter.object_filter.append(object_name)
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def delete_object_in_object_filter(self, filtername: str, object_name: str):
+        """필터 프리셋에서 객체 제거"""
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                for face in filter.object_filter:
+                    if face == object_name:
+                        filter.object_filter.remove(object_name)
+                        self.save_filters()
+                        return
+                raise ValueError("존재하지 않는 object_name입니다.")
+        raise ValueError("존재하지 않는 filtername입니다.")
+    
+    def init_object_in_object_filter(self, filtername: str):
+        """오브젝트 필터 리스트를 초기화한다"""
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.object_filter = []
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+        
+
+    def init_filter_list(self, filtername: str):
+        self.init_face_in_face_filter(filtername)
+        self.init_object_in_object_filter(filtername)
+
+    def update_filter_face_filter(self, filtername: str, face_filter: dict):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.face_filter = face_filter
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+
+    def update_filter_object_filter(self, filtername: str, object_filter: list):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.object_filter = object_filter
+                self.save_filters()
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
 
         
 
