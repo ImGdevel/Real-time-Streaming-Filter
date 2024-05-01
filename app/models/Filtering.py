@@ -102,7 +102,7 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-                    cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
                     is_known = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
                     if is_known: 
                         known_face_boxes.append(box)
@@ -116,6 +116,8 @@ class Filtering:
             self.object.init_exclude_id()
             self.init_id = False
 
+
+
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in self.current_filter_info.object_filter:
@@ -123,7 +125,7 @@ class Filtering:
                 results.append(box)
         
 
-        return results
+        return results, customs
     
     def blur(self,img, boxesList, blurRatio = 40):
         """
