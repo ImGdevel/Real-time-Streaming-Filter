@@ -167,7 +167,7 @@ class AddFaceDialog(QDialog):
         self.updateEvent.emit()
 
     def delete_person(self):
-        """사람 추가"""
+        """사람 삭제"""
         #self.registered_person_list.delete_item()
         #self.face_setting_processor.delete_person_face()
         #self.change_current_registered_person()
@@ -212,12 +212,8 @@ class AddFaceDialog(QDialog):
     def add_face_process(self, image_files):
         """이미지 등록 프로세스"""
 
-        print("진행 시작")
-
         for idx, file_path in enumerate(image_files):
-            print(self.current_person)
             if not self.current_person.face_name is None:
-                print("인코딩 시작")
                 if self.face_setting_processor.add_person_encoding(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
                     pixmap = QPixmap(file_path)
                     pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
