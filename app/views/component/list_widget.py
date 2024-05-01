@@ -16,16 +16,16 @@ class ListWidget(QListWidget):
         self.setSpacing(15)
         self.setStyleSheet(Style.list_widget_style)
 
-    def add_item(self, item_name):
+    def add_item(self, item_name: str):
         item = QListWidgetItem()
         self.addItem(item)
         button = self.create_button(item_name)
         self.setItemWidget(item, button)
         item.setSizeHint(button.sizeHint())
 
-    def create_button(self, item_name):
+    def create_button(self, item_name: str):
         button = QPushButton(item_name)
-        button.setObjectName("List Button")
+        button.setObjectName(item_name)
         button.setStyleSheet(Style.list_button_style)
         button.setMinimumHeight(40)
 
@@ -175,10 +175,10 @@ class RegisteredFacesListWidget(ListWidget):
         shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
         button.setGraphicsEffect(shadow_effect) 
 
-        button_layout.addWidget(button)
-        button_frame.setLayout(button_layout)
+        #button_layout.addWidget(button)
+        #button_frame.setLayout(button_layout)
 
-        return button_frame
+        return button
     
     def button_widget_open(self):
         """버튼을 클릭하면 해당 버튼이 확장 또는 축소됨"""

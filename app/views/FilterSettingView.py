@@ -317,22 +317,16 @@ class FilterSettingView(QWidget):
     # 필터 추가
     def add_filter(self):
         """Filter 추가 메서드"""
-        # filter_name = "New Filter"
-        # for i in range(1, self.filter_list_widget.count() + 2):
-        #     filter_name = f"New Filter {i}"
-        #     if not self.filter_setting_processor.get_filter(filter_name):
-        #         break
         filter_name = self.filter_setting_processor.add_filter()
-        print(" add filter : "+filter_name)
-        self.filter_list_widget.add_item(filter_name)
+        self.filter_list_widget.update_list()
         self.set_current_filter(filter_name)
 
     # 필터 삭제
     def delete_filter(self):
         """Filter 삭제 메서드"""
         self.filter_setting_processor.delete_filter(self.current_filter)
-        self.filter_list_widget.delete_item(self.current_filter)
-        self.set_current_filter(self.filter_list_widget.get_current_item_text())
+        self.filter_list_widget.update_list()
+        self.show_filter_setting_window(False)
 
     # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name):

@@ -59,7 +59,7 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 del self.filter_list[idx]
                 self.save_filters()
-                break
+                return
         raise ValueError("존재하지 않는 filtername입니다")
 
     def get_filter(self, filter_name: str) -> Union[Filter, None]:
@@ -68,7 +68,8 @@ class FilterManager:
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 return filter_obj
-        raise ValueError("존재하지 않는 filtername입니다")
+        return False
+        #raise ValueError("존재하지 않는 filtername입니다")
     
     def get_face_names_in_filter(self, filter_name: str):
         for filter_obj in self.filter_list:
