@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import ( 
-    QWidget, QHBoxLayout,  QVBoxLayout,
+    QFrame, QWidget, QHBoxLayout,  QVBoxLayout,
     QListWidget, QListWidgetItem, QPushButton, 
     QGraphicsDropShadowEffect, QButtonGroup
 )
-from PySide6.QtCore import Signal, Qt, QPropertyAnimation
+from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
@@ -121,6 +121,7 @@ class FilterListWidget(ListWidget):
         button.setStyleSheet(Style.list_button_style)
         button.setMinimumHeight(40)
         button.setCheckable(True)
+        button.clicked.connect(self.emit_button_clicked)
         self.button_group.addButton(button)
 
         shadow_effect = QGraphicsDropShadowEffect(self)
@@ -128,8 +129,6 @@ class FilterListWidget(ListWidget):
         shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
         shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
         button.setGraphicsEffect(shadow_effect)
-
-        button.clicked.connect(self.emit_button_clicked)
 
         return button
         
@@ -156,12 +155,19 @@ class RegisteredFacesListWidget(ListWidget):
 
     def create_button(self, item_name):
         """버튼을 추가하는 경우"""
+        button_frame = QWidget()
+        button_frame.setObjectName("Button Frame")
+        button_layout = QVBoxLayout()
+        button_layout.setSpacing(0)  # 레이아웃 간 간격을 0으로 설정
+        button_layout.setAlignment(Qt.AlignTop)
 
         button = QPushButton(item_name)
         button.setObjectName("List Button")
         button.setStyleSheet(Style.list_button_style)
         button.setMinimumHeight(40)
         button.clicked.connect(self.emit_button_clicked)
+        button.setCheckable(True)
+        self.button_group.addButton(button)
 
         shadow_effect = QGraphicsDropShadowEffect(self)
         shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
@@ -169,52 +175,50 @@ class RegisteredFacesListWidget(ListWidget):
         shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
         button.setGraphicsEffect(shadow_effect) 
 
-        return button
+        button_layout.addWidget(button)
+        button_frame.setLayout(button_layout)
+
+        return button_frame
     
     def button_widget_open(self):
         """버튼을 클릭하면 해당 버튼이 확장 또는 축소됨"""
         button = self.sender()
+        button_frame = button.parentWidget()
 
-        if button:
-            object_name = button.objectName()
-            print("ObjectName:", object_name)
+        if button_frame:
+            print("체크 여부", button.isChecked())
 
-            # 현재 버튼의 최대 높이 가져오기
-            current_max_height = button.maximumHeight()
-
-            # 버튼이 확장되어 있는지 여부 확인
-            is_expanded = current_max_height > button.minimumHeight()
+            if button.isChecked():
+                # 버튼이 체크된 상태라면
+                button_frame.setMinimumHeight(100)  # 프레임의 최소 높이를 확장될 높이로 설정
+                print("200으로 확장!")
+            else:
+                # 버튼이 체크되지 않은 상태라면
+                button_frame.setMinimumHeight(40)  # 프레임의 최소 높이를 원래의 최소 높이로 설정
+                print("40으로 축소!")
 
             # 애니메이션 객체 생성
-            animation = QPropertyAnimation(button, b"maximumHeight")
-            # 애니메이션 지속 시간 설정
-            animation.setDuration(300)
+            animation = QPropertyAnimation(button_frame, b"minimumHeight")
+            animation.setDuration(500)
+            animation.setEasingCurve(QEasingCurve.InOutQuart)
 
-            if not is_expanded:
-                # 버튼이 확장되지 않은 상태라면
-                # 애니메이션의 시작값과 끝값 설정
-                animation.setStartValue(button.minimumHeight())
-                animation.setEndValue(200)  # 확장될 높이로 조절
+            # 애니메이션의 시작값과 끝값 설정
+            animation.setStartValue(button_frame.height())
+            animation.setEndValue(button_frame.minimumHeight())
 
-            else:
-                # 버튼이 확장된 상태라면
-                # 애니메이션의 시작값과 끝값 설정
-                animation.setStartValue(current_max_height)
-                animation.setEndValue(button.minimumHeight())
-
-
-            print("확장 시작")
             # 애니메이션 시작
             animation.start()
+            print("애니메이션 종료: ", button_frame.height())
 
 
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
         button = self.sender()
 
-        self.button_widget_open()
+        
         
         if button:
+            self.button_widget_open()
             self.onClickItemEvent.emit(button.text())  # 시그널 발생
 
 
