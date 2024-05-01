@@ -49,7 +49,49 @@ class FilterManager:
                 filter.object_filter = filterinfo.object_filter
                 self.save_filters()
                 return True
-        raise ValueError("존재하지 않는 filtername입니다")
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_filter_name(self, filtername: str, newname: str):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.name = newname
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.face_filter_on = face_filter_on
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def add_face_in_face_filter(self, filtername: str, face_id: int):
+        """필터 프리셋에 얼굴 추가
+        기본값으로 블러 예외 처리가 선택됨
+        """
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                for face in filter.face_filter.keys():
+                    if face == face_id:
+                        return
+                filter.face_filter[face_id] = -1
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+
+    def update_filter_face_filter(self, filtername: str, face_filter: dict):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.face_filter = face_filter
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+
+    def update_filter_object_filter(self, filtername: str, object_filter: list):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.object_filter = object_filter
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")
 
         
 
