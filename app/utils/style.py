@@ -103,6 +103,11 @@ class Style:
     padding: 5px 10px;
     """
 
+    title_label = f"""
+    font-weight: bold; 
+    font-size: 20px;
+    """
+
 
 
     setting_list_button_style = f"""

@@ -142,6 +142,7 @@ class FilterSettingView(QWidget):
         layout.addWidget(frame)
         return layout
     
+    # 세팅 페이지
     def setting_page(self):
 
         #설정창 들
@@ -152,7 +153,6 @@ class FilterSettingView(QWidget):
         self.object_filter_widget = ObjectFilterSettngWidget()
         self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
         
-
         mos_widget = QWidget()
         mos_widget.setLayout(self.mosaic_setting_layout())
 
@@ -218,7 +218,7 @@ class FilterSettingView(QWidget):
         face_layout.setAlignment(Qt.AlignRight)
         
         face_label = QLabel("필터링 인물 설정")
-        face_label.setStyleSheet("font-weight: bold; font-size: 20px;")
+        face_label.setStyleSheet(Style.title_label)
         face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
@@ -257,7 +257,7 @@ class FilterSettingView(QWidget):
         default_mosaic_layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
 
         default_mosaic_layout_label = QLabel("기본 모자이크 설정")
-        default_mosaic_layout_label.setStyleSheet("font-weight: bold; font-size: 20px;")
+        default_mosaic_layout_label.setStyleSheet(Style.title_label)
         default_mosaic_layout.addWidget(default_mosaic_layout_label,0,0)
 
         # 모자이크 강도 설정 라벨과 슬라이더를 그리드에 추가
@@ -285,33 +285,12 @@ class FilterSettingView(QWidget):
 
         default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
 
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)  # 수평 구분선
-        separator.setFrameShadow(QFrame.Sunken)  # 음각형태로 그림자 표시
-
-
-        custom_mosaic_layout = QVBoxLayout()
-        custom_mosaic_layout_label = QLabel("커스텀 모자이크 설정")
-        custom_mosaic_layout_label.setFont(QFont("Arial", 18))  # 폰트 크기 조정
-        
-
-        custom_mosaic_list_widget = MosaicStickerList()
-        
-
-
-        custom_mosaic_layout.addWidget(separator)
-        custom_mosaic_layout.addWidget(custom_mosaic_layout_label)
-        custom_mosaic_layout.addWidget(custom_mosaic_list_widget)
-
-        custom_mosaic_layout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        
+    
         layout.addLayout(default_mosaic_layout)
-        layout.addLayout(custom_mosaic_layout)
 
         return layout
 
-
-
+    # 윈도우 디스플레이 설정
     def show_filter_setting_window(self, is_show):
         """윈도우 디스플레이 결정"""
         if is_show:
@@ -320,7 +299,7 @@ class FilterSettingView(QWidget):
         else:
             self.right_widget.hide()
             self.empty_widget.show()
-    
+
 
     def register_face(self, person_name):
         """얼굴 등록 메서드"""
@@ -329,12 +308,13 @@ class FilterSettingView(QWidget):
             return
         
         self.registered_faces_list_widget.add_item(person_name) # 등록
+   
     
-
     def select_registered_face(self, item):
         """등록된 얼굴 선택 메서드"""
         pass
 
+    # 필터 추가
     def add_filter(self):
         """Filter 추가 메서드"""
         filter_name = "New Filter"
@@ -346,13 +326,14 @@ class FilterSettingView(QWidget):
         self.filter_list_widget.add_item(filter_name)
         self.set_current_filter(filter_name)
 
-
+    # 필터 삭제
     def delete_filter(self):
         """Filter 삭제 메서드"""
         self.filter_setting_processor.delete_filter(self.current_filter)
         self.filter_list_widget.delete_item(self.current_filter)
         self.set_current_filter(self.filter_list_widget.get_current_item_text())
 
+    # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
         filter_data = self.filter_setting_processor.get_filter(filter_name)
@@ -370,7 +351,7 @@ class FilterSettingView(QWidget):
             print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
             
-    
+    # 
     def update_registered_faces_list_widget(self, face_filter_data):
         """registered_faces_list_widget 업데이트 메서드"""
         # 기존 항목 삭제
@@ -379,20 +360,24 @@ class FilterSettingView(QWidget):
         for face_name in face_filter_data:
             self.registered_faces_list_widget.add_item(face_name)
 
+    # 인물 등록창 Open
     def show_add_face_dialog(self):
         """얼굴 추가 다이얼로그 표시 메서드"""
         dialog = AddFaceDialog(self)
         dialog.updateEvent.connect(self.update_available_faces)
         dialog.exec_()
 
+    # 오브젝트 필터 업데이트
     def update_object_filter(self, list):
         """콜백 오브젝트 리스트 업데이트"""
         self.current_filter_object_list = list
 
+    # 
     def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""
         self.available_faces_list_widget.update_list()
 
+    # 필터 이름 업데이트
     def update_filter_name(self, text):
         """필터 이름 변경"""
         if self.current_filter == text or text == "" or text == None:
@@ -407,7 +392,7 @@ class FilterSettingView(QWidget):
             self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
             self.set_current_filter(text)
 
-
+    # 필터 정보 저장
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
         # registered_faces_list_widget의 내용 가져오기
@@ -417,7 +402,7 @@ class FilterSettingView(QWidget):
         # 현재 선택된 필터 정보 업데이트
         self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
         
-        
+    # 페이지 리프레쉬
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
