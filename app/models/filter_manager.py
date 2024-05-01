@@ -19,11 +19,11 @@ class FilterManager:
         index = 1
         for filter in self.filter_list:
             filters.append(filter.name)
-        name = "New Filter "+str(index)
+        name = "새 필터 "+str(index)
         while True:
-            if "New Filter "+str(index) in filters:
+            if "새 필터 "+str(index) in filters:
                 index += 1
-                name = "New Filter "+str(index)
+                name = "새 필터 "+str(index)
             else:
                 self.filter_list.append(Filter(name))
                 self.save_filters()
