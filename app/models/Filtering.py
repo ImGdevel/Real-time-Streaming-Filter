@@ -31,8 +31,10 @@ class Filtering:
         self.replaceManager = ReplaceManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
+        self.current_filter_info = None
+        self.init_id = False
 
-    def filtering(self, img, filter_info = Filter("test")):
+    def filtering(self, img):
         """
         감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
 
@@ -44,21 +46,21 @@ class Filtering:
         Returns:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
-        if filter_info is None:
-            filter_info = Filter("test")
-        if filter_info.face_filter_on:
-            if "Human face" not in filter_info.object_filter:
-                filter_info.object_filter.append("Human face")
-        self.object.set_filter_classes(filter_info.object_filter)
+        if self.current_filter_info is None:
+            self.current_filter_info = Filter("test")
+        if self.current_filter_info.face_filter_on:
+            if "Human face" not in self.current_filter_info.object_filter:
+                self.current_filter_info.object_filter.append("Human face")
+        self.object.set_filter_classes(self.current_filter_info.object_filter)
         results = []
         known_faces_id = []
-        for name in filter_info.face_filter:
+        for name in self.current_filter_info.face_filter:
             known_faces_id.append(self.faceManager.get_person_face_id(name))
 
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            if filter_info.face_filter_on is True:
+            if self.current_filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
@@ -67,35 +69,36 @@ class Filtering:
                     else :
                         results.append(box)
                         continue
-            if result[2] in filter_info.object_filter:
+            if result[2] in self.current_filter_info.object_filter:
                 results.append(box)
 
         customs = self.object.custom_detect(img)
         for result in customs:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            if result[2] in filter_info.object_filter:
+            if result[2] in self.current_filter_info.object_filter:
                 results.append(box)
             
         return results
     
-    def video_filtering(self, img, filter_info = Filter("test")):
-        if filter_info is None:
-            filter_info = Filter("test")
-        if filter_info.face_filter_on:
-            if "Human face" not in filter_info.object_filter:
-                filter_info.object_filter.append("Human face")
-        self.object.set_filter_classes(filter_info.object_filter)
+    def video_filtering(self, img):
+
+        if self.current_filter_info is None:
+            return []
+        if self.current_filter_info.face_filter_on:
+            if "Human face" not in self.current_filter_info.object_filter:
+                self.current_filter_info.object_filter.append("Human face")
+        self.object.set_filter_classes(self.current_filter_info.object_filter)
         results = []
         known_faces_id = []
         known_face_boxes = []
-        for name in filter_info.face_filter:
+        for name in self.current_filter_info.face_filter:
             known_faces_id.append(self.faceManager.get_person_face_id(name))
 
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             # print(result[2])
-            if filter_info.face_filter_on is True:
+            if self.current_filter_info.face_filter_on is True:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
@@ -106,20 +109,23 @@ class Filtering:
                     results.append(result)
                     continue
                     
-            if result[2] in filter_info.object_filter:
+            if result[2] in self.current_filter_info.object_filter:
                 results.append(result)
         results = self.object.object_track(img, results, known_face_boxes)
+        if self.init_id is True:
+            self.object.init_exclude_id()
+            self.init_id = False
 
         customs = self.object.custom_detect(img)
         for result in customs:
-            if result[2] in filter_info.object_filter:
+            if result[2] in self.current_filter_info.object_filter:
                 box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
                 results.append(box)
         
 
         return results
     
-    def blur(self,img, boxesList, blurRatio = 100):
+    def blur(self,img, boxesList, blurRatio = 40):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
@@ -133,26 +139,33 @@ class Filtering:
         """
         for box in boxesList:
 
-            
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             # 정수로 변환
             roi = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
 
+            # Calculate blur region size
+            blur_w = int((x2 - x1)*blurRatio/150) 
+            blur_h = int((y2 - y1)*blurRatio/150)  
+
             # ROI에 blur 적용
-            blurred_roi = cv2.blur(roi, (blurRatio, blurRatio))
+            blurred_roi = cv2.blur(roi, (blur_w, blur_h))
             
             # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
             img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blurred_roi
             
         return img
 
-    def elliptical_blur(self, img, boxesList, blurRatio = 75):
+    def elliptical_blur(self, img, boxesList, blurRatio = 40):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             obj = img[y1:y2, x1:x2]
 
             # Calculate blur region size
-            blur_w = int((x2 - x1) * 0.5)  # 가로 길이의 절반
-            blur_h = int((y2 - y1) * 0.5)  # 세로 길이의 절반
+            # Calculate blur region size
+            blur_w = int((x2 - x1)*blurRatio/150) 
+            blur_h = int((y2 - y1)*blurRatio/150)  
+
+            # ROI에 blur 적용
 
             if blur_w <= 0 or blur_h <= 0:
                 return
@@ -174,12 +187,12 @@ class Filtering:
             img[y1:y2, x1:x2] = obj
         return img
     
-    def replace_face_img(self, img, boxesList, replace_img_id):
+    def face_sticker(self, img, boxesList, replace_img_id):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             w = x2-x1
             h = y2-y1
-
+            
             x_center = int((x1+x2)/2)
             y_center = int((y1+y2)/2)
 
@@ -226,6 +239,15 @@ class Filtering:
             #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
 
         return img
+    
+    def set_filter(self, current_filter:Filter = None):
+        if current_filter is None :
+            self.current_filter_info = Filter("test")
+        else :
+            self.current_filter_info = current_filter
+         
 
     def tracking_id_init(self):
-        self.object.init_exclude_id()
+        self.init_id = True
+            
+
