@@ -335,12 +335,13 @@ class FilterSettingView(QWidget):
 
         if filter_data:
             print("[Log] : 선택된 필터 > ", filter_data)
+            self.filter_list_widget.set_select_item(filter_name)
             self.current_filter = filter_name
             self.filter_name_widget.set_title(filter_name)
             self.current_filter_face_list = filter_data.face_filter
             self.current_filter_object_list = filter_data.object_filter
             self.setup_setting_page(0)
-
+            
             self.show_filter_setting_window(True)
         else:
             print(f"[Log] : Filter '{filter_name}' not found")
