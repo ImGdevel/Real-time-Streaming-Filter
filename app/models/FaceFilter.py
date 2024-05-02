@@ -286,6 +286,22 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
         return True
     
 
+def identify_known_face(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
+    known_faces = load_known_faces(known_faces_path)
+    except_faces = {}
+    for person in people_list:
+        except_faces.update(find_person_data(person, known_faces))
+    #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
+    person_name, tolerance = recognize_face(except_faces, face_encoding)
+
+    if person_name == "unknown":
+        return None
+    else:
+        return person_name
+    
+
+def set_known_faces():
+    pass #return known_faces.pickle 내용 dict 들어갈 예정
 
 
 #---------------------------------------------------------#

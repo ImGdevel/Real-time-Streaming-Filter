@@ -59,7 +59,7 @@ class ImageProcessor():
             # 이미지 처리 
             blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+            boxesList, customs = self.filtering.filtering(image)
             processed_image = self.filtering.blur(image, boxesList)
             
 

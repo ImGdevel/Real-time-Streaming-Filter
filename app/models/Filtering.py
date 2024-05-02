@@ -31,6 +31,9 @@ class Filtering:
         self.replaceManager = ReplaceManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
+
+        known_faces = None
+
         self.current_filter_info = None
         self.init_id = False
 
@@ -78,7 +81,7 @@ class Filtering:
             if result[2] in self.current_filter_info.object_filter:
                 results.append(box)
             
-        return results
+        return results, customs
     
     def video_filtering(self, img):
 
