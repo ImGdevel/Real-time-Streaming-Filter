@@ -32,6 +32,20 @@ class FilterSettingController:
         for id in ids:
             names.append(self.face_manager.get_person_face_name(id))
         return names
+    
+    def get_face_ids_in_filter(self, filter_name: str):
+        return self.filter_manager.get_face_ids_in_filter(filter_name)
+        
+    def get_face_in_filter(self, filter_name: str):
+        ids = self.filter_manager.get_face_ids_in_filter(filter_name)
+        names = []
+        
+        for id in ids:
+            name = self.face_manager.get_person_face_name(id)
+            names.append((name, id))
+            
+        return names
+    
 
     
     def add_face_in_face_filter(self, filter_name: str, person_id: int):

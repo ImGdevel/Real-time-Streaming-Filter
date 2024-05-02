@@ -410,7 +410,7 @@ class FilterSettingView(QWidget):
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
         # registered_faces_list_widget의 내용 가져오기
-        updated_face_filter = self.registered_faces_list_widget.get_items_object_name()
+        updated_face_filter = self.registered_faces_list_widget.get_items_data()
         updated_filtering_object = self.current_filter_object_list
 
         # 현재 선택된 필터 정보 업데이트

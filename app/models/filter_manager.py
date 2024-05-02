@@ -77,7 +77,7 @@ class FilterManager:
                     if face == face_id:
                         self.save_filters()
                         return
-                filter.face_filter[face_id] = -1
+                filter.face_filter[int(face_id)] = -1
                 self.save_filters()
                 return
         raise ValueError("존재하지 않는 filtername입니다.")

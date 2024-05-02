@@ -70,6 +70,15 @@ class ListWidget(QListWidget):
             if widget:
                 return widget.objectName()
         return None
+    
+    def get_item_data(self, index: int):
+        """아이템 인덱스를 통해 위젯 내의 유저 데이터를 반환하는 메서드"""
+        item = self.item(index)
+        if item:
+            widget = self.itemWidget(item)
+            if widget:
+                return widget.userData
+        return None
 
     def is_in_item(self, object_name: str):
         """현재 아이템 리스트에 있는지 확인"""
@@ -80,6 +89,9 @@ class ListWidget(QListWidget):
 
     def get_items_object_name(self):
         return [self.get_item_object_name(i) for i in range(self.count())]
+    
+    def get_items_data(self):
+        return [int(self.get_item_data(i)) for i in range(self.count())]
     
     def set_items_event(self, event):
         self.onClickItemEvent.connect(event)
@@ -133,9 +145,9 @@ class RegisteredFacesListWidget(ListWidget):
 
     def update_list(self):
         self.clear()
-        lists = self.filter_setting_processor.get_face_names_in_filter(self.filter_name)
-        for filter in self.filter_setting_processor.get_face_names_in_filter(self.filter_name):
-            self.add_item(filter)
+        for name, id in self.filter_setting_processor.get_face_in_filter(self.filter_name):
+            self.add_item(name, str(id))
+            
 
 
     # def add_item(self, item_name):
@@ -225,6 +237,7 @@ class AvailableFacesListWidget(ListWidget):
     def update_list(self):
         self.clear()
         for person in self.face_setting_processor.get_person_faces():
+            print(person)
             self.add_item(person.face_name, str(person.face_id))
 
     def emit_button_clicked(self):
