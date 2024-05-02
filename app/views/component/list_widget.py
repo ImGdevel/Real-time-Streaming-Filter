@@ -129,15 +129,12 @@ class RegisteredFacesListWidget(ListWidget):
         self.filter_name = filter
 
     def register_person_faces(self, person_id):
-        print("받음", person_id, "전송 >", self.filter_name, person_id)
-        
         self.filter_setting_processor.add_face_in_face_filter(self.filter_name, person_id)
 
     def update_list(self):
         self.clear()
         lists = self.filter_setting_processor.get_face_names_in_filter(self.filter_name)
         for filter in self.filter_setting_processor.get_face_names_in_filter(self.filter_name):
-            print("필터 사람", filter)
             self.add_item(filter)
 
 
@@ -227,10 +224,7 @@ class AvailableFacesListWidget(ListWidget):
 
     def update_list(self):
         self.clear()
-        print("필터 업데이트!")
         for person in self.face_setting_processor.get_person_faces():
-            # print("사람:", person)
-
             self.add_item(person.face_name, str(person.face_id))
 
     def emit_button_clicked(self):
@@ -239,7 +233,6 @@ class AvailableFacesListWidget(ListWidget):
         
         if widget:
             self.set_select_item(widget.objectName())
-            print("전송>>" ,widget.userData, type(widget.userData))
             self.onClickItemEvent.emit(widget.userData)  # ObjectName을 시그널로 전달
     
 

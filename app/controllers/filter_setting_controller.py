@@ -10,11 +10,6 @@ class FilterSettingController:
     def add_filter(self):
         return self.filter_manager.add_filter()
 
-    # def add_filter(self, filter_name: str):
-    #     """Filter 추가 메서드"""
-    #     filter = Filter(name=filter_name,face_filter_on=True, face_filter=[], object_filter=[])
-    #     self.filter_manager.add_filter(filter)
-        
     def get_filter(self, filter_name):
         """Filter를 가져오게 하기"""
         return self.filter_manager.get_filter(filter_name)
