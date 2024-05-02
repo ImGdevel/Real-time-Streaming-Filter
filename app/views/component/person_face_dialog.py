@@ -11,7 +11,7 @@ from .title_edit import TitleEdit
 from utils import Style
 
 
-class AddFaceDialog(QDialog):
+class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
     
     def __init__(self, parent=None):
@@ -28,7 +28,8 @@ class AddFaceDialog(QDialog):
         self.setFixedSize(800, 600)
 
         main_layout = QHBoxLayout()
-
+        
+        
         self.face_registration_layout = self._setup_face_registration_layout()
 
         self.face_registration_widget = QWidget()
@@ -37,7 +38,7 @@ class AddFaceDialog(QDialog):
 
         main_layout.addWidget(self._setup_registered_person_list_layout())
         main_layout.addWidget(self.face_registration_widget)
-        main_layout.addWidget(QWidget())
+        main_layout.addWidget(self.empty_widget)
         self.show_window(False)
 
         self.setLayout(main_layout)

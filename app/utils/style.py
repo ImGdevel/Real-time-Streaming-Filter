@@ -6,9 +6,33 @@ class Style:
     base_style01 = f'background-color: {Colors.baseColor02};'
     
 
+    push_button = f"""
+        QPushButton {{
+    	    background-position: left center;
+            background-repeat: no-repeat;
+    	    border: none;
+    	    border-left: 22px solid transparent;
+    	    background-color:transparent;
+    	    text-align: left;
+    	    padding-left: 44px;
+        }}
+        
+        QPushButton:hover{{
+    	    background-color: rgb(40, 44, 52);\n"
+        }}
+        
+        QPushButton:pressed {{
+        background-color: rgb(189, 147, 249);
+    	color: rgb(255, 255, 255);
+        }}
+    """
+    
+    
+    
     
     frame_style = f"""
         background-color: {Colors.base_color_06};
+        color: white;
         border-radius: 5px;  
         padding: 0px;
     """

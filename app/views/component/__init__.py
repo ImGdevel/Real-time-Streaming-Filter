@@ -1,7 +1,7 @@
 from .drag_drop import DragDropLabel
 from .setting_widget import SettingWidget
 from .image_item import ImageItem, FaceImageItem
-from .add_Face_dialog import AddFaceDialog
+from .person_face_dialog import PersonFaceDialog
 from .file_view_widget import FileViewWidget
 from .list_widget import ListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, FilterListWidget, MosaicStickerList
 from .title_edit import TitleEdit
