@@ -131,6 +131,11 @@ class Style:
     font-weight: bold; 
     font-size: 20px;
     """
+    
+    title_label_middle = f"""
+    font-weight: bold; 
+    font-size: 16px;
+    """
 
 
 

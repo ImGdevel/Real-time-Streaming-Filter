@@ -232,21 +232,34 @@ class FilterSettingView(QWidget):
         
         face_label = QLabel("필터링 인물 설정")
         face_label.setStyleSheet(Style.title_label)
-        face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
         face_register_layout = QHBoxLayout()
         
         # RegisteredFacesListWidget 초기화 및 설정
+        registered_faces_list_label = QLabel("필터 등록 인물")
+        registered_faces_list_label.setStyleSheet(Style.title_label_middle)
+        
         self.registered_faces_list_widget = RegisteredFacesListWidget()
         self.registered_faces_list_widget.set_items_event(self.select_registered_face)
         
         # AvailableFacesListWidget 초기화 및 설정
+        available_faces_list_label = QLabel("인물 리스트")
+        available_faces_list_label.setStyleSheet(Style.title_label_middle)
+
         self.available_faces_list_widget = AvailableFacesListWidget()
         self.available_faces_list_widget.set_items_event(self.register_face)
         
-        face_register_layout.addWidget(self.registered_faces_list_widget, 5)
-        face_register_layout.addWidget(self.available_faces_list_widget,3) 
+        registered_faces_list_layout = QVBoxLayout()
+        registered_faces_list_layout.addWidget(registered_faces_list_label)
+        registered_faces_list_layout.addWidget(self.registered_faces_list_widget)
+        
+        available_faces_list_layout = QVBoxLayout()
+        available_faces_list_layout.addWidget(available_faces_list_label)
+        available_faces_list_layout.addWidget(self.available_faces_list_widget)
+        
+        face_register_layout.addLayout(registered_faces_list_layout, 2)
+        face_register_layout.addLayout(available_faces_list_layout, 1)
         
         face_setting_widget = QWidget()
         face_setting_widget.setLayout(face_register_layout)
