@@ -1,16 +1,28 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QScrollArea, QVBoxLayout, QHBoxLayout, QGridLayout, 
     QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, 
-    QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy
+    QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy, QDialog
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QFont
 from views.component import (
-    AddFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
+    PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
     TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicStickerList
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
+
+
+class SettingsDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Settings")
+        
+        layout = QVBoxLayout()
+        self.label = QLabel("Settings Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
 
 class FilterSettingView(QWidget):
     def __init__(self, parent=None):
@@ -49,7 +61,7 @@ class FilterSettingView(QWidget):
         layout.addWidget(self.left_widget, 1) 
         layout.addWidget(self.right_widget, 4)  
         layout.addWidget(self.empty_widget, 4)  
-        self.show_filter_setting_window(False)
+        self.show_filter_setting_page(False)
 
         self.setLayout(layout)
 
@@ -107,9 +119,9 @@ class FilterSettingView(QWidget):
         right_layout = QVBoxLayout()
         
         # 필터 이름 표시 및 수정
-        self.filter_name_widget = TitleEdit()
-        self.filter_name_widget.setMaximumHeight(50)
-        self.filter_name_widget.onEditEvent.connect(self.update_filter_name)
+        self.filter_title_label = TitleEdit()
+        self.filter_title_label.setMaximumHeight(50)
+        self.filter_title_label.onEditEvent.connect(self.update_filter_name)
 
         # 설정 내용
         content_frame = QFrame()
@@ -130,7 +142,7 @@ class FilterSettingView(QWidget):
         button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
-        right_layout.addWidget(self.filter_name_widget)
+        right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
         right_layout.addLayout(button_layout)
         
@@ -201,7 +213,8 @@ class FilterSettingView(QWidget):
 
         if buttonName == "setting01" or index == 0:
             self.settings_content.setCurrentIndex(0)
-            self.update_registered_faces_list_widget(self.current_filter_face_list)
+            self.registered_faces_list_widget.set_filter(self.current_filter)
+            self.registered_faces_list_widget.update_list()
 
         if buttonName == "setting02" or index == 1:
             self.settings_content.setCurrentIndex(1)
@@ -219,21 +232,34 @@ class FilterSettingView(QWidget):
         
         face_label = QLabel("필터링 인물 설정")
         face_label.setStyleSheet(Style.title_label)
-        face_label.setFixedHeight(30)  # 높이 설정
         
         # 얼굴 등록 박스 설정
         face_register_layout = QHBoxLayout()
         
         # RegisteredFacesListWidget 초기화 및 설정
+        registered_faces_list_label = QLabel("필터 등록 인물")
+        registered_faces_list_label.setStyleSheet(Style.title_label_middle)
+        
         self.registered_faces_list_widget = RegisteredFacesListWidget()
         self.registered_faces_list_widget.set_items_event(self.select_registered_face)
         
         # AvailableFacesListWidget 초기화 및 설정
+        available_faces_list_label = QLabel("인물 리스트")
+        available_faces_list_label.setStyleSheet(Style.title_label_middle)
+
         self.available_faces_list_widget = AvailableFacesListWidget()
         self.available_faces_list_widget.set_items_event(self.register_face)
         
-        face_register_layout.addWidget(self.registered_faces_list_widget)
-        face_register_layout.addWidget(self.available_faces_list_widget) 
+        registered_faces_list_layout = QVBoxLayout()
+        registered_faces_list_layout.addWidget(registered_faces_list_label)
+        registered_faces_list_layout.addWidget(self.registered_faces_list_widget)
+        
+        available_faces_list_layout = QVBoxLayout()
+        available_faces_list_layout.addWidget(available_faces_list_label)
+        available_faces_list_layout.addWidget(self.available_faces_list_widget)
+        
+        face_register_layout.addLayout(registered_faces_list_layout, 2)
+        face_register_layout.addLayout(available_faces_list_layout, 1)
         
         face_setting_widget = QWidget()
         face_setting_widget.setLayout(face_register_layout)
@@ -244,8 +270,11 @@ class FilterSettingView(QWidget):
         # Add 버튼 추가
         add_face_button = QPushButton("등록")
         add_face_button.setFixedSize(60, 30)
-        add_face_button.clicked.connect(self.show_add_face_dialog)
+        add_face_button.clicked.connect(self.open_person_face_setting_dialog)
         face_layout.addWidget(add_face_button)
+        
+        self.person_face_setting_window = PersonFaceDialog()
+        self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
         
         return face_layout
     
@@ -291,7 +320,7 @@ class FilterSettingView(QWidget):
         return layout
 
     # 윈도우 디스플레이 설정
-    def show_filter_setting_window(self, is_show):
+    def show_filter_setting_page(self, is_show):
         """윈도우 디스플레이 결정"""
         if is_show:
             self.right_widget.show()
@@ -299,19 +328,38 @@ class FilterSettingView(QWidget):
         else:
             self.right_widget.hide()
             self.empty_widget.show()
+            
+        # 현재 필터로 창 업데이트
+    def set_current_filter(self, filter_name):
+        """현제 선택된 필터로 창 업데이트"""
+        self.filter_list_widget.update_list()
+        filter_data = self.filter_setting_processor.get_filter(filter_name)
+
+        if filter_data:
+            print("[Log] : 선택된 필터 > ", filter_data)
+            self.filter_list_widget.set_select_item(filter_name)
+            self.current_filter = filter_name
+            self.filter_title_label.set_title(filter_name)
+            #self.filter_title_label.set_show_mode()
+            self.current_filter_face_list = filter_data.face_filter
+            self.current_filter_object_list = filter_data.object_filter
+            self.setup_setting_page(0)
+            
+            self.show_filter_setting_page(True)
+        else:
+            print(f"[Log] : Filter '{filter_name}' not found")
+            self.show_filter_setting_page(False)
 
 
-    def register_face(self, person_name):
+    def register_face(self, person_id):
         """얼굴 등록 메서드"""
-        if self.registered_faces_list_widget.is_in_item(person_name): #중복 체크
-            print(f"'{person_name}' is already registered.")
-            return
-        
-        self.registered_faces_list_widget.add_item(person_name) # 등록
+        self.registered_faces_list_widget.register_person_faces(person_id)
+        self.registered_faces_list_widget.update_list()
    
     
     def select_registered_face(self, item):
         """등록된 얼굴 선택 메서드"""
+        
         pass
 
     # 필터 추가
@@ -326,73 +374,43 @@ class FilterSettingView(QWidget):
         """Filter 삭제 메서드"""
         self.filter_setting_processor.delete_filter(self.current_filter)
         self.filter_list_widget.update_list()
-        self.show_filter_setting_window(False)
-
-    # 현재 필터로 창 업데이트
-    def set_current_filter(self, filter_name):
-        """현제 선택된 필터로 창 업데이트"""
-        filter_data = self.filter_setting_processor.get_filter(filter_name)
-
-        if filter_data:
-            print("[Log] : 선택된 필터 > ", filter_data)
-            self.filter_list_widget.set_select_item(filter_name)
-            self.current_filter = filter_name
-            self.filter_name_widget.set_title(filter_name)
-            self.current_filter_face_list = filter_data.face_filter
-            self.current_filter_object_list = filter_data.object_filter
-            self.setup_setting_page(0)
-            
-            self.show_filter_setting_window(True)
-        else:
-            print(f"[Log] : Filter '{filter_name}' not found")
-            self.show_filter_setting_window(False)
-            
-    # 
-    def update_registered_faces_list_widget(self, face_filter_data):
-        """registered_faces_list_widget 업데이트 메서드"""
-        # 기존 항목 삭제
-        self.registered_faces_list_widget.clear()
-        # face_filter_data를 QListWidget에 추가
-        for face_name in face_filter_data:
-            self.registered_faces_list_widget.add_item(face_name)
+        self.show_filter_setting_page(False)
 
     # 인물 등록창 Open
-    def show_add_face_dialog(self):
-        """얼굴 추가 다이얼로그 표시 메서드"""
-        dialog = AddFaceDialog(self)
-        dialog.updateEvent.connect(self.update_available_faces)
-        dialog.exec_()
+    def open_person_face_setting_dialog(self):
+        """얼굴 추가 창을 띄운다."""
+        self.person_face_setting_window.show()
+
+    # 얼굴 수정 사항 완료시
+    def update_person_face_setting_dialog_event(self):
+        """available_faces_list_widget 업데이트 메서드"""
+        self.available_faces_list_widget.update_list()
+        self.registered_faces_list_widget.update_list()
 
     # 오브젝트 필터 업데이트
     def update_object_filter(self, list):
         """콜백 오브젝트 리스트 업데이트"""
         self.current_filter_object_list = list
 
-    # 
-    def update_available_faces(self):
-        """available_faces_list_widget 업데이트 메서드"""
-        self.available_faces_list_widget.update_list()
-
     # 필터 이름 업데이트
-    def update_filter_name(self, text):
+    def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter == text or text == "" or text == None:
+        if self.current_filter == new_name or new_name == "" or new_name == None:
             #잘못된 입력, 돌아감
             pass
-        elif self.filter_setting_processor.get_filter(text):
+        elif self.filter_setting_processor.get_filter(new_name):
             #필터 이름 중복
             QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
         else:
             #필터 이름 변경
-            filter = self.filter_setting_processor.get_filter(self.current_filter)
-            self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
-            self.set_current_filter(text)
+            self.filter_setting_processor.update_filter_name(self.current_filter, new_name)
+            self.set_current_filter(new_name)
 
     # 필터 정보 저장
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
         # registered_faces_list_widget의 내용 가져오기
-        updated_face_filter = self.registered_faces_list_widget.get_items_text()
+        updated_face_filter = self.registered_faces_list_widget.get_items_object_name()
         updated_filtering_object = self.current_filter_object_list
 
         # 현재 선택된 필터 정보 업데이트

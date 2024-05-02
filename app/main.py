@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
-
+ 
         # SET UI DEFINITIONS
         # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
