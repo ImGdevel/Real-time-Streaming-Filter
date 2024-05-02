@@ -142,7 +142,7 @@ class FaceManager:
         """person_face를 가져오게 하기"""
         print("get person face")
         for face in self.face_list:
-            if face.face_name == face_id:
+            if face.face_id == face_id:
                 return face
         raise ValueError("존재하지 않는 face_id입니다")
 

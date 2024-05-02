@@ -25,7 +25,7 @@ class AddFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(600, 800)
+        self.setFixedSize(800, 600)
 
         main_layout = QHBoxLayout()
 
@@ -95,12 +95,12 @@ class AddFaceDialog(QDialog):
 
         image_layout = self.setup_image_layout()
 
-        add_button = QPushButton("Register")
-        add_button.clicked.connect(self.update_registered_person)
+        #add_button = QPushButton("Register")
+        #add_button.clicked.connect(self.update_registered_person)
 
         face_registration_layout.addWidget(self.text_layout)
         face_registration_layout.addLayout(image_layout)
-        face_registration_layout.addWidget(add_button)
+        #face_registration_layout.addWidget(add_button)
         
         return face_registration_layout
     
@@ -117,12 +117,11 @@ class AddFaceDialog(QDialog):
     def change_current_registered_person(self, index: str):
         """등록된 사람 선택하는 메서드"""
         self.show_window(True)
-        person_info = self.face_setting_processor.get_person_face_by_name(index) # 등록된 사람 가져오기 -> Face 객체
+        person_info = self.face_setting_processor.get_person_face_by_id(int(index)) # 등록된 사람 가져오기 -> Face 객체
 
         if not person_info is None:
             self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
-            # todo : 현재 선택된 사람의 정보를 바탕으로 _setup_face_registration_layout 을 업데이트해야 함
-            self.text_layout.set_title(index) #title 변경
+            self.text_layout.set_title(self.current_person.face_name) #title 변경
             self.update_image_list()
         else:
             print("사람 정보가 존재하지 않습니다.")
@@ -162,17 +161,14 @@ class AddFaceDialog(QDialog):
     def add_person(self):
         """사람 추가"""
         self.face_setting_processor.add_person_face()
-        # self.registered_person_list.add_item("defalut")
-        # self.change_current_registered_person("defalut")
+        self.registered_person_list.update_list()
         self.updateEvent.emit()
 
     def delete_person(self):
         """사람 삭제"""
-        #self.registered_person_list.delete_item()
-        #self.face_setting_processor.delete_person_face()
-        #self.change_current_registered_person()
-        #self.updateEvent.emit()
-        pass
+        self.face_setting_processor.delete_person_face_by_id(self.current_person.face_id)
+        self.registered_person_list.update_list()
+        self.show_window(False)
         
 
     def open_file_dialog(self):
@@ -250,6 +246,7 @@ class AddFaceDialog(QDialog):
                 self.text_layout.set_title(new_name) #title 변경
                 self.current_person.face_name = new_name
                 self.registered_person_list.update_list()
+                self.updateEvent.emit()
 
 
     def update_registered_person(self):

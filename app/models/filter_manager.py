@@ -181,9 +181,6 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 names = []
                 for face_id in filter_obj.face_filter.keys():
-                    if face_id is None:
-                        print("잘못된 id")
-                        return
                     names.append(self.face_manager.get_person_face_name(int(face_id)))
                 return names
         raise ValueError("존재하지 않는 filtername입니다.")
