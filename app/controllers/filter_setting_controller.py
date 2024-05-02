@@ -22,6 +22,9 @@ class FilterSettingController:
             print(f"Filter '{filter_name}'의 face_filter 정보가 업데이트 되었습니다.")
         else:
             print(f"Filter '{filter_name}'를 찾을 수 없습니다.")
+            
+    def update_filter_name(self, filter_target_name: str, filter_new_name: str):
+        self.filter_manager.update_filter_name(filter_target_name, filter_new_name)
 
     def get_face_names_in_filter(self, filter_name: str):
         ids = self.filter_manager.get_face_ids_in_filter(filter_name)

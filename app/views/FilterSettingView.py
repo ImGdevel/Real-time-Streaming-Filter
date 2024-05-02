@@ -310,7 +310,7 @@ class FilterSettingView(QWidget):
     
     def select_registered_face(self, item):
         """등록된 얼굴 선택 메서드"""
-
+        
         pass
 
     # 필터 추가
@@ -329,7 +329,7 @@ class FilterSettingView(QWidget):
     # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name):
         """현제 선택된 필터로 창 업데이트"""
-        
+        self.filter_list_widget.update_list()
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
@@ -355,8 +355,6 @@ class FilterSettingView(QWidget):
         dialog.updateEvent.connect(self.update_available_faces)
         dialog.exec_()
 
-
-
     # 얼굴 수정 사항 완료시
     def update_available_faces(self):
         """available_faces_list_widget 업데이트 메서드"""
@@ -369,19 +367,18 @@ class FilterSettingView(QWidget):
         self.current_filter_object_list = list
 
     # 필터 이름 업데이트
-    def update_filter_name(self, text):
+    def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter == text or text == "" or text == None:
+        if self.current_filter == new_name or new_name == "" or new_name == None:
             #잘못된 입력, 돌아감
             pass
-        elif self.filter_setting_processor.get_filter(text):
+        elif self.filter_setting_processor.get_filter(new_name):
             #필터 이름 중복
             QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
         else:
             #필터 이름 변경
-            filter = self.filter_setting_processor.get_filter(self.current_filter)
-            self.filter_setting_processor.update_filter(self.current_filter, text, True ,filter.face_filter, filter.object_filter)
-            self.set_current_filter(text)
+            self.filter_setting_processor.update_filter_name(self.current_filter, new_name)
+            self.set_current_filter(new_name)
 
     # 필터 정보 저장
     def apply_filter_settings(self):
