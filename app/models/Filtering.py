@@ -47,11 +47,7 @@ class Filtering:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
         if self.current_filter_info is None:
-            self.current_filter_info = Filter("test")
-        if self.current_filter_info.face_filter_on:
-            if "Human face" not in self.current_filter_info.object_filter:
-                self.current_filter_info.object_filter.append("Human face")
-        self.object.set_filter_classes(self.current_filter_info.object_filter)
+            return []
         results = []
         known_faces_id = []
         for name in self.current_filter_info.face_filter:
@@ -69,8 +65,6 @@ class Filtering:
                     else :
                         results.append(box)
                         continue
-            if result[2] in self.current_filter_info.object_filter:
-                results.append(box)
 
         customs = self.object.custom_detect(img)
         for result in customs:
@@ -81,13 +75,9 @@ class Filtering:
         return results
     
     def video_filtering(self, img):
-
         if self.current_filter_info is None:
             return []
-        if self.current_filter_info.face_filter_on:
-            if "Human face" not in self.current_filter_info.object_filter:
-                self.current_filter_info.object_filter.append("Human face")
-        self.object.set_filter_classes(self.current_filter_info.object_filter)
+
         results = []
         known_faces_id = []
         known_face_boxes = []
@@ -108,9 +98,7 @@ class Filtering:
                         known_face_boxes.append(box)
                     results.append(result)
                     continue
-                    
-            if result[2] in self.current_filter_info.object_filter:
-                results.append(result)
+
         results = self.object.object_track(img, results, known_face_boxes)
         if self.init_id is True:
             self.object.init_exclude_id()
@@ -247,6 +235,10 @@ class Filtering:
             self.current_filter_info = Filter("test")
         else :
             self.current_filter_info = current_filter
+            if self.current_filter_info.face_filter_on:
+                if "Human face" not in self.current_filter_info.object_filter:
+                    self.current_filter_info.object_filter.append("Human face")
+            self.object.set_filter_classes(self.current_filter_info.object_filter)
          
 
     def tracking_id_init(self):

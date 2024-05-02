@@ -36,6 +36,7 @@ class ObjectDetect:
         self.originFilterClasses = []
         self.customFilterClasses = []    
         self.exclude_id = []
+        self.sticker_id = dict()
         self.CONFIDENCE_THRESHOLD = 0.2
     
     def set_filter_classes(self, filter_classes:list):
@@ -99,20 +100,15 @@ class ObjectDetect:
     def object_track(self, img, results, known_faces):
         tracks = self.modelManager.tracker.update_tracks(results, frame=img)
         last_results = []
-        for track, result in zip(tracks,results):
+        for track in tracks:
             if not track.is_confirmed():
                 continue
-            ltrb = track.to_ltrb(orig=True)
-            xmin, ymin, xmax, ymax = int(ltrb[0]), int(ltrb[1]), int(ltrb[2]), int(ltrb[3])
-            box = [xmin, ymin, xmax, ymax]
-
-            
-            track_id = track.track_id
+            box = track.to_ltrb(orig=True)
 
             if box in known_faces:
-                if track_id not in self.exclude_id:
-                    self.exclude_id.append(track_id)
-            if track_id not in self.exclude_id:
+                if track.track_id not in self.exclude_id:
+                    self.exclude_id.append(track.track_id)
+            if track.track_id not in self.exclude_id:
                 last_results.append(box)
 
         return last_results

@@ -1,9 +1,10 @@
-from models import FilterManager, Filter
+from models import FilterManager, Filter, FaceManager
 
 class FilterSettingController:
 
     def __init__(self):
         self.filter_manager = FilterManager()
+        self.face_manager = FaceManager()
         self.load_filter()
 
     def add_filter(self):
@@ -28,7 +29,12 @@ class FilterSettingController:
             print(f"Filter '{filter_name}'를 찾을 수 없습니다.")
 
     def get_face_names_in_filter(self, filter_name: str):
-        return self.filter_manager.get_face_names_in_filter(filter_name)
+        ids = self.filter_manager.get_face_ids_in_filter(filter_name)
+        names = []
+        for id in ids:
+            names.append(self.face_manager.get_person_face_name(id))
+        return names
+
     
     def add_face_in_face_filter(self, filter_name: str, person_id: int):
         self.filter_manager.add_face_in_face_filter(filter_name, person_id)

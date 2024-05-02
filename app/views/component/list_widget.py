@@ -229,7 +229,7 @@ class AvailableFacesListWidget(ListWidget):
         self.clear()
         print("필터 업데이트!")
         for person in self.face_setting_processor.get_person_faces():
-            print("사람:", person)
+            # print("사람:", person)
 
             self.add_item(person.face_name, str(person.face_id))
 
