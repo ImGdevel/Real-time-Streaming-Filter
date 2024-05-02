@@ -29,6 +29,9 @@ class FilterSettingController:
 
     def get_face_names_in_filter(self, filter_name: str):
         return self.filter_manager.get_face_names_in_filter(filter_name)
+    
+    def add_face_in_face_filter(self, filter_name: str, person_id: int):
+        self.filter_manager.add_face_in_face_filter(filter_name, person_id)
 
     def delete_filter(self, filter_name: str):
         """Filter 삭제 메서드"""

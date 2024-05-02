@@ -138,7 +138,7 @@ class FaceManager:
                 return face
         raise ValueError("존재하지 않는 face_name입니다")
 
-    def get_person_face_by_id(self, face_id):
+    def get_person_face_by_id(self, face_id : int):
         """person_face를 가져오게 하기"""
         print("get person face")
         for face in self.face_list:
@@ -146,7 +146,7 @@ class FaceManager:
                 return face
         raise ValueError("존재하지 않는 face_id입니다")
 
-    def get_person_face_name(self, face_id):
+    def get_person_face_name(self, face_id : int):
         for face in self.face_list:
             if face.face_id == face_id:
                 return face.face_name

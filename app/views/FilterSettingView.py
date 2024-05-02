@@ -201,7 +201,8 @@ class FilterSettingView(QWidget):
 
         if buttonName == "setting01" or index == 0:
             self.settings_content.setCurrentIndex(0)
-            self.update_registered_faces_list_widget(self.current_filter_face_list)
+            self.registered_faces_list_widget.set_filter(self.current_filter)
+            self.registered_faces_list_widget.update_list()
 
         if buttonName == "setting02" or index == 1:
             self.settings_content.setCurrentIndex(1)
@@ -301,13 +302,12 @@ class FilterSettingView(QWidget):
             self.empty_widget.show()
 
 
-    def register_face(self, person_name):
+    def register_face(self, person_id):
         """얼굴 등록 메서드"""
-        if self.registered_faces_list_widget.is_in_item(person_name): #중복 체크
-            print(f"'{person_name}' is already registered.")
-            return
-        
-        self.registered_faces_list_widget.add_item(person_name) # 등록
+
+        print("왜 못받아?", person_id)
+        self.registered_faces_list_widget.register_person_faces(person_id)
+        self.registered_faces_list_widget.update_list()
    
     
     def select_registered_face(self, item):
@@ -326,7 +326,6 @@ class FilterSettingView(QWidget):
         """Filter 삭제 메서드"""
         self.filter_setting_processor.delete_filter(self.current_filter)
         self.filter_list_widget.update_list()
-        self.show_filter_setting_window(False)
 
     # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name):
@@ -347,14 +346,6 @@ class FilterSettingView(QWidget):
             print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_window(False)
             
-    # 
-    def update_registered_faces_list_widget(self, face_filter_data):
-        """registered_faces_list_widget 업데이트 메서드"""
-        # 기존 항목 삭제
-        self.registered_faces_list_widget.clear()
-        # face_filter_data를 QListWidget에 추가
-        for face_name in face_filter_data:
-            self.registered_faces_list_widget.add_item(face_name)
 
     # 인물 등록창 Open
     def show_add_face_dialog(self):
