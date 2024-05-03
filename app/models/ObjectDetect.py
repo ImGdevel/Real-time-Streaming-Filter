@@ -111,9 +111,10 @@ class ObjectDetect:
         last_results = dict()
         last_results[-1] = []
         for track in tracks:
-            xy_box = track.to_ltrb(orig=True).tolist()
+            float_box = track.to_ltrb(orig=True).tolist()
+            int_box = [int(float_box[0]), int(float_box[1]), int(float_box[2]), int(float_box[3])]
             if not track.is_confirmed():
-                last_results[-1].append(xy_box)
+                last_results[-1].append(int_box)
                 continue
             box = track.to_ltwh(orig=True).tolist()
             for face in results.keys():
@@ -129,11 +130,11 @@ class ObjectDetect:
             print()
             for sticker in self.sticker_id.keys():
                 if track.track_id == self.sticker_id[sticker]:
-                    last_results[sticker] = [xy_box]
+                    last_results[sticker] = [int_box]
                     is_sticker = True
                     break
             if is_sticker == False:
-                last_results[-1].append(xy_box)
+                last_results[-1].append(int_box)
 
         return last_results
     
