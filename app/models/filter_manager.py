@@ -161,8 +161,8 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 for key in filter_obj.face_filter.keys():
                     if int(key) == face_id:
-                        filter_obj[key] = sticker_id
-                        return filter_obj[key]
+                        filter_obj.face_filter[key] = sticker_id
+                        return filter_obj.face_filter[key]
                 raise ValueError("존재하지 않는 face_id입니다")
         raise ValueError("존재하지 않는 filtername입니다.")    
         

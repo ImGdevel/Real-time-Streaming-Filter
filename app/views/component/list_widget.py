@@ -189,6 +189,7 @@ class RegisteredFacesListWidget(ListWidget):
     
     def register_sticker(self, person_id, sticker_id):
         print("저장", person_id, sticker_id)
+        
         self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
         pass
     

@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QPixmap, QIcon, QImage
-from models.replace_manager import ReplaceManager
+from models import StickerManager
 from utils import Style
 import cv2
 import np
@@ -16,7 +16,7 @@ class RegisteredFaceViewDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet(Style.frame_style)
-        self.replace_manager = ReplaceManager()
+        self.replace_manager = StickerManager()
         self.person_id = None
         self._initUI()
 
@@ -58,9 +58,8 @@ class RegisteredFaceViewDialog(QDialog):
         """이미 등록된 스티커가 있다면 불러오기"""
         self.person_id = person_id
         if sticker_id != -1:
-            img = self.replace_manager.load_img_to_id(sticker_id)
+            img = self.replace_manager.load_Qimg_to_id(sticker_id)
             if img is not None:
-                print(img)
                 pixmap = QPixmap.fromImage(img)
                 self.image_label.setPixmap(pixmap)
                 self.image_label.setScaledContents(True)
@@ -86,6 +85,7 @@ class RegisteredFaceViewDialog(QDialog):
         if hasattr(self, 'image_path'):
             print("스티커 등록")
             sticker_id = self.replace_manager.register_img_path(self.image_path)
+            print(sticker_id)
             self.onEventSave.emit(self.person_id, sticker_id)
         self.close()
 
