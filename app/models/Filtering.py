@@ -65,7 +65,7 @@ class Filtering:
                     face_encode = face_encoding_box(img, box)
                     person_name = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
                     if person_name:
-                        known_faces.append(person_name)
+                        known_faces_id.append(person_name)
                     results.append(box)
 
         customs = self.object.custom_detect(img)

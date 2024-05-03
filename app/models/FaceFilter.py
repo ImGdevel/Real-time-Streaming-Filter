@@ -4,8 +4,6 @@ import face_recognition
 import re
 import pickle
 
-#사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
-known_faces = {}
 
 #이미지에서 얼굴 특징을 추출하여 반환하는 함수
 def extract_face_features(image_path):
