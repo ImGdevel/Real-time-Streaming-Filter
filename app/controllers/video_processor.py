@@ -44,7 +44,7 @@ class VideoProcessor(QThread):
                 break  # 동영상 끝에 도달하면 반복 중지
 
             
-            boxesList = self.filtering.filtering(frame)
+            boxesList, customs = self.filtering.filtering(frame)
             processed_frame = self.filtering.blur(frame, boxesList)
             # 출력 동영상에 프레임 쓰기
             output_video.write(processed_frame)
