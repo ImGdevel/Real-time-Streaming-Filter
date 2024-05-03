@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QIcon
 from controllers import FilterSettingController, PersonFaceSettingController
-from .sticker_attach_dialog import StickerAttachDialog
+from .sticker_attach_dialog import RegisteredFaceViewDialog
 
 from utils import Colors, Style
 
@@ -135,8 +135,11 @@ class RegisteredFacesListWidget(ListWidget):
     
     def create_button(self, item_name: str, item_data = None):
         widget = QWidget()
+        widget.setObjectName(item_name)
         widget.setStyleSheet(Style.frame_style_none_line)
+        
         widget.userData = item_data
+        print("리스트 버튼 등록",widget , "/", item_name, item_data, widget.userData )
         
         shadow_effect = QGraphicsDropShadowEffect(widget)
         shadow_effect.setBlurRadius(5)
@@ -157,7 +160,7 @@ class RegisteredFacesListWidget(ListWidget):
         
         button.clicked.connect(self.emit_button_clicked)
         
-        self.sticker_dialog = StickerAttachDialog()
+        self.sticker_dialog = RegisteredFaceViewDialog()
         
         
         button02 = QPushButton()
@@ -183,8 +186,8 @@ class RegisteredFacesListWidget(ListWidget):
         if button:
             parent_widget = button.parentWidget()
             if parent_widget:
-                id = parent_widget.userData
-                self.sticker_dialog.set_sticker_dialog(id)
+                print("부모 >>", parent_widget.userData)
+                self.sticker_dialog.set_sticker_dialog(parent_widget.userData)
                 self.sticker_dialog.show()
     
     def register_sticker(self, sticker):
@@ -207,7 +210,9 @@ class RegisteredFacesListWidget(ListWidget):
     def update_list(self):
         self.clear()
         for name, id in self.filter_setting_processor.get_face_in_filter(self.filter_name):
+            print(name, ">",  id)
             self.add_item(name, str(id))
+            
             
 
 
@@ -222,8 +227,8 @@ class AvailableFacesListWidget(ListWidget):
     def update_list(self):
         self.clear()
         for person in self.face_setting_processor.get_person_faces():
-            print(person)
             self.add_item(person.face_name, str(person.face_id))
+            
 
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""

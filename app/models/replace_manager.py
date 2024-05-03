@@ -43,7 +43,7 @@ class ReplaceManager:
         max_img_number += 1
         replace_images[max_img_number] = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
 
-        self.path_manager.save_replace_images(replace_images)    
+        self.path_manager.save_replace_images(replace_images)
 
     def load_img_to_id(self, img_id):
         replace_images = self.path_manager.load_replace_images()

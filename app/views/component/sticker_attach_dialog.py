@@ -4,51 +4,73 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtGui import QPixmap, QIcon, QImage
 from models.replace_manager import ReplaceManager
 from utils import Style
+import cv2
+import np
 
-class StickerAttachDialog(QDialog):
-    updateEvent = Signal(int) 
-    
+class RegisteredFaceViewDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet(Style.frame_style)
+        self.replace_manager = ReplaceManager()
         self._initUI()
 
     def _initUI(self):
-        self.setWindowTitle("Add Face")
+        self.setWindowTitle("Registered Face View")
         self.setFixedSize(320, 400)
 
         main_layout = QVBoxLayout()
+        main_layout.setAlignment(Qt.AlignCenter)
+
+        register_button = QPushButton()
+        register_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        register_button.setIcon(QIcon('./resources/icons/cil-folder-open'))
+        register_button.setFixedSize(40, 40)
+        register_button.clicked.connect(self.register_image)
+        main_layout.addWidget(register_button)
 
         self.image_label = QLabel()
         self.image_label.setFixedSize(300, 300)
         self.image_label.setStyleSheet("border: 2px solid #808080")
         main_layout.addWidget(self.image_label)
 
-        self.open_file_button = QPushButton("Open Image")
-        self.open_file_button.clicked.connect(self.open_file_dialog)
-        self.open_file_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
-        main_layout.addWidget(self.open_file_button)
+        button_layout = QHBoxLayout()
+        save_button = QPushButton("등록")
+        save_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        save_button.clicked.connect(self.save)
+        button_layout.addWidget(save_button)
+
+        cancel_button = QPushButton("취소")
+        cancel_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        cancel_button.clicked.connect(self.cancel)
+        button_layout.addWidget(cancel_button)
+
+        main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
-        
-    def set_sticker_dialog(self, id = None):
-        
-        
-        
-        
-        pass
 
-    def open_file_dialog(self):
+    def set_sticker_dialog(self, id=None):
+        """이미 등록된 스티커가 있다면 불러오기"""
+        if id is not None:
+            img = self.replace_manager.load_img_to_id(id)
+            print(img)
+            if img is not None:
+                img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                qimg = QImage(img_rgb.data, img_rgb.shape[1], img_rgb.shape[0], img_rgb.strides[0], QImage.Format_RGB888)
+                pixmap = QPixmap.fromImage(qimg)
+                self.image_label.setPixmap(pixmap)
+                self.image_label.setScaledContents(True)
+
+    def register_image(self):
         options = QFileDialog.Options()
-        file_paths, _ = QFileDialog.getOpenFileNames(
-            self, "Open Images", "", "Image Files (*.png *.jpeg)", options=options
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Open Image", "", "Image Files (*.png *.jpeg)", options=options
         )
 
-        if file_paths:
-            file_path = file_paths[0]
+        if file_path:
+            self.image_path = file_path
             self.load_image(file_path)
 
     def load_image(self, file_path):
@@ -56,6 +78,16 @@ class StickerAttachDialog(QDialog):
         if not pixmap.isNull():
             self.image_label.setPixmap(pixmap)
             self.image_label.setScaledContents(True)
+
+    def save(self):
+        if hasattr(self, 'image_path'):
+            print("스티커 등록")
+            self.replace_manager.register_img_path(self.image_path)
+        self.close()
+
+    def cancel(self):
+        self.close()
+
 
     def drag_enter_event(self, event):
         """드래그 이벤트 처리"""
@@ -83,9 +115,3 @@ class StickerAttachDialog(QDialog):
         else:
             event.ignore()
 
-    def add_face_process(self, image_files):
-        """이미지 등록 프로세스"""
-
-        for idx, file_path in enumerate(image_files):
-            if not self.current_person.face_name is None:
-                pass
