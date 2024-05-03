@@ -121,7 +121,8 @@ class ImageView(QWidget):
             print(self.filtered_image)
     
     def Download(self):
-        print("Download")
+        if self.filtered_image:
+            self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
 
     def UrlListConverter(self, urls):
         origin_urls =list()
