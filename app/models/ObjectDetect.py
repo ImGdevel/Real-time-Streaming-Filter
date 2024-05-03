@@ -47,6 +47,11 @@ class ObjectDetect:
             if value in filter_classes:
                 self.customFilterClasses.append(key)
 
+    def set_known_faces(self, face_list: list):
+        for face in face_list:
+            self.sticker_id[face] = []
+        print("sticker_id: ", self.sticker_id)
+
     def origin_detect(self, img):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
@@ -97,18 +102,38 @@ class ObjectDetect:
 
         return results 
     
-    def object_track(self, img, results, known_faces):
-        tracks = self.modelManager.tracker.update_tracks(results, frame=img)
-        last_results = []
+    def object_track(self, img, results):
+        detections = []
+        for value in results.values():
+            detections.extend(value)
+        print("detections: ", detections)
+        tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
+        last_results = dict()
+        last_results[-1] = []
         for track in tracks:
+            xy_box = track.to_ltrb(orig=True).tolist()
             if not track.is_confirmed():
+                last_results[-1].append(xy_box)
                 continue
-            box = track.to_ltrb(orig=True).tolist()
-            if box in known_faces:
-                if track.track_id not in self.exclude_id:
-                    self.exclude_id.append(track.track_id)
-            if track.track_id not in self.exclude_id:
-                last_results.append(box)
+            box = track.to_ltwh(orig=True).tolist()
+            for face in results.keys():
+                if face != -1:
+                    if len(results[face]) != 0:
+                        print("box:",box)
+                        print("results[face][0]:",results[face][0])
+                        if box == results[face][0][0]:
+                            self.sticker_id[face] = track.track_id
+
+            is_sticker = False
+            print("sticker_id:",self.sticker_id)
+            print()
+            for sticker in self.sticker_id.keys():
+                if track.track_id == self.sticker_id[sticker]:
+                    last_results[sticker] = [xy_box]
+                    is_sticker = True
+                    break
+            if is_sticker == False:
+                last_results[-1].append(xy_box)
 
         return last_results
     
