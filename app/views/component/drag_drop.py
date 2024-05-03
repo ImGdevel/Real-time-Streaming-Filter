@@ -77,7 +77,14 @@ class DragDropLabel(QLabel):
         return self.urls
     
     def setExampleView(self, urls):
-        pixmap = QPixmap.fromImage(urls)
+        image = QImage(urls)
+        
+        # Check if the image has loaded successfully
+        if image.isNull():
+            print("Failed to load the image.")
+            return
+        
+        pixmap = QPixmap.fromImage(image)
         widget_size = self.dropbox_lable.size()
         print(widget_size)
         # Get image size
