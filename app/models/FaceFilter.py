@@ -196,15 +196,15 @@ def recognize_face(known_faces, face_encoding, tolerance=0.3):
 
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
-            # print("==========distance==========")
-            # print(distance)
+            print("==========distance==========")
+            print(distance)
             if distance < tolerance and distance < min_distance:
                 min_distance = distance
                 recognized_face = name
                 tolerance_used = distance
 
-    # print(recognized_face, ":::::")
-    # print(tolerance_used)
+    print(recognized_face, ":::::")
+    print(tolerance_used)
 
     return recognized_face, tolerance_used
 
@@ -268,9 +268,10 @@ def delete_face_code(face_code, known_faces_path = './models/known_faces.pickle'
 
 
 #제외할 얼굴 딕셔너리, 검색할 얼굴 인코딩값을 넣으면 아는 사람인지 아닌지 반환
-def is_known_person(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
+def is_known_person(people_list, face_encoding, known_faces:dict):
     #등록된 사람 딕셔너리를 일단 파일에서 받아옴
-    known_faces = load_known_faces(known_faces_path) # 수정예정
+    #known_faces = load_known_faces(known_faces_path) # 수정예정
+    
     #이후 그 안에서 필터링을 제외할 사람 데이터를 담은 딕셔너리를 생성
     except_faces = {}
     for person in people_list:
@@ -282,23 +283,25 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
         return False
     else:
         return True
-    
 
-def identify_known_face(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
-    known_faces = load_known_faces(known_faces_path) # 수정예정
+# face_encoding이 people_list로 주어진 사람들 중 누구인지 반환
+def identify_known_face(people_list, face_encoding, known_faces:dict):
+    #known_faces = load_known_faces(known_faces_path) # 수정예정
     except_faces = {}
     for person in people_list:
         except_faces.update(find_person_data(person, known_faces))
     #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
     person_name, tolerance = recognize_face(except_faces, face_encoding)
-
+    
     if person_name == "unknown":
         return None
     else:
-        return person_name
+        return extract_name(person_name) # 이름_i에서 이름만 떼서 반환
     
 
-def set_known_faces():
+def set_known_faces(known_faces_path):
+    known_faces = load_known_faces(known_faces_path)
+    return known_faces
     pass #return known_faces.pickle 내용 dict 들어갈 예정
 
 
