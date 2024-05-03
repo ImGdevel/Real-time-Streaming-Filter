@@ -29,6 +29,12 @@ class FilterSettingController:
     def update_sticker_id_in_filter(self, filter_name: str, face_id: int, sticker_id: int):
         return self.filter_manager.update_sticker_id_in_filter(filter_name, face_id, sticker_id)
 
+    def update_blur_strength_in_filter(self, filter_name: str, blur_strength: float):
+        return self.update_blur_strength_in_filter(filter_name, blur_strength)
+
+    def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
+        return self.update_blur_shape_in_filter(filter_name, blur_shape)
+
     def get_face_names_in_filter(self, filter_name: str):
         ids = self.filter_manager.get_face_ids_in_filter(filter_name)
         names = []
@@ -51,7 +57,13 @@ class FilterSettingController:
     
     def get_sticker_id_in_filter(self, filter_name: str, face_id: int):
         return self.filter_manager.get_sticker_id_in_filter(filter_name, face_id)
-    
+
+    def get_blur_strength_in_filter(self, filter_name: str):
+        return self.filter_manager.get_blur_strength_in_filter(filter_name)
+
+    def get_blur_shape_in_filter(self, filter_name: str):
+        return self.filter_manager.get_blur_shape_in_filter(filter_name)
+
     def add_face_in_face_filter(self, filter_name: str, person_id: int):
         self.filter_manager.add_face_in_face_filter(filter_name, person_id)
 

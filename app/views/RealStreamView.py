@@ -1,9 +1,12 @@
-from utils import Colors, Style
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame
+from PySide6.QtWidgets import ( 
+    QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
+    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter
+)
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
+from utils import Colors, Style
 from controllers import RealStreamProcessor
-from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget
+from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, MosaicSettingWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -162,23 +165,36 @@ class RealStreamView(QWidget):
 
     def setup_bottom_layer(self):
         '''하단 레이어 설정 메서드'''
-        frame = ShadowWidget()  # 하단 위젯
+        frame = QWidget()  # 하단 위젯
+        frame.setStyleSheet(Style.frame_style)  # 배경색 및 테두리 설정
+        frame.setGraphicsEffect(Style.shadow(frame))
         
         layout = QHBoxLayout()
-        bottom_widget = QWidget()
-        bottom_widget.setStyleSheet(Style.frame_style)  # 배경색 및 테두리 설정
-    
-        # 버튼 레이아웃 설정
-        bottom_layout = QHBoxLayout()
-        bottom_layout.setSpacing(10)
+
+        # 각각의 위젯 생성
+        widget1 = QWidget()
         
-        #self.object_filter_widget = ObjectFilterSettngWidget()
-        #self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
-        #bottom_layout.addWidget(self.object_filter_widget)
+        widget2 = ObjectFilterSettngWidget()
         
+        widget3 = MosaicSettingWidget()
         
-        bottom_widget.setLayout(bottom_layout)
-        layout.addWidget(bottom_widget)
+        # 각 위젯에 배경색 및 테두리 설정
+        widget1.setStyleSheet(Style.frame_style_line)
+        widget2.setStyleSheet(Style.frame_style_line)
+        widget3.setStyleSheet(Style.frame_style_line)
+        
+        # 스플리터 생성 및 각 위젯 추가
+        splitter = QSplitter()
+        splitter.addWidget(widget1)
+        splitter.addWidget(widget2)
+        splitter.addWidget(widget3)
+        
+        # 스플리터 레이아웃 설정
+        splitter.setSizes([300, 200, 200])  # 초기 비율을 3:2:2로 설정
+        
+        # 레이아웃 설정
+        layout = QHBoxLayout()
+        layout.addWidget(splitter)
         
         frame.setLayout(layout)
         
@@ -224,7 +240,6 @@ class RealStreamView(QWidget):
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
         self.streaming_processor.set_filter(index)
-        #self.object_filter_widget.setup_object_filter_widget(self.selected_filtering_object)
         pass
 
     def update_object_filter(self, list):
@@ -232,8 +247,6 @@ class RealStreamView(QWidget):
         self.selected_filtering_object = list
         pass
         
-        
-
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
         if q_img is None:

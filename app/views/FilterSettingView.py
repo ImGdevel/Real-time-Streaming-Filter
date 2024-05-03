@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QFont
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ShadowWidget, ObjectFilterSettngWidget
+    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
@@ -127,24 +127,24 @@ class FilterSettingView(QWidget):
         content_frame = QFrame()
         content_frame.setLayout(self.setting_page())
         
-        apply_button = QPushButton("적용")
-        apply_button.clicked.connect(self.apply_filter_settings)
-        apply_button.setFixedSize(60, 30)  # 높이 설정
+        #apply_button = QPushButton("적용")
+        #apply_button.clicked.connect(self.apply_filter_settings)
+        #apply_button.setFixedSize(60, 30)  # 높이 설정
         
-        cancel_button = QPushButton("취소")
-        cancel_button.clicked.connect(self.apply_filter_settings)
-        cancel_button.setFixedSize(60, 30)  # 높이 설정
+        #cancel_button = QPushButton("취소")
+        #cancel_button.clicked.connect(self.apply_filter_settings)
+        #cancel_button.setFixedSize(60, 30)  # 높이 설정
 
         # 수평 레이아웃 생성 및 오른쪽 정렬
-        button_layout = QHBoxLayout()
-        button_layout.addStretch(1)
-        button_layout.addWidget(apply_button)
-        button_layout.addWidget(cancel_button)
+        #button_layout = QHBoxLayout()
+        #button_layout.addStretch(1)
+        #button_layout.addWidget(apply_button)
+        #button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
-        right_layout.addLayout(button_layout)
+        #right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -156,7 +156,6 @@ class FilterSettingView(QWidget):
     
     # 세팅 페이지
     def setting_page(self):
-
         #설정창 들
         face_widget = QWidget()
         face_widget.setStyleSheet(Style.frame_style_none_line)
@@ -165,14 +164,13 @@ class FilterSettingView(QWidget):
         self.object_filter_widget = ObjectFilterSettngWidget()
         self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
         
-        mos_widget = QWidget()
-        mos_widget.setLayout(self.mosaic_setting_layout())
+        mosaic_setting_widget = MosaicSettingWidget()
 
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
         self.settings_content.addWidget(face_widget)
         self.settings_content.addWidget(self.object_filter_widget)
-        self.settings_content.addWidget(mos_widget)
+        self.settings_content.addWidget(mosaic_setting_widget)
 
         # 설정 목록에 들어갈 버튼 생성
         button1 = QPushButton("필터링 인물 설정")
@@ -277,47 +275,6 @@ class FilterSettingView(QWidget):
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
         
         return face_layout
-    
-    def mosaic_setting_layout(self):
-        """모자이크 설정 레이아웃"""
-        layout = QVBoxLayout()
-
-        default_mosaic_layout  = QGridLayout()  # 그리드 레이아웃으로 변경
-        default_mosaic_layout.setSpacing(10)  # 위젯 간의 간격을 10으로 설정
-
-        default_mosaic_layout_label = QLabel("기본 모자이크 설정")
-        default_mosaic_layout_label.setStyleSheet(Style.title_label)
-        default_mosaic_layout.addWidget(default_mosaic_layout_label,0,0)
-
-        # 모자이크 강도 설정 라벨과 슬라이더를 그리드에 추가
-        intensity_label = QLabel("모자이크 강도 ")
-        intensity_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
-        intensity_slider = QSlider(Qt.Horizontal)  # 수평 슬라이더 생성
-        intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # 크기 정책 설정
-        intensity_slider.setMaximumWidth(500)  # 최대 너비 설정
-        intensity_slider.setMinimumWidth(400)
-        default_mosaic_layout .addWidget(intensity_label, 1, 0)  # 라벨을 (0, 0) 위치에 추가
-        default_mosaic_layout .addWidget(intensity_slider, 1, 1, alignment=Qt.AlignRight)  # 슬라이더를 (0, 1) 위치에 추가, 우측 정렬 적용
-
-        # 모자이크 모양 설정 라벨과 드롭다운을 그리드에 추가
-        shape_label = QLabel("모자이크 모양 ")
-        shape_label.setFont(QFont("Arial", 15))  # 폰트 크기 조정
-        shape_combobox = QComboBox()
-        shape_combobox.setMaximumWidth(300)  # 최대 너비 설정
-        shape_combobox.setMinimumWidth(200)
-        shape_combobox.addItems(["사각형", "원형"])
-        default_mosaic_layout.addWidget(shape_label, 2, 0)  # 라벨을 (1, 0) 위치에 추가
-        default_mosaic_layout.addWidget(shape_combobox, 2, 1,  alignment=Qt.AlignRight)  # 드롭다운을 (1, 1) 위치에 추가
-        
-        default_mosaic_layout.setColumnStretch(0, 1)  # 첫 번째 열의 너비를 1배로 설정
-        default_mosaic_layout.setColumnStretch(1, 4)  # 첫 번째 열의 너비를 4배로 설정
-
-        default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
-
-    
-        layout.addLayout(default_mosaic_layout)
-
-        return layout
 
     # 윈도우 디스플레이 설정
     def show_filter_setting_page(self, is_show):

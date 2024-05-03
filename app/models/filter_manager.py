@@ -166,7 +166,20 @@ class FilterManager:
                         return filter_obj.face_filter[key]
                 raise ValueError("존재하지 않는 face_id입니다")
         raise ValueError("존재하지 않는 filtername입니다.")    
-        
+    
+    def update_blur_strength_in_filter(self, filter_name: str, blur_strength: float):
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                filter_obj.blur_strength = blur_strength
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")    
+
+    def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                filter_obj.blur_shape = blur_shape
+                return
+        raise ValueError("존재하지 않는 filtername입니다.")    
 
     def remove_filter(self, filter_name: str):
         """지정된 이름의 필터를 제거합니다."""
@@ -204,7 +217,18 @@ class FilterManager:
                 raise ValueError("존재하지 않는 face_id입니다")
         raise ValueError("존재하지 않는 filtername입니다.")
 
+    def get_blur_strength_in_filter(self, filter_name: str):
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                return filter_obj.blur_strength
+        raise ValueError("존재하지 않는 filtername입니다.")    
 
+    def get_blur_shape_in_filter(self, filter_name: str):
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                return filter_obj.blur_shape
+        raise ValueError("존재하지 않는 filtername입니다.")    
+    
     # def get_face_names_in_filter(self, filter_name: str):
         # for filter_obj in self.filter_list:
         #     if filter_obj.name == filter_name:
