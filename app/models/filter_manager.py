@@ -74,7 +74,7 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 for face in filter.face_filter.keys():
-                    if face == face_id:
+                    if int(face) == face_id:
                         self.save_filters()
                         return
                 filter.face_filter[int(face_id)] = -1
@@ -87,7 +87,7 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 for face in filter.face_filter.keys():
-                    if face == face_id:
+                    if int(face) == face_id:
                         del filter.face_filter[face_id]
                         return
                 return
