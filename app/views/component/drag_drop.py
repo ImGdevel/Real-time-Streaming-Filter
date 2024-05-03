@@ -1,12 +1,14 @@
 from PySide6.QtWidgets import QLabel, QHBoxLayout
 from PySide6.QtCore import Qt, QMimeDatabase, Signal
-from PySide6.QtGui import QPixmap, QDragEnterEvent, QImage
+from PySide6.QtGui import QPixmap, QDragEnterEvent, QImage, QResizeEvent
 from urllib.parse import urlparse
 
 
 class DragDropLabel(QLabel):
 
     drop_signal = Signal(list)
+    currunt_exm = str()
+    currunt_filt = str()
 
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -125,3 +127,10 @@ class DragDropLabel(QLabel):
                                     Qt.KeepAspectRatio)
 
         self.filtered_label.setPixmap(scaled_pixmap)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        if self.currunt_exm:
+            self.setExampleView(self.currunt_exm)
+        if self.currunt_filt:
+            self.setFilteredView(self.currunt_filt)
+        return super().resizeEvent(event)
