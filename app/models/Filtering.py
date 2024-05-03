@@ -1,7 +1,7 @@
 from .ObjectDetect import ObjectDetect
 from .FaceFilter import *
 from .ModelManager import ModelManager
-from .replace_manager import ReplaceManager
+from .sticker_manager import StickerManager
 from .face_manager import FaceManager
 from .filter_info import Filter
 from .path_manager import PathManager
@@ -28,7 +28,7 @@ class Filtering:
         self.object = ObjectDetect()
         self.modelManager = ModelManager()
         self.faceManager = FaceManager()
-        self.replaceManager = ReplaceManager()
+        self.stickerManager = StickerManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
@@ -202,7 +202,7 @@ class Filtering:
             y_center = int((y1+y2)/2)
 
 
-            replace_img = self.replaceManager.load_img_to_id(replace_img_id)
+            replace_img = self.stickerManager.load_img_to_id(replace_img_id)
             r_h,r_w = replace_img.shape[:2]
             if w > h:
                 aspect_ratio = w / r_w
