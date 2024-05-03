@@ -156,6 +156,15 @@ class FilterManager:
                 return
         raise ValueError("존재하지 않는 filtername입니다.")
 
+    def update_sticker_id_in_filter(self, filter_name: str, face_id: int, sticker_id: int):
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                for key in filter_obj.face_filter.keys():
+                    if int(key) == face_id:
+                        filter_obj[key] = sticker_id
+                        return filter_obj[key]
+                raise ValueError("존재하지 않는 face_id입니다")
+        raise ValueError("존재하지 않는 filtername입니다.")    
         
 
     def remove_filter(self, filter_name: str):
@@ -194,15 +203,6 @@ class FilterManager:
                 raise ValueError("존재하지 않는 face_id입니다")
         raise ValueError("존재하지 않는 filtername입니다.")
 
-    def update_sticker_id_in_filter(self, filter_name: str, face_id: int, sticker_id: int):
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                for key in filter_obj.face_filter.keys():
-                    if int(key) == face_id:
-                        filter_obj[key] = sticker_id
-                        return filter_obj[key]
-                raise ValueError("존재하지 않는 face_id입니다")
-        raise ValueError("존재하지 않는 filtername입니다.")    
 
     # def get_face_names_in_filter(self, filter_name: str):
         # for filter_obj in self.filter_list:
