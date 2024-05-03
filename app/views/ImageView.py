@@ -81,6 +81,12 @@ class ImageView(QWidget):
         if self.filtered_image:
             del self.filtered_image[url.toLocalFile()]
 
+        if url == self.dropbox_widget.currunt_exm:
+            self.dropbox_widget.currunt_exm = self.urls[0]
+            if self.filtered_image:
+                self.dropbox_widget.currunt_filt = self.urls[0].toLocalFile()
+            self.dropbox_widget.refreashWidget()
+
     def set_filter_option(self, index):
         """필터 옵션 선택"""
         self.filter_image_processor.set_filter(index)
@@ -96,6 +102,7 @@ class ImageView(QWidget):
         if add_urls :
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
+            self.dropbox_widget.currunt_exm = file_path
             self.file_view_widget.addNewFile(add_urls)
 
     def changeImage(self, url):

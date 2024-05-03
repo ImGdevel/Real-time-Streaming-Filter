@@ -129,8 +129,11 @@ class DragDropLabel(QLabel):
         self.filtered_label.setPixmap(scaled_pixmap)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        self.refreashWidget()
+        return super().resizeEvent(event)
+    
+    def refreashWidget(self):
         if self.currunt_exm:
             self.setExampleView(self.currunt_exm)
         if self.currunt_filt:
             self.setFilteredView(self.currunt_filt)
-        return super().resizeEvent(event)
