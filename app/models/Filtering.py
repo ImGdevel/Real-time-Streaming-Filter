@@ -50,8 +50,8 @@ class Filtering:
             return []
         results = []
         known_faces_id = []
-        for name in self.current_filter_info.face_filter:
-            known_faces_id.append(self.faceManager.get_person_face_id(name))
+        for name in self.current_filter_info.face_filter.keys():
+            known_faces_id.append(name)
 
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
@@ -60,11 +60,10 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-                    if is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path()):
-                        continue
-                    else :
-                        results.append(box)
-                        continue
+                    person_name = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
+                    if person_name:
+                        known_faces.append(person_name)
+                    results.append(box)
 
         customs = self.object.custom_detect(img)
         for result in customs:
@@ -81,8 +80,8 @@ class Filtering:
         results = []
         known_faces_id = []
         known_face_boxes = []
-        for name in self.current_filter_info.face_filter:
-            known_faces_id.append(self.faceManager.get_person_face_id(name))
+        for name in self.current_filter_info.face_filter.keys():
+            known_faces_id.append(name)
 
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
@@ -98,8 +97,9 @@ class Filtering:
                         known_face_boxes.append(box)
                     results.append(result)
                     continue
-
-        results = self.object.object_track(img, results, known_face_boxes)
+        
+        if len(results) != 0:
+            results = self.object.object_track(img, results, known_face_boxes)
         if self.init_id is True:
             self.object.init_exclude_id()
             self.init_id = False
@@ -113,7 +113,7 @@ class Filtering:
                 results.append(box)
         
 
-        return results, customs
+        return results
     
     def blur(self,img, boxesList, blurRatio = 40):
         """
@@ -147,6 +147,8 @@ class Filtering:
 
     def elliptical_blur(self, img, boxesList, blurRatio = 40):
         for box in boxesList:
+            if len(box) == 0:
+                continue
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             obj = img[y1:y2, x1:x2]
 

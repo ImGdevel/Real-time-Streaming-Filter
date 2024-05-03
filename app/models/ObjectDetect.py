@@ -103,8 +103,7 @@ class ObjectDetect:
         for track in tracks:
             if not track.is_confirmed():
                 continue
-            box = track.to_ltrb(orig=True)
-
+            box = track.to_ltrb(orig=True).tolist()
             if box in known_faces:
                 if track.track_id not in self.exclude_id:
                     self.exclude_id.append(track.track_id)
