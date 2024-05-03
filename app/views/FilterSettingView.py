@@ -127,24 +127,24 @@ class FilterSettingView(QWidget):
         content_frame = QFrame()
         content_frame.setLayout(self.setting_page())
         
-        apply_button = QPushButton("적용")
-        apply_button.clicked.connect(self.apply_filter_settings)
-        apply_button.setFixedSize(60, 30)  # 높이 설정
+        #apply_button = QPushButton("적용")
+        #apply_button.clicked.connect(self.apply_filter_settings)
+        #apply_button.setFixedSize(60, 30)  # 높이 설정
         
-        cancel_button = QPushButton("취소")
-        cancel_button.clicked.connect(self.apply_filter_settings)
-        cancel_button.setFixedSize(60, 30)  # 높이 설정
+        #cancel_button = QPushButton("취소")
+        #cancel_button.clicked.connect(self.apply_filter_settings)
+        #cancel_button.setFixedSize(60, 30)  # 높이 설정
 
         # 수평 레이아웃 생성 및 오른쪽 정렬
-        button_layout = QHBoxLayout()
-        button_layout.addStretch(1)
-        button_layout.addWidget(apply_button)
-        button_layout.addWidget(cancel_button)
+        #button_layout = QHBoxLayout()
+        #button_layout.addStretch(1)
+        #button_layout.addWidget(apply_button)
+        #button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
-        right_layout.addLayout(button_layout)
+        #right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율

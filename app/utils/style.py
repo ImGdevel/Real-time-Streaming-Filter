@@ -49,7 +49,15 @@ class Style:
     frame_style = f"""
         background-color: {Colors.base_color_06};
         color: white;
-        border-radius: 5px;  
+        border-radius: 5px;
+        padding: 0px;
+    """
+    
+    frame_style_line = f"""
+        background-color: {Colors.base_color_06};
+        color: white;
+        border: 1px solid #222222;
+        border-radius: 5px;
         padding: 0px;
     """
     

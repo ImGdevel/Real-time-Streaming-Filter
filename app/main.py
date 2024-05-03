@@ -22,8 +22,8 @@ class MainWindow(QMainWindow):
 
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
-        title = "PyDracula - Modern GUI"
-        description = "PyDracula APP - Theme with colors based on Dracula for Python."
+        title = "CAMA"
+        description = "CAMA APP"
         # APPLY TEXTS
         self.setWindowTitle(title)
         widgets.titleRightInfo.setText(description)
