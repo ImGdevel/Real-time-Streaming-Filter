@@ -11,10 +11,13 @@ import cv2
 import np
 
 class RegisteredFaceViewDialog(QDialog):
+    onEventSave = Signal(int, int)
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet(Style.frame_style)
         self.replace_manager = ReplaceManager()
+        self.person_id = None
         self._initUI()
 
     def _initUI(self):
@@ -28,7 +31,7 @@ class RegisteredFaceViewDialog(QDialog):
         register_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
         register_button.setIcon(QIcon('./resources/icons/cil-folder-open'))
         register_button.setFixedSize(40, 40)
-        register_button.clicked.connect(self.register_image)
+        register_button.clicked.connect(self.open_image)
         main_layout.addWidget(register_button)
 
         self.image_label = QLabel()
@@ -51,19 +54,19 @@ class RegisteredFaceViewDialog(QDialog):
 
         self.setLayout(main_layout)
 
-    def set_sticker_dialog(self, id=None):
+    def set_sticker_dialog(self, person_id, sticker_id):
         """이미 등록된 스티커가 있다면 불러오기"""
-        if id is not None:
-            img = self.replace_manager.load_img_to_id(id)
-            print(img)
+        self.person_id = person_id
+        if sticker_id != -1:
+            img = self.replace_manager.load_img_to_id(sticker_id)
             if img is not None:
-                img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                qimg = QImage(img_rgb.data, img_rgb.shape[1], img_rgb.shape[0], img_rgb.strides[0], QImage.Format_RGB888)
-                pixmap = QPixmap.fromImage(qimg)
+                print(img)
+                pixmap = QPixmap.fromImage(img)
                 self.image_label.setPixmap(pixmap)
                 self.image_label.setScaledContents(True)
 
-    def register_image(self):
+    def open_image(self):
+        """이미지 등록"""
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open Image", "", "Image Files (*.png *.jpeg)", options=options
@@ -82,36 +85,9 @@ class RegisteredFaceViewDialog(QDialog):
     def save(self):
         if hasattr(self, 'image_path'):
             print("스티커 등록")
-            self.replace_manager.register_img_path(self.image_path)
+            sticker_id = self.replace_manager.register_img_path(self.image_path)
+            self.onEventSave.emit(self.person_id, sticker_id)
         self.close()
 
     def cancel(self):
         self.close()
-
-
-    def drag_enter_event(self, event):
-        """드래그 이벤트 처리"""
-        if event.mimeData().hasUrls():
-            event.accept()
-        else:
-            event.ignore()
-
-    def drag_move_event(self, event):
-        """드래그 이동 이벤트 처리"""
-        if event.mimeData().hasUrls():
-            event.setDropAction(Qt.CopyAction)
-            event.accept()
-        else:
-            event.ignore()
-
-    def drop_event(self, event):
-        """드롭 이벤트 처리"""
-        if event.mimeData().hasUrls():
-            event.setDropAction(Qt.CopyAction)
-            event.accept()
-            
-            image_files = [url.toLocalFile() for url in event.mimeData().urls()]
-            self.add_face_process(image_files)
-        else:
-            event.ignore()
-

@@ -137,9 +137,7 @@ class RegisteredFacesListWidget(ListWidget):
         widget = QWidget()
         widget.setObjectName(item_name)
         widget.setStyleSheet(Style.frame_style_none_line)
-        
         widget.userData = item_data
-        print("리스트 버튼 등록",widget , "/", item_name, item_data, widget.userData )
         
         shadow_effect = QGraphicsDropShadowEffect(widget)
         shadow_effect.setBlurRadius(5)
@@ -147,11 +145,8 @@ class RegisteredFacesListWidget(ListWidget):
         shadow_effect.setOffset(3, 3)
         widget.setGraphicsEffect(shadow_effect) 
         
-        
-        
         frame_layout = QHBoxLayout()
         frame_layout.setContentsMargins(0,0,0,0)
-        
         
         button = QPushButton(item_name)
         button.setObjectName(item_name)
@@ -159,9 +154,6 @@ class RegisteredFacesListWidget(ListWidget):
         button.setMinimumHeight(40)
         
         button.clicked.connect(self.emit_button_clicked)
-        
-        self.sticker_dialog = RegisteredFaceViewDialog()
-        
         
         button02 = QPushButton()
         button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
@@ -179,18 +171,25 @@ class RegisteredFacesListWidget(ListWidget):
         frame_layout.addWidget(button02)
         frame_layout.addWidget(button03)
         widget.setLayout(frame_layout)
+    
         return widget
     
     def show_sticker_dialog(self):
+        self.sticker_dialog = RegisteredFaceViewDialog()
+        self.sticker_dialog.onEventSave.connect(self.register_sticker)
+    
         button = self.sender()
         if button:
             parent_widget = button.parentWidget()
             if parent_widget:
-                print("부모 >>", parent_widget.userData)
-                self.sticker_dialog.set_sticker_dialog(parent_widget.userData)
+                person_id = int(parent_widget.userData)
+                sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
+                self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
                 self.sticker_dialog.show()
     
-    def register_sticker(self, sticker):
+    def register_sticker(self, person_id, sticker_id):
+        print("저장", person_id, sticker_id)
+        self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
         pass
     
     def emit_button_clicked(self):
@@ -210,12 +209,9 @@ class RegisteredFacesListWidget(ListWidget):
     def update_list(self):
         self.clear()
         for name, id in self.filter_setting_processor.get_face_in_filter(self.filter_name):
-            print(name, ">",  id)
             self.add_item(name, str(id))
             
-            
-
-
+        
 
 class AvailableFacesListWidget(ListWidget):
     def __init__(self, parent=None):
