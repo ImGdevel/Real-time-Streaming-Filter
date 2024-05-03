@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QIcon
 from controllers import FilterSettingController, PersonFaceSettingController
-from .sticker_attach_dialog import RegisteredFaceViewDialog
+from .sticker_attach_dialog import StickerRegisteredDialog
 
 from utils import Colors, Style
 
@@ -175,7 +175,7 @@ class RegisteredFacesListWidget(ListWidget):
         return widget
     
     def show_sticker_dialog(self):
-        self.sticker_dialog = RegisteredFaceViewDialog()
+        self.sticker_dialog = StickerRegisteredDialog()
         self.sticker_dialog.onEventSave.connect(self.register_sticker)
     
         button = self.sender()
@@ -185,11 +185,10 @@ class RegisteredFacesListWidget(ListWidget):
                 person_id = int(parent_widget.userData)
                 sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
                 self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
-                self.sticker_dialog.show()
+                self.sticker_dialog.exec_()
+                
     
     def register_sticker(self, person_id, sticker_id):
-        print("저장", person_id, sticker_id)
-        
         self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
         pass
     

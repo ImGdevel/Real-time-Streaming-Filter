@@ -10,7 +10,7 @@ from utils import Style
 import cv2
 import numpy as np
 
-class RegisteredFaceViewDialog(QDialog):
+class StickerRegisteredDialog(QDialog):
     onEventSave = Signal(int, int)
     
     def __init__(self, parent=None):
@@ -23,6 +23,7 @@ class RegisteredFaceViewDialog(QDialog):
     def _initUI(self):
         self.setWindowTitle("Registered Face View")
         self.setFixedSize(320, 400)
+
 
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignCenter)
@@ -57,6 +58,7 @@ class RegisteredFaceViewDialog(QDialog):
     def set_sticker_dialog(self, person_id, sticker_id):
         """이미 등록된 스티커가 있다면 불러오기"""
         self.person_id = person_id
+        print(person_id, sticker_id)
         if sticker_id != -1:
             img = self.replace_manager.load_Qimg_to_id(sticker_id)
             if img is not None:
@@ -83,9 +85,7 @@ class RegisteredFaceViewDialog(QDialog):
 
     def save(self):
         if hasattr(self, 'image_path'):
-            print("스티커 등록")
             sticker_id = self.replace_manager.register_img_path(self.image_path)
-            print(sticker_id)
             self.onEventSave.emit(self.person_id, sticker_id)
         self.close()
 

@@ -53,6 +53,14 @@ class Style:
         padding: 0px;
     """
     
+    dialog_style = f"""
+        background-color: {Colors.base_color_06};
+        border: 2px solid #808080;
+        color: white;
+        border-radius: 5px;  
+        padding: 0px;
+    """
+    
     frame_style_none_line = f"""
         background-color: {Colors.base_color_06};
         border-radius: 5px;  
