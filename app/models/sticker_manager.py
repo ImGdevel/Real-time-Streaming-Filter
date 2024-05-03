@@ -22,16 +22,16 @@ class StickerManager:
         sticker_images = None
         sticker_images = self.path_manager.load_sticker_images()
         max_img_number = -1
-        if sticker_images:
-            for key in sticker_images.keys():
+        
+        for key in sticker_images.keys():
 
-                if key > max_img_number:
-                    max_img_number = key
+            if key > max_img_number:
+                max_img_number = key
 
-            max_img_number += 1
-            sticker_images[max_img_number] = img
+        max_img_number += 1
+        sticker_images[max_img_number] = img
 
-            self.path_manager.save_sticker_images(sticker_images)
+        self.path_manager.save_sticker_images(sticker_images)
 
         return max_img_number
         
@@ -40,16 +40,16 @@ class StickerManager:
         sticker_images = None
         sticker_images = self.path_manager.load_sticker_images()
         max_img_number = -1
-        if sticker_images:
-            for key in sticker_images.keys():
 
-                if key > max_img_number:
-                    max_img_number = key
+        for key in sticker_images.keys():
 
-            max_img_number += 1
-            sticker_images[max_img_number] = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+            if key > max_img_number:
+                max_img_number = key
 
-            self.path_manager.save_sticker_images(sticker_images)
+        max_img_number += 1
+        sticker_images[max_img_number] = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+
+        self.path_manager.save_sticker_images(sticker_images)
 
         return max_img_number
 
