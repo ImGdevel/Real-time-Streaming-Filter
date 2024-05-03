@@ -144,5 +144,6 @@ class DragDropLabel(QLabel):
     def refreashWidget(self):
         if self.currunt_exm:
             self.setExampleView(self.currunt_exm)
+            print("refreashed")
         if self.currunt_filt:
             self.setFilteredView(self.currunt_filt)

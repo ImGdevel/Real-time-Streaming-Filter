@@ -77,18 +77,21 @@ class ImageView(QWidget):
         pass
     
     def removeUrl(self, url):
-        if url == self.dropbox_widget.currunt_exm:
+        i = int()
+        if url.toLocalFile() == self.dropbox_widget.currunt_exm:
             i = self.urls.index(url)
             if i+1 == len(self.urls):
                 i = i-1
-            self.dropbox_widget.currunt_exm = self.urls[i]
-            if self.filtered_image:
-                self.dropbox_widget.currunt_filt = self.urls[i].toLocalFile()
-            self.dropbox_widget.refreashWidget()
 
         self.urls.remove(url)
         if self.filtered_image:
             del self.filtered_image[url.toLocalFile()]
+
+        if url.toLocalFile() == self.dropbox_widget.currunt_exm and len(self.urls) != 0:
+            self.dropbox_widget.currunt_exm = self.urls[i].toLocalFile()
+            if self.filtered_image:
+                self.dropbox_widget.currunt_filt = self.filtered_image[self.urls[i].toLocalFile()]
+            self.dropbox_widget.refreashWidget()
 
 
     def set_filter_option(self, index):
