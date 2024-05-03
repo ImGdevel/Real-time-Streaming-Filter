@@ -118,7 +118,7 @@ class ImageView(QWidget):
             # ''')
             progress_dialog.show()
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
-            print(self.filtered_image)
+            #print(self.filtered_image)
     
     def Download(self):
         if self.filtered_image:
