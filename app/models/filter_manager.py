@@ -1,13 +1,13 @@
 from typing import Union
 from .filter_info import Filter
 from .path_manager import PathManager
-from .face_manager import FaceManager
+# from .face_manager import FaceManager
 
 class FilterManager:
     _instance = None
     filter_list: list = []
     path_manager = PathManager()
-    face_manager = FaceManager()
+    # face_manager = FaceManager()
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -19,11 +19,11 @@ class FilterManager:
         index = 1
         for filter in self.filter_list:
             filters.append(filter.name)
-        name = "New Filter "+str(index)
+        name = "새 필터 "+str(index)
         while True:
-            if "New Filter "+str(index) in filters:
+            if "새 필터 "+str(index) in filters:
                 index += 1
-                name = "New Filter "+str(index)
+                name = "새 필터 "+str(index)
             else:
                 self.filter_list.append(Filter(name))
                 self.save_filters()
@@ -90,7 +90,7 @@ class FilterManager:
                     if face == face_id:
                         del filter.face_filter[face_id]
                         return
-                raise ValueError("존재하지 않는 face_id입니다.")
+                return
         raise ValueError("존재하지 않는 filtername입니다.")
     
     def init_face_in_face_filter(self, filtername:str):
@@ -176,14 +176,23 @@ class FilterManager:
         return False
         #raise ValueError("존재하지 않는 filtername입니다")
     
-    def get_face_names_in_filter(self, filter_name: str):
+    def get_face_ids_in_filter(self, filter_name: str):
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
-                names = []
+                ids = []
                 for face_id in filter_obj.face_filter.keys():
-                    names.append(self.face_manager.get_person_face_name(face_id))
-                return names
+                    ids.append(int(face_id))
+                return ids
         raise ValueError("존재하지 않는 filtername입니다.")
+
+    # def get_face_names_in_filter(self, filter_name: str):
+        # for filter_obj in self.filter_list:
+        #     if filter_obj.name == filter_name:
+        #         names = []
+        #         for face_id in filter_obj.face_filter.keys():
+        #             names.append(self.face_manager.get_person_face_name(int(face_id)))
+        #         return names
+        # raise ValueError("존재하지 않는 filtername입니다.")
 
     def get_filters(self):
         """전체 필터 리스트를 가져옵니다."""

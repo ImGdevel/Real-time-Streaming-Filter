@@ -224,7 +224,7 @@ class Ui_MainWindow(object):
 "/* MENUS */\n"
 "#contentSettings .QPushButton {	\n"
 "	background-position: left center;\n"
-"    background-repeat: no-repeat;\n"
+"       background-repeat: no-repeat;\n"
 "	border: none;\n"
 "	border-left: 22px solid transparent;\n"
 "	background-color:transparent;\n"

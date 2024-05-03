@@ -17,17 +17,18 @@ class ListWidget(QListWidget):
         self.setStyleSheet(Style.list_widget_style)
         self.current_item = None
 
-    def add_item(self, item_name: str):
+    def add_item(self, item_name: str, item_data = None):
         item = QListWidgetItem()
         self.addItem(item)
-        widget = self.create_button(item_name)
+        widget = self.create_button(item_name, item_data)
         self.setItemWidget(item, widget)
         item.setSizeHint(widget.sizeHint())
 
-    def create_button(self, item_name: str):
+    def create_button(self, item_name: str, item_data = None):
         widget = QPushButton(item_name)
         widget.setObjectName(item_name)
         widget.setStyleSheet(Style.list_button_style)
+        widget.userData = item_data
         widget.setMinimumHeight(40)
 
         shadow_effect = QGraphicsDropShadowEffect(self)
@@ -92,7 +93,7 @@ class FilterListWidget(ListWidget):
         self.filter_setting_processor = FilterSettingController()
         self.update_list()
     
-    def create_button(self, item_name: str):
+    def create_button(self, item_name: str, item_data = None):
         widget = QPushButton(item_name)
         widget.setObjectName(item_name)
         widget.setStyleSheet(Style.list_button_style)
@@ -120,8 +121,22 @@ class FilterListWidget(ListWidget):
 class RegisteredFacesListWidget(ListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.button_group = QButtonGroup()
-        self.button_group.setExclusive(True)
+        self.filter_setting_processor = FilterSettingController()
+        self.filter_name = None
+
+
+    def set_filter(self, filter):
+        self.filter_name = filter
+
+    def register_person_faces(self, person_id):
+        self.filter_setting_processor.add_face_in_face_filter(self.filter_name, person_id)
+
+    def update_list(self):
+        self.clear()
+        lists = self.filter_setting_processor.get_face_names_in_filter(self.filter_name)
+        for filter in self.filter_setting_processor.get_face_names_in_filter(self.filter_name):
+            self.add_item(filter)
+
 
     # def add_item(self, item_name):
     #     item = QListWidgetItem()
@@ -205,17 +220,21 @@ class AvailableFacesListWidget(ListWidget):
         super().__init__(parent)
         
         self.face_setting_processor = PersonFaceSettingController()
-        self.populate_faces()
-
-    def populate_faces(self):
-        for people in self.face_setting_processor.get_person_faces():
-            self.add_item(people.face_name)
+        self.update_list()
 
     def update_list(self):
         self.clear()
-        print("필터 업데이트!")
-        for people in self.face_setting_processor.get_person_faces():
-            self.add_item(people.face_name)
+        for person in self.face_setting_processor.get_person_faces():
+            self.add_item(person.face_name, str(person.face_id))
+
+    def emit_button_clicked(self):
+        """아이템 클릭 시그널을 발생시키는 메서드"""
+        widget = self.sender()
+        
+        if widget:
+            self.set_select_item(widget.objectName())
+            self.onClickItemEvent.emit(widget.userData)  # ObjectName을 시그널로 전달
+    
 
 
 
