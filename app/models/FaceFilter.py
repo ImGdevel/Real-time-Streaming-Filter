@@ -4,8 +4,6 @@ import face_recognition
 import re
 import pickle
 
-#사람별 얼굴 특징을 저장하는 딕셔너리 가 필요함.. 다른 파일에 저장하도록
-known_faces = {}
 
 #이미지에서 얼굴 특징을 추출하여 반환하는 함수
 def extract_face_features(image_path):
@@ -272,7 +270,7 @@ def delete_face_code(face_code, known_faces_path = './models/known_faces.pickle'
 #제외할 얼굴 딕셔너리, 검색할 얼굴 인코딩값을 넣으면 아는 사람인지 아닌지 반환
 def is_known_person(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
     #등록된 사람 딕셔너리를 일단 파일에서 받아옴
-    known_faces = load_known_faces(known_faces_path)
+    known_faces = load_known_faces(known_faces_path) # 수정예정
     #이후 그 안에서 필터링을 제외할 사람 데이터를 담은 딕셔너리를 생성
     except_faces = {}
     for person in people_list:
@@ -286,6 +284,22 @@ def is_known_person(people_list, face_encoding, known_faces_path = './models/kno
         return True
     
 
+def identify_known_face(people_list, face_encoding, known_faces_path = './models/known_faces.pickle'):
+    known_faces = load_known_faces(known_faces_path) # 수정예정
+    except_faces = {}
+    for person in people_list:
+        except_faces.update(find_person_data(person, known_faces))
+    #이름에 해당하는 이름_i : encoding 반환 / except_faces에 추가
+    person_name, tolerance = recognize_face(except_faces, face_encoding)
+
+    if person_name == "unknown":
+        return None
+    else:
+        return person_name
+    
+
+def set_known_faces():
+    pass #return known_faces.pickle 내용 dict 들어갈 예정
 
 
 #---------------------------------------------------------#

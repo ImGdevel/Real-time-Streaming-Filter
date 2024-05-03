@@ -26,13 +26,31 @@ class FilterSettingController:
     def update_filter_name(self, filter_target_name: str, filter_new_name: str):
         self.filter_manager.update_filter_name(filter_target_name, filter_new_name)
 
+    def update_sticker_id_in_filter(self, filter_name: str, face_id: int, sticker_id: int):
+        return self.filter_manager.update_sticker_id_in_filter(filter_name, face_id, sticker_id)
+
     def get_face_names_in_filter(self, filter_name: str):
         ids = self.filter_manager.get_face_ids_in_filter(filter_name)
         names = []
         for id in ids:
             names.append(self.face_manager.get_person_face_name(id))
         return names
-
+    
+    def get_face_ids_in_filter(self, filter_name: str):
+        return self.filter_manager.get_face_ids_in_filter(filter_name)
+        
+    def get_face_in_filter(self, filter_name: str):
+        ids = self.filter_manager.get_face_ids_in_filter(filter_name)
+        names = []
+        
+        for id in ids:
+            name = self.face_manager.get_person_face_name(id)
+            names.append((name, id))
+            
+        return names
+    
+    def get_sticker_id_in_filter(self, filter_name: str, face_id: int):
+        return self.filter_manager.get_sticker_id_in_filter(filter_name, face_id)
     
     def add_face_in_face_filter(self, filter_name: str, person_id: int):
         self.filter_manager.add_face_in_face_filter(filter_name, person_id)

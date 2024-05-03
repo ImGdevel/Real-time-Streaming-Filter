@@ -4,8 +4,10 @@ from PySide6.QtWidgets import (
     QGraphicsDropShadowEffect, QButtonGroup
 )
 from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QIcon
 from controllers import FilterSettingController, PersonFaceSettingController
+from .sticker_attach_dialog import StickerRegisteredDialog
+
 from utils import Colors, Style
 
 class ListWidget(QListWidget):
@@ -30,12 +32,7 @@ class ListWidget(QListWidget):
         widget.setStyleSheet(Style.list_button_style)
         widget.userData = item_data
         widget.setMinimumHeight(40)
-
-        shadow_effect = QGraphicsDropShadowEffect(self)
-        shadow_effect.setBlurRadius(5)
-        shadow_effect.setColor(QColor(0, 0, 0, 100))
-        shadow_effect.setOffset(3, 3)
-        widget.setGraphicsEffect(shadow_effect) 
+        widget.setGraphicsEffect(Style.shadow(self)) 
 
         widget.clicked.connect(self.emit_button_clicked)
 
@@ -70,6 +67,15 @@ class ListWidget(QListWidget):
             if widget:
                 return widget.objectName()
         return None
+    
+    def get_item_data(self, index: int):
+        """아이템 인덱스를 통해 위젯 내의 유저 데이터를 반환하는 메서드"""
+        item = self.item(index)
+        if item:
+            widget = self.itemWidget(item)
+            if widget:
+                return widget.userData
+        return None
 
     def is_in_item(self, object_name: str):
         """현재 아이템 리스트에 있는지 확인"""
@@ -80,6 +86,9 @@ class ListWidget(QListWidget):
 
     def get_items_object_name(self):
         return [self.get_item_object_name(i) for i in range(self.count())]
+    
+    def get_items_data(self):
+        return [int(self.get_item_data(i)) for i in range(self.count())]
     
     def set_items_event(self, event):
         self.onClickItemEvent.connect(event)
@@ -108,8 +117,7 @@ class FilterListWidget(ListWidget):
         shadow_effect.setOffset(3, 3)
         widget.setGraphicsEffect(shadow_effect) 
 
-        return widget
-        
+        return widget        
     
     def update_list(self):
         self.clear()
@@ -123,6 +131,73 @@ class RegisteredFacesListWidget(ListWidget):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
         self.filter_name = None
+        self.setSpacing(10)
+    
+    def create_button(self, item_name: str, item_data = None):
+        widget = QWidget()
+        widget.setObjectName(item_name)
+        widget.setStyleSheet(Style.frame_style_none_line)
+        widget.userData = item_data
+        
+        shadow_effect = QGraphicsDropShadowEffect(widget)
+        shadow_effect.setBlurRadius(5)
+        shadow_effect.setColor(QColor(0, 0, 0, 100))
+        shadow_effect.setOffset(3, 3)
+        widget.setGraphicsEffect(shadow_effect) 
+        
+        frame_layout = QHBoxLayout()
+        frame_layout.setContentsMargins(0,0,0,0)
+        
+        button = QPushButton(item_name)
+        button.setObjectName(item_name)
+        button.setStyleSheet(Style.list_button_style)
+        button.setMinimumHeight(40)
+        
+        button.clicked.connect(self.emit_button_clicked)
+        
+        button02 = QPushButton()
+        button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
+        button02.setFixedSize(40,40)
+        button02.setStyleSheet(Style.mini_button_style)
+        button02.setGraphicsEffect(Style.shadow(button02)) 
+        button02.clicked.connect(self.show_sticker_dialog)
+        
+        button03 = QPushButton()
+        button03.setFixedSize(40,40)
+        button03.setStyleSheet(Style.mini_button_style)
+        button03.setGraphicsEffect(Style.shadow(button03)) 
+        
+        frame_layout.addWidget(button)
+        frame_layout.addWidget(button02)
+        frame_layout.addWidget(button03)
+        widget.setLayout(frame_layout)
+    
+        return widget
+    
+    def show_sticker_dialog(self):
+        self.sticker_dialog = StickerRegisteredDialog()
+        self.sticker_dialog.onEventSave.connect(self.register_sticker)
+    
+        button = self.sender()
+        if button:
+            parent_widget = button.parentWidget()
+            if parent_widget:
+                person_id = int(parent_widget.userData)
+                sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
+                self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
+                self.sticker_dialog.exec_()
+                
+    
+    def register_sticker(self, person_id, sticker_id):
+        self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
+        pass
+    
+    def emit_button_clicked(self):
+        """아이템 클릭 시그널을 발생시키는 메서드"""
+        widget = self.sender()
+        
+        if widget:
+            self.set_select_item(widget.objectName())
 
 
     def set_filter(self, filter):
@@ -133,87 +208,10 @@ class RegisteredFacesListWidget(ListWidget):
 
     def update_list(self):
         self.clear()
-        lists = self.filter_setting_processor.get_face_names_in_filter(self.filter_name)
-        for filter in self.filter_setting_processor.get_face_names_in_filter(self.filter_name):
-            self.add_item(filter)
-
-
-    # def add_item(self, item_name):
-    #     item = QListWidgetItem()
-    #     self.addItem(item)
-    #     button = self.create_button(item_name)
-    #     self.setItemWidget(item, button)
-    #     item.setSizeHint(button.sizeHint())
-
-    # def create_button(self, item_name):
-    #     """버튼을 추가하는 경우"""
-    #     button_frame = QWidget()
-    #     button_frame.setObjectName("Button Frame")
-    #     button_layout = QVBoxLayout()
-    #     button_layout.setSpacing(0)  # 레이아웃 간 간격을 0으로 설정
-    #     button_layout.setAlignment(Qt.AlignTop)
-
-    #     button = QPushButton(item_name)
-    #     button.setObjectName("List Button")
-    #     button.setStyleSheet(Style.list_button_style)
-    #     button.setMinimumHeight(40)
-    #     button.clicked.connect(self.emit_button_clicked)
-    #     button.setCheckable(True)
-    #     self.button_group.addButton(button)
-
-    #     shadow_effect = QGraphicsDropShadowEffect(self)
-    #     shadow_effect.setBlurRadius(5)  # 흐림 정도 조절
-    #     shadow_effect.setColor(QColor(0, 0, 0, 100))  # 그림자 색상 및 투명도 조절
-    #     shadow_effect.setOffset(3, 3)  # 그림자 위치 조절
-    #     button.setGraphicsEffect(shadow_effect) 
-
-    #     #button_layout.addWidget(button)
-    #     #button_frame.setLayout(button_layout)
-
-    #     return button
-    
-    # def button_widget_open(self):
-    #     """버튼을 클릭하면 해당 버튼이 확장 또는 축소됨"""
-    #     button = self.sender()
-    #     button_frame = button.parentWidget()
-
-    #     if button_frame:
-    #         print("체크 여부", button.isChecked())
-
-    #         if button.isChecked():
-    #             # 버튼이 체크된 상태라면
-    #             button_frame.setMinimumHeight(100)  # 프레임의 최소 높이를 확장될 높이로 설정
-    #             print("200으로 확장!")
-    #         else:
-    #             # 버튼이 체크되지 않은 상태라면
-    #             button_frame.setMinimumHeight(40)  # 프레임의 최소 높이를 원래의 최소 높이로 설정
-    #             print("40으로 축소!")
-
-    #         # 애니메이션 객체 생성
-    #         animation = QPropertyAnimation(button_frame, b"minimumHeight")
-    #         animation.setDuration(500)
-    #         animation.setEasingCurve(QEasingCurve.InOutQuart)
-
-    #         # 애니메이션의 시작값과 끝값 설정
-    #         animation.setStartValue(button_frame.height())
-    #         animation.setEndValue(button_frame.minimumHeight())
-
-    #         # 애니메이션 시작
-    #         animation.start()
-    #         print("애니메이션 종료: ", button_frame.height())
-
-
-    # def emit_button_clicked(self):
-    #     """아이템 클릭 시그널을 발생시키는 메서드"""
-    #     button = self.sender()
-
+        for name, id in self.filter_setting_processor.get_face_in_filter(self.filter_name):
+            self.add_item(name, str(id))
+            
         
-        
-    #     if button:
-    #         self.button_widget_open()
-    #         self.onClickItemEvent.emit(button.text())  # 시그널 발생
-
-
 
 class AvailableFacesListWidget(ListWidget):
     def __init__(self, parent=None):
@@ -226,6 +224,7 @@ class AvailableFacesListWidget(ListWidget):
         self.clear()
         for person in self.face_setting_processor.get_person_faces():
             self.add_item(person.face_name, str(person.face_id))
+            
 
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
@@ -235,11 +234,3 @@ class AvailableFacesListWidget(ListWidget):
             self.set_select_item(widget.objectName())
             self.onClickItemEvent.emit(widget.userData)  # ObjectName을 시그널로 전달
     
-
-
-
-class MosaicStickerList(ListWidget):
-    onClickItemEvent = Signal(str)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
