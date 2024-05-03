@@ -8,7 +8,7 @@ from PySide6.QtGui import QPixmap, QIcon, QImage
 from models import StickerManager
 from utils import Style
 import cv2
-import np
+import numpy as np
 
 class RegisteredFaceViewDialog(QDialog):
     onEventSave = Signal(int, int)
