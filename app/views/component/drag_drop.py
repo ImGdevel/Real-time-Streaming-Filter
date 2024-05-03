@@ -37,7 +37,7 @@ class DragDropLabel(QLabel):
                     font-family:'Malgun Gothic';
             }
         ''')
-
+        self.filtered_label.setMinimumWidth(432)
 
         self.layout.addWidget(self.dropbox_lable)
         self.layout.addWidget(self.filtered_label)
