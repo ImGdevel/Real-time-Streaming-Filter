@@ -1,7 +1,23 @@
 from .colors import Colors
+from PySide6.QtWidgets import QGraphicsDropShadowEffect
+from PySide6.QtGui import QColor, QIcon, QPixmap
 
 class Style:
     #Title Bar Colors
+    
+    def shadow(target):
+        shadow_effect = QGraphicsDropShadowEffect(target)
+        shadow_effect.setBlurRadius(5)
+        shadow_effect.setColor(QColor(0, 0, 0, 100))
+        shadow_effect.setOffset(3, 3)
+        return shadow_effect
+        
+    # 이미지 크기를 조정할 함수
+    def resize_icon(icon_path, width, height):
+        pixmap = QPixmap(icon_path)
+        resized_pixmap = pixmap.scaled(width, height)
+        return QIcon(resized_pixmap)
+    
 
     base_style01 = f'background-color: {Colors.baseColor02};'
     
@@ -53,11 +69,11 @@ class Style:
     """
     
     mini_button_style = f"""
-    QPushButton {{
-        background-color: {Colors.base_color_06};
-        border-radius: 5px;  
-    }}
-    
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border-radius: 5px;
+            padding: 0px;
+        }}
     """
     
     line_edit_style = f"""

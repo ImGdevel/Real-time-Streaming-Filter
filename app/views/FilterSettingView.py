@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QFont
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicStickerList
+    TitleEdit, ShadowWidget, ObjectFilterSettngWidget
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
