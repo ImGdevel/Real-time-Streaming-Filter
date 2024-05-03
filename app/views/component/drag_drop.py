@@ -77,7 +77,7 @@ class DragDropLabel(QLabel):
         return self.urls
     
     def setExampleView(self, urls):
-        pixmap = QPixmap(urls)
+        pixmap = QPixmap.fromImage(urls)
         widget_size = self.dropbox_lable.size()
         print(widget_size)
         # Get image size
@@ -91,7 +91,9 @@ class DragDropLabel(QLabel):
         scale_factor = min(width_factor, height_factor)
 
         # Scale pixmap with maintaining aspect ratio
-        scaled_pixmap = pixmap.scaled(image_size * scale_factor, Qt.KeepAspectRatio)
+        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor), 
+                                    int(image_size.height() * scale_factor), 
+                                    Qt.KeepAspectRatio)
 
         self.dropbox_lable.setPixmap(scaled_pixmap)
 
