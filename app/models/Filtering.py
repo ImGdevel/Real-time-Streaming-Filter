@@ -7,6 +7,7 @@ from .filter_info import Filter
 from .path_manager import PathManager
 import cv2
 import numpy as np
+from typing import Optional
 
 class Filtering:
     """
@@ -32,7 +33,7 @@ class Filtering:
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
-        known_faces = None
+        self.known_faces: Optional[dict] = None
 
         self.current_filter_info = None
         self.init_id = False
@@ -63,7 +64,7 @@ class Filtering:
                 if result[2] == "Human face":
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
-                    person_name = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
+                    person_name = is_known_person(known_faces_id, face_encode, self.known_faces)
                     if person_name:
                         known_faces_id.append(person_name)
                     results.append(box)
@@ -95,7 +96,7 @@ class Filtering:
                     # print("사람 얼굴일 경우")
                     face_encode = face_encoding_box(img, box)
                     # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known = is_known_person(known_faces_id, face_encode, self.pathManeger.known_faces_path())
+                    is_known = is_known_person(known_faces_id, face_encode, self.known_faces)
                     if is_known: 
                         known_face_boxes.append(box)
                     results.append(result)
@@ -244,7 +245,9 @@ class Filtering:
                 if "Human face" not in self.current_filter_info.object_filter:
                     self.current_filter_info.object_filter.append("Human face")
             self.object.set_filter_classes(self.current_filter_info.object_filter)
-         
+        
+        self.known_faces = set_known_faces(self.pathManeger.known_faces_path())
+        
 
     def tracking_id_init(self):
         self.init_id = True
