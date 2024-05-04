@@ -163,29 +163,35 @@ class FilterSettingView(QWidget):
         self.settings_content.addWidget(mosaic_setting_widget)
     
         # 설정 목록에 들어갈 버튼 생성
-        button1 = QPushButton("필터링 인물 설정")
-        button1.setObjectName("setting01")
-        button1.setCheckable(True)
-        button2 = QPushButton("유해매체 필터 설정")
-        button2.setObjectName("setting02")
-        button2.setCheckable(True)
-        button3 = QPushButton("모자아크 설정")
-        button3.setObjectName("setting03")
-        button3.setCheckable(True)
+        self.button1 = QPushButton("필터링 인물 설정")
+        self.button1.setObjectName("setting01")
+        self.button1.setCheckable(True)
+        self.button2 = QPushButton("유해매체 필터 설정")
+        self.button2.setObjectName("setting02")
+        self.button2.setCheckable(True)
+        self.button3 = QPushButton("모자아크 설정")
+        self.button3.setObjectName("setting03")
+        self.button3.setCheckable(True)
 
         #버튼 연결
-        button1.clicked.connect(self.setup_setting_page)
-        button2.clicked.connect(self.setup_setting_page)
-        button3.clicked.connect(self.setup_setting_page)
-
+        self.button1.clicked.connect(lambda: self.setup_setting_page(0))
+        self.button2.clicked.connect(lambda: self.setup_setting_page(1))
+        self.button3.clicked.connect(lambda: self.setup_setting_page(2))
+        
+        button_group = QButtonGroup()
+        button_group.setExclusive(False)
+        button_group.addButton(self.button1)
+        button_group.addButton(self.button2)
+        button_group.addButton(self.button3)
+        
         # 버튼을 수직으로 정렬하는 레이아웃 생성
         vbox = QVBoxLayout()
         vbox.setSpacing(0)
         vbox.setContentsMargins(0,1,0,0)
         vbox.setAlignment(Qt.AlignTop)
-        vbox.addWidget(button1)
-        vbox.addWidget(button2)
-        vbox.addWidget(button3)
+        vbox.addWidget(self.button1)
+        vbox.addWidget(self.button2)
+        vbox.addWidget(self.button3)
 
         # 설정 목록 위젯 생성 및 레이아웃 설정
         settings_list = QWidget()
@@ -201,20 +207,27 @@ class FilterSettingView(QWidget):
         return layout
 
     def setup_setting_page(self, index):
-        button = self.sender()
-        buttonName = button.objectName()
-
-        if buttonName == "setting01" or index == 0:
+            
+        if index == 0:
             self.settings_content.setCurrentIndex(0)
             self.registered_faces_list_widget.set_filter(self.current_filter)
             self.registered_faces_list_widget.update_list()
-
-        if buttonName == "setting02" or index == 1:
+            self.button1.setChecked(True)
+            self.button2.setChecked(False)
+            self.button3.setChecked(False)
+        
+        elif index == 1:
             self.settings_content.setCurrentIndex(1)
             self.object_filter_widget.setup_object_filter_widget(self.current_filter_object_list)
+            self.button2.setChecked(True)
+            self.button1.setChecked(False)
+            self.button3.setChecked(False)
 
-        if buttonName == "setting03" or index == 2:
+        elif index == 2:
             self.settings_content.setCurrentIndex(2)
+            self.button3.setChecked(True)
+            self.button2.setChecked(False)
+            self.button1.setChecked(False)
 
 
     # 얼굴 레이어
