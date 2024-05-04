@@ -158,8 +158,17 @@ class RealStreamView(QWidget):
         self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         video_layout.addWidget(self.video_box)
+        self.video_box.setFixedWidth(725)
         frame.setLayout(video_layout)
-        
+
+        self.cam_dialog = QDialog()
+        layer = QGridLayout()
+        self.dialog_videolable = QLabel()
+        self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
+        self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
+        layer.addWidget(self.dialog_videolable)
+        self.cam_dialog.setLayout(layer)
+
         return frame
         
 
@@ -225,12 +234,7 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
-        dialog = QDialog()
-        layer = QGridLayout()
-        self.dialog_videolable = self.video_box
-        layer.addWidget(self.dialog_videolable)
-        dialog.setLayout(layer)
-        dialog.show()
+        self.cam_dialog.exec()
         # 웹캠 새장 로직 추가
     
     def change_webcam(self, index):
@@ -254,8 +258,7 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-        if self.dialog_videolable:
-            self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+        self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
 
     def render(self):
         """페이지 refesh"""
