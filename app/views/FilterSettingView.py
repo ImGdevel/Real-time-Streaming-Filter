@@ -245,7 +245,12 @@ class FilterSettingView(QWidget):
         # AvailableFacesListWidget 초기화 및 설정
         available_faces_list_label = QLabel("인물 리스트")
         available_faces_list_label.setStyleSheet(Style.title_label_middle)
-
+        
+        # Add 버튼 추가
+        add_face_button = QPushButton("등록")
+        add_face_button.setFixedSize(60, 30)
+        add_face_button.clicked.connect(self.open_person_face_setting_dialog)
+        
         self.available_faces_list_widget = AvailableFacesListWidget()
         self.available_faces_list_widget.set_items_event(self.register_face)
         
@@ -253,9 +258,11 @@ class FilterSettingView(QWidget):
         registered_faces_list_layout.addWidget(registered_faces_list_label)
         registered_faces_list_layout.addWidget(self.registered_faces_list_widget)
         
-        available_faces_list_layout = QVBoxLayout()
-        available_faces_list_layout.addWidget(available_faces_list_label)
-        available_faces_list_layout.addWidget(self.available_faces_list_widget)
+        available_faces_list_layout = QGridLayout()
+        available_faces_list_layout.addWidget(available_faces_list_label, 0, 0)
+        available_faces_list_layout.addWidget(add_face_button, 0, 1)
+        available_faces_list_layout.addWidget(self.available_faces_list_widget, 1, 0, 1, 2)
+        
         
         face_register_layout.addLayout(registered_faces_list_layout, 2)
         face_register_layout.addLayout(available_faces_list_layout, 1)
@@ -266,11 +273,7 @@ class FilterSettingView(QWidget):
         face_layout.addWidget(face_label)
         face_layout.addWidget(face_setting_widget)
 
-        # Add 버튼 추가
-        add_face_button = QPushButton("등록")
-        add_face_button.setFixedSize(60, 30)
-        add_face_button.clicked.connect(self.open_person_face_setting_dialog)
-        face_layout.addWidget(add_face_button)
+
         
         self.person_face_setting_window = PersonFaceDialog()
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
@@ -288,9 +291,14 @@ class FilterSettingView(QWidget):
             self.empty_layout.show()
             
         # 현재 필터로 창 업데이트
-    def set_current_filter(self, filter_name):
+    def set_current_filter(self, filter_name = None):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
+        if filter_name == None or filter_name is "":
+            print(f"[Log] : Filter '{filter_name}' not found")
+            self.show_filter_setting_page(False)
+            return
+            
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
@@ -378,5 +386,6 @@ class FilterSettingView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
+        self.set_current_filter(None)
         pass
         
