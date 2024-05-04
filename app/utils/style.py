@@ -203,7 +203,7 @@ class Style:
     setting_list_button_style = f"""
         QWidget{{
             background-color: {Colors.base_color_06};
-            border: 1px solid {Colors.base_color_03};
+            border: 2px solid {Colors.base_color_03};
             border-radius: 0px;
             padding: 0px;
             margin: 0px;
@@ -211,12 +211,12 @@ class Style:
 
         QPushButton {{
             background-color: {Colors.base_color_06};
-            border: 1px solid {Colors.base_color_03};
+            border: 2px solid {Colors.base_color_03};
             border-top: none;
             padding: 5px;
             margin: 0px;
             border-radius: 0px;
-            text-align: center;
+            text-align: left;
             font-size: 16px;
         }}
 
