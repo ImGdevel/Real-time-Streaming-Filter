@@ -227,7 +227,8 @@ class RealStreamView(QWidget):
         '''새창 메서드'''
         dialog = QDialog()
         layer = QGridLayout()
-        layer.addWidget(self.video_box)
+        self.dialog_videolable = self.video_box
+        layer.addWidget(self.dialog_videolable)
         dialog.setLayout(layer)
         dialog.show()
         # 웹캠 새장 로직 추가
@@ -253,6 +254,8 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+        if self.dialog_videolable:
+            self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
 
     def render(self):
         """페이지 refesh"""
