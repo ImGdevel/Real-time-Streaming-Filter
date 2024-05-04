@@ -132,7 +132,7 @@ class RegisteredFacesListWidget(ListWidget):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
         self.filter_name = None
-        self.setSpacing(5)
+        self.setSpacing(4)
     
     def create_button(self, item_name: str, item_data = None):
         widget = QWidget()
@@ -148,10 +148,11 @@ class RegisteredFacesListWidget(ListWidget):
         
         frame_layout = QHBoxLayout()
         frame_layout.setContentsMargins(0,0,0,0)
+        frame_layout.setSpacing(0)
         
         button = QPushButton(item_name)
         button.setObjectName(item_name)
-        button.setStyleSheet(Style.list_button_style)
+        button.setStyleSheet(Style.list_button_style_none_line)
         button.setMinimumHeight(40)
         
         button.clicked.connect(self.emit_button_clicked)
@@ -159,14 +160,14 @@ class RegisteredFacesListWidget(ListWidget):
         button02 = QPushButton()
         button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
         button02.setFixedSize(40,40)
-        button02.setStyleSheet(Style.mini_button_style)
+        button02.setStyleSheet(Style.list_button_style_none_line)
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
-        button03.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
+        button03.setIcon(QIcon('./resources/icons/Orion_bin'))
         button03.setFixedSize(40,40)
-        button03.setStyleSheet(Style.mini_button_style)
-        button03.clicked.connect(lambda: self.remove_button(widget))
+        button03.setStyleSheet(Style.list_button_style_none_line)
+        button03.clicked.connect(lambda: self.remove_button(widget.userData))
         #버튼 자기 자신을 삭제
         
         frame_layout.addWidget(button)
@@ -190,11 +191,10 @@ class RegisteredFacesListWidget(ListWidget):
                 self.sticker_dialog.exec_()
                 
     def remove_button(self, button_widget):
-        # 부모 위젯에서 해당 버튼 위젯을 제거
-        self.layout().removeWidget(button_widget)
-        self.filter_setting_processor
-        # 버튼 위젯을 삭제
-        button_widget.deleteLater()
+        print(button_widget)
+        
+        if button_widget:
+            pass
                 
     
     def register_sticker(self, person_id, sticker_id):

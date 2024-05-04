@@ -86,6 +86,7 @@ class Style:
             background-color: {Colors.base_color_06};
             border: 2px solid {Colors.base_color_04};
             border-radius: 5px;
+            font-size: 15px;
             padding: 0px;
         }}
         
@@ -96,14 +97,6 @@ class Style:
 
         QPushButton:pressed {{
             background-color: {Colors.base_color_04};
-        }}
-
-        QPushButton:focus {{
-            outline: none;
-        }}
-
-        QPushButton:checked {{
-            background-color: {Colors.base_color_X};
         }}
     """
     
@@ -149,6 +142,27 @@ class Style:
 
         QPushButton:checked {{
             background-color: {Colors.base_color_X};
+        }}
+
+    """
+    
+    list_button_style_none_line = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: none;
+            border-radius: 5px;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 16px;
+        }}
+
+        QPushButton:hover {{
+            background-color: {Colors.base_color_07}; 
+            border: none;
+        }}
+
+        QPushButton:pressed {{
+            background-color: {Colors.base_color_04};
         }}
 
     """
