@@ -53,7 +53,7 @@ class Filtering:
                 if result[2] == "Human face":
                     face_encode = face_encoding_box(img, box)
                     # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.known_faces_path())
+                    is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
                     if is_known is not None: 
                         results[int(is_known)].append(result)
                     else:

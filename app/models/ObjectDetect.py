@@ -40,6 +40,7 @@ class ObjectDetect:
         self.CONFIDENCE_THRESHOLD = 0.2
     
     def set_filter_classes(self, filter_classes:list):
+        """인식할 객체 목록들을 설정한다."""
         for key, value in self.orginNames.items():
             if value in filter_classes:
                 self.originFilterClasses.append(key)
@@ -54,6 +55,15 @@ class ObjectDetect:
         print("sticker_id: ", self.sticker_id)
 
     def detect(self, img, filter_classes, model, names):
+        """
+        객체인식 결과를 반환한다.
+        img: 객체 인식이 필요한 이미지
+        filter_classes: 인식할 객체 목록
+        model: 객체 인식 모델
+        names: 객체 이름 목록
+
+        return: [[box], 신뢰도, 객체 이름]의 리스트를 반환한다.
+        """
         results = []
         
         if not filter_classes:
@@ -92,6 +102,7 @@ class ObjectDetect:
         return self.detect(img, self.customFilterClasses, self.modelManager.customModel, self.customNames)
     
     def object_track(self, img, results):
+        """주어진 이미지와 좌표에 대한 객체 추적 결과를 반환한다."""
         detections = []
         for value in results.values():
             detections.extend(value)
@@ -123,4 +134,5 @@ class ObjectDetect:
         return last_results
     
     def init_exclude_id(self):
+        """저장된 track_id를 초기화한다"""
         self.exclude_id = []

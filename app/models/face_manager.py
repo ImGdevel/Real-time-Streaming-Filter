@@ -57,7 +57,7 @@ class FaceManager:
 
         for face in self.face_list:
             if face.face_name == face_name:
-                if  register_person(str(face.face_id), file_path, self.path_manager.known_faces_path()):
+                if  register_person(str(face.face_id), file_path, self.path_manager.load_known_faces_path()):
                     max_face_number = find_max_face_number(face_name, face.encoding_list)
                     max_face_number += 1
                     face_code = face_name + "_" + str(max_face_number)
@@ -74,7 +74,7 @@ class FaceManager:
 
         for face in self.face_list:
             if face.face_id == face_id:
-                if  register_person(str(face.face_id), file_path, self.path_manager.known_faces_path()):
+                if  register_person(str(face.face_id), file_path, self.path_manager.load_known_faces_path()):
                     max_face_number = find_max_face_number(face_id, face.encoding_list)
                     max_face_number += 1
                     face_code = face_id + "_" + str(max_face_number)
@@ -223,6 +223,11 @@ class FaceManager:
                 return q_images
         raise ValueError("존재하지 않는 face_id입니다")
 
+    def get_person_faces(self):
+        """person_face """
+        print("get person faces")
+        return self.face_list
+    
     def update_person_face_by_name(self, person_name, person: dict):
         """person_face 업데이트 메서드"""
         for face in self.face_list:
@@ -273,10 +278,5 @@ class FaceManager:
             
         raise ValueError("존재하지 않는 face_id입니다")
 
-
-    def get_person_faces(self):
-        """person_face """
-        print("get person faces")
-        return self.face_list
 
 

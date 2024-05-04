@@ -15,6 +15,7 @@ class FilterManager:
         return cls._instance
     
     def add_filter(self):
+        """새로운 필터 프리셋을 생성한다."""
         filters = []
         index = 1
         for filter in self.filter_list:
@@ -54,16 +55,53 @@ class FilterManager:
                 filter.object_filter.append(object_name)
                 return
         raise ValueError("존재하지 않는 filtername입니다.")
+
+    def get_filter(self, filter_name: str) -> Union[Filter, None]:
+        """이름을 기반으로 필터를 가져옵니다."""
+        print("filter name: "+ filter_name)
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                return filter_obj
+        return False
+        #raise ValueError("존재하지 않는 filtername입니다")
     
-    # def add_filter(self, filter_obj: Filter):
-    #     """새로운 필터를 추가합니다."""
-    #     filters = []
-    #     for filter in self.filter_list:
-    #         filters.append(filter.name)
-    #     if filter_obj.name in filters:
-    #         raise ValueError("중복된 필터 이름입니다.")
-    #     self.filter_list.append(filter_obj)
-    #     self.save_filters()
+    def get_face_ids_in_filter(self, filter_name: str):
+        """필터 프리셋의 face_id 리스트를 반환한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                ids = []
+                for face_id in filter_obj.face_filter.keys():
+                    ids.append(int(face_id))
+                return ids
+        raise ValueError("존재하지 않는 filtername입니다.")
+    
+    def get_sticker_id_in_filter(self, filter_name: str, face_id: int):
+        """필터 프리셋의 face_id에 부여된 sticker_id를 반환한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                for key in filter_obj.face_filter.keys():
+                    if int(key) == face_id:
+                        return filter_obj.face_filter[key]
+                raise ValueError("존재하지 않는 face_id입니다")
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def get_blur_strength_in_filter(self, filter_name: str):
+        """필터 프리셋의 blur 강도를 반환한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                return filter_obj.blur_strength
+        raise ValueError("존재하지 않는 filtername입니다.")    
+
+    def get_blur_shape_in_filter(self, filter_name: str):
+        """필터 프리셋의 blur 모양을 반환한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                return filter_obj.blur_shape
+        raise ValueError("존재하지 않는 filtername입니다.")   
+     
+    def get_filters(self):
+        """전체 필터 리스트를 가져옵니다."""
+        return self.filter_list[:]
 
     def update_filter(self, filtername: str, filterinfo: Filter):
         """필터를 업데이트 합니다."""
@@ -78,6 +116,7 @@ class FilterManager:
         raise ValueError("존재하지 않는 filtername입니다.")
 
     def update_filter_name(self, filtername: str, newname: str):
+        """필터 프리셋의 이름을 변경한다"""
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = newname
@@ -86,6 +125,7 @@ class FilterManager:
         raise ValueError("존재하지 않는 filtername입니다.")
 
     def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
+        """필터 프리셋의 얼굴 필터링 여부를 변경한다"""
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.face_filter_on = face_filter_on
@@ -95,6 +135,7 @@ class FilterManager:
 
 
     def update_filter_face_filter(self, filtername: str, face_filter: dict):
+        """필터 프리셋의 얼굴 리스트를 변경한다."""
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.face_filter = face_filter
@@ -104,6 +145,7 @@ class FilterManager:
 
 
     def update_filter_object_filter(self, filtername: str, object_filter: list):
+        """필터 프리셋의 객체 리스트를 변경한다."""
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.object_filter = object_filter
@@ -112,6 +154,7 @@ class FilterManager:
         raise ValueError("존재하지 않는 filtername입니다.")
 
     def update_sticker_id_in_filter(self, filter_name: str, face_id: int, sticker_id: int):
+        """필터 프리셋의 face_id에 부여된 sticer_id를 변경한다."""
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 for key in filter_obj.face_filter.keys():
@@ -123,6 +166,7 @@ class FilterManager:
         raise ValueError("존재하지 않는 filtername입니다.")    
     
     def update_blur_strength_in_filter(self, filter_name: str, blur_strength: float):
+        """필터 프리셋의 blur 강도를 변경한다."""
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 filter_obj.blur_strength = blur_strength
@@ -130,6 +174,7 @@ class FilterManager:
         raise ValueError("존재하지 않는 filtername입니다.")    
 
     def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
+        """필터 프리셋의 blur 모양을 변경한다."""
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 filter_obj.blur_shape = blur_shape
@@ -191,63 +236,12 @@ class FilterManager:
         
 
     def init_filter(self, filtername: str):
+        """필터 내용 초기화"""
         self.init_face_in_filter(filtername)
         self.init_object_in_filter(filtername)
  
 
 
-    def get_filter(self, filter_name: str) -> Union[Filter, None]:
-        """이름을 기반으로 필터를 가져옵니다."""
-        print("filter name: "+ filter_name)
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                return filter_obj
-        return False
-        #raise ValueError("존재하지 않는 filtername입니다")
-    
-    def get_face_ids_in_filter(self, filter_name: str):
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                ids = []
-                for face_id in filter_obj.face_filter.keys():
-                    ids.append(int(face_id))
-                return ids
-        raise ValueError("존재하지 않는 filtername입니다.")
-    
-    def get_sticker_id_in_filter(self, filter_name: str, face_id: int):
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                for key in filter_obj.face_filter.keys():
-                    if int(key) == face_id:
-                        return filter_obj.face_filter[key]
-                raise ValueError("존재하지 않는 face_id입니다")
-        raise ValueError("존재하지 않는 filtername입니다.")
-
-    def get_blur_strength_in_filter(self, filter_name: str):
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                return filter_obj.blur_strength
-        raise ValueError("존재하지 않는 filtername입니다.")    
-
-    def get_blur_shape_in_filter(self, filter_name: str):
-        for filter_obj in self.filter_list:
-            if filter_obj.name == filter_name:
-                return filter_obj.blur_shape
-        raise ValueError("존재하지 않는 filtername입니다.")    
-    
-    # def get_face_names_in_filter(self, filter_name: str):
-        # for filter_obj in self.filter_list:
-        #     if filter_obj.name == filter_name:
-        #         names = []
-        #         for face_id in filter_obj.face_filter.keys():
-        #             names.append(self.face_manager.get_person_face_name(int(face_id)))
-        #         return names
-        # raise ValueError("존재하지 않는 filtername입니다.")
-
-    def get_filters(self):
-        """전체 필터 리스트를 가져옵니다."""
-        return self.filter_list[:]
-    
     def save_filters(self):
         """filter_list를 파일에 저장합니다."""
         self.path_manager.save_filter_data(self.filter_list)
