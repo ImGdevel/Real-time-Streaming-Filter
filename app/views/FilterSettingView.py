@@ -45,22 +45,17 @@ class FilterSettingView(QWidget):
         layout = QHBoxLayout()
 
         # 왼쪽 레이어 - Filter List
-        self.left_layout = self.setup_left_layer()
-        self.left_widget = ShadowWidget()
-        self.left_widget.setLayout(self.left_layout)
+        left_layout = self.setup_left_layer()
 
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
-        self.right_widget = ShadowWidget()
-        self.right_widget.setStyleSheet(Style.frame_style)
-        self.right_widget.setLayout(self.right_layout)
 
-        self.empty_widget = QFrame()
+        self.empty_layout = QWidget()
 
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
-        layout.addWidget(self.left_widget, 1) 
-        layout.addWidget(self.right_widget, 4)  
-        layout.addWidget(self.empty_widget, 4)  
+        layout.addWidget(left_layout, 1)
+        layout.addWidget(self.right_layout, 4)
+        layout.addWidget(self.empty_layout, 4)
         self.show_filter_setting_page(False)
 
         self.setLayout(layout)
@@ -68,6 +63,10 @@ class FilterSettingView(QWidget):
     # 왼쪽 레이어
     def setup_left_layer(self):
         """왼쪽 레이어 설정 메서드"""
+        frame = QWidget()
+        frame.setStyleSheet(Style.frame_style)
+        frame.setGraphicsEffect(Style.shadow(frame))
+        
         left_layout = QVBoxLayout()
         
         # Filter 목록
@@ -108,14 +107,17 @@ class FilterSettingView(QWidget):
         left_layout.addWidget(list_frame)
         left_layout.addLayout(filter_list_button_layout)
 
-        return left_layout
+        frame.setLayout(left_layout)
+
+        return frame
 
     # 오른쪽 레이어
     def setup_right_layer(self):
         """오른쪽 레이어 설정 메서드"""
+        frame = QWidget()
+        frame.setStyleSheet(Style.frame_style)
+        frame.setGraphicsEffect(Style.shadow(frame))
         
-        layout = QVBoxLayout()
-        frame = QFrame()
         right_layout = QVBoxLayout()
         
         # 필터 이름 표시 및 수정
@@ -151,8 +153,7 @@ class FilterSettingView(QWidget):
         right_layout.setStretch(2, 4)  # 하단 필터 리스트 높이 비율
         
         frame.setLayout(right_layout)
-        layout.addWidget(frame)
-        return layout
+        return frame
     
     # 세팅 페이지
     def setting_page(self):
@@ -280,11 +281,11 @@ class FilterSettingView(QWidget):
     def show_filter_setting_page(self, is_show):
         """윈도우 디스플레이 결정"""
         if is_show:
-            self.right_widget.show()
-            self.empty_widget.hide()
+            self.right_layout.show()
+            self.empty_layout.hide()
         else:
-            self.right_widget.hide()
-            self.empty_widget.show()
+            self.right_layout.hide()
+            self.empty_layout.show()
             
         # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name):

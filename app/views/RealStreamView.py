@@ -38,12 +38,15 @@ class RealStreamView(QWidget):
 
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
-        toolbar = ShadowWidget()  # 툴바 위젯
+        toolbar = QWidget()  # 툴바 위젯
         toolbar.setMaximumWidth(250)  # 크기 설정
-
+        toolbar.setStyleSheet(Style.frame_style)
+        toolbar.setGraphicsEffect(Style.shadow(toolbar))
+        
         # 툴바 레이아웃 설정
         toolbar_layout = QVBoxLayout()
-
+        toolbar_layout.setContentsMargins(0,0,0,0)
+        
         # 상단 핵심 버튼 설정
         core_buttons_widget = self.setup_core_buttons()
         toolbar_layout.addWidget(core_buttons_widget)
@@ -63,6 +66,7 @@ class RealStreamView(QWidget):
         '''상단 핵심 버튼 설정 메서드'''
         frame = QWidget()
         frame.setStyleSheet(Style.frame_style)
+        frame.setGraphicsEffect(Style.shadow(frame))
         frame.setFixedHeight(70)
         
         core_buttons_layout = QHBoxLayout()
@@ -104,6 +108,7 @@ class RealStreamView(QWidget):
         frame = QWidget()
         frame.setFixedHeight(140)
         frame.setStyleSheet(Style.frame_style)
+        frame.setGraphicsEffect(Style.shadow(frame))
         
         video_options_layout = QVBoxLayout()
 
@@ -133,9 +138,10 @@ class RealStreamView(QWidget):
     def setup_filter_list(self):
         '''필터 리스트 위젯'''
         # Filter 목록
-        list_frame = QWidget()
-        list_frame.setStyleSheet(Style.list_frame_style)
-        list_frame_layout = QVBoxLayout()
+        frame = QWidget()
+        frame.setStyleSheet(Style.list_frame_style)
+        frame.setGraphicsEffect(Style.shadow(frame))
+        layout = QVBoxLayout()
         
         list_label = QLabel("필터 목록")
         list_label.setStyleSheet(Style.list_frame_label)
@@ -143,11 +149,11 @@ class RealStreamView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
         
-        list_frame_layout.addWidget(list_label)
-        list_frame_layout.addWidget(self.filter_list_widget)
-        list_frame.setLayout(list_frame_layout)
+        layout.addWidget(list_label)
+        layout.addWidget(self.filter_list_widget)
+        frame.setLayout(layout)
 
-        return list_frame
+        return frame
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
@@ -170,6 +176,7 @@ class RealStreamView(QWidget):
         frame.setGraphicsEffect(Style.shadow(frame))
         
         layout = QHBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
 
         # 각각의 위젯 생성
         widget1 = QWidget()
