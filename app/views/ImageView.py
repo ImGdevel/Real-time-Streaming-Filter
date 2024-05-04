@@ -77,9 +77,22 @@ class ImageView(QWidget):
         pass
     
     def removeUrl(self, url):
+        i = int()
+        if url.toLocalFile() == self.dropbox_widget.currunt_exm:
+            i = self.urls.index(url)
+            if i+1 == len(self.urls):
+                i = i-1
+
         self.urls.remove(url)
         if self.filtered_image:
             del self.filtered_image[url.toLocalFile()]
+
+        if url.toLocalFile() == self.dropbox_widget.currunt_exm and len(self.urls) != 0:
+            self.dropbox_widget.currunt_exm = self.urls[i].toLocalFile()
+            if self.filtered_image:
+                self.dropbox_widget.currunt_filt = self.filtered_image[self.urls[i].toLocalFile()]
+            self.dropbox_widget.refreashWidget()
+
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
@@ -96,14 +109,17 @@ class ImageView(QWidget):
         if add_urls :
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
+            self.dropbox_widget.currunt_exm = file_path
             self.file_view_widget.addNewFile(add_urls)
 
     def changeImage(self, url):
         file_path = url.toLocalFile()
         self.dropbox_widget.setExampleView(file_path)
+        self.dropbox_widget.currunt_exm = file_path
         if self.filtered_image:
             print("in")
             self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
+            self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
