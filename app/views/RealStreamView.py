@@ -120,11 +120,17 @@ class RealStreamView(QWidget):
         self.webcam_list = self.detect_webcams()
         self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
-        
+
+        self.refreash_webcam_button = QPushButton()
+        self.refreash_webcam_button.setFixedSize(50, 25)
+        self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
+        self.refreash_webcam_button.setIcon(QIcon('./resources/icons/cil-reload.png'))
+        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
 
         # 중단 레이아웃 설정
         video_options_layout.addWidget(webcam_combo_label)
         video_options_layout.addWidget(self.webcam_combo)
+        video_options_layout.addWidget(self.refreash_webcam_button)
         
         frame.setLayout(video_options_layout)
         return frame
