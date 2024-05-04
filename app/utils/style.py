@@ -19,9 +19,6 @@ class Style:
         return QIcon(resized_pixmap)
     
 
-    base_style01 = f'background-color: {Colors.baseColor02};'
-    
-
     push_button = f"""
         QPushButton {{
     	    background-position: left center;
@@ -87,54 +84,72 @@ class Style:
     mini_button_style = f"""
         QPushButton {{
             background-color: {Colors.base_color_06};
+            border: 2px solid {Colors.base_color_04};
             border-radius: 5px;
             padding: 0px;
+        }}
+        
+        QPushButton:hover {{
+            background-color: {Colors.base_color_07}; 
+            border: 2px solid {Colors.base_color_08};
+        }}
+
+        QPushButton:pressed {{
+            background-color: {Colors.base_color_04};
+        }}
+
+        QPushButton:focus {{
+            outline: none;
+        }}
+
+        QPushButton:checked {{
+            background-color: {Colors.base_color_X};
         }}
     """
     
     line_edit_style = f"""
-    QLineEdit {{
-        background-color: rgb(33, 37, 43);
-        border-radius: 5px;
-        border: 2px solid rgb(33, 37, 43);
-        padding-left: 10px;
-        selection-color: rgb(255, 255, 255);
-        selection-background-color: rgb(255, 121, 198);
-    }}
-    QLineEdit:hover {{
-        border: 2px solid rgb(64, 71, 88);
-    }}
-    QLineEdit:focus {{
-        border: 2px solid rgb(91, 101, 124);
-    }}
+        QLineEdit {{
+            background-color: rgb(33, 37, 43);
+            border-radius: 5px;
+            border: 2px solid rgb(33, 37, 43);
+            padding-left: 10px;
+            selection-color: rgb(255, 255, 255);
+            selection-background-color: rgb(255, 121, 198);
+        }}
+        QLineEdit:hover {{
+            border: 2px solid rgb(64, 71, 88);
+        }}
+        QLineEdit:focus {{
+            border: 2px solid rgb(91, 101, 124);
+        }}
     """
     
     
     list_button_style = f"""
-    QPushButton {{
-        background-color: {Colors.base_color_06};
-        border-radius: 5px;
-        border: none;
-        text-align: center;
-        font-size: 16px;
-        margin-top: -2px;
-    }}
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: 2px solid {Colors.base_color_04};
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }}
 
-    QPushButton:hover {{
-        background-color: {Colors.base_color_05}; 
-    }}
+        QPushButton:hover {{
+            background-color: {Colors.base_color_07}; 
+            border: 2px solid {Colors.base_color_08};
+        }}
 
-    QPushButton:pressed {{
-        background-color: {Colors.base_color_04};
-    }}
+        QPushButton:pressed {{
+            background-color: {Colors.base_color_04};
+        }}
 
-    QPushButton:focus {{
-        outline: none;
-    }}
+        QPushButton:focus {{
+            outline: none;
+        }}
 
-    QPushButton:checked {{
-        background-color: {Colors.base_color_X};
-    }}
+        QPushButton:checked {{
+            background-color: {Colors.base_color_X};
+        }}
 
     """
 
@@ -147,65 +162,65 @@ class Style:
     """
 
     list_frame_style = f"""
-    background-color: {Colors.base_color_06};
-    border-radius: 5px;
-    padding: 10px 20px;
+        background-color: {Colors.base_color_06};
+        border-radius: 5px;
+        padding: 10px 20px;
     """
     
     list_frame_label = f"""
-    color: white; 
-    font-size: 18px; 
-    font-weight: bold; 
-    padding: 5px 10px;
+        color: white; 
+        font-size: 18px; 
+        font-weight: bold; 
+        padding: 5px 10px;
     """
 
     title_label = f"""
-    font-weight: bold; 
-    font-size: 20px;
+        font-weight: bold; 
+        font-size: 20px;
     """
     
     title_label_middle = f"""
-    font-weight: bold; 
-    font-size: 16px;
+        font-weight: bold; 
+        font-size: 16px;
     """
 
 
 
     setting_list_button_style = f"""
-    QWidget{{
-        background-color: {Colors.base_color_06};
-        border: 1px solid rgb(00, 00, 00);
-        padding: 0px;
-        margin: 0px;
-    }}
+        QWidget{{
+            background-color: {Colors.base_color_06};
+            border: 1px solid rgb(00, 00, 00);
+            padding: 0px;
+            margin: 0px;
+        }}
 
-    QPushButton {{
-        background-color: {Colors.base_color_06};
-        padding: 5px;
-        margin: 0px;
-        border-radius: 0px;
-        border: none;
-        text-align: center;
-        font-size: 16px;
-    }}
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            padding: 5px;
+            margin: 0px;
+            border-radius: 0px;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+        }}
 
-    QPushButton:hover {{
-        background-color: {Colors.base_color_05}; 
-    }}
+        QPushButton:hover {{
+            background-color: {Colors.base_color_05}; 
+        }}
 
-    QPushButton:pressed {{
-        background-color: {Colors.base_color_04};
-    }}
+        QPushButton:pressed {{
+            background-color: {Colors.base_color_04};
+        }}
 
-    QPushButton:focus {{
-        outline: none;
-    }}
+        QPushButton:focus {{
+            outline: none;
+        }}
 
-    QPushButton:checked {{
-        background-color: {Colors.base_color_04};
-    }}
+        QPushButton:checked {{
+            background-color: {Colors.base_color_04};
+        }}
 
-    QPushButton:selected {{
-        background-color: {Colors.base_color_04};
-    }}
+        QPushButton:selected {{
+            background-color: {Colors.base_color_04};
+        }}
     """

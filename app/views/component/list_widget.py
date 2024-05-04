@@ -159,13 +159,11 @@ class RegisteredFacesListWidget(ListWidget):
         button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
         button02.setFixedSize(40,40)
         button02.setStyleSheet(Style.mini_button_style)
-        button02.setGraphicsEffect(Style.shadow(button02)) 
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
         button03.setFixedSize(40,40)
         button03.setStyleSheet(Style.mini_button_style)
-        button03.setGraphicsEffect(Style.shadow(button03)) 
         
         frame_layout.addWidget(button)
         frame_layout.addWidget(button02)
