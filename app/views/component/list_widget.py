@@ -213,7 +213,7 @@ class RegisteredFacesListWidget(ListWidget):
         self.filter_name = filter
 
     def register_person_faces(self, person_id):
-        self.filter_setting_processor.add_face_in_face_filter(self.filter_name, person_id)
+        self.filter_setting_processor.add_face_in_filter(self.filter_name, person_id)
 
     def update_list(self):
         self.clear()

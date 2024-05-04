@@ -91,7 +91,7 @@ class FaceManager:
             if face.face_name == person_name:
                 self.face_list.remove(face)
                 for filter in self.filter_manager.filter_list:
-                    self.filter_manager.delete_face_in_face_filter(filter.name, face.face_id)
+                    self.filter_manager.delete_face_in_filter(filter.name, face.face_id)
                 self.save_person_face()
                 return True
         raise ValueError("존재하지 않는 face_name입니다")
@@ -103,7 +103,7 @@ class FaceManager:
             if face.face_id == face_id:
                 self.face_list.remove(face)
                 for filter in self.filter_manager.filter_list:
-                    self.filter_manager.delete_face_in_face_filter(filter.name, face_id)
+                    self.filter_manager.delete_face_in_filter(filter.name, face_id)
                 self.save_person_face()
                 return True
         raise ValueError("존재하지 않는 face_id입니다")
