@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
-    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter
+    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from utils import Colors, Style
 from controllers import RealStreamProcessor
 from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, MosaicSettingWidget
+import cv2
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -111,21 +112,14 @@ class RealStreamView(QWidget):
         webcam_combo_label = QLabel("Webcam")
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
-        self.webcam_combo.addItems(["0", "1"])
+        self.webcam_list = self.detect_webcams()
+        self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
         
-        # 비디오 배율 콤보박스
-        aspect_ratio_combo_label = QLabel("Aspect Ratio")
-        self.aspect_ratio_combo = QComboBox()
-        self.aspect_ratio_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
-        self.aspect_ratio_combo.addItems(["16:9", "3:4", "4:3", "9:16"])
-        self.aspect_ratio_combo.currentIndexChanged.connect(self.change_aspect_ratio)
 
         # 중단 레이아웃 설정
         video_options_layout.addWidget(webcam_combo_label)
         video_options_layout.addWidget(self.webcam_combo)
-        video_options_layout.addWidget(aspect_ratio_combo_label)
-        video_options_layout.addWidget(self.aspect_ratio_combo)
         
         frame.setLayout(video_options_layout)
         return frame
@@ -224,18 +218,17 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
+        dialog = QDialog()
+        layer = QGridLayout()
+        layer.addWidget(self.video_box)
+        dialog.setLayout(layer)
+        dialog.show()
         # 웹캠 새장 로직 추가
-        pass
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
+        self.streaming_processor.video_cap = cv2.VideoCapture(index)
         # 웹캠 변경 로직 추가
-        pass
-
-    def change_aspect_ratio(self, index):
-        '''비디오 배율 변경 메서드'''
-        # 비디오 배율 변경 로직 추가
-        pass
 
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
@@ -263,3 +256,27 @@ class RealStreamView(QWidget):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
         self.timer.stop()
+    
+    def detect_webcams():
+    # 연결된 카메라 장치를 검색합니다.
+        index = 0
+        name_list = list()
+        while True:
+            cap = cv2.VideoCapture(index)
+            if not cap.read()[0]:
+                break
+            
+            # 장치의 이름을 가져옵니다.
+            device_name = cap.get(cv2.CAP_PROP_POS_MSEC)
+            name_list.append(device_name)
+            cap.release()
+            index += 1
+        
+        return name_list
+    
+    def refreash_webcam_combox(self):
+        namelist = self.detect_webcams()
+        combox = QComboBox()
+        combox.addItems(namelist)
+        self.webcam_combo = combox
+        self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
