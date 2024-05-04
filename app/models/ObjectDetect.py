@@ -53,6 +53,22 @@ class ObjectDetect:
             self.sticker_id[face] = []
         print("sticker_id: ", self.sticker_id)
 
+    def detect(self, img, filter_classes, model, names):
+        results = []
+        
+        if not filter_classes:
+            return results
+        detection = model.predict(img, verbose=False, classes=filter_classes, show=False)[0]  # 일반 모델로 결과 예측
+
+        for data in detection.boxes.data.tolist():
+            confidence = float(data[4])
+            if confidence < self.CONFIDENCE_THRESHOLD:
+                continue
+            xmin, ymin, xmax, ymax = int(data[0]), int(data[1]), int(data[2]), int(data[3])
+            label = names[int(data[5])]
+            results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
+        return results 
+    
     def origin_detect(self, img):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
@@ -62,21 +78,7 @@ class ObjectDetect:
         Returns:
             tuple: 바운딩 박스의 목록과 각 객체가 얼굴인지를 나타내는 목록을 포함하는 튜플입니다.
         """
-        results = []
-        
-        if not self.originFilterClasses:
-            return results
-        detection = self.modelManager.orginModel.predict(img, verbose=False, classes=self.originFilterClasses, show=False)[0]  # 일반 모델로 결과 예측
-
-        for data in detection.boxes.data.tolist():
-            confidence = float(data[4])
-            if confidence < self.CONFIDENCE_THRESHOLD:
-                continue
-            xmin, ymin, xmax, ymax = int(data[0]), int(data[1]), int(data[2]), int(data[3])
-            label = self.orginNames[int(data[5])]
-            results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
-
-        return results 
+        return self.detect(img, self.originFilterClasses, self.modelManager.orginModel, self.orginNames)
 
     def custom_detect(self, img):
         """사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
@@ -87,21 +89,7 @@ class ObjectDetect:
         Returns:
             list: 탐지된 객체의 바운딩 박스 목록입니다.
         """
-        results = []
-        
-        if not self.originFilterClasses:
-            return results
-        detection = self.modelManager.customModel.predict(img, verbose=False, classes=self.customFilterClasses, show=False)[0]  # 일반 모델로 결과 예측
-
-        for data in detection.boxes.data.tolist():
-            confidence = float(data[4])
-            if confidence < self.CONFIDENCE_THRESHOLD:
-                continue
-            xmin, ymin, xmax, ymax = int(data[0]), int(data[1]), int(data[2]), int(data[3])
-            label = self.customNames[int(data[5])]
-            results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
-
-        return results 
+        return self.detect(img, self.customFilterClasses, self.modelManager.customModel, self.customNames)
     
     def object_track(self, img, results):
         detections = []
