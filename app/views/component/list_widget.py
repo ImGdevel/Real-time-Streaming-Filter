@@ -192,9 +192,8 @@ class RegisteredFacesListWidget(ListWidget):
                 
     def remove_button(self, button_widget):
         print(button_widget)
-        
-        if button_widget:
-            pass
+        self.filter_setting_processor.delete_face_in_filter(self.filter_name, int(button_widget))
+        self.update_list()
                 
     
     def register_sticker(self, person_id, sticker_id):

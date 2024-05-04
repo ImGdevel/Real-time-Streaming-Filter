@@ -165,12 +165,15 @@ class FilterSettingView(QWidget):
         # 설정 목록에 들어갈 버튼 생성
         self.button1 = QPushButton("필터링 인물 설정")
         self.button1.setObjectName("setting01")
+        self.button1.setMinimumHeight(45)
         self.button1.setCheckable(True)
         self.button2 = QPushButton("유해매체 필터 설정")
         self.button2.setObjectName("setting02")
+        self.button2.setMinimumHeight(45)
         self.button2.setCheckable(True)
         self.button3 = QPushButton("모자아크 설정")
         self.button3.setObjectName("setting03")
+        self.button3.setMinimumHeight(45)
         self.button3.setCheckable(True)
 
         #버튼 연결

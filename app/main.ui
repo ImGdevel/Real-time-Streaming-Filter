@@ -23,7 +23,7 @@
   <widget class="QWidget" name="styleSheet">
    <property name="font">
     <font>
-     <family>Segoe UI</family>
+     <family>맑은 고딕</family>
      <pointsize>12</pointsize>
      <italic>false</italic>
      <bold>false</bold>
@@ -39,7 +39,7 @@ DARK THEME - DRACULA COLOR BASED
 
 QWidget{
 	color: rgb(221, 221, 221);
-	font: 12pt &quot;Segoe UI&quot;;
+	font: 12pt &quot;맑은 고딕&quot;;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
