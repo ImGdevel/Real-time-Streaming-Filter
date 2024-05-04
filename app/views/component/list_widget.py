@@ -15,8 +15,9 @@ class ListWidget(QListWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSpacing(15)
+        self.setSpacing(10)
         self.setStyleSheet(Style.list_widget_style)
+        self.setContentsMargins(0,0,0,0)
         self.current_item = None
 
     def add_item(self, item_name: str, item_data = None):
@@ -131,7 +132,7 @@ class RegisteredFacesListWidget(ListWidget):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
         self.filter_name = None
-        self.setSpacing(10)
+        self.setSpacing(5)
     
     def create_button(self, item_name: str, item_data = None):
         widget = QWidget()
@@ -162,8 +163,11 @@ class RegisteredFacesListWidget(ListWidget):
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
+        button03.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
         button03.setFixedSize(40,40)
         button03.setStyleSheet(Style.mini_button_style)
+        button03.clicked.connect(lambda: self.remove_button(widget))
+        #버튼 자기 자신을 삭제
         
         frame_layout.addWidget(button)
         frame_layout.addWidget(button02)
@@ -184,6 +188,13 @@ class RegisteredFacesListWidget(ListWidget):
                 sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
                 self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
                 self.sticker_dialog.exec_()
+                
+    def remove_button(self, button_widget):
+        # 부모 위젯에서 해당 버튼 위젯을 제거
+        self.layout().removeWidget(button_widget)
+        self.filter_setting_processor
+        # 버튼 위젯을 삭제
+        button_widget.deleteLater()
                 
     
     def register_sticker(self, person_id, sticker_id):

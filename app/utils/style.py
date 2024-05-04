@@ -109,9 +109,9 @@ class Style:
     
     line_edit_style = f"""
         QLineEdit {{
-            background-color: rgb(33, 37, 43);
+            background-color: {Colors.base_color_04};
             border-radius: 5px;
-            border: 2px solid rgb(33, 37, 43);
+            border: 2px solid {Colors.base_color_04};
             padding-left: 10px;
             selection-color: rgb(255, 255, 255);
             selection-background-color: rgb(255, 121, 198);
@@ -189,17 +189,19 @@ class Style:
     setting_list_button_style = f"""
         QWidget{{
             background-color: {Colors.base_color_06};
-            border: 1px solid rgb(00, 00, 00);
+            border: 1px solid {Colors.base_color_03};
+            border-radius: 0px;
             padding: 0px;
             margin: 0px;
         }}
 
         QPushButton {{
             background-color: {Colors.base_color_06};
+            border: 1px solid {Colors.base_color_03};
+            border-top: none;
             padding: 5px;
             margin: 0px;
             border-radius: 0px;
-            border: none;
             text-align: center;
             font-size: 16px;
         }}
@@ -208,19 +210,8 @@ class Style:
             background-color: {Colors.base_color_05}; 
         }}
 
-        QPushButton:pressed {{
-            background-color: {Colors.base_color_04};
-        }}
-
-        QPushButton:focus {{
-            outline: none;
-        }}
-
         QPushButton:checked {{
             background-color: {Colors.base_color_04};
         }}
 
-        QPushButton:selected {{
-            background-color: {Colors.base_color_04};
-        }}
     """

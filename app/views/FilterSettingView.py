@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QScrollArea, QVBoxLayout, QHBoxLayout, QGridLayout, 
-    QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, 
+    QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, QButtonGroup,
     QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy, QDialog
 )
 from PySide6.QtCore import Qt, QTimer
@@ -11,17 +11,6 @@ from views.component import (
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
-
-
-class SettingsDialog(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Settings")
-        
-        layout = QVBoxLayout()
-        self.label = QLabel("Settings Window")
-        layout.addWidget(self.label)
-        self.setLayout(layout)
 
 
 class FilterSettingView(QWidget):
@@ -172,14 +161,17 @@ class FilterSettingView(QWidget):
         self.settings_content.addWidget(face_widget)
         self.settings_content.addWidget(self.object_filter_widget)
         self.settings_content.addWidget(mosaic_setting_widget)
-
+    
         # 설정 목록에 들어갈 버튼 생성
         button1 = QPushButton("필터링 인물 설정")
         button1.setObjectName("setting01")
+        button1.setCheckable(True)
         button2 = QPushButton("유해매체 필터 설정")
         button2.setObjectName("setting02")
+        button2.setCheckable(True)
         button3 = QPushButton("모자아크 설정")
         button3.setObjectName("setting03")
+        button3.setCheckable(True)
 
         #버튼 연결
         button1.clicked.connect(self.setup_setting_page)
@@ -188,6 +180,8 @@ class FilterSettingView(QWidget):
 
         # 버튼을 수직으로 정렬하는 레이아웃 생성
         vbox = QVBoxLayout()
+        vbox.setSpacing(0)
+        vbox.setContentsMargins(0,1,0,0)
         vbox.setAlignment(Qt.AlignTop)
         vbox.addWidget(button1)
         vbox.addWidget(button2)
@@ -249,6 +243,7 @@ class FilterSettingView(QWidget):
         # Add 버튼 추가
         add_face_button = QPushButton("등록")
         add_face_button.setFixedSize(60, 30)
+        add_face_button.setStyleSheet(Style.mini_button_style)
         add_face_button.clicked.connect(self.open_person_face_setting_dialog)
         
         self.available_faces_list_widget = AvailableFacesListWidget()
@@ -294,7 +289,7 @@ class FilterSettingView(QWidget):
     def set_current_filter(self, filter_name = None):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
-        if filter_name == None or filter_name is "":
+        if filter_name == None or filter_name == "":
             print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_page(False)
             return
