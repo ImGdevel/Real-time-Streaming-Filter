@@ -257,7 +257,7 @@ class RealStreamView(QWidget):
         self.streaming_processor.stop()
         self.timer.stop()
     
-    def detect_webcams():
+    def detect_webcams(self):
     # 연결된 카메라 장치를 검색합니다.
         index = 0
         name_list = list()
@@ -267,8 +267,7 @@ class RealStreamView(QWidget):
                 break
             
             # 장치의 이름을 가져옵니다.
-            device_name = cap.get(cv2.CAP_PROP_POS_MSEC)
-            name_list.append(device_name)
+            name_list.append(str(index))
             cap.release()
             index += 1
         
