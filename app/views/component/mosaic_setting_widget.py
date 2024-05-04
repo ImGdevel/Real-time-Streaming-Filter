@@ -28,15 +28,11 @@ class MosaicSettingWidget(QWidget):
         default_mosaic_layout.addWidget(default_mosaic_layout_label, 0, 0)
 
         intensity_label = QLabel("모자이크 강도 ")
-        intensity_label.setFont(QFont("Arial", 15))
         intensity_slider = QSlider(Qt.Horizontal)
         intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        intensity_slider.setMaximumWidth(500)
-        intensity_slider.setMinimumWidth(300)
         intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
         
         slider_value_label = QLabel("0")
-
         
         default_mosaic_layout.addWidget(intensity_label, 1, 0)
         default_mosaic_layout.addWidget(slider_value_label, 1, 1, alignment=Qt.AlignRight)
@@ -44,18 +40,15 @@ class MosaicSettingWidget(QWidget):
         
 
         shape_label = QLabel("모자이크 모양 ")
-        shape_label.setFont(QFont("Arial", 15))
         shape_combobox = QComboBox()
-        shape_combobox.setMaximumWidth(300)
-        shape_combobox.setMinimumWidth(200)
         shape_combobox.addItems(["사각형", "원형"])
         shape_combobox.currentIndexChanged.connect(self.set_value_drop_down)  # 드롭다운 값 변경 시 이벤트 연결
         default_mosaic_layout.addWidget(shape_label, 2, 0)
         default_mosaic_layout.addWidget(shape_combobox, 2, 1, 2, 2, alignment=Qt.AlignRight)
         
         default_mosaic_layout.setColumnStretch(0, 1)
-        default_mosaic_layout.setColumnStretch(1, 2)
-        default_mosaic_layout.setColumnStretch(2, 5)
+        default_mosaic_layout.setColumnStretch(1, 1)
+        default_mosaic_layout.setColumnStretch(2, 8)
 
         default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
     

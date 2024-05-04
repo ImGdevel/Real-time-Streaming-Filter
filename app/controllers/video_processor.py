@@ -32,6 +32,7 @@ class VideoProcessor(QThread):
         output_video = cv2.VideoWriter(self.temp_video_path, fourcc, fps, (frame_width, frame_height))
 
         i = 0
+        self.filtering.tracking_id_init()
         while True:
             i += 1
             progress = ((i + 1) / total_elements) * 100
@@ -42,12 +43,17 @@ class VideoProcessor(QThread):
                 return
             if not ret:
                 break  # 동영상 끝에 도달하면 반복 중지
-
-            
-            boxesList, customs = self.filtering.filtering(frame)
-            processed_frame = self.filtering.blur(frame, boxesList)
-            # 출력 동영상에 프레임 쓰기
-            output_video.write(processed_frame)
+  
+            boxesList = self.filtering.video_filtering(frame)    
+            for key in boxesList.keys():
+                if key == -1:
+                    processed_frame = self.filtering.elliptical_blur(frame, boxesList[key])
+                elif key == -2:
+                    processed_frame = self.filtering.blur(frame, boxesList[key])
+                else:
+                    processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
+                # 출력 동영상에 프레임 쓰기
+                output_video.write(processed_frame)
 
         cap.release()
         cv2.destroyAllWindows()

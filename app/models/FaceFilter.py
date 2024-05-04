@@ -295,7 +295,7 @@ def identify_known_face(people_list, face_encoding, known_faces_path = './models
     if person_name == "unknown":
         return None
     else:
-        return person_name
+        return extract_name(person_name)
     
 
 def set_known_faces():
