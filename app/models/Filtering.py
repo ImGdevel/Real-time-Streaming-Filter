@@ -71,7 +71,6 @@ class Filtering:
                     face_encode = face_encoding_box(img, box)
                     # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
                     is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.known_faces_path())
-                    print("is_known:", is_known)
                     if is_known is not None: 
                         results[int(is_known)].append(result)
                     else:
@@ -106,7 +105,6 @@ class Filtering:
                     face_encode = face_encoding_box(img, box)
                     # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
                     is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.known_faces_path())
-                    print("is_known:", is_known)
                     if is_known is not None: 
                         results[int(is_known)].append(result)
                     else:
@@ -135,8 +133,7 @@ class Filtering:
             if result[2] in self.current_filter_info.object_filter:
                 box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
                 results[-2].append(box)
-        print("results: ", results)
-
+        print("results: ",results)
         return results
     
     def blur(self,img, boxesList, blurRatio = 40):
@@ -206,15 +203,16 @@ class Filtering:
     def face_sticker(self, img, boxesList, face_id):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            w = x2-x1
-            h = y2-y1
-            
-            x_center = int((x1+x2)/2)
-            y_center = int((y1+y2)/2)
+            w = x2 - x1
+            h = y2 - y1
+
+            x_center = int((x1 + x2) / 2)
+            y_center = int((y1 + y2) / 2)
 
             replace_img_id = self.current_filter_info.face_filter[face_id]
             replace_img = self.stickerManager.load_img_to_id(replace_img_id)
-            r_h,r_w = replace_img.shape[:2]
+            r_h, r_w = replace_img.shape[:2]
+
             if w > h:
                 aspect_ratio = w / r_w
             else:
@@ -222,37 +220,30 @@ class Filtering:
 
             n_w = int(r_w * aspect_ratio)
             n_h = int(r_h * aspect_ratio)
-            # print("n_w : ",n_w)
-            # print("n_h : ",n_h)
-
 
             replace_img_resized = cv2.resize(replace_img, (n_w, n_h))
-            resize_x1 = x_center-int(n_w/2)
-            resize_x2 = x_center+int(n_w/2)+1
-            resize_y1 = y_center-int(n_h/2)
-            resize_y2 = y_center+int(n_h/2)+1
-            # print(replace_img_resized.shape)
+            resize_x1 = x_center - int(n_w / 2)
+            resize_x2 = x_center + int(n_w / 2)
+            resize_y1 = y_center - int(n_h / 2)
+            resize_y2 = y_center + int(n_h / 2)
 
-            # print("resize_x", resize_x1, " ", resize_x2)
-            # print("resize_y", resize_y1, " ", resize_y2)
+            # 경계 검사 후 보정
+            if resize_x1 < 0:
+                resize_x1 = 0
+            if resize_x2 > img.shape[1]:
+                resize_x2 = img.shape[1]
 
-            if resize_y2-resize_y1 != n_h:
-                resize_y2 -= 1
-            if resize_x2-resize_x1 != n_w:
-                resize_x2 -= 1
+            if resize_y1 < 0:
+                resize_y1 = 0
+            if resize_y2 > img.shape[0]:
+                resize_y2 = img.shape[0]
 
             for c in range(0, 3):
-                # 원본 이미지에서 얼굴 영역 추출
-
                 roi = img[resize_y1:resize_y2, resize_x1:resize_x2, c]
-                # print(roi.shape)
-                # 스티커 이미지 합성
-                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
-            
-            # 알파채널 없이
-            # for c in range(0, 3):
-            #     # 스티커 이미지 합성
-            #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
+                replace_img_resized_resized = cv2.resize(replace_img_resized, (roi.shape[1], roi.shape[0]))
+                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (
+                        1.0 - replace_img_resized_resized[:, :, 3] / 255.0) + replace_img_resized_resized[:, :, c] * (
+                                                                                replace_img_resized_resized[:, :, 3] / 255.0)
 
         return img
     

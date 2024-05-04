@@ -48,6 +48,7 @@ class ObjectDetect:
                 self.customFilterClasses.append(key)
 
     def set_known_faces(self, face_list: list):
+        self.sticker_id = dict()
         for face in face_list:
             self.sticker_id[face] = []
         print("sticker_id: ", self.sticker_id)
@@ -106,7 +107,6 @@ class ObjectDetect:
         detections = []
         for value in results.values():
             detections.extend(value)
-        print("detections: ", detections)
         tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
         last_results = dict()
         last_results[-1] = []
@@ -120,14 +120,10 @@ class ObjectDetect:
             for face in results.keys():
                 if face != -1:
                     if len(results[face]) != 0:
-                        print("box:",box)
-                        print("results[face][0]:",results[face][0])
                         if box == results[face][0][0]:
                             self.sticker_id[face] = track.track_id
 
             is_sticker = False
-            print("sticker_id:",self.sticker_id)
-            print()
             for sticker in self.sticker_id.keys():
                 if track.track_id == self.sticker_id[sticker]:
                     last_results[sticker] = [int_box]
