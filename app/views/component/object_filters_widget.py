@@ -2,7 +2,7 @@ from utils import Colors, Style
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, QComboBox, QScrollArea, QFrame, QCheckBox
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize, Signal
-from controllers import RealStreamProcessor
+from controllers import FilterSettingController
 from views.component import FilterListWidget, ShadowWidget, FrameWidget
 
 class ObjectFilterSettngWidget(QWidget):
@@ -11,7 +11,9 @@ class ObjectFilterSettngWidget(QWidget):
     def __init__(self, parent = None) -> None:
         super().__init__(parent)
         # 현재 선택된 객체 필터링 설정
+        self.filter_controller = FilterSettingController()
         self.selected_filtering_object = []
+        self.filter_name = None
         self.initUI()
     
     # 오브젝트 레이어
@@ -33,9 +35,9 @@ class ObjectFilterSettngWidget(QWidget):
         self.toggle_checkbox1 = QCheckBox("담배 필터")
         self.toggle_checkbox1.userData = "smoke"
         self.toggle_checkbox2 = QCheckBox("칼 필터")
-        self.toggle_checkbox2.userData = "2"
+        self.toggle_checkbox2.userData = "knife"
         self.toggle_checkbox3 = QCheckBox("소주/주류 필터")
-        self.toggle_checkbox3.userData = "3"
+        self.toggle_checkbox3.userData = "liquor"
         self.toggle_checkbox4 = QCheckBox("선정성 컨텐츠 필터")
         self.toggle_checkbox4.userData = "4"
         
@@ -64,8 +66,12 @@ class ObjectFilterSettngWidget(QWidget):
         
         self.setLayout(object_layout)
         
-    def setup_object_filter_widget(self, filtering_object_datas):
+    def setup_object_filter_widget(self, filter_name):
         """객체 필터링 설정 업데이트 메서드"""
+        self.filter_name = filter_name
+        filter_data = self.filter_controller.get_filter(filter_name)
+        filtering_object_datas = filter_data.object_filter
+        
         # 기존 체크 박스들의 상태 업데이트
         for i in range(self.object_setting_layout.count()):
             checkbox = self.object_setting_layout.itemAt(i).widget()
@@ -73,9 +79,9 @@ class ObjectFilterSettngWidget(QWidget):
                 checkbox.setChecked(True)  # 체크 박스를 체크 상태로 설정
             else:
                 checkbox.setChecked(False)  # 체크 박스를 체크 해제 상태로 설정
+                
+        self.selected_filtering_object = filtering_object_datas
 
-        # selected_filtering_object 업데이트
-        self.selected_filtering_object = filtering_object_datas.copy()
         
     def toggle_checkbox_clicked(self):
         """토글 체크 박스 클릭 이벤트 핸들러"""
@@ -87,5 +93,5 @@ class ObjectFilterSettngWidget(QWidget):
             self.selected_filtering_object.append(checkbox_name)  # 리스트에 추가
         else:
             self.selected_filtering_object.remove(checkbox_name)  # 리스트에서 제거
-        
-        self.onEventUpdateCheckbox.emit(self.selected_filtering_object)
+              
+        self.filter_controller.update_filter_object_filter(self.filter_name, self.selected_filtering_object)

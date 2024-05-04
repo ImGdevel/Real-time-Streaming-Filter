@@ -221,7 +221,7 @@ class FilterSettingView(QWidget):
         
         elif index == 1:
             self.settings_content.setCurrentIndex(1)
-            self.object_filter_widget.setup_object_filter_widget(self.current_filter_object_list)
+            self.object_filter_widget.setup_object_filter_widget(self.current_filter)
             self.button2.setChecked(True)
             self.button1.setChecked(False)
             self.button3.setChecked(False)
