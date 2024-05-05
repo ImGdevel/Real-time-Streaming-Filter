@@ -25,7 +25,7 @@ class PersonFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(600, 600)
 
         main_layout = QHBoxLayout()
         
