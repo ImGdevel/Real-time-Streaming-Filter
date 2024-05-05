@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
 "}\n"
 "#topLogo {\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	background-image: url(:/images/resources/images/PyDracula.png);\n"
+"	background-image: url(:/images/resources/images/CAMA_Icon.png);\n"
 "	background-position: centered;\n"
 "	background-repeat: no-repeat;\n"
 "}\n"
@@ -642,12 +642,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.toggleButton.sizePolicy().hasHeightForWidth())
         self.toggleButton.setSizePolicy(sizePolicy)
         self.toggleButton.setMinimumSize(QSize(0, 45))
-        font3 = QFont()
-        font3.setFamilies([u"Segoe UI"])
-        font3.setPointSize(12)
-        font3.setBold(False)
-        font3.setItalic(False)
-        self.toggleButton.setFont(font3)
+        self.toggleButton.setFont(font)
         self.toggleButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.toggleButton.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.toggleButton.setStyleSheet(u"background-image: url(:/icons/resources/icons/icon_menu.png);")
@@ -670,7 +665,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_home.sizePolicy().hasHeightForWidth())
         self.btn_home.setSizePolicy(sizePolicy)
         self.btn_home.setMinimumSize(QSize(0, 45))
-        self.btn_home.setFont(font3)
+        self.btn_home.setFont(font)
         self.btn_home.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_home.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_home.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-home.png);")
@@ -682,7 +677,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_streaming.sizePolicy().hasHeightForWidth())
         self.btn_streaming.setSizePolicy(sizePolicy)
         self.btn_streaming.setMinimumSize(QSize(0, 45))
-        self.btn_streaming.setFont(font3)
+        self.btn_streaming.setFont(font)
         self.btn_streaming.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_streaming.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_streaming.setStyleSheet(u"background-image:url(:/icons/resources/icons/cil-headphones.png);")
@@ -694,7 +689,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_video.sizePolicy().hasHeightForWidth())
         self.btn_video.setSizePolicy(sizePolicy)
         self.btn_video.setMinimumSize(QSize(0, 45))
-        self.btn_video.setFont(font3)
+        self.btn_video.setFont(font)
         self.btn_video.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_video.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_video.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-movie.png);")
@@ -706,7 +701,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_image.sizePolicy().hasHeightForWidth())
         self.btn_image.setSizePolicy(sizePolicy)
         self.btn_image.setMinimumSize(QSize(0, 45))
-        self.btn_image.setFont(font3)
+        self.btn_image.setFont(font)
         self.btn_image.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_image.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_image.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-image1.png);")
@@ -718,7 +713,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_filter_setting.sizePolicy().hasHeightForWidth())
         self.btn_filter_setting.setSizePolicy(sizePolicy)
         self.btn_filter_setting.setMinimumSize(QSize(0, 45))
-        self.btn_filter_setting.setFont(font3)
+        self.btn_filter_setting.setFont(font)
         self.btn_filter_setting.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_filter_setting.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-library.png);")
@@ -741,7 +736,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.toggleLeftBox.sizePolicy().hasHeightForWidth())
         self.toggleLeftBox.setSizePolicy(sizePolicy)
         self.toggleLeftBox.setMinimumSize(QSize(0, 45))
-        self.toggleLeftBox.setFont(font3)
+        self.toggleLeftBox.setFont(font)
         self.toggleLeftBox.setCursor(QCursor(Qt.PointingHandCursor))
         self.toggleLeftBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.toggleLeftBox.setStyleSheet(u"background-image: url(:/icons/resources/icons/icon_settings.png);")
@@ -836,7 +831,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_share.sizePolicy().hasHeightForWidth())
         self.btn_share.setSizePolicy(sizePolicy)
         self.btn_share.setMinimumSize(QSize(0, 45))
-        self.btn_share.setFont(font3)
+        self.btn_share.setFont(font)
         self.btn_share.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_share.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_share.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-share-boxed.png);")
@@ -848,7 +843,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_adjustments.sizePolicy().hasHeightForWidth())
         self.btn_adjustments.setSizePolicy(sizePolicy)
         self.btn_adjustments.setMinimumSize(QSize(0, 45))
-        self.btn_adjustments.setFont(font3)
+        self.btn_adjustments.setFont(font)
         self.btn_adjustments.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_adjustments.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_adjustments.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-equalizer.png);")
@@ -860,7 +855,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_more.sizePolicy().hasHeightForWidth())
         self.btn_more.setSizePolicy(sizePolicy)
         self.btn_more.setMinimumSize(QSize(0, 45))
-        self.btn_more.setFont(font3)
+        self.btn_more.setFont(font)
         self.btn_more.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_more.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_more.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-layers.png);")
@@ -940,7 +935,7 @@ class Ui_MainWindow(object):
         sizePolicy2.setHeightForWidth(self.titleRightInfo.sizePolicy().hasHeightForWidth())
         self.titleRightInfo.setSizePolicy(sizePolicy2)
         self.titleRightInfo.setMaximumSize(QSize(16777215, 45))
-        self.titleRightInfo.setFont(font3)
+        self.titleRightInfo.setFont(font)
         self.titleRightInfo.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.titleRightInfo)
@@ -985,13 +980,13 @@ class Ui_MainWindow(object):
         self.maximizeRestoreAppBtn.setObjectName(u"maximizeRestoreAppBtn")
         self.maximizeRestoreAppBtn.setMinimumSize(QSize(28, 28))
         self.maximizeRestoreAppBtn.setMaximumSize(QSize(28, 28))
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
-        font4.setPointSize(12)
-        font4.setBold(False)
-        font4.setItalic(False)
-        font4.setStyleStrategy(QFont.PreferDefault)
-        self.maximizeRestoreAppBtn.setFont(font4)
+        font3 = QFont()
+        font3.setFamilies([u"\ub9d1\uc740 \uace0\ub515"])
+        font3.setPointSize(12)
+        font3.setBold(False)
+        font3.setItalic(False)
+        font3.setStyleStrategy(QFont.PreferDefault)
+        self.maximizeRestoreAppBtn.setFont(font3)
         self.maximizeRestoreAppBtn.setCursor(QCursor(Qt.PointingHandCursor))
         icon3 = QIcon()
         icon3.addFile(u":/icons/resources/icons/icon_maximize.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -1046,7 +1041,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/PyDracula_vertical.png);\n"
+        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/CAMA_Logo.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;")
         self.stackedWidget.addWidget(self.home)
@@ -1084,7 +1079,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
         self.labelBoxBlenderInstalation = QLabel(self.frame_title_wid_1)
         self.labelBoxBlenderInstalation.setObjectName(u"labelBoxBlenderInstalation")
-        self.labelBoxBlenderInstalation.setFont(font3)
+        self.labelBoxBlenderInstalation.setFont(font)
         self.labelBoxBlenderInstalation.setStyleSheet(u"")
 
         self.verticalLayout_18.addWidget(self.labelBoxBlenderInstalation)
@@ -1111,7 +1106,7 @@ class Ui_MainWindow(object):
         self.pushButton = QPushButton(self.frame_content_wid_1)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(150, 30))
-        self.pushButton.setFont(font3)
+        self.pushButton.setFont(font)
         self.pushButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         icon4 = QIcon()
@@ -1217,7 +1212,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setFont(font3)
+        self.comboBox.setFont(font)
         self.comboBox.setAutoFillBackground(False)
         self.comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
         self.comboBox.setIconSize(QSize(16, 16))
@@ -1280,10 +1275,10 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         if (self.tableWidget.rowCount() < 16):
             self.tableWidget.setRowCount(16)
-        font5 = QFont()
-        font5.setFamilies([u"Segoe UI"])
+        font4 = QFont()
+        font4.setFamilies([u"Segoe UI"])
         __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font5);
+        __qtablewidgetitem4.setFont(font4);
         self.tableWidget.setVerticalHeaderItem(0, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(1, __qtablewidgetitem5)
@@ -1409,7 +1404,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.image_page)
         self.filter_setting_page = QWidget()
         self.filter_setting_page.setObjectName(u"filter_setting_page")
-        self.filter_setting_page.setFont(font3)
+        self.filter_setting_page.setFont(font)
         self.filter_setting_layout = QVBoxLayout(self.filter_setting_page)
         self.filter_setting_layout.setObjectName(u"filter_setting_layout")
         self.stackedWidget.addWidget(self.filter_setting_page)
@@ -1458,7 +1453,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_message.sizePolicy().hasHeightForWidth())
         self.btn_message.setSizePolicy(sizePolicy)
         self.btn_message.setMinimumSize(QSize(0, 45))
-        self.btn_message.setFont(font3)
+        self.btn_message.setFont(font)
         self.btn_message.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_message.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_message.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-envelope-open.png);")
@@ -1470,7 +1465,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_print.sizePolicy().hasHeightForWidth())
         self.btn_print.setSizePolicy(sizePolicy)
         self.btn_print.setMinimumSize(QSize(0, 45))
-        self.btn_print.setFont(font3)
+        self.btn_print.setFont(font)
         self.btn_print.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_print.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_print.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-print.png);")
@@ -1482,7 +1477,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_logout.sizePolicy().hasHeightForWidth())
         self.btn_logout.setSizePolicy(sizePolicy)
         self.btn_logout.setMinimumSize(QSize(0, 45))
-        self.btn_logout.setFont(font3)
+        self.btn_logout.setFont(font)
         self.btn_logout.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_logout.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_logout.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-account-logout.png);")
@@ -1514,11 +1509,11 @@ class Ui_MainWindow(object):
         self.creditsLabel = QLabel(self.bottomBar)
         self.creditsLabel.setObjectName(u"creditsLabel")
         self.creditsLabel.setMaximumSize(QSize(16777215, 16))
-        font6 = QFont()
-        font6.setFamilies([u"Segoe UI"])
-        font6.setBold(False)
-        font6.setItalic(False)
-        self.creditsLabel.setFont(font6)
+        font5 = QFont()
+        font5.setFamilies([u"\ub9d1\uc740 \uace0\ub515"])
+        font5.setBold(False)
+        font5.setItalic(False)
+        self.creditsLabel.setFont(font5)
         self.creditsLabel.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_5.addWidget(self.creditsLabel)
@@ -1585,17 +1580,17 @@ class Ui_MainWindow(object):
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zen"
-                        "o Rocha.</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">MIT License</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0"
-                        "px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
+"</style></head><body style=\" font-family:'\ub9d1\uc740 \uace0\ub515'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#ffffff;\">An interface created using Python and PySide (support for"
+                        " PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#ffffff;\">MIT License</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; colo"
+                        "r:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
         self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"CAMA  Real-time Streaming Filtering Application", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
