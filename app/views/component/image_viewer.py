@@ -15,7 +15,7 @@ class ImageViewWidget(QWidget):
     def initUI(self):
         self.remove_mode = False
         self.count = 0
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         #file view
         self.scroll_area = QScrollArea()
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)

@@ -35,8 +35,8 @@ class ImageView(QWidget):
 
         #파일 뷰어 설정
         self.file_view_widget = FileViewWidget()
-        self.file_view_widget.setMinimumSize(300, 150)
-        self.file_view_widget.setMaximumHeight(250)
+        self.file_view_widget.setMinimumSize(300, 200)
+        self.file_view_widget.setMaximumHeight(300)
         
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
@@ -45,15 +45,16 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.Encoding_button = QPushButton("Encoding")
-        self.Encoding_button.setFixedHeight(50)
-        self.Encoding_button.clicked.connect(self.Encoding)
-        self.setting_widget.addSettingButton(self.Encoding_button)
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
         self.filter_list_widget.setMinimumHeight(275)
         self.setting_widget.addWidget(self.filter_list_widget)
+        
+        self.Encoding_button = QPushButton("Encoding")
+        self.Encoding_button.setFixedHeight(50)
+        self.Encoding_button.clicked.connect(self.Encoding)
+        self.setting_widget.addSettingButton(self.Encoding_button)
 
         self.download_button = QPushButton("Download")
         self.download_button.setFixedHeight(50)

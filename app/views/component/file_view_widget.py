@@ -1,7 +1,7 @@
 from utils.colors import Colors
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
 from PySide6.QtCore import Qt, QUrl, Signal, QMimeDatabase
-from PySide6.QtGui import QDragEnterEvent
+from PySide6.QtGui import QDragEnterEvent, QIcon
 from .image_item import ImageItem
 import os
 from urllib.parse import urlparse
@@ -20,7 +20,7 @@ class FileViewWidget(QWidget):
         self.setAcceptDrops(True)
         self.remove_mode = False
         self.count = 0
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         #file view
         self.scroll_area = QScrollArea()
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -28,6 +28,7 @@ class FileViewWidget(QWidget):
         self.scroll_widget = QWidget()
         self.file_box_layout = QHBoxLayout()
         self.scroll_layout = QHBoxLayout(self.scroll_widget)
+        self.scroll_layout.addStretch()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.scroll_widget)
         self.file_box_layout.addWidget(self.scroll_area)
@@ -38,22 +39,25 @@ class FileViewWidget(QWidget):
 
         #button
         self.button_widget = QWidget()
-        self.button_widget.setFixedSize(300, 50)
-        self.button_layout = QHBoxLayout()
+        self.button_layout = QVBoxLayout()
 
-        self.remove_button = QPushButton("Del")
+        self.remove_button = QPushButton()
+        self.remove_button.setFixedSize(50, 50)
+        self.remove_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
         self.remove_button.clicked.connect(self.setRemoveMode)
         
-        self.file_explorer_button = QPushButton("Search")
+        self.file_explorer_button = QPushButton()
+        self.file_explorer_button.setFixedSize(50, 50)
+        self.file_explorer_button.setIcon(QIcon('./resources/icons/cil-folder-open.png'))
         self.file_explorer_button.clicked.connect(self.openFileExplorer)
         
-        self.button_layout.addWidget(self.remove_button)
         self.button_layout.addWidget(self.file_explorer_button)
+        self.button_layout.addWidget(self.remove_button)
         self.button_widget.setLayout(self.button_layout)
 
         #set frame layout
-        self.layout.addWidget(self.file_view_label)
         self.layout.addWidget(self.button_widget)
+        self.layout.addWidget(self.file_view_label)
         self.setLayout(self.layout)
         
 
