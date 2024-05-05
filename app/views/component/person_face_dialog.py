@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget,
-    QLineEdit, QLabel, QFileDialog, QScrollArea, QWidget
+    QWidget, QFrame,  QVBoxLayout, QHBoxLayout, 
+    QDialog, QPushButton, QListWidget, QLabel, QFileDialog, QStackedWidget
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
@@ -8,7 +8,7 @@ from PySide6.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
-from utils import Style
+from utils import Style, Icons
 
 
 class PersonFaceDialog(QDialog):
@@ -25,20 +25,24 @@ class PersonFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(600, 600)
 
         main_layout = QHBoxLayout()
+        main_layout.setContentsMargins(5,5,5,5)
         
+        face_registration_list_layout = self._setup_registered_person_list_layout()
+        face_registration_layout = self._setup_face_registration_layout()
+
+        empty_widget = QWidget()
+        face_registration_widget = QWidget()
+        face_registration_widget.setLayout(face_registration_layout)
+    
+        self.stacked_widget = QStackedWidget()
+        self.stacked_widget.addWidget(empty_widget)
+        self.stacked_widget.addWidget(face_registration_widget)
         
-        self.face_registration_layout = self._setup_face_registration_layout()
-
-        self.face_registration_widget = QWidget()
-        self.face_registration_widget.setLayout(self.face_registration_layout)
-        self.empty_widget = QWidget()
-
-        main_layout.addWidget(self._setup_registered_person_list_layout())
-        main_layout.addWidget(self.face_registration_widget)
-        main_layout.addWidget(self.empty_widget)
+        main_layout.addWidget(face_registration_list_layout, 1)
+        main_layout.addWidget(self.stacked_widget, 3)
         self.show_window(False)
 
         self.setLayout(main_layout)
@@ -59,24 +63,23 @@ class PersonFaceDialog(QDialog):
         self.registered_person_list.setFixedWidth(200)
        
         # Add Filter, Delete Filter 버튼
-        filter_list_button_layout = QHBoxLayout()
-
-        # Add Filter, Delete Filter 버튼
         add_button = QPushButton()
-        add_button.setIcon(QIcon('./resources/icons/cil-plus.png'))
+        add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_person)
         
         delete_button = QPushButton()
-        delete_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
+        delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_person)
 
+        # Add Filter, Delete Filter 버튼
+        filter_list_button_layout = QHBoxLayout()
+        filter_list_button_layout.addSpacing(10)
         filter_list_button_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         filter_list_button_layout.addWidget(add_button)
-        filter_list_button_layout.addSpacing(10)  # 버튼 사이 간격
         filter_list_button_layout.addWidget(delete_button)
         
         list_frame_layout.addWidget(list_label)
@@ -107,12 +110,10 @@ class PersonFaceDialog(QDialog):
     
     def show_window(self, show_window):
         """화면 """
-        if show_window:
-            self.empty_widget.hide()
-            self.face_registration_widget.show()
+        if not show_window:
+            self.stacked_widget.setCurrentIndex(0)
         else:
-            self.empty_widget.show()
-            self.face_registration_widget.hide()
+            self.stacked_widget.setCurrentIndex(1)
         
 
     def change_current_registered_person(self, index: str):
