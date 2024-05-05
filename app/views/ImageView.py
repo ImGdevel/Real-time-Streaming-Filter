@@ -45,7 +45,10 @@ class ImageView(QWidget):
 
         self.setting_frame = QWidget()
         self.setting_widget = SettingWidget()
-        self.setting_widget.Encoding_button.clicked.connect(self.Encoding)
+        self.Encoding_button = QPushButton("Encoding")
+        self.Encoding_button.setFixedHeight(50)
+        self.Encoding_button.clicked.connect(self.Encoding)
+        self.setting_widget.addSettingButton(self.Encoding_button)
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)

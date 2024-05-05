@@ -45,8 +45,10 @@ class VideoView(QWidget):
         list_frame = self.setup_filter_list()
 
         self.button1 = QPushButton("Encoding")
+        self.button1.setFixedHeight(50)
         self.button1.clicked.connect(self.do_video_encoding)
         self.button2 = QPushButton("Download")
+        self.button2.setFixedHeight(50)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
         self.button3.setIcon(QIcon('./resources/icons/cil-folder-open.png'))
