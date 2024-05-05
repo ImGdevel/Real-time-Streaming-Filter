@@ -6,7 +6,10 @@ from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from utils import Colors, Style
 from controllers import RealStreamProcessor
-from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, MosaicSettingWidget
+from views.component import (
+    FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, 
+    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
+)
 import cv2
 
 class RealStreamView(QWidget):
@@ -188,24 +191,27 @@ class RealStreamView(QWidget):
         layout.setContentsMargins(0,0,0,0)
 
         # 각각의 위젯 생성
-        widget1 = QWidget()
+        self.setting_01 = RegisteredFacesListWidget()
+        self.setting_02 = ObjectFilterSettngWidget()
+        self.setting_03 = MosaicSettingWidget()
         
-        widget2 = ObjectFilterSettngWidget()
+        self.widget1 = ContentLabeling()
+        self.widget1.setLabel("필터링 인물 관리")
+        self.widget1.setContent(self.setting_01)
         
-        widget3 = MosaicSettingWidget()
+        self.widget2 = ContentLabeling()
+        self.widget2.setLabel("유해 매체 필터링")
+        self.widget2.setContent(self.setting_02)
         
-        # 각 위젯에 배경색 및 테두리 설정
-        widget1.setStyleSheet(Style.frame_style_line)
-        widget2.setStyleSheet(Style.frame_style_line)
-        widget3.setStyleSheet(Style.frame_style_line)
+        self.widget3 = ContentLabeling()
+        self.widget3.setLabel("모자이크 블러 설정")
+        self.widget3.setContent(self.setting_03)
         
         # 스플리터 생성 및 각 위젯 추가
         splitter = QSplitter()
-        splitter.addWidget(widget1)
-        splitter.addWidget(widget2)
-        splitter.addWidget(widget3)
-        
-        # 스플리터 레이아웃 설정
+        splitter.addWidget(self.widget1)
+        splitter.addWidget(self.widget2)
+        splitter.addWidget(self.widget3)
         splitter.setSizes([300, 200, 200])  # 초기 비율을 3:2:2로 설정
         
         # 레이아웃 설정
@@ -213,8 +219,8 @@ class RealStreamView(QWidget):
         layout.addWidget(splitter)
         
         frame.setLayout(layout)
-        
         return frame
+
 
 
     # method
@@ -250,12 +256,10 @@ class RealStreamView(QWidget):
 
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
+        print("선택된 필터>>", index)
+        
         self.streaming_processor.set_filter(index)
-        pass
-
-    def update_object_filter(self, list):
-        """콜백 오브젝트 리스트 업데이트"""
-        self.selected_filtering_object = list
+        
         pass
         
     def update_video(self, q_img=None):

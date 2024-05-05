@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QFont
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget
+    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style
@@ -145,30 +145,42 @@ class FilterSettingView(QWidget):
     # 세팅 페이지
     def setting_page(self):
         #설정창 들
-        face_widget = QWidget()
-        face_widget.setStyleSheet(Style.frame_style_none_line)
-        face_widget.setLayout(self.setup_face_layout())
+        face_widget = self.setup_face_layout()
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
         mosaic_setting_widget = MosaicSettingWidget()
+        
+        content01 =  ContentLabeling()
+        content01.setLabel("필터링 인물 설정")
+        content01.setContent(face_widget)
+        
+        content02 =  ContentLabeling()
+        content02.setLabel("유해 매체 필터링 설정")
+        content02.setContent(self.object_filter_widget)
+        
+        content03 =  ContentLabeling()
+        content03.setLabel("모자이크 블러 설정")
+        content03.setContent(mosaic_setting_widget)
+        
+
 
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
-        self.settings_content.addWidget(face_widget)
-        self.settings_content.addWidget(self.object_filter_widget)
-        self.settings_content.addWidget(mosaic_setting_widget)
+        self.settings_content.addWidget(content01)
+        self.settings_content.addWidget(content02)
+        self.settings_content.addWidget(content03)
     
         # 설정 목록에 들어갈 버튼 생성
-        self.button1 = QPushButton("필터링 인물 설정")
+        self.button1 = QPushButton("필터링 인물")
         self.button1.setObjectName("setting01")
         self.button1.setMinimumHeight(45)
         self.button1.setCheckable(True)
-        self.button2 = QPushButton("유해매체 필터 설정")
+        self.button2 = QPushButton("유해 매체 필터링")
         self.button2.setObjectName("setting02")
         self.button2.setMinimumHeight(45)
         self.button2.setCheckable(True)
-        self.button3 = QPushButton("모자아크 설정")
+        self.button3 = QPushButton("모자아크 블러")
         self.button3.setObjectName("setting03")
         self.button3.setMinimumHeight(45)
         self.button3.setCheckable(True)
@@ -187,7 +199,7 @@ class FilterSettingView(QWidget):
         # 버튼을 수직으로 정렬하는 레이아웃 생성
         vbox = QVBoxLayout()
         vbox.setSpacing(0)
-        vbox.setContentsMargins(0,1,0,0)
+        vbox.setContentsMargins(0,2,0,0)
         vbox.setAlignment(Qt.AlignTop)
         vbox.addWidget(self.button1)
         vbox.addWidget(self.button2)
@@ -233,21 +245,18 @@ class FilterSettingView(QWidget):
     # 얼굴 레이어
     def setup_face_layout(self):
         """얼굴 인식 필터 설정 영역 레이아웃 생성"""
-        face_layout = QVBoxLayout()
+        frame = QWidget()
+        frame.setStyleSheet(Style.frame_style_none_line)
+        
+        
+        face_layout = QHBoxLayout()
         face_layout.setAlignment(Qt.AlignRight)
-        
-        face_label = QLabel("필터링 인물 설정")
-        face_label.setStyleSheet(Style.title_label)
-        
-        # 얼굴 등록 박스 설정
-        face_register_layout = QHBoxLayout()
         
         # RegisteredFacesListWidget 초기화 및 설정
         registered_faces_list_label = QLabel("필터 등록 인물")
         registered_faces_list_label.setStyleSheet(Style.title_label_middle)
         
         self.registered_faces_list_widget = RegisteredFacesListWidget()
-        self.registered_faces_list_widget.set_items_event(self.select_registered_face)
         
         # AvailableFacesListWidget 초기화 및 설정
         available_faces_list_label = QLabel("인물 리스트")
@@ -271,20 +280,14 @@ class FilterSettingView(QWidget):
         available_faces_list_layout.addWidget(add_face_button, 0, 1)
         available_faces_list_layout.addWidget(self.available_faces_list_widget, 1, 0, 1, 2)
         
-        
-        face_register_layout.addLayout(registered_faces_list_layout, 2)
-        face_register_layout.addLayout(available_faces_list_layout, 1)
-        
-        face_setting_widget = QWidget()
-        face_setting_widget.setLayout(face_register_layout)
-        
-        face_layout.addWidget(face_label)
-        face_layout.addWidget(face_setting_widget)
-
         self.person_face_setting_window = PersonFaceDialog()
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
         
-        return face_layout
+        face_layout.addLayout(registered_faces_list_layout, 2)
+        face_layout.addLayout(available_faces_list_layout, 1)
+        
+        frame.setLayout(face_layout)
+        return frame
 
     # 윈도우 디스플레이 설정
     def show_filter_setting_page(self, is_show):
@@ -324,12 +327,6 @@ class FilterSettingView(QWidget):
         """얼굴 등록 메서드"""
         self.registered_faces_list_widget.register_person_faces(person_id)
         self.registered_faces_list_widget.update_list()
-   
-    
-    def select_registered_face(self, item):
-        """등록된 얼굴 선택 메서드"""
-        
-        pass
 
     # 필터 추가
     def add_filter(self):

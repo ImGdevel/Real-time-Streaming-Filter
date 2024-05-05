@@ -12,6 +12,7 @@ class ObjectFilterSettngWidget(QWidget):
         super().__init__(parent)
         # 현재 선택된 객체 필터링 설정
         self.filter_controller = FilterSettingController()
+        self.setStyleSheet(Style.frame_style)
         self.selected_filtering_object = []
         self.filter_name = None
         self.initUI()
@@ -19,17 +20,9 @@ class ObjectFilterSettngWidget(QWidget):
     # 오브젝트 레이어
     def initUI(self):
         """객체 필터링 설정 영역 레이아웃 생성"""
-        object_layout = QVBoxLayout()
-        
-        object_label = QLabel("유해 매체 필터링")
-        object_label.setStyleSheet("font-weight: bold; font-size: 20px;")
-        object_label.setFixedHeight(30)  # 높이 설정
-        
-        self.object_setting_widget = QWidget()
-
-        # QVBoxLayout을 self.object_setting_widget 위젯에 설정
-        self.object_setting_layout = QVBoxLayout(self.object_setting_widget)
-        self.object_setting_layout.setAlignment(Qt.AlignTop)
+        self.object_layout = QVBoxLayout()
+        self.object_layout.setContentsMargins(0,0,0,0)
+        self.object_layout.setAlignment(Qt.AlignTop)
         
         # QCheckBox로 변경
         self.toggle_checkbox1 = QCheckBox("담배 필터")
@@ -53,18 +46,13 @@ class ObjectFilterSettngWidget(QWidget):
         self.toggle_checkbox3.clicked.connect(self.toggle_checkbox_clicked)
         self.toggle_checkbox4.clicked.connect(self.toggle_checkbox_clicked)
 
-
-
         # 버튼 위젯들을 QVBoxLayout에 추가
-        self.object_setting_layout.addWidget(self.toggle_checkbox1)
-        self.object_setting_layout.addWidget(self.toggle_checkbox2)
-        self.object_setting_layout.addWidget(self.toggle_checkbox3)
-        self.object_setting_layout.addWidget(self.toggle_checkbox4)
-
-        object_layout.addWidget(object_label)
-        object_layout.addWidget(self.object_setting_widget)
+        self.object_layout.addWidget(self.toggle_checkbox1)
+        self.object_layout.addWidget(self.toggle_checkbox2)
+        self.object_layout.addWidget(self.toggle_checkbox3)
+        self.object_layout.addWidget(self.toggle_checkbox4)
         
-        self.setLayout(object_layout)
+        self.setLayout(self.object_layout)
         
     def setup_object_filter_widget(self, filter_name):
         """객체 필터링 설정 업데이트 메서드"""
@@ -73,8 +61,8 @@ class ObjectFilterSettngWidget(QWidget):
         filtering_object_datas = filter_data.object_filter
         
         # 기존 체크 박스들의 상태 업데이트
-        for i in range(self.object_setting_layout.count()):
-            checkbox = self.object_setting_layout.itemAt(i).widget()
+        for i in range(self.object_layout.count()):
+            checkbox = self.object_layout.itemAt(i).widget()
             if checkbox.userData in filtering_object_datas:
                 checkbox.setChecked(True)  # 체크 박스를 체크 상태로 설정
             else:

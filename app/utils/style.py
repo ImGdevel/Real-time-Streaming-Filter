@@ -212,7 +212,7 @@ class Style:
         QPushButton {{
             background-color: {Colors.base_color_06};
             border: 2px solid {Colors.base_color_03};
-            border-top: none;
+            border-top: 2px solid {Colors.base_color_F};
             padding: 5px;
             margin: 0px;
             border-radius: 0px;
@@ -221,8 +221,16 @@ class Style:
         }}
 
         QPushButton:hover {{
-            background-color: {Colors.base_color_05}; 
+            background-color: {Colors.base_color_07}; 
+            border: 2px solid {Colors.base_color_08};
         }}
+        
+        QPushButton:checked::hover {{
+            background-color: {Colors.base_color_04};
+            border: 2px solid {Colors.base_color_03};
+            border-top: 2px solid {Colors.base_color_F};
+        }}
+    
 
         QPushButton:checked {{
             background-color: {Colors.base_color_04};
