@@ -28,21 +28,6 @@ class PathManager:
             pickle.dump(face_data, file)
         pass
 
-    def save_setting_data(self, setting_data):
-        """setting 정보를 파일에 저장"""
-        with open(self.setting_file, 'wb') as file:
-            pickle.dump(setting_data, file)
-
-    def save_filter_data(self, filter_data):
-        """filter 정보를 파일에 저장"""
-        with open(self.filter_file, 'wb') as file:
-            pickle.dump(filter_data, file)
-
-    def save_sticker_images(self, images):
-        """대체 이미지를 저장"""
-        with open(self.sticker_images, 'wb') as file:
-            pickle.dump(images, file)
-
     def load_face_data(self):
         """기존에 등록된 face정보를 로드함"""
         if os.path.exists(self.face_file):
@@ -51,6 +36,11 @@ class PathManager:
             return face_data
         else:
             return []
+
+    def save_setting_data(self, setting_data):
+        """setting 정보를 파일에 저장"""
+        with open(self.setting_file, 'wb') as file:
+            pickle.dump(setting_data, file)
 
     def load_setting_data(self):
         """기존에 등록된 setting정보를 로드함"""
@@ -61,6 +51,11 @@ class PathManager:
         else:
             return []      
 
+    def save_filter_data(self, filter_data):
+        """filter 정보를 파일에 저장"""
+        with open(self.filter_file, 'wb') as file:
+            pickle.dump(filter_data, file)
+
     def load_filter_data(self):
         """기존에 등록된 filter정보를 로드함"""
         if os.path.exists(self.filter_file):
@@ -70,6 +65,16 @@ class PathManager:
         else:
             return []
 
+
+    def known_faces_path(self):
+        """known_faces.pickle 경로"""
+        return self.known_faces
+
+
+    def save_sticker_images(self, images):
+        """대체 이미지를 저장"""
+        with open(self.sticker_images, 'wb') as file:
+            pickle.dump(images, file)
 
     def load_sticker_images(self):
         if os.path.exists(self.sticker_images):
@@ -108,7 +113,3 @@ class PathManager:
         else:
             print("Documents 폴더를 찾을 수 없습니다.")
             return None
-
-    def load_known_faces_path(self):
-        """known_faces.pickle 경로"""
-        return self.known_faces

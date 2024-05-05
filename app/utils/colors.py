@@ -38,6 +38,4 @@ class Colors:
     base_color_X = 'rgb(189, 147, 249)'
     base_color_Y = 'rgb(255, 121, 198)'
     base_color_Z = 'rgb(221, 221, 221)'
-    
-    base_color_F = 'rgba(225, 225, 225, 0)'
 
