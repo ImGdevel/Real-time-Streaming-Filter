@@ -23,23 +23,19 @@ class MosaicSettingWidget(QWidget):
         default_mosaic_layout = QGridLayout()
         default_mosaic_layout.setSpacing(10)
 
-        default_mosaic_layout_label = QLabel("기본 모자이크 설정")
-        default_mosaic_layout_label.setStyleSheet(Style.title_label)
-        default_mosaic_layout.addWidget(default_mosaic_layout_label, 0, 0)
-
-        intensity_label = QLabel("모자이크 강도 ")
+        intensity_label = QLabel("블러 강도 ")
         intensity_slider = QSlider(Qt.Horizontal)
         intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
         
-        slider_value_label = QLabel("0")
+        # slider_value_label = QLabel("0")
         
         default_mosaic_layout.addWidget(intensity_label, 1, 0)
-        default_mosaic_layout.addWidget(slider_value_label, 1, 1, alignment=Qt.AlignRight)
+        #default_mosaic_layout.addWidget(slider_value_label, 1, 1, alignment=Qt.AlignRight)
         default_mosaic_layout.addWidget(intensity_slider, 1, 2, alignment=Qt.AlignRight)
         
 
-        shape_label = QLabel("모자이크 모양 ")
+        shape_label = QLabel("블러 모양")
         shape_combobox = QComboBox()
         shape_combobox.addItems(["사각형", "원형"])
         shape_combobox.currentIndexChanged.connect(self.set_value_drop_down)  # 드롭다운 값 변경 시 이벤트 연결
