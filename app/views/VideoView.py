@@ -44,17 +44,21 @@ class VideoView(QWidget):
         '''설정 위젯에 버튼 추가'''
         list_frame = self.setup_filter_list()
 
-        self.button1 = QPushButton("Test - 인코딩")
+        self.button1 = QPushButton("Encoding")
+        self.button1.setFixedHeight(50)
         self.button1.clicked.connect(self.do_video_encoding)
-        self.button2 = QPushButton("Test - download")
+        self.button2 = QPushButton("Download")
+        self.button2.setFixedHeight(50)
         self.button2.clicked.connect(self.download_video)
-        self.button3 = QPushButton("Test - VideoUpload")
+        self.button3 = QPushButton()
+        self.button3.setIcon(QIcon('./resources/icons/cil-folder-open.png'))
         self.button3.clicked.connect(self.openFileDialog)
+        self.button3.setFixedSize(25, 25)
 
+        self.setting_widget.addSettingButton(self.button3)
         self.setting_widget.addWidget(list_frame)
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
-        self.setting_widget.addSettingButton(self.button3)
         
     def setup_filter_list(self):
         '''필터 리스트 위젯'''
