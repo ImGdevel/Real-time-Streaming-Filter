@@ -33,7 +33,7 @@ class Ui_MainWindow(object):
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
         font = QFont()
-        font.setFamilies([u"\ub9d1\uc740 \uace0\ub515"])
+        font.setFamilies([u"Segoe UI"])
         font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
 "\n"
 "QWidget{\n"
 "	color: rgb(221, 221, 221);\n"
-"	font: 12pt \"\ub9d1\uc740 \uace0\ub515\";\n"
+"	font: 12pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -68,9 +68,9 @@ class Ui_MainWindow(object):
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
 "Bg App */\n"
-"#bgApp {"
-                        "	\n"
-"	background-color: rgb(40, 44, 52);\n"
+"#bgApp {	\n"
+"	background"
+                        "-color: rgb(40, 44, 52);\n"
 "	border: 1px solid rgb(44, 49, 58);\n"
 "}\n"
 "\n"
@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
 "}\n"
 "#topLogo {\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	background-image: url(:/images/resources/images/CAMA_Icon.png);\n"
+"	background-image: url(:/images/resources/images/PyDracula.png);\n"
 "	background-position: centered;\n"
 "	background-repeat: no-repeat;\n"
 "}\n"
@@ -102,8 +102,8 @@ class Ui_MainWindow(object):
 "	background-color: rgb(40, 44, 52);\n"
 "}\n"
 "#topMenu .QPushButton:pressed {	\n"
-"	background-co"
-                        "lor: rgb(189, 147, 249);\n"
+"	background-color: rgb(189, 147"
+                        ", 249);\n"
 "	color: rgb(255, 255, 255);\n"
 "}\n"
 "#bottomMenu .QPushButton {	\n"
@@ -141,8 +141,8 @@ class Ui_MainWindow(object):
 "	background-color: rgb(40, 44, 52);\n"
 "}\n"
 "#toggleButton:pressed {\n"
-"	background-"
-                        "color: rgb(189, 147, 249);\n"
+"	background-color: rgb(189, 1"
+                        "47, 249);\n"
 "}\n"
 "\n"
 "/* Title Menu */\n"
@@ -174,9 +174,9 @@ class Ui_MainWindow(object):
 "#extraCloseColumnBtn:pressed { background-color: rgb(180, 141, 238); border-style: solid; border-radius: 4px; }\n"
 "\n"
 "/* Extra Content */\n"
-"#extraConten"
-                        "t{\n"
-"	border-top: 3px solid rgb(40, 44, 52);\n"
+"#extraContent{\n"
+"	border-to"
+                        "p: 3px solid rgb(40, 44, 52);\n"
 "}\n"
 "\n"
 "/* Extra Top Menus */\n"
@@ -208,8 +208,8 @@ class Ui_MainWindow(object):
 "\n"
 "/* Top Buttons */\n"
 "#rightButtons .QPushButton { background-color: rgba(255, 255, 255, 0); border: none;  border-radius: 5px; }\n"
-"#rightButtons .QPushButton:hover { background-color: rgb(44, 49, 5"
-                        "7); border-style: solid; border-radius: 4px; }\n"
+"#rightButtons .QPushButton:hover { background-color: rgb(44, 49, 57); border-style:"
+                        " solid; border-radius: 4px; }\n"
 "#rightButtons .QPushButton:pressed { background-color: rgb(23, 26, 30); border-style: solid; border-radius: 4px; }\n"
 "\n"
 "/* Theme Settings */\n"
@@ -224,7 +224,7 @@ class Ui_MainWindow(object):
 "/* MENUS */\n"
 "#contentSettings .QPushButton {	\n"
 "	background-position: left center;\n"
-"    background-repeat: no-repeat;\n"
+"       background-repeat: no-repeat;\n"
 "	border: none;\n"
 "	border-left: 22px solid transparent;\n"
 "	background-color:transparent;\n"
@@ -236,8 +236,8 @@ class Ui_MainWindow(object):
 "}\n"
 "#contentSettings .QPushButton:pressed {	\n"
 "	background-color: rgb(189, 147, 249);\n"
-""
-                        "	color: rgb(255, 255, 255);\n"
+"	color: rgb(25"
+                        "5, 255, 255);\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -272,8 +272,8 @@ class Ui_MainWindow(object):
 "QHeaderView::section:horizontal\n"
 "{\n"
 "    border: 1px solid rgb(33, 37, 43);\n"
-"	ba"
-                        "ckground-color: rgb(33, 37, 43);\n"
+"	background-color"
+                        ": rgb(33, 37, 43);\n"
 "	padding: 3px;\n"
 "	border-top-left-radius: 7px;\n"
 "    border-top-right-radius: 7px;\n"
@@ -307,8 +307,8 @@ class Ui_MainWindow(object):
 "	border-radius: 5px;\n"
 "	padding: 10px;\n"
 "	selection-color: rgb(255, 255, 255);\n"
-"	selection-b"
-                        "ackground-color: rgb(255, 121, 198);\n"
+"	selection-background-colo"
+                        "r: rgb(255, 121, 198);\n"
 "}\n"
 "QPlainTextEdit  QScrollBar:vertical {\n"
 "    width: 8px;\n"
@@ -344,10 +344,10 @@ class Ui_MainWindow(object):
 "	border-top-right-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
 "    subcontrol-position: right;\n"
-"    subcontrol-origin: margi"
-                        "n;\n"
+"    subcontrol-origin: margin;\n"
 "}\n"
-"QScrollBar::sub-line:horizontal {\n"
+"Q"
+                        "ScrollBar::sub-line:horizontal {\n"
 "    border: none;\n"
 "    background: rgb(55, 63, 77);\n"
 "    width: 20px;\n"
@@ -382,9 +382,9 @@ class Ui_MainWindow(object):
 "     height: 20px;\n"
 "	border-bottom-left-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
-"     subcontrol-position: bottom"
-                        ";\n"
-"     subcontrol-origin: margin;\n"
+"     subcontrol-position: bottom;\n"
+"     sub"
+                        "control-origin: margin;\n"
 " }\n"
 " QScrollBar::sub-line:vertical {\n"
 "	border: none;\n"
@@ -417,9 +417,9 @@ class Ui_MainWindow(object):
 "}\n"
 "QCheckBox::indicator:checked {\n"
 "    background: 3px solid rgb(52, 59, 72);\n"
-"	border: 3px solid rgb(52, 59, 72"
-                        ");	\n"
-"	background-image: url(:/icons/resources/icons/cil-check-alt.png);\n"
+"	border: 3px solid rgb(52, 59, 72);	\n"
+"	backg"
+                        "round-image: url(:/icons/resources/icons/cil-check-alt.png);\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -452,9 +452,9 @@ class Ui_MainWindow(object):
 "	border: 2px solid rgb(64, 71, 88);\n"
 "}\n"
 "QComboBox::drop-down {\n"
-"	subcontrol-origin: pad"
-                        "ding;\n"
-"	subcontrol-position: top right;\n"
+"	subcontrol-origin: padding;\n"
+"	sub"
+                        "control-position: top right;\n"
 "	width: 25px; \n"
 "	border-left-width: 3px;\n"
 "	border-left-color: rgba(39, 44, 54, 150);\n"
@@ -485,9 +485,9 @@ class Ui_MainWindow(object):
 "}\n"
 "QSlider::handle:horizontal {\n"
 "    background-color: rgb(189, 147, 249);\n"
-"    bord"
-                        "er: none;\n"
-"    height: 10px;\n"
+"    border: none;\n"
+""
+                        "    height: 10px;\n"
 "    width: 10px;\n"
 "    margin: 0px;\n"
 "	border-radius: 5px;\n"
@@ -524,9 +524,9 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
-"CommandLinkButto"
-                        "n */\n"
-"QCommandLinkButton {	\n"
+"CommandLinkButton */\n"
+"QComm"
+                        "andLinkButton {	\n"
 "	color: rgb(255, 121, 198);\n"
 "	border-radius: 5px;\n"
 "	padding: 5px;\n"
@@ -981,7 +981,7 @@ class Ui_MainWindow(object):
         self.maximizeRestoreAppBtn.setMinimumSize(QSize(28, 28))
         self.maximizeRestoreAppBtn.setMaximumSize(QSize(28, 28))
         font3 = QFont()
-        font3.setFamilies([u"\ub9d1\uc740 \uace0\ub515"])
+        font3.setFamilies([u"Segoe UI"])
         font3.setPointSize(12)
         font3.setBold(False)
         font3.setItalic(False)
@@ -1041,7 +1041,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/CAMA_Logo.png);\n"
+        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/PyDracula_vertical.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;")
         self.stackedWidget.addWidget(self.home)
@@ -1510,7 +1510,7 @@ class Ui_MainWindow(object):
         self.creditsLabel.setObjectName(u"creditsLabel")
         self.creditsLabel.setMaximumSize(QSize(16777215, 16))
         font5 = QFont()
-        font5.setFamilies([u"\ub9d1\uc740 \uace0\ub515"])
+        font5.setFamilies([u"Segoe UI"])
         font5.setBold(False)
         font5.setItalic(False)
         self.creditsLabel.setFont(font5)
@@ -1580,17 +1580,17 @@ class Ui_MainWindow(object):
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'\ub9d1\uc740 \uace0\ub515'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#ffffff;\">An interface created using Python and PySide (support for"
-                        " PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#ffffff;\">MIT License</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:10pt; color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; colo"
-                        "r:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zen"
+                        "o Rocha.</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">MIT License</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0"
+                        "px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
         self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"CAMA  Real-time Streaming Filtering Application", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))

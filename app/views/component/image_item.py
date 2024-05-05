@@ -7,17 +7,15 @@ class ImageItem(QWidget):
     delet_signal = Signal(QWidget)
     def __init__(self, file_info):
         super().__init__()
-        self.setContentsMargins(0,0,0,0)
         self.file_data = file_info
+
         file_url = file_info.toLocalFile()
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignCenter)
         self.image_label.setPixmap(QPixmap(file_url).scaled(80, 80))
-        self.image_label.setFixedSize(80,80)
 
         self.name_label = QLabel(file_info.fileName())
         self.name_label.setAlignment(Qt.AlignCenter)
-        self.name_label.setFixedSize(80,20)
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
@@ -55,7 +53,6 @@ class FaceImageItem(QWidget):
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignCenter)
         self.image_label.setPixmap(QPixmap(file_url).scaled(80, 80))
-        self.image_label.setFixedSize(80,100)
 
         self.name_label = QLabel(file_info.fileName())
         self.name_label.setAlignment(Qt.AlignCenter)

@@ -1,16 +1,12 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
-    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog
+    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
-from utils import Colors, Style, Icons
+from utils import Colors, Style
 from controllers import RealStreamProcessor
-from views.component import (
-    FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, 
-    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
-)
-import cv2
+from views.component import FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, MosaicSettingWidget
 
 class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
@@ -42,15 +38,12 @@ class RealStreamView(QWidget):
 
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
-        toolbar = QWidget()  # 툴바 위젯
+        toolbar = ShadowWidget()  # 툴바 위젯
         toolbar.setMaximumWidth(250)  # 크기 설정
-        toolbar.setStyleSheet(Style.frame_style)
-        toolbar.setGraphicsEffect(Style.shadow(toolbar))
-        
+
         # 툴바 레이아웃 설정
         toolbar_layout = QVBoxLayout()
-        toolbar_layout.setContentsMargins(0,0,0,0)
-        
+
         # 상단 핵심 버튼 설정
         core_buttons_widget = self.setup_core_buttons()
         toolbar_layout.addWidget(core_buttons_widget)
@@ -70,7 +63,6 @@ class RealStreamView(QWidget):
         '''상단 핵심 버튼 설정 메서드'''
         frame = QWidget()
         frame.setStyleSheet(Style.frame_style)
-        frame.setGraphicsEffect(Style.shadow(frame))
         frame.setFixedHeight(70)
         
         core_buttons_layout = QHBoxLayout()
@@ -79,7 +71,7 @@ class RealStreamView(QWidget):
         self.play_pause_button = QPushButton()
         self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setStyleSheet(Style.mini_button_style)
-        self.play_pause_button.setIcon(QIcon(Icons.play_button))
+        self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
 
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
@@ -88,14 +80,14 @@ class RealStreamView(QWidget):
         self.stop_button = QPushButton()
         self.stop_button.setFixedSize(50,50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
-        self.stop_button.setIcon(QIcon(Icons.stop_button))
+        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
         self.stop_button.clicked.connect(self.stop_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
         self.new_window_button.setFixedSize(50,50)
         self.new_window_button.setStyleSheet(Style.mini_button_style)
-        self.new_window_button.setIcon(QIcon(Icons.clone))
+        self.new_window_button.setIcon(QIcon('./resources/icons/cil-clone.png'))
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
@@ -112,7 +104,6 @@ class RealStreamView(QWidget):
         frame = QWidget()
         frame.setFixedHeight(140)
         frame.setStyleSheet(Style.frame_style)
-        frame.setGraphicsEffect(Style.shadow(frame))
         
         video_options_layout = QVBoxLayout()
 
@@ -120,20 +111,21 @@ class RealStreamView(QWidget):
         webcam_combo_label = QLabel("Webcam")
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
-        self.webcam_list = self.detect_webcams()
-        self.webcam_combo.addItems(self.webcam_list)
+        self.webcam_combo.addItems(["0", "1"])
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
-
-        self.refreash_webcam_button = QPushButton()
-        self.refreash_webcam_button.setFixedSize(50, 25)
-        self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
-        self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
-        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
+        
+        # 비디오 배율 콤보박스
+        aspect_ratio_combo_label = QLabel("Aspect Ratio")
+        self.aspect_ratio_combo = QComboBox()
+        self.aspect_ratio_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
+        self.aspect_ratio_combo.addItems(["16:9", "3:4", "4:3", "9:16"])
+        self.aspect_ratio_combo.currentIndexChanged.connect(self.change_aspect_ratio)
 
         # 중단 레이아웃 설정
         video_options_layout.addWidget(webcam_combo_label)
         video_options_layout.addWidget(self.webcam_combo)
-        video_options_layout.addWidget(self.refreash_webcam_button)
+        video_options_layout.addWidget(aspect_ratio_combo_label)
+        video_options_layout.addWidget(self.aspect_ratio_combo)
         
         frame.setLayout(video_options_layout)
         return frame
@@ -141,10 +133,9 @@ class RealStreamView(QWidget):
     def setup_filter_list(self):
         '''필터 리스트 위젯'''
         # Filter 목록
-        frame = QWidget()
-        frame.setStyleSheet(Style.list_frame_style)
-        frame.setGraphicsEffect(Style.shadow(frame))
-        layout = QVBoxLayout()
+        list_frame = QWidget()
+        list_frame.setStyleSheet(Style.list_frame_style)
+        list_frame_layout = QVBoxLayout()
         
         list_label = QLabel("필터 목록")
         list_label.setStyleSheet(Style.list_frame_label)
@@ -152,11 +143,11 @@ class RealStreamView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
         
-        layout.addWidget(list_label)
-        layout.addWidget(self.filter_list_widget)
-        frame.setLayout(layout)
+        list_frame_layout.addWidget(list_label)
+        list_frame_layout.addWidget(self.filter_list_widget)
+        list_frame.setLayout(list_frame_layout)
 
-        return frame
+        return list_frame
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
@@ -167,17 +158,8 @@ class RealStreamView(QWidget):
         self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         video_layout.addWidget(self.video_box)
-        self.video_box.setFixedWidth(725)
         frame.setLayout(video_layout)
-
-        self.cam_dialog = QDialog()
-        layer = QGridLayout()
-        self.dialog_videolable = QLabel()
-        self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
-        layer.addWidget(self.dialog_videolable)
-        self.cam_dialog.setLayout(layer)
-
+        
         return frame
         
 
@@ -188,30 +170,26 @@ class RealStreamView(QWidget):
         frame.setGraphicsEffect(Style.shadow(frame))
         
         layout = QHBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
 
         # 각각의 위젯 생성
-        self.setting_01 = RegisteredFacesListWidget()
-        self.setting_02 = ObjectFilterSettngWidget()
-        self.setting_03 = MosaicSettingWidget()
+        widget1 = QWidget()
         
-        self.widget1 = ContentLabeling()
-        self.widget1.setLabel("필터링 인물 관리")
-        self.widget1.setContent(self.setting_01)
+        widget2 = ObjectFilterSettngWidget()
         
-        self.widget2 = ContentLabeling()
-        self.widget2.setLabel("유해 매체 필터링")
-        self.widget2.setContent(self.setting_02)
+        widget3 = MosaicSettingWidget()
         
-        self.widget3 = ContentLabeling()
-        self.widget3.setLabel("모자이크 블러 설정")
-        self.widget3.setContent(self.setting_03)
+        # 각 위젯에 배경색 및 테두리 설정
+        widget1.setStyleSheet(Style.frame_style_line)
+        widget2.setStyleSheet(Style.frame_style_line)
+        widget3.setStyleSheet(Style.frame_style_line)
         
         # 스플리터 생성 및 각 위젯 추가
         splitter = QSplitter()
-        splitter.addWidget(self.widget1)
-        splitter.addWidget(self.widget2)
-        splitter.addWidget(self.widget3)
+        splitter.addWidget(widget1)
+        splitter.addWidget(widget2)
+        splitter.addWidget(widget3)
+        
+        # 스플리터 레이아웃 설정
         splitter.setSizes([300, 200, 200])  # 초기 비율을 3:2:2로 설정
         
         # 레이아웃 설정
@@ -219,8 +197,8 @@ class RealStreamView(QWidget):
         layout.addWidget(splitter)
         
         frame.setLayout(layout)
+        
         return frame
-
 
 
     # method
@@ -229,11 +207,11 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
-                self.play_pause_button.setIcon(QIcon(Icons.play_button))
+                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
             if self.streaming_processor.isRunning():
-                self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
                 self.streaming_processor.stop()
                 self.timer.stop()
                 
@@ -246,20 +224,27 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
-        self.cam_dialog.exec()
         # 웹캠 새장 로직 추가
+        pass
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
-        self.streaming_processor.video_cap = cv2.VideoCapture(index)
         # 웹캠 변경 로직 추가
+        pass
+
+    def change_aspect_ratio(self, index):
+        '''비디오 배율 변경 메서드'''
+        # 비디오 배율 변경 로직 추가
+        pass
 
     def set_filter_option(self, index):
         '''필터 옵션 선택'''
-        print("선택된 필터>>", index)
-        
         self.streaming_processor.set_filter(index)
-        
+        pass
+
+    def update_object_filter(self, list):
+        """콜백 오브젝트 리스트 업데이트"""
+        self.selected_filtering_object = list
         pass
         
     def update_video(self, q_img=None):
@@ -268,7 +253,6 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-        self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
 
     def render(self):
         """페이지 refesh"""
@@ -279,26 +263,3 @@ class RealStreamView(QWidget):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
         self.timer.stop()
-    
-    def detect_webcams(self):
-    # 연결된 카메라 장치를 검색합니다.
-        index = 0
-        name_list = list()
-        while True:
-            cap = cv2.VideoCapture(index)
-            if not cap.read()[0]:
-                break
-            
-            # 장치의 이름을 가져옵니다.
-            name_list.append(str(index))
-            cap.release()
-            index += 1
-        
-        return name_list
-    
-    def refreash_webcam_combox(self):
-        namelist = self.detect_webcams()
-        combox = QComboBox()
-        combox.addItems(namelist)
-        self.webcam_combo = combox
-        self.webcam_combo.currentIndexChanged.connect(self.change_webcam)

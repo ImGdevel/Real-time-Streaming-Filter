@@ -44,14 +44,8 @@ class RealStreamProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        boxesList = self.filtering.video_filtering(frame)    
-        for key in boxesList.keys():
-            if key == -1:
-                processed_frame = self.filtering.elliptical_blur(frame, boxesList[key])
-            elif key == -2:
-                processed_frame = self.filtering.blur(frame, boxesList[key])
-            else:
-                processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
+        boxesList, customs = self.filtering.video_filtering(frame)    
+        processed_frame = self.filtering.elliptical_blur(frame, boxesList)
     
         return processed_frame
     
@@ -61,6 +55,7 @@ class RealStreamProcessor(QThread):
             current_filter = self.filter_manager.get_filter(filter)
             print("현제 적용 필터 :",  current_filter)
             self.filtering.set_filter(current_filter)
+            self.filtering.tracking_id_init()
 
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
