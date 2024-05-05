@@ -91,7 +91,13 @@ class Filtering:
         results = self.filter_state_check(results)
 
         results = self.object_filter(img, results)
-            
+        for key, result in results.items():
+            boxes = []
+            for value in result:
+                if len(value) != 0:
+                    box = [value[0][0], value[0][1], value[0][0]+value[0][2], value[0][1]+value[0][3]]
+                    boxes.append(box)
+            results[key] = boxes
         return results
     
     def video_filtering(self, img):
