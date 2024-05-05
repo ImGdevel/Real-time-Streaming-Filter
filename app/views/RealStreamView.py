@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
-from utils import Colors, Style
+from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor
 from views.component import (
     FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, 
@@ -79,7 +79,7 @@ class RealStreamView(QWidget):
         self.play_pause_button = QPushButton()
         self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setStyleSheet(Style.mini_button_style)
-        self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        self.play_pause_button.setIcon(QIcon(Icons.play_button))
 
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
@@ -88,14 +88,14 @@ class RealStreamView(QWidget):
         self.stop_button = QPushButton()
         self.stop_button.setFixedSize(50,50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
-        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
+        self.stop_button.setIcon(QIcon(Icons.stop_button))
         self.stop_button.clicked.connect(self.stop_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
         self.new_window_button.setFixedSize(50,50)
         self.new_window_button.setStyleSheet(Style.mini_button_style)
-        self.new_window_button.setIcon(QIcon('./resources/icons/cil-clone.png'))
+        self.new_window_button.setIcon(QIcon(Icons.clone))
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
@@ -127,7 +127,7 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button = QPushButton()
         self.refreash_webcam_button.setFixedSize(50, 25)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
-        self.refreash_webcam_button.setIcon(QIcon('./resources/icons/cil-reload.png'))
+        self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
         self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
 
         # 중단 레이아웃 설정
@@ -229,11 +229,11 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
-                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+                self.play_pause_button.setIcon(QIcon(Icons.play_button))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
             if self.streaming_processor.isRunning():
-                self.play_pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
+                self.play_pause_button.setIcon(QIcon(Icons.puse_button))
                 self.streaming_processor.stop()
                 self.timer.stop()
                 

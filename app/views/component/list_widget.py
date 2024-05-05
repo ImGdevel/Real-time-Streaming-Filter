@@ -8,7 +8,7 @@ from PySide6.QtGui import QColor, QIcon
 from controllers import FilterSettingController, PersonFaceSettingController
 from .sticker_attach_dialog import StickerRegisteredDialog
 
-from utils import Colors, Style
+from utils import Colors, Style, Icons
 
 class ListWidget(QListWidget):
     onClickItemEvent = Signal(str)
@@ -158,13 +158,13 @@ class RegisteredFacesListWidget(ListWidget):
         button.clicked.connect(self.emit_button_clicked)
         
         button02 = QPushButton()
-        button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
+        button02.setIcon(QIcon(Icons.smiley_sticker))
         button02.setFixedSize(40,40)
         button02.setStyleSheet(Style.list_button_style_none_line)
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
-        button03.setIcon(QIcon('./resources/icons/Orion_bin'))
+        button03.setIcon(QIcon(Icons.dust_bin))
         button03.setFixedSize(40,40)
         button03.setStyleSheet(Style.list_button_style_none_line)
         button03.clicked.connect(lambda: self.remove_button(widget.userData))

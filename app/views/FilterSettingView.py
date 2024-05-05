@@ -10,7 +10,7 @@ from views.component import (
     TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
 )
 from controllers import FilterSettingController, PersonFaceSettingController
-from utils import Colors, Style
+from utils import Colors, Style, Icons
 
 
 class FilterSettingView(QWidget):
@@ -75,13 +75,13 @@ class FilterSettingView(QWidget):
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton()
-        add_button.setIcon(QIcon('./resources/icons/cil-plus.png'))
+        add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
         
         delete_button = QPushButton()
-        delete_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
+        delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
         delete_button.clicked.connect(self.delete_filter)
