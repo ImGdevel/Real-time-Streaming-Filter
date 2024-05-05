@@ -22,10 +22,6 @@ class FilterSettingView(QWidget):
         self.face_setting_processor.load_person_faces()
         
         self.current_filter = None
-        self.current_filter_object_list = [] 
-        self.current_filter_face_list = None
-        self.current_filter_mosaic_strength = None
-        self.current_filter_mosaic_shape = None
 
         self.initUI()
 
@@ -35,16 +31,18 @@ class FilterSettingView(QWidget):
 
         # 왼쪽 레이어 - Filter List
         left_layout = self.setup_left_layer()
-
+        
         # 오른쪽 레이어 - Filter Setting
-        self.right_layout = self.setup_right_layer()
-
-        self.empty_layout = QWidget()
+        empty_layout = QWidget()
+        right_layout = self.setup_right_layer()
+        
+        self.stacked_layout = QStackedWidget()
+        self.stacked_layout.addWidget(right_layout)
+        self.stacked_layout.addWidget(empty_layout)
 
         # 전체 레이아웃에 왼쪽과 오른쪽 레이어 추가
         layout.addWidget(left_layout, 1)
-        layout.addWidget(self.right_layout, 4)
-        layout.addWidget(self.empty_layout, 4)
+        layout.addWidget(self.stacked_layout, 4)
         self.show_filter_setting_page(False)
 
         self.setLayout(layout)
@@ -152,7 +150,6 @@ class FilterSettingView(QWidget):
         face_widget.setLayout(self.setup_face_layout())
 
         self.object_filter_widget = ObjectFilterSettngWidget()
-        self.object_filter_widget.onEventUpdateCheckbox.connect(self.update_object_filter)
         
         mosaic_setting_widget = MosaicSettingWidget()
 
@@ -284,8 +281,6 @@ class FilterSettingView(QWidget):
         face_layout.addWidget(face_label)
         face_layout.addWidget(face_setting_widget)
 
-
-        
         self.person_face_setting_window = PersonFaceDialog()
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
         
@@ -295,11 +290,10 @@ class FilterSettingView(QWidget):
     def show_filter_setting_page(self, is_show):
         """윈도우 디스플레이 결정"""
         if is_show:
-            self.right_layout.show()
-            self.empty_layout.hide()
+            self.stacked_layout.setCurrentIndex(0)
         else:
-            self.right_layout.hide()
-            self.empty_layout.show()
+            self.stacked_layout.setCurrentIndex(1)
+
             
         # 현재 필터로 창 업데이트
     def set_current_filter(self, filter_name = None):
@@ -318,8 +312,6 @@ class FilterSettingView(QWidget):
             self.current_filter = filter_name
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
-            self.current_filter_face_list = filter_data.face_filter
-            self.current_filter_object_list = filter_data.object_filter
             self.setup_setting_page(0)
             
             self.show_filter_setting_page(True)
@@ -356,18 +348,13 @@ class FilterSettingView(QWidget):
     # 인물 등록창 Open
     def open_person_face_setting_dialog(self):
         """얼굴 추가 창을 띄운다."""
-        self.person_face_setting_window.show()
+        self.person_face_setting_window.exec()
 
     # 얼굴 수정 사항 완료시
     def update_person_face_setting_dialog_event(self):
         """available_faces_list_widget 업데이트 메서드"""
         self.available_faces_list_widget.update_list()
         self.registered_faces_list_widget.update_list()
-
-    # 오브젝트 필터 업데이트
-    def update_object_filter(self, list):
-        """콜백 오브젝트 리스트 업데이트"""
-        self.current_filter_object_list = list
 
     # 필터 이름 업데이트
     def update_filter_name(self, new_name):
@@ -386,6 +373,7 @@ class FilterSettingView(QWidget):
     # 필터 정보 저장
     def apply_filter_settings(self):
         """세팅된 필터링 정보 저장"""
+        return
         # registered_faces_list_widget의 내용 가져오기
         updated_face_filter = self.registered_faces_list_widget.get_items_data()
         updated_filtering_object = self.current_filter_object_list
