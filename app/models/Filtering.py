@@ -20,7 +20,6 @@ class Filtering:
         filtering: 감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
         blur: boxesList에 지정된 관심 영역에 블러를 적용합니다.
     """
-    
     def __init__(self):
         """
         Filtering 클래스를 초기화합니다.
