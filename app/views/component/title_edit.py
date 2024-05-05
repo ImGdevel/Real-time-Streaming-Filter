@@ -23,8 +23,10 @@ class TitleEdit(QWidget):
         self.filter_name_line_edit.setStyleSheet(Style.line_edit_style)
         self.filter_name_line_edit.hide()  # Hide initially
 
-        self.title_edit_button = QPushButton("edit")
+        self.title_edit_button = QPushButton("변경")
         self.title_edit_button.setMaximumWidth(70)
+        self.title_edit_button.setFixedSize(60,30)
+        self.title_edit_button.setStyleSheet(Style.mini_button_style)
         self.title_edit_button.clicked.connect(self.toggle_edit_mode)
 
         title_layout.addWidget(self.tiltle_label)
@@ -45,8 +47,8 @@ class TitleEdit(QWidget):
 
     def set_edit_mode(self):
         self.edit_mode = True
-        self.title_edit_button.setText("save")
-
+        self.title_edit_button.setText("저장")
+        
         self.filter_name_line_edit.setText(self.tiltle_label.text())
         filter_name_layout = self.tiltle_label.parentWidget().layout()
         filter_name_layout.replaceWidget(self.tiltle_label, self.filter_name_line_edit)
@@ -55,7 +57,7 @@ class TitleEdit(QWidget):
 
     def set_show_mode(self):
         self.edit_mode = False
-        self.title_edit_button.setText("edit")
+        self.title_edit_button.setText("변경")
         self.onEditEvent.emit(self.filter_name_line_edit.text())  # Emit signal
         
         # Update label text and layout

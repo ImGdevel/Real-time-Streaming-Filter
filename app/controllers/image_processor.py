@@ -28,8 +28,7 @@ class ImageProcessor():
             # 이미지 처리 
             #blur_ratio = 50
 
-            boxesList, customs = self.filtering.filtering(image)
-
+            boxesList = self.filtering.filtering(image)
             processed_image = self.filtering.blur(image, boxesList)
             
 
@@ -47,7 +46,6 @@ class ImageProcessor():
     def filtering_images_to_dict(self, image_paths, progress_dialog):
         total_elements = len(image_paths)
         processed_images_dict = {}
-
         for i, image_path in enumerate(image_paths):
             #다이얼로그 처리
             progress = ((i + 1) / total_elements) * 100
@@ -61,11 +59,14 @@ class ImageProcessor():
             # 이미지 처리 
             blur_ratio = 50
 
-            boxesList, customs = self.filtering.filtering(image)
-
-            processed_image = self.filtering.blur(image, boxesList)
-            
-
+            boxesList = self.filtering.filtering(image)
+            for key in boxesList.keys():
+                if key == -1:
+                    processed_image = self.filtering.elliptical_blur(image, boxesList[key])
+                elif key == -2:
+                    processed_image = self.filtering.blur(image, boxesList[key])
+                else:
+                    processed_image = self.filtering.face_sticker(image, boxesList[key], key)
             
             processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
             height, width, channel = processed_image.shape
