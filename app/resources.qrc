@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="images">
-    <file>resources/images/PyDracula.png</file>
-    <file>resources/images/PyDracula_vertical.png</file>
+    <file>resources/images/CAMA_Icon.png</file>
+    <file>resources/images/CAMA_Logo.png</file>
   </qresource>
   <qresource prefix="icons">
     <file>resources/icons/cil-3d.png</file>

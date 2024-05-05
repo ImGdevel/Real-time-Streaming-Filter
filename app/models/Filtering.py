@@ -7,7 +7,6 @@ from .filter_info import Filter
 from .path_manager import PathManager
 import cv2
 import numpy as np
-from typing import Optional
 
 class Filtering:
     """
@@ -33,10 +32,43 @@ class Filtering:
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
-        self.known_faces: Optional[dict] = None
+        known_faces = None
 
         self.current_filter_info = None
+        self.change_filter_info = None
         self.init_id = False
+        self.filter_change = False
+
+    def face_filter(self, img, results):
+        results[-1] = []
+        known_face_ids = []
+        for name in self.current_filter_info.face_filter.keys():
+            known_face_ids.append(name)
+            results[name] = []
+
+        origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
+        for result in origins:  # 수정: isFace를 is_face로 변경                
+            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
+            if self.current_filter_info.face_filter_on is True:
+                if result[2] == "Human face":
+                    face_encode = face_encoding_box(img, box)
+                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                    is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
+                    if is_known is not None: 
+                        results[int(is_known)].append(result)
+                    else:
+                        results[-1].append(result)
+        return results
+    
+    def object_filter(self, img, results):
+        results[-2] = []
+
+        customs = self.object.custom_detect(img)
+        for result in customs:
+            if result[2] in self.current_filter_info.object_filter:
+                box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
+                results[-2].append(box)
+        return results
 
     def filtering(self, img):
         """
@@ -51,71 +83,39 @@ class Filtering:
             list: 감지된 객체의 바운딩 박스 목록입니다.
         """
         if self.current_filter_info is None:
-            return []
-        results = []
-        known_faces_id = []
-        for name in self.current_filter_info.face_filter.keys():
-            known_faces_id.append(name)
+            return dict()
 
-        origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
-        for result in origins:  # 수정: isFace를 is_face로 변경                
-            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            if self.current_filter_info.face_filter_on is True:
-                if result[2] == "Human face":
-                    # print("사람 얼굴일 경우")
-                    face_encode = face_encoding_box(img, box)
-                    person_name = is_known_person(known_faces_id, face_encode, self.known_faces)
-                    if person_name:
-                        known_faces_id.append(person_name)
-                    results.append(box)
+        results = dict()
+        results = self.face_filter(img, results)
+        
+        results = self.filter_state_check(results)
 
-        customs = self.object.custom_detect(img)
-        for result in customs:
-            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            if result[2] in self.current_filter_info.object_filter:
-                results.append(box)
-            
-        return results, customs
+        results = self.object_filter(img, results)
+        for key, result in results.items():
+            boxes = []
+            for value in result:
+                if len(value) != 0:
+                    box = [value[0][0], value[0][1], value[0][0]+value[0][2], value[0][1]+value[0][3]]
+                    boxes.append(box)
+            results[key] = boxes
+        return results
     
     def video_filtering(self, img):
         if self.current_filter_info is None:
-            return []
+            return dict()
 
-        results = []
-        known_faces_id = []
-        known_face_boxes = []
-        for name in self.current_filter_info.face_filter.keys():
-            known_faces_id.append(name)
+        results = dict()
+        results = self.face_filter(img, results)
 
-        origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
-        for result in origins:  # 수정: isFace를 is_face로 변경                
-            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            # print(result[2])
-            if self.current_filter_info.face_filter_on is True:
-                if result[2] == "Human face":
-                    # print("사람 얼굴일 경우")
-                    face_encode = face_encoding_box(img, box)
-                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known = is_known_person(known_faces_id, face_encode, self.known_faces)
-                    if is_known: 
-                        known_face_boxes.append(box)
-                    results.append(result)
-                    continue
-        
         if len(results) != 0:
-            results = self.object.object_track(img, results, known_face_boxes)
+            results = self.object.object_track(img, results)
         if self.init_id is True:
             self.object.init_exclude_id()
             self.init_id = False
 
+        results = self.filter_state_check(results)
 
-
-        customs = self.object.custom_detect(img)
-        for result in customs:
-            if result[2] in self.current_filter_info.object_filter:
-                box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-                results.append(box)
-        
+        results = self.object_filter(img, results)
 
         return results
     
@@ -183,18 +183,19 @@ class Filtering:
             img[y1:y2, x1:x2] = obj
         return img
     
-    def face_sticker(self, img, boxesList, replace_img_id):
+    def face_sticker(self, img, boxesList, face_id):
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            w = x2-x1
-            h = y2-y1
-            
-            x_center = int((x1+x2)/2)
-            y_center = int((y1+y2)/2)
+            w = x2 - x1
+            h = y2 - y1
 
+            x_center = int((x1 + x2) / 2)
+            y_center = int((y1 + y2) / 2)
 
+            replace_img_id = self.current_filter_info.face_filter[face_id]
             replace_img = self.stickerManager.load_img_to_id(replace_img_id)
-            r_h,r_w = replace_img.shape[:2]
+            r_h, r_w = replace_img.shape[:2]
+
             if w > h:
                 aspect_ratio = w / r_w
             else:
@@ -202,41 +203,44 @@ class Filtering:
 
             n_w = int(r_w * aspect_ratio)
             n_h = int(r_h * aspect_ratio)
-            # print("n_w : ",n_w)
-            # print("n_h : ",n_h)
-
 
             replace_img_resized = cv2.resize(replace_img, (n_w, n_h))
-            resize_x1 = x_center-int(n_w/2)
-            resize_x2 = x_center+int(n_w/2)+1
-            resize_y1 = y_center-int(n_h/2)
-            resize_y2 = y_center+int(n_h/2)+1
-            # print(replace_img_resized.shape)
+            resize_x1 = x_center - int(n_w / 2)
+            resize_x2 = x_center + int(n_w / 2)
+            resize_y1 = y_center - int(n_h / 2)
+            resize_y2 = y_center + int(n_h / 2)
 
-            # print("resize_x", resize_x1, " ", resize_x2)
-            # print("resize_y", resize_y1, " ", resize_y2)
+            # 경계 검사 후 보정
+            if resize_x1 < 0:
+                resize_x1 = 0
+            if resize_x2 > img.shape[1]:
+                resize_x2 = img.shape[1]
 
-            if resize_y2-resize_y1 != n_h:
-                resize_y2 -= 1
-            if resize_x2-resize_x1 != n_w:
-                resize_x2 -= 1
+            if resize_y1 < 0:
+                resize_y1 = 0
+            if resize_y2 > img.shape[0]:
+                resize_y2 = img.shape[0]
 
             for c in range(0, 3):
-                # 원본 이미지에서 얼굴 영역 추출
-
                 roi = img[resize_y1:resize_y2, resize_x1:resize_x2, c]
-                # print(roi.shape)
-                # 스티커 이미지 합성
-                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (1.0 - replace_img_resized[:, :, 3] / 255.0) + replace_img_resized[:, :, c] * (replace_img_resized[:, :, 3] / 255.0)
-            
-            # 알파채널 없이
-            # for c in range(0, 3):
-            #     # 스티커 이미지 합성
-            #     img[y1:y2, x1:x2, c] = replace_img_resized[:, :, c]
+                replace_img_resized_resized = cv2.resize(replace_img_resized, (roi.shape[1], roi.shape[0]))
+                img[resize_y1:resize_y2, resize_x1:resize_x2, c] = roi * (
+                        1.0 - replace_img_resized_resized[:, :, 3] / 255.0) + replace_img_resized_resized[:, :, c] * (
+                                                                                replace_img_resized_resized[:, :, 3] / 255.0)
 
         return img
     
     def set_filter(self, current_filter:Filter = None):
+        """변경될 필터 정보를 전달하고 필터를 변경해야 하는 상태라고 저장한다"""
+        if self.current_filter_info is None:
+            self.change_filter(current_filter)
+            return
+        self.change_filter_info = current_filter
+        self.filter_change = True
+        self.tracking_id_init()
+
+    def change_filter(self, current_filter:Filter = None):
+        """필터를 변경한다"""
         if current_filter is None :
             self.current_filter_info = Filter("test")
         else :
@@ -245,11 +249,23 @@ class Filtering:
                 if "Human face" not in self.current_filter_info.object_filter:
                     self.current_filter_info.object_filter.append("Human face")
             self.object.set_filter_classes(self.current_filter_info.object_filter)
-        
-        self.known_faces = set_known_faces(self.pathManeger.known_faces_path())
-        
+            self.object.set_known_faces(current_filter.face_filter.keys())
+
+    def filter_state_check(self, results):
+        """filter가 변경됐는지 확인하고 변경사항을 적용한다."""
+        if self.filter_change is True:
+            self.change_filter(self.change_filter_info)
+            self.change_filter_info = None
+            self.filter_change = False
+            temp = []
+            for values in results.values():
+                temp.extend(values)
+            results = dict()
+            results[-1] = temp
+        return results
 
     def tracking_id_init(self):
+        """저장된 track_id 정보를 초기화한다."""
         self.init_id = True
             
 

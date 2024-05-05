@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QLi
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QPixmap, QIcon, QImage
 from models import StickerManager
-from utils import Style
+from utils import Style, Icons
 import cv2
 import numpy as np
 
@@ -30,7 +30,7 @@ class StickerRegisteredDialog(QDialog):
 
         register_button = QPushButton()
         register_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
-        register_button.setIcon(QIcon('./resources/icons/cil-folder-open'))
+        register_button.setIcon(QIcon(Icons.folder_open))
         register_button.setFixedSize(40, 40)
         register_button.clicked.connect(self.open_image)
         main_layout.addWidget(register_button)

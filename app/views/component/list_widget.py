@@ -8,15 +8,16 @@ from PySide6.QtGui import QColor, QIcon
 from controllers import FilterSettingController, PersonFaceSettingController
 from .sticker_attach_dialog import StickerRegisteredDialog
 
-from utils import Colors, Style
+from utils import Colors, Style, Icons
 
 class ListWidget(QListWidget):
     onClickItemEvent = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSpacing(15)
+        self.setSpacing(10)
         self.setStyleSheet(Style.list_widget_style)
+        self.setContentsMargins(0,0,0,0)
         self.current_item = None
 
     def add_item(self, item_name: str, item_data = None):
@@ -131,7 +132,7 @@ class RegisteredFacesListWidget(ListWidget):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
         self.filter_name = None
-        self.setSpacing(10)
+        self.setSpacing(4)
     
     def create_button(self, item_name: str, item_data = None):
         widget = QWidget()
@@ -147,25 +148,27 @@ class RegisteredFacesListWidget(ListWidget):
         
         frame_layout = QHBoxLayout()
         frame_layout.setContentsMargins(0,0,0,0)
+        frame_layout.setSpacing(0)
         
         button = QPushButton(item_name)
         button.setObjectName(item_name)
-        button.setStyleSheet(Style.list_button_style)
+        button.setStyleSheet(Style.list_button_style_none_line)
         button.setMinimumHeight(40)
         
         button.clicked.connect(self.emit_button_clicked)
         
         button02 = QPushButton()
-        button02.setIcon(QIcon('./resources/icons/cil-smiley-sticker'))
+        button02.setIcon(QIcon(Icons.smiley_sticker))
         button02.setFixedSize(40,40)
-        button02.setStyleSheet(Style.mini_button_style)
-        button02.setGraphicsEffect(Style.shadow(button02)) 
+        button02.setStyleSheet(Style.list_button_style_none_line)
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
+        button03.setIcon(QIcon(Icons.dust_bin))
         button03.setFixedSize(40,40)
-        button03.setStyleSheet(Style.mini_button_style)
-        button03.setGraphicsEffect(Style.shadow(button03)) 
+        button03.setStyleSheet(Style.list_button_style_none_line)
+        button03.clicked.connect(lambda: self.remove_button(widget.userData))
+        #버튼 자기 자신을 삭제
         
         frame_layout.addWidget(button)
         frame_layout.addWidget(button02)
@@ -187,6 +190,11 @@ class RegisteredFacesListWidget(ListWidget):
                 self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
                 self.sticker_dialog.exec_()
                 
+    def remove_button(self, button_widget):
+        print(button_widget)
+        self.filter_setting_processor.delete_face_in_filter(self.filter_name, int(button_widget))
+        self.update_list()
+                
     
     def register_sticker(self, person_id, sticker_id):
         self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
@@ -204,7 +212,7 @@ class RegisteredFacesListWidget(ListWidget):
         self.filter_name = filter
 
     def register_person_faces(self, person_id):
-        self.filter_setting_processor.add_face_in_face_filter(self.filter_name, person_id)
+        self.filter_setting_processor.add_face_in_filter(self.filter_name, person_id)
 
     def update_list(self):
         self.clear()
