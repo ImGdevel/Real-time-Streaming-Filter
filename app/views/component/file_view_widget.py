@@ -26,9 +26,9 @@ class FileViewWidget(QWidget):
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.file_view_label = QLabel()
         self.scroll_widget = QWidget()
+        self.file_view_label.setContentsMargins(0,0,0,0)
         self.file_box_layout = QHBoxLayout()
         self.scroll_layout = QHBoxLayout(self.scroll_widget)
-        self.scroll_layout.addStretch()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.scroll_widget)
         self.file_box_layout.addWidget(self.scroll_area)
@@ -93,9 +93,10 @@ class FileViewWidget(QWidget):
         for i, file_info in enumerate(urls):
             file_widget = ImageItem(file_info)
             file_widget.delet_signal.connect(self.removeFile)
-            file_widget.setFixedSize(100, 100)
+            file_widget.setFixedSize(120, 120)
             self.scroll_layout.addWidget(file_widget)
             self.count += 1
+        self.scroll_layout.addStretch()
 
     def removeFile(self, widget):
         if self.remove_mode:
