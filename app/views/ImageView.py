@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QThread, Signal
-from .component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget
+from views.component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget, ContentLabeling
 from controllers import ImageProcessor
-from utils import Colors
+from utils import Colors, Style
 
 class ImageView(QWidget):
     
@@ -23,11 +23,7 @@ class ImageView(QWidget):
         self.setAcceptDrops(True)
         self.count = 0
         # 전체 레이아웃 설정
-        self.layout = QVBoxLayout()
-
-        self.top_widget = QWidget()
-        self.top_layout = QHBoxLayout()
-        self.top_layout.setSpacing(1)
+        layout = QGridLayout()
 
         #dropbox 위젯
         self.dropbox_widget = DragDropLabel()
@@ -43,42 +39,51 @@ class ImageView(QWidget):
         self.file_view_widget.drop_signal.connect(self.addItemFileView)
         self.file_view_widget.image_change.connect(self.changeImage)
 
-        self.setting_frame = QWidget()
+        setting_frame = QWidget()
+        setting_frame.setStyleSheet(Style.frame_style)
+        setting_frame.setGraphicsEffect(Style.shadow(setting_frame))
+        
         self.setting_widget = SettingWidget()
+
 
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
-        self.filter_list_widget.setMinimumHeight(275)
-        self.setting_widget.addWidget(self.filter_list_widget)
         
-        self.Encoding_button = QPushButton("Encoding")
-        self.Encoding_button.setFixedHeight(50)
-        self.Encoding_button.clicked.connect(self.Encoding)
-        self.setting_widget.addSettingButton(self.Encoding_button)
-
-        self.download_button = QPushButton("Download")
-        self.download_button.setFixedHeight(50)
-        self.download_button.clicked.connect(self.Download)
-        self.setting_widget.addWidget(self.download_button)
+        content_label = ContentLabeling()
+        content_label.setLabel("필터 목록")
+        content_label.setContent(self.filter_list_widget)
+        content_label.setContentMargin(0,0,0,0)
         
-        self.setting_frame.setMinimumSize(100, 150)
-        self.setting_frame.setMaximumWidth(235)
-        self.setting_layout = QVBoxLayout()
-        self.setting_layout.addWidget(self.setting_widget)
-        self.setting_frame.setLayout(self.setting_layout)
+        self.setting_widget.addWidget(content_label)
+        
+        encoding_button = QPushButton("Encoding")
+        encoding_button.setFixedHeight(40)
+        encoding_button.setStyleSheet(Style.mini_button_style)
+        encoding_button.clicked.connect(self.Encoding)
+        self.setting_widget.addSettingButton(encoding_button)
 
-        self.top_layout.addWidget(self.dropbox_widget)
-        self.top_layout.addWidget(self.setting_frame)
-        self.top_widget.setLayout(self.top_layout)
-        self.layout.addWidget(self.top_widget)
-        self.layout.addWidget(self.file_view_widget)
+        download_button = QPushButton("Download")
+        download_button.setFixedHeight(40)
+        download_button.setStyleSheet(Style.mini_button_style)
+        download_button.clicked.connect(self.Download)
+        self.setting_widget.addWidget(download_button)
+        
+        setting_frame.setMinimumSize(100, 150)
+        setting_frame.setMaximumWidth(235)
+        setting_layout = QVBoxLayout()
+        setting_layout.setContentsMargins(0,0,0,0)
+        setting_layout.addWidget(self.setting_widget)
+        setting_frame.setLayout(setting_layout)
+        
+        layout.addWidget(self.dropbox_widget, 0, 0)
+        layout.addWidget(setting_frame, 0, 1)
+        layout.addWidget(self.file_view_widget, 1, 0, 1, 2)
 
-        self.setLayout(self.layout)
+        layout.setRowStretch(0, 2)
+        layout.setRowStretch(1, 1)
 
-    def render(self):
-        """페이지 refesh"""
-        self.filter_list_widget.update_list()
-        pass
+        self.setLayout(layout)
+
     
     def removeUrl(self, url):
         i = int()
@@ -152,5 +157,7 @@ class ImageView(QWidget):
         
         return origin_urls
         
-
-   
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_list()
+        pass
