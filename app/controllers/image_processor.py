@@ -1,3 +1,4 @@
+import time
 import cv2
 import os
 import numpy as np
@@ -44,20 +45,22 @@ class ImageProcessor():
         return processed_images
 
     #원본 사진을 받아서 임시로 이미지 처리
-    def filtering_images_to_dict(self, image_paths, progress_dialog):
+    def filtering_images_to_dict(self, image_paths, progress_dialog = None):
         total_elements = len(image_paths)
         processed_images_dict = {}
 
+        print("CheckPoint 4")
         for i, image_path in enumerate(image_paths):
+            print("CheckPoint 5")
             #다이얼로그 처리
-            progress = ((i + 1) / total_elements) * 100
-            progress_dialog.setValue(progress)
-            QApplication.processEvents()
-            if progress_dialog.wasCanceled():
-                return dict()
+            #progress = ((i + 1) / total_elements) * 100
+            #progress_dialog.setValue(progress)
+            #QApplication.processEvents()
+            #if progress_dialog.wasCanceled():
+            #   return dict()
             # 이미지 읽어오기
             image = cv2.imread(image_path)
-            
+            print("CheckPoint 6")
             # 이미지 처리 
             blur_ratio = 50
 
@@ -66,12 +69,13 @@ class ImageProcessor():
             processed_image = self.filtering.blur(image, boxesList)
             
 
-            
+            print("CheckPoint 7")
             processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
             height, width, channel = processed_image.shape
             bytes_per_line = 3 * width
+            print("CheckPoint 8")
             q_img = QImage(processed_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
-
+            print("CheckPoint 9")
             processed_images_dict[image_path] = q_img
 
 

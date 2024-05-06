@@ -56,8 +56,9 @@ class Filtering:
         known_faces_id = []
         for name in self.current_filter_info.face_filter.keys():
             known_faces_id.append(name)
-
+        print("CheckPoint 10")
         origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
+        print("CheckPoint 11")
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             if self.current_filter_info.face_filter_on is True:
@@ -68,13 +69,13 @@ class Filtering:
                     if person_name:
                         known_faces_id.append(person_name)
                     results.append(box)
-
+        print("CheckPoint 12")
         customs = self.object.custom_detect(img)
         for result in customs:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             if result[2] in self.current_filter_info.object_filter:
                 results.append(box)
-            
+        print("CheckPoint 13")
         return results, customs
     
     def video_filtering(self, img):

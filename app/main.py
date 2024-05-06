@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 import os
 import platform
@@ -13,6 +14,15 @@ os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 widgets = None
 
 class MainWindow(QMainWindow):
+
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(MainWindow, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -166,6 +176,9 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
 if __name__ == "__main__":
+        # Windows에서 스크립트 실행 시 멀티프로세스 코드를 지원하기 위해 필요한 코드
+    if platform.system() == "Windows":
+        multiprocessing.freeze_support()
     app = QApplication(sys.argv)
 
     window = MainWindow()

@@ -106,18 +106,22 @@ class ImageView(QWidget):
             self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
 
     def Encoding(self):
+        print("CheckPoint 0")
         url_list = self.UrlListConverter(self.urls)
+        print("CheckPoint 1")
         if url_list:
-            progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
-            progress_dialog.setWindowModality(Qt.WindowModal)
+            #progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+            #progress_dialog.setWindowModality(Qt.WindowModal)
             # progress_dialog.setStyleSheet('''
             #     background-color: #333333; /* Dark gray background */
             #     color: #FFFFFF; /* White text */
             #     font-size: 16px; /* Font size */
             #     padding: 20px; /* Padding */
             # ''')
-            progress_dialog.show()
-            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
+            #progress_dialog.show()
+            print("CheckPoint 2")
+            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list)
+            print("CheckPoint 3")
             #print(self.filtered_image)
     
     def Download(self):
