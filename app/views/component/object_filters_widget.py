@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize, Signal
 from controllers import FilterSettingController
-from views.component import FilterListWidget, ShadowWidget, FrameWidget
+from views.component import FilterListWidget, ShadowWidget
 
 class ObjectFilterSettngWidget(QWidget):
     onEventUpdateCheckbox = Signal(list)

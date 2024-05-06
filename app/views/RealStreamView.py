@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QTimer, QSize
 from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor
 from views.component import (
-    FilterListWidget, ShadowWidget, FrameWidget, ObjectFilterSettngWidget, 
+    FilterListWidget, ShadowWidget, ObjectFilterSettngWidget, 
     MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
 )
 import cv2

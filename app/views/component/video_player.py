@@ -4,6 +4,7 @@ from PySide6.QtMultimedia import QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtGui import QIcon, QDragEnterEvent, QDropEvent
 from PySide6.QtCore import QUrl, Qt, Signal
+from utils import Icons, Style
 
 class VideoPlayer(QWidget):
     setPlayVideo = Signal(str)
@@ -26,17 +27,17 @@ class VideoPlayer(QWidget):
 
         self.start_button = QPushButton()
         self.start_button.setFixedSize(30,30)
-        self.start_button.setIcon(QIcon('./resources/icons/cil-media-play.png'))
+        self.start_button.setIcon(QIcon(Icons.play_button))
         self.start_button.clicked.connect(self.start_video)
 
         self.pause_button = QPushButton()
         self.pause_button.setFixedSize(30,30)
-        self.pause_button.setIcon(QIcon('./resources/icons/cil-media-pause.png'))
+        self.pause_button.setIcon(QIcon(Icons.puse_button))
         self.pause_button.clicked.connect(self.pause_video)
 
         self.stop_button = QPushButton()
         self.stop_button.setFixedSize(30,30)
-        self.stop_button.setIcon(QIcon('./resources/icons/cil-media-stop.png'))
+        self.stop_button.setIcon(QIcon(Icons.stop_button))
         self.stop_button.clicked.connect(self.stop_video)
     
         

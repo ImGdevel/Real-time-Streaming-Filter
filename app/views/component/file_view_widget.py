@@ -5,6 +5,7 @@ from PySide6.QtGui import QDragEnterEvent, QIcon
 from .image_item import ImageItem
 import os
 from urllib.parse import urlparse
+from utils import Style, Icons
 
 class FileViewWidget(QWidget):
     drop_signal = Signal(list)
@@ -43,12 +44,12 @@ class FileViewWidget(QWidget):
 
         self.remove_button = QPushButton()
         self.remove_button.setFixedSize(50, 50)
-        self.remove_button.setIcon(QIcon('./resources/icons/Orion_bin.png'))
+        self.remove_button.setIcon(QIcon(Icons.dust_bin))
         self.remove_button.clicked.connect(self.setRemoveMode)
         
         self.file_explorer_button = QPushButton()
         self.file_explorer_button.setFixedSize(50, 50)
-        self.file_explorer_button.setIcon(QIcon('./resources/icons/cil-folder-open.png'))
+        self.file_explorer_button.setIcon(QIcon(Icons.folder_open))
         self.file_explorer_button.clicked.connect(self.openFileExplorer)
         
         self.button_layout.addWidget(self.file_explorer_button)
