@@ -3,8 +3,8 @@ from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from controllers import VideoProcessor
-from views.component import FilterListWidget, VideoPlayer, ShadowWidget, SettingWidget
-from utils import Colors, Style
+from views.component import FilterListWidget, VideoPlayer, ShadowWidget, SettingWidget, ContentLabeling
+from utils import Colors, Style, Icons
 
 class VideoView(QWidget):
     '''PySide6를 이용한 비디오 재생 화면 구성 클래스'''
@@ -18,66 +18,56 @@ class VideoView(QWidget):
 
     def initUI(self):
         '''UI 초기화'''
-        self.layout = QHBoxLayout()
-        self.initVideoWidget()
-        self.initSettingWidget()
-        self.setLayout(self.layout)
-
-    def initVideoWidget(self):
-        '''비디오 위젯 및 레이아웃 초기화'''
+        layout = QHBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+        
         self.video_player = VideoPlayer()
         self.video_player.setPlayVideo.connect(self.get_encoding_video)
-        self.layout.addWidget(self.video_player)
-        self.layout.setAlignment(Qt.AlignCenter)  # 부모 위젯의 레이아웃을 가운데 정렬로 설정
+        
 
-    def initSettingWidget(self):
-        '''설정 위젯 초기화'''
+        
         self.setting_widget = SettingWidget()
+        self.setting_widget.setStyleSheet(Style.frame_style)
+        self.setting_widget.setGraphicsEffect(Style.shadow(self.setting_widget))
         self.setting_widget.setMinimumWidth(200)
         self.setting_widget.setMaximumWidth(240)
         # 설정 위젯에 버튼 추가
         self.initSettingButtons()
         
-        self.layout.addWidget(self.setting_widget)
+        layout.addWidget(self.video_player, 4)
+        layout.addWidget(self.setting_widget, 1)
+
+        self.setLayout(layout)
 
     def initSettingButtons(self):
         '''설정 위젯에 버튼 추가'''
-        list_frame = self.setup_filter_list()
+
+        list_frame = ContentLabeling()
+        list_frame.setLabel("필터 목록")
+        list_frame.setStyleSheet(Style.frame_style)
+        list_frame.setContentMargin(10,10,10,10)
+        
+        self.filter_list_widget = FilterListWidget()
+        self.filter_list_widget.set_items_event(self.set_filter_option)
+        list_frame.setContent(self.filter_list_widget)
+        
 
         self.button1 = QPushButton("Encoding")
-        self.button1.setFixedHeight(50)
+        self.button1.setFixedHeight(40)
         self.button1.clicked.connect(self.do_video_encoding)
         self.button2 = QPushButton("Download")
-        self.button2.setFixedHeight(50)
+        self.button2.setFixedHeight(40)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
-        self.button3.setIcon(QIcon('./resources/icons/cil-folder-open.png'))
+        self.button3.setIcon(QIcon(Icons.folder_open))
         self.button3.clicked.connect(self.openFileDialog)
-        self.button3.setFixedSize(25, 25)
+        self.button3.setFixedSize(50, 50)
 
         self.setting_widget.addSettingButton(self.button3)
         self.setting_widget.addWidget(list_frame)
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
         
-    def setup_filter_list(self):
-        '''필터 리스트 위젯'''
-        # Filter 목록
-        list_frame = QWidget()
-        list_frame.setStyleSheet(Style.list_frame_style)
-        list_frame_layout = QVBoxLayout()
-        
-        list_label = QLabel("필터 목록")
-        list_label.setStyleSheet(Style.list_frame_label)
-        
-        self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.set_items_event(self.set_filter_option)
-        
-        list_frame_layout.addWidget(list_label)
-        list_frame_layout.addWidget(self.filter_list_widget)
-        list_frame.setLayout(list_frame_layout)
-
-        return list_frame
     
     
     def openFileDialog(self):
