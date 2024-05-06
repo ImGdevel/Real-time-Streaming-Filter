@@ -179,6 +179,7 @@ if __name__ == "__main__":
         # Windows에서 스크립트 실행 시 멀티프로세스 코드를 지원하기 위해 필요한 코드
     if platform.system() == "Windows":
         multiprocessing.freeze_support()
+        print("Freeze")
     app = QApplication(sys.argv)
 
     window = MainWindow()

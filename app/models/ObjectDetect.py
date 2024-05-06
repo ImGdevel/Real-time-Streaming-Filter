@@ -57,13 +57,9 @@ class ObjectDetect:
             tuple: 바운딩 박스의 목록과 각 객체가 얼굴인지를 나타내는 목록을 포함하는 튜플입니다.
         """
         results = []
-        print("CheckPoint 14")
         if not self.originFilterClasses:
-            print("CheckPoint 15")
             return results
-         16")
         detection = self.modelManager.orginModel.predict(img, verbose=False, classes=self.originFilterClasses, show=False)[0]  # 일반 모델로 결과 예측
-        print("CheckPoint 17")
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
             if confidence < self.CONFIDENCE_THRESHOLD:
