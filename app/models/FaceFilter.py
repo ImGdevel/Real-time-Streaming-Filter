@@ -193,7 +193,7 @@ def recognize_face(known_faces, face_encoding, tolerance=0.3):
     recognized_face = "unknown"
     min_distance = float('inf')
     tolerance_used = None
-
+    print(dlib.DLIB_USE_CUDA)
     for name, encodings in known_faces.items():
             distance = face_recognition.face_distance([encodings], face_encoding[0])
             # print("==========distance==========")
