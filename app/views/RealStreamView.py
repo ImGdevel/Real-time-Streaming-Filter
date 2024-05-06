@@ -110,11 +110,11 @@ class RealStreamView(QWidget):
     def setup_video_options(self):
         '''중단 비디오 옵션 설정 메서드'''
         frame = QWidget()
-        frame.setFixedHeight(140)
+        frame.setMaximumHeight(120)
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
         
-        video_options_layout = QVBoxLayout()
+        video_options_layout = QGridLayout()
 
         # 웹캠 선택 콤보박스
         webcam_combo_label = QLabel("Webcam")
@@ -125,15 +125,15 @@ class RealStreamView(QWidget):
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
 
         self.refreash_webcam_button = QPushButton()
-        self.refreash_webcam_button.setFixedSize(50, 25)
+        self.refreash_webcam_button.setFixedSize(30, 30)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
         self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
 
         # 중단 레이아웃 설정
-        video_options_layout.addWidget(webcam_combo_label)
-        video_options_layout.addWidget(self.webcam_combo)
-        video_options_layout.addWidget(self.refreash_webcam_button)
+        video_options_layout.addWidget(webcam_combo_label, 0, 0)
+        video_options_layout.addWidget(self.webcam_combo, 1, 0)
+        video_options_layout.addWidget(self.refreash_webcam_button, 1, 1)
         
         frame.setLayout(video_options_layout)
         return frame

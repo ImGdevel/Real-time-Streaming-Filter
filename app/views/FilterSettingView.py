@@ -113,7 +113,7 @@ class FilterSettingView(QWidget):
         self.filter_title_label.onEditEvent.connect(self.update_filter_name)
 
         # 설정 내용
-        content_frame = QFrame()
+        content_frame = QWidget()
         content_frame.setLayout(self.setting_page())
         
         #apply_button = QPushButton("적용")
