@@ -93,6 +93,7 @@ class PersonFaceDialog(QDialog):
     def _setup_face_registration_layout(self):
         """얼굴 등록 레이아웃 설정 메서드"""
         face_registration_layout = QVBoxLayout()
+        face_registration_layout.setAlignment(Qt.AlignTop)
 
         self.text_layout = TitleEdit()
         self.text_layout.onEditEvent.connect(self.change_person_name)
@@ -108,31 +109,14 @@ class PersonFaceDialog(QDialog):
         
         return face_registration_layout
     
-    def show_window(self, show_window):
-        """화면 """
-        if not show_window:
-            self.stacked_widget.setCurrentIndex(0)
-        else:
-            self.stacked_widget.setCurrentIndex(1)
-        
 
-    def change_current_registered_person(self, index: str):
-        """등록된 사람 선택하는 메서드"""
-        self.show_window(True)
-        person_info = self.face_setting_processor.get_person_face_by_id(int(index)) # 등록된 사람 가져오기 -> Face 객체
-
-        if not person_info is None:
-            self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
-            self.text_layout.set_title(self.current_person.face_name) #title 변경
-            self.update_image_list()
-        else:
-            print("사람 정보가 존재하지 않습니다.")
 
     def setup_image_layout(self):
         """이미지 업로드 레이아웃 설정 메서드"""
         image_layout = QVBoxLayout()
         
         self.image_list_widget = QListWidget()
+        self.image_list_widget.setStyleSheet(Style.frame_inner_style)
         self.image_list_widget.setViewMode(QListWidget.IconMode)
         self.image_list_widget.setFixedSize(350, 350)
         self.image_list_widget.setIconSize(QSize(200, 200))  # 아이콘 크기 설정
@@ -159,6 +143,26 @@ class PersonFaceDialog(QDialog):
         image_layout.addWidget(upload_image_button)
         
         return image_layout
+    
+    def show_window(self, show_window):
+        """화면 """
+        if not show_window:
+            self.stacked_widget.setCurrentIndex(0)
+        else:
+            self.stacked_widget.setCurrentIndex(1)
+        
+
+    def change_current_registered_person(self, index: str):
+        """등록된 사람 선택하는 메서드"""
+        self.show_window(True)
+        person_info = self.face_setting_processor.get_person_face_by_id(int(index)) # 등록된 사람 가져오기 -> Face 객체
+
+        if not person_info is None:
+            self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
+            self.text_layout.set_title(self.current_person.face_name) #title 변경
+            self.update_image_list()
+        else:
+            print("사람 정보가 존재하지 않습니다.")
     
     def add_person(self):
         """사람 추가"""
