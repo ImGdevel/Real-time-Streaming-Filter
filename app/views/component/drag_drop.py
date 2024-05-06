@@ -1,12 +1,14 @@
 from PySide6.QtWidgets import QLabel, QHBoxLayout
 from PySide6.QtCore import Qt, QMimeDatabase, Signal
-from PySide6.QtGui import QPixmap, QDragEnterEvent, QImage
+from PySide6.QtGui import QPixmap, QDragEnterEvent, QImage, QResizeEvent
 from urllib.parse import urlparse
 
 
 class DragDropLabel(QLabel):
 
     drop_signal = Signal(list)
+    currunt_exm = str()
+    currunt_filt = str()
 
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -35,7 +37,7 @@ class DragDropLabel(QLabel):
                     font-family:'Malgun Gothic';
             }
         ''')
-
+        self.filtered_label.setMinimumWidth(432)
 
         self.layout.addWidget(self.dropbox_lable)
         self.layout.addWidget(self.filtered_label)
@@ -75,7 +77,14 @@ class DragDropLabel(QLabel):
         return self.urls
     
     def setExampleView(self, urls):
-        pixmap = QPixmap(urls)
+        image = QImage(urls)
+        
+        # Check if the image has loaded successfully
+        if image.isNull():
+            print("Failed to load the image.")
+            return
+        
+        pixmap = QPixmap.fromImage(image)
         widget_size = self.dropbox_lable.size()
         print(widget_size)
         # Get image size
@@ -89,7 +98,9 @@ class DragDropLabel(QLabel):
         scale_factor = min(width_factor, height_factor)
 
         # Scale pixmap with maintaining aspect ratio
-        scaled_pixmap = pixmap.scaled(image_size * scale_factor, Qt.KeepAspectRatio)
+        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor), 
+                                    int(image_size.height() * scale_factor), 
+                                    Qt.KeepAspectRatio)
 
         self.dropbox_lable.setPixmap(scaled_pixmap)
 
@@ -125,3 +136,14 @@ class DragDropLabel(QLabel):
                                     Qt.KeepAspectRatio)
 
         self.filtered_label.setPixmap(scaled_pixmap)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.refreashWidget()
+        return super().resizeEvent(event)
+    
+    def refreashWidget(self):
+        if self.currunt_exm:
+            self.setExampleView(self.currunt_exm)
+            print("refreashed")
+        if self.currunt_filt:
+            self.setFilteredView(self.currunt_filt)
