@@ -128,6 +128,8 @@ class FilterListWidget(ListWidget):
 
     
 class RegisteredFacesListWidget(ListWidget):
+    onEventUpdate = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filter_setting_processor = FilterSettingController()
@@ -194,11 +196,12 @@ class RegisteredFacesListWidget(ListWidget):
         print(button_widget)
         self.filter_setting_processor.delete_face_in_filter(self.filter_name, int(button_widget))
         self.update_list()
+        self.onEventUpdate.emit()
                 
     
     def register_sticker(self, person_id, sticker_id):
         self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
-        pass
+        self.onEventUpdate.emit()
     
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
@@ -213,6 +216,7 @@ class RegisteredFacesListWidget(ListWidget):
 
     def register_person_faces(self, person_id):
         self.filter_setting_processor.add_face_in_filter(self.filter_name, person_id)
+        self.onEventUpdate.emit()
 
     def update_list(self):
         self.clear()

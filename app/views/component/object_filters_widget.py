@@ -6,7 +6,7 @@ from controllers import FilterSettingController
 from views.component import FilterListWidget, ShadowWidget
 
 class ObjectFilterSettngWidget(QWidget):
-    onEventUpdateCheckbox = Signal(list)
+    onEventUpdate = Signal()
     
     def __init__(self, parent = None) -> None:
         super().__init__(parent)
@@ -83,3 +83,4 @@ class ObjectFilterSettngWidget(QWidget):
             self.selected_filtering_object.remove(checkbox_name)  # 리스트에서 제거
               
         self.filter_controller.update_filter_object_filter(self.filter_name, self.selected_filtering_object)
+        self.onEventUpdate.emit()

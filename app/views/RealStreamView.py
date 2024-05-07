@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
 from utils import Colors, Style, Icons
-from controllers import RealStreamProcessor
+from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ShadowWidget, ObjectFilterSettngWidget, 
     MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
@@ -16,10 +16,12 @@ class RealStreamView(QWidget):
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.filter_controller = FilterSettingController()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
+        self.current_filter = None
         self.initUI()
 
     def initUI(self):
@@ -192,8 +194,11 @@ class RealStreamView(QWidget):
 
         # 각각의 위젯 생성
         self.setting_01 = RegisteredFacesListWidget()
+        self.setting_01.onEventUpdate.connect(self.update_filter)
         self.setting_02 = ObjectFilterSettngWidget()
+        self.setting_02.onEventUpdate.connect(self.update_filter)
         self.setting_03 = MosaicSettingWidget()
+        self.setting_03.onEventUpdate.connect(self.update_filter)
         
         self.widget1 = ContentLabeling()
         self.widget1.setLabel("필터링 인물 관리")
@@ -221,6 +226,13 @@ class RealStreamView(QWidget):
         frame.setLayout(layout)
         return frame
 
+    def setup_settings(self, filter_name):
+        """세팅 셋업"""
+        if filter_name is not None:
+            self.setting_01.set_filter(filter_name)
+            self.setting_01.update_list()
+            self.setting_02.setup_object_filter_widget(filter_name)
+            self.setting_03.setup_mosaic_setting(filter_name)
 
 
     # method
@@ -252,15 +264,18 @@ class RealStreamView(QWidget):
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
         self.streaming_processor.video_cap = cv2.VideoCapture(index)
-        # 웹캠 변경 로직 추가
 
-    def set_filter_option(self, index):
+
+    def set_filter_option(self, filter_name):
         '''필터 옵션 선택'''
-        print("선택된 필터>>", index)
-        
-        self.streaming_processor.set_filter(index)
-        
-        pass
+        self.current_filter = filter_name
+        self.streaming_processor.set_filter(self.current_filter)
+        self.setup_settings(self.current_filter)
+
+    def update_filter(self):
+        if self.current_filter:
+            self.streaming_processor.set_filter(self.current_filter)
+
         
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
