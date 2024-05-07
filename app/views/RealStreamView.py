@@ -247,7 +247,7 @@ class RealStreamView(QWidget):
         else:
             if self.streaming_processor.isRunning():
                 self.play_pause_button.setIcon(QIcon(Icons.puse_button))
-                self.streaming_processor.stop()
+                self.streaming_processor.pause()
                 self.timer.stop()
                 
 
@@ -264,7 +264,7 @@ class RealStreamView(QWidget):
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
-        self.streaming_processor.video_cap = cv2.VideoCapture(index)
+        self.streaming_processor.set_web_cam(index)
 
 
     def set_filter_option(self, filter_name):
@@ -286,18 +286,10 @@ class RealStreamView(QWidget):
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
         self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
 
-    def render(self):
-        """페이지 refesh"""
-        self.filter_list_widget.update_list()
-        pass
 
-    def closeEvent(self, event):
-        '''GUI 종료 이벤트 메서드'''
-        self.streaming_processor.stop()
-        self.timer.stop()
     
     def detect_webcams(self):
-    # 연결된 카메라 장치를 검색합니다.
+        # 연결된 카메라 장치를 검색합니다.
         index = 0
         name_list = list()
         while True:
@@ -318,3 +310,12 @@ class RealStreamView(QWidget):
         combox.addItems(namelist)
         self.webcam_combo = combox
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
+
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_list()
+
+    def closeEvent(self, event):
+        '''GUI 종료 이벤트 메서드'''
+        self.streaming_processor.stop()
+        self.timer.stop()

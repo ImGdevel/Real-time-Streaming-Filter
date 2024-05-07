@@ -16,12 +16,16 @@ class RealStreamProcessor(QThread):
 
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = True  # 화면 좌우 뒤집기 상태
-        self.current_webcam = None
+        self.current_webcam = 0
 
     def run(self):
         '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
         self.is_running = True
-        while self.is_running:
+
+        if self.video_cap is None:
+            self.video_cap = cv2.VideoCapture(self.current_webcam)
+
+        while self.is_running and self.video_cap.isOpened():
             #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
@@ -37,7 +41,7 @@ class RealStreamProcessor(QThread):
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
             #end = time.time()
             #result = end - start
-            # print("time: "+ str(result))
+            #print("time: "+ str(result))
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
@@ -72,7 +76,10 @@ class RealStreamProcessor(QThread):
 
     def stop(self):
         '''스레드 종료 메서드'''
+        self.is_running = False
         self.quit()
+        self.video_cap.release()
+        self.video_cap = None
 
     def set_web_cam(self, web_cam):
         '''웹캠 설정'''
