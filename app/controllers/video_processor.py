@@ -57,7 +57,6 @@ class VideoProcessor(QThread):
 
         cap.release()
         cv2.destroyAllWindows()
-        print("인코딩 완료")
         self.encodingVideoPathEvent.emit(self.temp_video_path)
         
     def download_video(self):
@@ -71,6 +70,6 @@ class VideoProcessor(QThread):
         """필터 설정"""
         if not filter is None:
             current_filter = self.filter_manager.get_filter(filter)
-            print("현제 적용 필터 :",  current_filter)
+            #print("현제 적용 필터 :",  current_filter)
             self.filtering.set_filter(current_filter)
             

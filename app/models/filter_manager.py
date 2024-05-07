@@ -58,7 +58,6 @@ class FilterManager:
 
     def get_filter(self, filter_name: str) -> Union[Filter, None]:
         """이름을 기반으로 필터를 가져옵니다."""
-        print("filter name: "+ filter_name)
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 return filter_obj
@@ -170,17 +169,16 @@ class FilterManager:
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 filter_obj.mosaic_blur_strength = blur_strength
-                print("blur strength:",blur_strength)
+                #print("blur strength:",blur_strength)
                 return
         raise ValueError("존재하지 않는 filtername입니다.")    
 
     def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
         """필터 프리셋의 blur 모양을 변경한다."""
-        print(blur_shape)
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 filter_obj.mosaic_blur_shape = blur_shape
-                print("blur shape:",blur_shape)
+                #print("blur shape:",blur_shape)
                 return
         raise ValueError("존재하지 않는 filtername입니다.")   
 

@@ -53,7 +53,6 @@ class MosaicSettingWidget(QWidget):
 
     def setup_mosaic_setting(self, filter_name):
         self.filter_name = filter_name
-        print(filter_name)
         filter_data = self.filter_controller.get_filter(filter_name)
         if filter_data:
             self.shape_combobox.setCurrentIndex(0 if filter_data.mosaic_blur_shape == "rect" else 1)
