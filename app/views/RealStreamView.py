@@ -174,6 +174,7 @@ class RealStreamView(QWidget):
 
         self.cam_dialog = QDialog()
         layer = QGridLayout()
+        layer.setContentsMargins(0,0,0,0)
         self.dialog_videolable = QLabel()
         self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
