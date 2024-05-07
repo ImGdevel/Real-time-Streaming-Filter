@@ -47,9 +47,9 @@ class VideoProcessor(QThread):
             boxesList = self.filtering.video_filtering(frame)    
             for key in boxesList.keys():
                 if key == -1:
-                    processed_frame = self.filtering.elliptical_blur(frame, boxesList[key])
-                elif key == -2:
                     processed_frame = self.filtering.blur(frame, boxesList[key])
+                elif key == -2:
+                    processed_frame = self.filtering.square_blur(frame, boxesList[key])
                 else:
                     processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
                 # 출력 동영상에 프레임 쓰기

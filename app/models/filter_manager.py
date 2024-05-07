@@ -169,7 +169,8 @@ class FilterManager:
         """필터 프리셋의 blur 강도를 변경한다."""
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
-                filter_obj.blur_strength = blur_strength
+                filter_obj.mosaic_blur_strength = blur_strength
+                print("blur strength:",blur_strength)
                 return
         raise ValueError("존재하지 않는 filtername입니다.")    
 
@@ -177,7 +178,8 @@ class FilterManager:
         """필터 프리셋의 blur 모양을 변경한다."""
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
-                filter_obj.blur_shape = blur_shape
+                filter_obj.mosaic_blur_shape = blur_shape
+                print("blur shape:",blur_shape)
                 return
         raise ValueError("존재하지 않는 filtername입니다.")   
 
