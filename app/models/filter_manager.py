@@ -175,6 +175,7 @@ class FilterManager:
 
     def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
         """필터 프리셋의 blur 모양을 변경한다."""
+        print(blur_shape)
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 filter_obj.blur_shape = blur_shape

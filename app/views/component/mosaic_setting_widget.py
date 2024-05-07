@@ -26,8 +26,7 @@ class MosaicSettingWidget(QWidget):
         intensity_label = QLabel("블러 강도 ")
         self.intensity_slider = QSlider(Qt.Horizontal)
         self.intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        #intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
-        self.intensity_slider.sliderReleased.connect(self.set_value_slider)
+        self.intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
         
         # slider_value_label = QLabel("0")
         
@@ -54,28 +53,28 @@ class MosaicSettingWidget(QWidget):
 
     def setup_mosaic_setting(self, filter_name):
         self.filter_name = filter_name
+        print(filter_name)
         filter_data = self.filter_controller.get_filter(filter_name)
         if filter_data:
             self.shape_combobox.setCurrentIndex(0 if filter_data.mosaic_blur_shape == "rect" else 1)
             self.intensity_slider.setValue(filter_data.mosaic_blur_strength)
     
-    def set_value_slider(self):
+    def set_value_slider(self, value):
         """슬라이더 값 변경 시 호출되는 메서드"""
-        if self.filter_name:
-            value = self.intensity_slider.value()
-            self.filter_controller.update_blur_strength_in_filter(self.filter_name, value)
-            self.onEventUpdate.emit()
+        self.filter_controller.update_blur_strength_in_filter(self.filter_name, value)
+        self.onEventUpdate.emit()
     
     
     def set_value_drop_down(self, index):
         """드롭다운 값 변경 시 호출되는 메서드"""
+        print(self.filter_name)
         if self.filter_name:
             value = None
             if index == 0:
                 value = "rect"
             elif index == 1:
                 value =  "circle"
-
+            print(self.filter_name,value)
             self.filter_controller.update_blur_shape_in_filter(self.filter_name, value)
             self.onEventUpdate.emit()
             

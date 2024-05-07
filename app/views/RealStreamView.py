@@ -232,6 +232,7 @@ class RealStreamView(QWidget):
             self.setting_01.set_filter(filter_name)
             self.setting_01.update_list()
             self.setting_02.setup_object_filter_widget(filter_name)
+            print(filter_name)
             self.setting_03.setup_mosaic_setting(filter_name)
 
 
