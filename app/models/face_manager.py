@@ -252,14 +252,13 @@ class FaceManager:
         #print("update person name")
         for face in self.face_list:
             if face.face_name == new_name:
-                raise ValueError("중복된 이름입니다")
+                return False
         for face in self.face_list:
             if face.face_name == last_name:
                 face.face_name = new_name
                 self.save_person_face()
                 return True
-            
-        raise ValueError("존재하지 않는 face_name입니다")
+        return False
 
     
     def update_person_name_by_id(self, face_id: int, new_name: str):

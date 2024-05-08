@@ -16,6 +16,14 @@ class VideoProcessor(QThread):
         self.filter_manager = FilterManager()
         self.path_manager = PathManager()
         self.temp_video_path = str
+
+    def set_video(self, video_path, progress_dialog):
+        self.video_path = video_path
+        self.progress_dialog = progress_dialog
+
+    def run(self):
+        self.filtering_video(self.video_path, self.progress_dialog)
+        
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path, progress_dialog):

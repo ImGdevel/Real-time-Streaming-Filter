@@ -92,8 +92,10 @@ class VideoView(QWidget):
         #다이얼로그 구문 
         progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
         progress_dialog.setWindowModality(Qt.WindowModal)
+        self.video_processor.set_video(self.origin_video_path, progress_dialog)
+        self.video_processor.run()
         progress_dialog.exec()
-        self.video_processor.filtering_video(self.origin_video_path, progress_dialog)
+        
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
