@@ -119,10 +119,12 @@ class Filtering:
         return results
     
     def blur(self, img, boxesList):
+        if self.current_filter_info is None:
+            return img
         if self.current_filter_info.mosaic_blur_shape == "rect":
-            self.square_blur(img, boxesList)
+            return self.square_blur(img, boxesList)
         else:
-            self.elliptical_blur(img, boxesList)
+            return self.elliptical_blur(img, boxesList)
 
 
     def square_blur(self,img, boxesList):
@@ -137,6 +139,8 @@ class Filtering:
         Returns:
             img (numpy.ndarray): 지정된 영역에 블러가 적용된 수정된 이미지입니다.
         """
+        if self.current_filter_info is None:
+            return img
         blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
 
@@ -158,6 +162,8 @@ class Filtering:
         return img
 
     def elliptical_blur(self, img, boxesList):
+        if self.current_filter_info is None:
+            return img
         blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
             if len(box) == 0:
