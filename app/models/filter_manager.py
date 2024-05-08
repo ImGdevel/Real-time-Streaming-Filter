@@ -117,6 +117,9 @@ class FilterManager:
     def update_filter_name(self, filtername: str, newname: str):
         """필터 프리셋의 이름을 변경한다"""
         for filter in self.filter_list:
+            if filter.name == newname:
+                raise ValueError("중복된 이름입니다.")
+        for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = newname
                 self.save_filters()
