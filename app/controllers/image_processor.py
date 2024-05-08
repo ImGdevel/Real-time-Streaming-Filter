@@ -60,6 +60,7 @@ class ImageProcessor():
             blur_ratio = 50
 
             boxesList = self.filtering.filtering(image)
+            processed_image = image
             for key in boxesList.keys():
                 if key == -1:
                     if boxesList[key] is not None:
