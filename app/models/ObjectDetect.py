@@ -52,7 +52,7 @@ class ObjectDetect:
         self.sticker_id = dict()
         for face in face_list:
             self.sticker_id[face] = []
-        print("sticker_id: ", self.sticker_id)
+        #print("sticker_id: ", self.sticker_id)
 
     def detect(self, img, filter_classes, model, names):
         """

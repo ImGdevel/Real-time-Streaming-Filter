@@ -47,12 +47,11 @@ class FaceManager:
         max_face_id += 1
         self.face_list.append(Face(max_face_id, name)) 
         self.save_person_face()
-        print(self.face_list)
 
 
     def add_person_encoding_by_name(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        print("add person encoding")
+        #print("add person encoding")
         face_encoding = cv2.imread(file_path)
 
         for face in self.face_list:
@@ -69,7 +68,7 @@ class FaceManager:
 
     def add_person_encoding_by_id(self, face_id: int, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        print("add person encoding")
+        #print("add person encoding")
         face_encoding = cv2.imread(file_path)
 
         for face in self.face_list:
@@ -86,7 +85,7 @@ class FaceManager:
 
     def delete_person_face_by_name(self, person_name: str):
         """person_face 삭제 메서드"""
-        print("delete person face")
+        #print("delete person face")
         for face in self.face_list:
             if face.face_name == person_name:
                 self.face_list.remove(face)
@@ -98,7 +97,7 @@ class FaceManager:
 
     def delete_person_face_by_id(self, face_id: int):
         """person_face 삭제 메서드"""
-        print("delete person face")
+        #print("delete person face")
         for face in self.face_list:
             if face.face_id == face_id:
                 self.face_list.remove(face)
@@ -110,7 +109,7 @@ class FaceManager:
 
     def delete_person_encoding_by_name(self, person_name: str, encoding_name: str):
         """person_name의 encoding리스트 중 하나를 제거"""
-        print("delete person encoding")
+        #print("delete person encoding")
         for face in self.face_list:
             if face.face_name == person_name:
                 value = face.encoding_list.pop(encoding_name, 0)
@@ -124,7 +123,7 @@ class FaceManager:
 
     def delete_person_encoding_by_id(self, face_id: str, encoding_name: str):
         """person_name의 encoding리스트 중 하나를 제거"""
-        print("delete person encoding")
+        #print("delete person encoding")
         for face in self.face_list:
             if face.face_id == face_id:
                 value = face.encoding_list.pop(encoding_name, 0)
@@ -138,7 +137,7 @@ class FaceManager:
         
     def get_person_face_by_name(self, person_name):
         """person_face를 가져오게 하기"""
-        print("get person face")
+        #print("get person face")
         for face in self.face_list:
             if face.face_name == person_name:
                 return face
@@ -146,7 +145,7 @@ class FaceManager:
 
     def get_person_face_by_id(self, face_id : int):
         """person_face를 가져오게 하기"""
-        print("get person face")
+        #print("get person face")
         for face in self.face_list:
             if face.face_id == face_id:
                 return face
@@ -167,7 +166,7 @@ class FaceManager:
 
     def get_person_encoding_by_name(self, person_name: str, encoding_name: str) -> QImage:
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
-        print("get person encoding")
+        #print("get person encoding")
         for face in self.face_list:
             if face.face_name == person_name:
                 face_encoding = face.encoding_list.get(encoding_name)
@@ -182,7 +181,7 @@ class FaceManager:
 
     def get_person_encoding_by_id(self, face_id: int, encoding_name: str) -> QImage:
         """person_name이 가진 encoding_name에 해당하는 numpy배열을 반환"""
-        print("get person encoding")
+        #print("get person encoding")
         for face in self.face_list:
             if face.face_id == face_id:
                 face_encoding = face.encoding_list.get(encoding_name)
@@ -196,7 +195,7 @@ class FaceManager:
 
 
     def get_person_encodings_by_name(self, person_name: str):
-        print("get person encodings")
+        #print("get person encodings")
         for face in self.face_list:
             if face.face_name == person_name:
                 q_images = []
@@ -210,7 +209,7 @@ class FaceManager:
         raise ValueError("존재하지 않는 face_name입니다")
 
     def get_person_encodings_by_id(self, face_id: int):
-        print("get person encodings")
+        #print("get person encodings")
         for face in self.face_list:
             if face.face_id == face_id:
                 q_images = []
@@ -225,7 +224,7 @@ class FaceManager:
 
     def get_person_faces(self):
         """person_face """
-        print("get person faces")
+        #print("get person faces")
         return self.face_list
     
     def update_person_face_by_name(self, person_name, person: dict):
@@ -250,7 +249,7 @@ class FaceManager:
 
     def update_person_name_by_name(self, last_name: str, new_name: str):
         """사람 이름 변경"""
-        print("update person name")
+        #print("update person name")
         for face in self.face_list:
             if face.face_name == new_name:
                 raise ValueError("중복된 이름입니다")
@@ -265,7 +264,7 @@ class FaceManager:
     
     def update_person_name_by_id(self, face_id: int, new_name: str):
         """사람 이름 변경"""
-        print("update person name")
+        #print("update person name")
         for face in self.face_list:
             if face.face_name == new_name:
                 raise ValueError("중복된 이름입니다")

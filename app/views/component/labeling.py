@@ -13,22 +13,30 @@ class ContentLabeling(QWidget):
         self.initUI()
     
     def initUI(self):
-        layout = QVBoxLayout()
-        layout.setContentsMargins(10, 2, 10, 0)
-        layout.setSpacing(5)
-        layout.setAlignment(Qt.AlignTop)
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
+        frame = QWidget()
+        
+        content_label_layout = QVBoxLayout()
+        content_label_layout.setContentsMargins(10, 2, 10, 0)
+        content_label_layout.setSpacing(5)
+        content_label_layout.setAlignment(Qt.AlignTop)
         
         self.label = QLabel("")
         
         self.content_layout = QVBoxLayout()
-        self.content_layout.setContentsMargins(0, 5, 0, 0)
+        self.content_layout.setContentsMargins(0, 5, 0, 5)
         
         self.content = QWidget()
         self.content.setStyleSheet(Style.frame_style)
         self.content.setLayout(self.content_layout)
         
-        layout.addWidget(self.label)
-        layout.addWidget(self.content)
+        content_label_layout.addWidget(self.label)
+        content_label_layout.addWidget(self.content)
+        
+        frame.setLayout(content_label_layout)
+        layout.addWidget(frame)
+        
         self.setLayout(layout)
         
     def setContent(self, contnet: QWidget):

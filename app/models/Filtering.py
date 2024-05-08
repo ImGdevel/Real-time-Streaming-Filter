@@ -20,7 +20,6 @@ class Filtering:
         filtering: 감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
         blur: boxesList에 지정된 관심 영역에 블러를 적용합니다.
     """
-    
     def __init__(self):
         """
         Filtering 클래스를 초기화합니다.
@@ -94,7 +93,7 @@ class Filtering:
         for key, result in results.items():
             boxes = []
             for value in result:
-                if len(value) != 0:
+                if len(value) != 0 and key != -2:
                     box = [value[0][0], value[0][1], value[0][0]+value[0][2], value[0][1]+value[0][3]]
                     boxes.append(box)
             results[key] = boxes
@@ -119,7 +118,14 @@ class Filtering:
 
         return results
     
-    def blur(self,img, boxesList, blurRatio = 40):
+    def blur(self, img, boxesList):
+        if self.current_filter_info.mosaic_blur_shape == "rect":
+            self.square_blur(img, boxesList)
+        else:
+            self.elliptical_blur(img, boxesList)
+
+
+    def square_blur(self,img, boxesList):
         """
         boxesList에 지정된 관심 영역에 블러를 적용합니다.
 
@@ -131,6 +137,7 @@ class Filtering:
         Returns:
             img (numpy.ndarray): 지정된 영역에 블러가 적용된 수정된 이미지입니다.
         """
+        blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
 
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
@@ -140,7 +147,8 @@ class Filtering:
             # Calculate blur region size
             blur_w = int((x2 - x1)*blurRatio/150) 
             blur_h = int((y2 - y1)*blurRatio/150)  
-
+            if blur_w <= 0 or blur_h <= 0:
+                return img
             # ROI에 blur 적용
             blurred_roi = cv2.blur(roi, (blur_w, blur_h))
             
@@ -149,7 +157,8 @@ class Filtering:
             
         return img
 
-    def elliptical_blur(self, img, boxesList, blurRatio = 40):
+    def elliptical_blur(self, img, boxesList):
+        blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
             if len(box) == 0:
                 continue
@@ -164,7 +173,7 @@ class Filtering:
             # ROI에 blur 적용
 
             if blur_w <= 0 or blur_h <= 0:
-                return
+                return img
             # Apply blur in elliptical shape
             blur_obj = cv2.blur(obj, (blur_w, blur_h))
 
@@ -184,6 +193,8 @@ class Filtering:
         return img
     
     def face_sticker(self, img, boxesList, face_id):
+        if self.current_filter_info.face_filter[face_id] == -1:
+            return img
         for box in boxesList:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             w = x2 - x1

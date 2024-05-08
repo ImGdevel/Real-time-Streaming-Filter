@@ -113,7 +113,7 @@ class FilterSettingView(QWidget):
         self.filter_title_label.onEditEvent.connect(self.update_filter_name)
 
         # 설정 내용
-        content_frame = QFrame()
+        content_frame = QWidget()
         content_frame.setLayout(self.setting_page())
         
         #apply_button = QPushButton("적용")
@@ -303,7 +303,6 @@ class FilterSettingView(QWidget):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
         if filter_name == None or filter_name == "":
-            print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_page(False)
             return
             

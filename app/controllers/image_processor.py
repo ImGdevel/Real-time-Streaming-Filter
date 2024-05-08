@@ -29,7 +29,7 @@ class ImageProcessor():
             #blur_ratio = 50
 
             boxesList = self.filtering.filtering(image)
-            processed_image = self.filtering.blur(image, boxesList)
+            processed_image = self.filtering.square_blur(image, boxesList)
             
 
             
@@ -62,9 +62,9 @@ class ImageProcessor():
             boxesList = self.filtering.filtering(image)
             for key in boxesList.keys():
                 if key == -1:
-                    processed_image = self.filtering.elliptical_blur(image, boxesList[key])
-                elif key == -2:
                     processed_image = self.filtering.blur(image, boxesList[key])
+                elif key == -2:
+                    processed_image = self.filtering.square_blur(image, boxesList[key])
                 else:
                     processed_image = self.filtering.face_sticker(image, boxesList[key], key)
             
