@@ -262,14 +262,10 @@ class RealStreamView(QWidget):
                 self.streaming_processor.pause()
                 self.timer.stop()
                 
-
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
-        
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
         raise NotImplementedError("This function is not implemented yet")
-    
-    
     
     def open_new_window(self):
         '''새창 메서드'''
@@ -280,12 +276,12 @@ class RealStreamView(QWidget):
         '''웹캠 변경 메서드'''
         self.streaming_processor.set_web_cam(index)
 
-
-    def set_filter_option(self, filter_name):
+    def set_filter_option(self, filter_name = None):
         '''필터 옵션 선택'''
         self.current_filter = filter_name
+        self.streaming_processor.set_filter(self.current_filter)
+
         if filter_name is not None:
-            self.streaming_processor.set_filter(self.current_filter)
             self.show_setting(True)
             self.setup_settings(self.current_filter)
         else:
@@ -294,7 +290,6 @@ class RealStreamView(QWidget):
     def update_filter(self):
         if self.current_filter:
             self.streaming_processor.set_filter(self.current_filter)
-
         
     def update_video(self, q_img=None):
         '''비디오 업데이트 메서드'''
@@ -303,7 +298,6 @@ class RealStreamView(QWidget):
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
         self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-
     
     def detect_webcams(self):
         # 연결된 카메라 장치를 검색합니다.
@@ -331,9 +325,11 @@ class RealStreamView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
+        self.set_filter_option()
         self.show_setting(False)
 
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
         self.timer.stop()
+

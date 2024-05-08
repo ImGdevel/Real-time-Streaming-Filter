@@ -59,9 +59,10 @@ class RealStreamProcessor(QThread):
     
     def set_filter(self, filter):
         """필터 설정"""
-        if not filter is None:
+        if filter is not None:
             current_filter = self.filter_manager.get_filter(filter)
-            self.filtering.set_filter(current_filter)
+        
+        self.filtering.set_filter(current_filter)
 
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
