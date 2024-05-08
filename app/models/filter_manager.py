@@ -171,6 +171,7 @@ class FilterManager:
                 filter_obj.mosaic_blur_strength = blur_strength
                 #print("blur strength:",blur_strength)
                 return
+        print("filterName:", filter_name)
         raise ValueError("존재하지 않는 filtername입니다.")    
 
     def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
