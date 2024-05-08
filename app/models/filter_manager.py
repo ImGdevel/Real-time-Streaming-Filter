@@ -117,11 +117,14 @@ class FilterManager:
     def update_filter_name(self, filtername: str, newname: str):
         """필터 프리셋의 이름을 변경한다"""
         for filter in self.filter_list:
+            if filter.name == newname:
+                return False
+        for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = newname
                 self.save_filters()
-                return
-        raise ValueError("존재하지 않는 filtername입니다.")
+                return True
+        return False
 
     def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
         """필터 프리셋의 얼굴 필터링 여부를 변경한다"""
@@ -129,9 +132,8 @@ class FilterManager:
             if filter.name == filtername:
                 filter.face_filter_on = face_filter_on
                 self.save_filters()
-                return
-        raise ValueError("존재하지 않는 filtername입니다.")
-
+                return True
+        return False
 
     def update_filter_face_filter(self, filtername: str, face_filter: dict):
         """필터 프리셋의 얼굴 리스트를 변경한다."""

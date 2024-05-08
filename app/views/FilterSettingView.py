@@ -312,6 +312,7 @@ class FilterSettingView(QWidget):
         if filter_data:
             print("[Log] : 선택된 필터 > ", filter_data)
             self.filter_list_widget.set_select_item(filter_name)
+            print("이름 지정: ", filter_name)
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
@@ -354,16 +355,15 @@ class FilterSettingView(QWidget):
     # 필터 이름 업데이트
     def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter == new_name or new_name == "" or new_name == None:
-            #잘못된 입력, 돌아감
-            pass
-        elif self.filter_setting_processor.get_filter(new_name):
-            #필터 이름 중복
-            QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
-        else:
-            #필터 이름 변경
-            self.filter_setting_processor.update_filter_name(self.current_filter, new_name)
-            self.set_current_filter(new_name)
+        if self.current_filter:
+            if self.current_filter == new_name:
+                return
+            if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
+                self.set_current_filter(new_name)
+            else:
+                QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                self.set_current_filter(self.current_filter)
+            
 
     # 필터 정보 저장
     def apply_filter_settings(self):
