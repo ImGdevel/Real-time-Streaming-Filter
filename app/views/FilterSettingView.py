@@ -303,7 +303,6 @@ class FilterSettingView(QWidget):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
         if filter_name == None or filter_name == "":
-            print(f"[Log] : Filter '{filter_name}' not found")
             self.show_filter_setting_page(False)
             return
             

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
-    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog
+    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, QStackedWidget
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize
@@ -213,19 +213,31 @@ class RealStreamView(QWidget):
         self.widget3.setLabel("모자이크 블러 설정")
         self.widget3.setContent(self.setting_03)
         
+
         # 스플리터 생성 및 각 위젯 추가
         splitter = QSplitter()
         splitter.addWidget(self.widget1)
         splitter.addWidget(self.widget2)
         splitter.addWidget(self.widget3)
         splitter.setSizes([300, 200, 200])  # 초기 비율을 3:2:2로 설정
-        
+
+        self.stackedWidget = QStackedWidget()
+        self.empty = QWidget()
+        self.stackedWidget.addWidget(self.empty)
+        self.stackedWidget.addWidget(splitter)
+
         # 레이아웃 설정
         layout = QHBoxLayout()
-        layout.addWidget(splitter)
-        
+        layout.addWidget(self.stackedWidget)
         frame.setLayout(layout)
         return frame
+    
+    def show_setting(self, show):
+        if show:
+            self.stackedWidget.setCurrentIndex(1)
+        else:
+            self.stackedWidget.setCurrentIndex(0)
+
 
     def setup_settings(self, filter_name):
         """세팅 셋업"""
@@ -270,8 +282,12 @@ class RealStreamView(QWidget):
     def set_filter_option(self, filter_name):
         '''필터 옵션 선택'''
         self.current_filter = filter_name
-        self.streaming_processor.set_filter(self.current_filter)
-        self.setup_settings(self.current_filter)
+        if filter_name is not None:
+            self.streaming_processor.set_filter(self.current_filter)
+            self.show_setting(True)
+            self.setup_settings(self.current_filter)
+        else:
+            self.show_setting(False)
 
     def update_filter(self):
         if self.current_filter:
@@ -285,7 +301,6 @@ class RealStreamView(QWidget):
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
         self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-
 
     
     def detect_webcams(self):
@@ -314,6 +329,7 @@ class RealStreamView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
+        self.show_setting(False)
 
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''

@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         btnName = btn.objectName()
 
         # PRINT BTN NAME
-        print(f'Button "{btnName}" pressed!')
+        #print(f'Button "{btnName}" pressed!')
 
         # SHOW HOME PAGE
         if btnName == "btn_home":
@@ -159,6 +159,7 @@ class MainWindow(QMainWindow):
         # SET DRAG POS WINDOW
         self.dragPos = event.globalPos()
 
+        return
         # PRINT MOUSE EVENTS
         if event.buttons() == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
