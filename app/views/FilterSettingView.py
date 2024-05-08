@@ -302,6 +302,7 @@ class FilterSettingView(QWidget):
     def set_current_filter(self, filter_name = None):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
+        self.current_filter = filter_name
         if filter_name == None or filter_name == "":
             self.show_filter_setting_page(False)
             return
@@ -311,11 +312,9 @@ class FilterSettingView(QWidget):
         if filter_data:
             print("[Log] : 선택된 필터 > ", filter_data)
             self.filter_list_widget.set_select_item(filter_name)
-            self.current_filter = filter_name
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
-            
             self.show_filter_setting_page(True)
         else:
             print(f"[Log] : Filter '{filter_name}' not found")

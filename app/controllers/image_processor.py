@@ -62,11 +62,14 @@ class ImageProcessor():
             boxesList = self.filtering.filtering(image)
             for key in boxesList.keys():
                 if key == -1:
-                    processed_image = self.filtering.blur(image, boxesList[key])
+                    if boxesList[key] is not None:
+                        processed_image = self.filtering.blur(image, boxesList[key])
                 elif key == -2:
-                    processed_image = self.filtering.square_blur(image, boxesList[key])
+                    if boxesList[key] is not None:
+                        processed_image = self.filtering.square_blur(image, boxesList[key])
                 else:
-                    processed_image = self.filtering.face_sticker(image, boxesList[key], key)
+                    if boxesList[key] is not None:
+                        processed_image = self.filtering.face_sticker(image, boxesList[key], key)
             
             processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
             height, width, channel = processed_image.shape

@@ -49,19 +49,24 @@ class RealStreamProcessor(QThread):
         boxesList = self.filtering.video_filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
-                processed_frame = self.filtering.blur(frame, boxesList[key])
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.blur(frame, boxesList[key])
             elif key == -2:
-                processed_frame = self.filtering.square_blur(frame, boxesList[key])
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.square_blur(frame, boxesList[key])
             else:
-                processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
     
         return processed_frame
     
     def set_filter(self, filter):
         """필터 설정"""
-        if not filter is None:
+        if filter is not None:
             current_filter = self.filter_manager.get_filter(filter)
             self.filtering.set_filter(current_filter)
+        else: 
+            self.filtering.set_filter(None)
 
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
