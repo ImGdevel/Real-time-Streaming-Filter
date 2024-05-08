@@ -344,7 +344,8 @@ class FilterSettingView(QWidget):
     # 인물 등록창 Open
     def open_person_face_setting_dialog(self):
         """얼굴 추가 창을 띄운다."""
-        self.person_face_setting_window.exec()
+        self.person_face_setting_window.show()
+
 
     # 얼굴 수정 사항 완료시
     def update_person_face_setting_dialog_event(self):

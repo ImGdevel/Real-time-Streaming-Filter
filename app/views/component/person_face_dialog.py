@@ -3,12 +3,48 @@ from PySide6.QtWidgets import (
     QDialog, QPushButton, QListWidget, QLabel, QFileDialog, QStackedWidget
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
-from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
+from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
 from PySide6.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from utils import Style, Icons
+
+
+class FaceRegistrationProcessor(QThread):
+    countChanged = Signal(int)
+    addItem = Signal(str)
+    finished = Signal(list)
+
+    def __init__(self):
+        super().__init__()
+        self._is_canceled = False
+        self.face_setting_processor = PersonFaceSettingController()
+
+
+
+    def setup(self, image_files, person):
+        self.image_files = image_files
+        self.current_person = person
+
+    def run(self):
+        failed_registration_images = []
+        try:
+            for idx, file_path in enumerate(self.image_files):
+                if not self.current_person.face_name is None:
+                    if self.face_setting_processor.add_person_encoding_by_name(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
+                        self.addItem.emit(file_path)
+                    else:
+                        print(f"이미지 등록 실패: {file_path}")
+                        failed_registration_images.append(file_path)
+        except Exception as e:
+            print("errror")
+        finally:
+            self.finished.emit(failed_registration_images)
+
+    def cancel(self):
+        self._is_canceled = True
+
 
 
 class PersonFaceDialog(QDialog):
@@ -19,6 +55,10 @@ class PersonFaceDialog(QDialog):
         self.face_setting_processor = PersonFaceSettingController()
         self.current_person = None
         self.setStyleSheet(Style.frame_style)
+
+        self.face_registration_processor = FaceRegistrationProcessor()
+        self.face_registration_processor.finished.connect(self.enroll_finished)
+        self.face_registration_processor.addItem.connect(self.add_image)
         
         self._initUI()
 
@@ -211,24 +251,37 @@ class PersonFaceDialog(QDialog):
         else:
             event.ignore()
 
+
+    def enroll_finished(self):
+        print("종료")
+        self.progress_dialog.close()
+
+    def cancelCounting(self):
+        self.face_registration_processor.cancel()
+        pass
+
     def add_face_process(self, image_files):
         """이미지 등록 프로세스"""
+        self.progress_dialog = QProgressDialog()
+        self.progress_dialog.setWindowTitle("Progress")
+        self.progress_dialog.setLabelText("얼굴을 등록 중 입니다")
+        self.progress_dialog.setCancelButtonText("취소")
+        self.progress_dialog.setRange(0, 0)  # Infinite progress
+        self.progress_dialog.canceled.connect(self.cancelCounting)
+        
+        
+        self.face_registration_processor.setup(image_files, self.current_person)
 
-        for idx, file_path in enumerate(image_files):
-            if not self.current_person.face_name is None:
-                print("인코딩 시작")
-                if self.face_setting_processor.add_person_encoding_by_name(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
-                    pixmap = QPixmap(file_path)
-                    pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)
-                    icon = QIcon(pixmap)
+        self.face_registration_processor.start()
+        self.progress_dialog.exec()
+    
 
-                    item = QListWidgetItem()
-                    item.setIcon(icon)
-                    self.image_list_widget.addItem(item)
-                    
-                    print("인코딩 성공")
-                else:
-                    print(f"이미지 등록 실패: {file_path}")
+    def add_image(self, img: str):
+        pixmap = QPixmap(img)  # 이미지 경로를 QPixmap으로 변환
+        pixmap = pixmap.scaled(140, 140, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
+        icon = QIcon(pixmap)
+        item = QListWidgetItem(icon, None)
+        self.image_list_widget.addItem(item)
 
     
     def update_image_list(self):
@@ -238,12 +291,7 @@ class PersonFaceDialog(QDialog):
         image_list = self.face_setting_processor.get_person_encodings_by_name(self.current_person.face_name)
         if self.current_person:
             for encoding_value in image_list:
-                pixmap = QPixmap(encoding_value)  # 이미지 경로를 QPixmap으로 변환
-                pixmap = pixmap.scaled(150, 150, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
-                icon = QIcon(pixmap)
-                
-                item = QListWidgetItem(icon, None)
-                self.image_list_widget.addItem(item)
+                self.add_image(encoding_value)
 
     def change_person_name(self, new_name):
         """이름 변경"""
@@ -253,7 +301,6 @@ class PersonFaceDialog(QDialog):
                 self.current_person.face_name = new_name
                 self.registered_person_list.update_list()
                 self.updateEvent.emit()
-
 
     def update_registered_person(self):
         """사람 등록"""
