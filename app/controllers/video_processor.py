@@ -19,7 +19,7 @@ class VideoProcessor(QThread):
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path, progress_dialog):
-
+        
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
         total_elements = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -67,9 +67,9 @@ class VideoProcessor(QThread):
         """필터링 된 비디오를 다운합니다."""
         # todo : output_video_path를 다운로드 경로로 이동
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        image_name = f"output_video_{current_time}"
+        video_name = f"output_video_{current_time}.mp4"
         output_video_path = self.path_manager.load_download_path()
-        output_video_path = os.path.join(output_video_path, image_name)
+        output_video_path = os.path.join(output_video_path, video_name)
 
         
         shutil.copy(self.temp_video_path, output_video_path)
