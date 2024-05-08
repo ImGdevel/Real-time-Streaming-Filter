@@ -24,8 +24,6 @@ class VideoView(QWidget):
         self.video_player = VideoPlayer()
         self.video_player.setPlayVideo.connect(self.get_encoding_video)
         
-
-        
         self.setting_widget = SettingWidget()
         self.setting_widget.setStyleSheet(Style.frame_style)
         self.setting_widget.setGraphicsEffect(Style.shadow(self.setting_widget))
@@ -68,8 +66,6 @@ class VideoView(QWidget):
         self.setting_widget.addSettingButton(self.button1)
         self.setting_widget.addSettingButton(self.button2)
         
-    
-    
     def openFileDialog(self):
         '''파일 대화상자를 통해 비디오 파일 선택'''
         options = QFileDialog.Options()
@@ -77,9 +73,10 @@ class VideoView(QWidget):
         if filePath:
             self.origin_video_path = filePath
             self.play_video(filePath)
-        
+
     def play_video(self, video_path):
         """영상 재생"""
+        self.video_processor.set_video(video_path)
         self.video_player.set_video(video_path)
         self.video_player.start_video()
 
@@ -90,16 +87,28 @@ class VideoView(QWidget):
     def do_video_encoding(self):
         """비디오 인코딩"""
         #다이얼로그 구문 
-        progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
-        progress_dialog.setWindowModality(Qt.WindowModal)
-        self.video_processor.set_video(self.origin_video_path, progress_dialog)
-        self.video_processor.run()
-        progress_dialog.exec()
-        
+        if self.origin_video_path:
+            self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+            self.video_processor.progressChanged.connect(self.setProgress)
+            self.progress_dialog.canceled.connect(self.cancelCounting) # 취소시
+            self.video_processor.start()
+
+            self.progress_dialog.exec_()
+            
+        else:
+            # todo : 동영상이 선택 되지 않았음을 알려야 함
+            raise NotImplementedError("todo : 동영상이 선택 되지 않았음을 알려야 함")
+    
+    def setProgress(self, value):
+        """작업 진행 상황 업데이트"""
+        self.progress_dialog.setValue(value)
+
+    def cancelCounting(self):
+        """인코딩 취소시"""
+        self.video_processor.encoding_cancel()
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
-        print("인코딩 영상 재생!!")
         self.encoding_video_path = video_path
         self.play_video(video_path)
     
