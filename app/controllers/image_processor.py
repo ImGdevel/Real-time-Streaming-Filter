@@ -88,11 +88,11 @@ class ImageProcessor():
         """
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         download_directory = self.path_manager.load_download_path()
-        print("down images to : " + self.output_video_path)
+        print("down images to : " + download_directory)
         sequence_number = 1
         for qimage in QImage_list:
-            #img = self.QImage_to_cv2(qimage)
-            img = qimage2ndarray.rgb_view(qimage)
+            img = self.QImage_to_cv2(qimage)
+            #img = qimage2ndarray.rgb_view(qimage)
 
             # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
             image_name = f"{current_time}_{sequence_number}.jpg"
@@ -111,11 +111,16 @@ class ImageProcessor():
         """
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         download_directory = self.path_manager.load_download_path()
-        print("down images to : " + self.output_video_path)
+        print("down images to : " + download_directory)
         sequence_number = 1
         for key, qimage in QImage_dict.items():
-            #img = self.QImage_to_cv2(qimage)
+
+            if qimage.format() != QImage.Format_ARGB32:
+                # QImage를 32비트 이미지로 변환
+                qimage = qimage.convertToFormat(QImage.Format_ARGB32)
+
             img = qimage2ndarray.rgb_view(qimage)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
             image_name = f"{current_time}_{sequence_number}.jpg"
             output_path = os.path.join(download_directory, image_name)
@@ -142,8 +147,24 @@ class ImageProcessor():
 
 
 
-
-
+    # 이미지를 OpenCV 형식으로 변환하는 메소드
+    def QImage_to_cv2(self, qimage):
+        if qimage.format() != QImage.Format_RGB888:
+            # QImage의 형식이 RGB888이 아니면 변환
+            qimage = qimage.convertToFormat(QImage.Format_RGB888)
+        
+        width = qimage.width()
+        height = qimage.height()
+        
+        # QImage에서 데이터를 가져와서 numpy 배열로 변환
+        ptr = qimage.bits()
+        ptr.setsize(qimage.byteCount())
+        arr = np.array(ptr).reshape(height, width, 3)  # 3 channels for RGB
+        
+        # OpenCV의 BGR 형식으로 변환
+        cv_img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+        
+        return cv_img
 
 
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import cv2
 import shutil
@@ -62,9 +63,14 @@ class VideoProcessor(QThread):
     def download_video(self):
         """필터링 된 비디오를 다운합니다."""
         # todo : output_video_path를 다운로드 경로로 이동
-        self.output_video_path = self.path_manager.load_download_path()
-        shutil.move(self.temp_video_path, self.output_video_path)
-        print("move video to : " + self.output_video_path)
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        image_name = f"output_video_{current_time}"
+        output_video_path = self.path_manager.load_download_path()
+        output_video_path = os.path.join(output_video_path, image_name)
+
+        
+        shutil.copy(self.temp_video_path, output_video_path)
+        print("copy video to : " + output_video_path)
         
     def set_filter(self, filter):
         """필터 설정"""
