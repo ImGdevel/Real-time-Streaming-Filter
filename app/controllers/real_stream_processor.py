@@ -49,11 +49,14 @@ class RealStreamProcessor(QThread):
         boxesList = self.filtering.video_filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
-                processed_frame = self.filtering.blur(frame, boxesList[key])
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.blur(frame, boxesList[key])
             elif key == -2:
-                processed_frame = self.filtering.square_blur(frame, boxesList[key])
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.square_blur(frame, boxesList[key])
             else:
-                processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
+                if boxesList[key] is not None:
+                    processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
     
         return processed_frame
     
