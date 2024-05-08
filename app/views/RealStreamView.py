@@ -273,7 +273,7 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
-        self.cam_dialog.exec()
+        self.cam_dialog.show()
         # 웹캠 새장 로직 추가
     
     def change_webcam(self, index):
