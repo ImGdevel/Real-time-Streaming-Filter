@@ -52,10 +52,10 @@ class VideoView(QWidget):
         list_frame.setContent(self.filter_list_widget)
         
 
-        self.button1 = QPushButton("Encoding")
+        self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
         self.button1.clicked.connect(self.do_video_encoding)
-        self.button2 = QPushButton("Download")
+        self.button2 = QPushButton("다운로드")
         self.button2.setFixedHeight(40)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
@@ -92,7 +92,7 @@ class VideoView(QWidget):
         #다이얼로그 구문 
         progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
         progress_dialog.setWindowModality(Qt.WindowModal)
-        progress_dialog.show()
+        progress_dialog.exec()
         self.video_processor.filtering_video(self.origin_video_path, progress_dialog)
         
     def get_encoding_video(self, video_path):
