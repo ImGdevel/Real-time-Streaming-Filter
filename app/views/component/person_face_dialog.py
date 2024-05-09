@@ -8,6 +8,7 @@ from PySide6.QtGui import QPixmap, QIcon
 from controllers import PersonFaceSettingController
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
+from .capture_window import CaptureWindow
 from utils import Style, Icons
 
 
@@ -164,8 +165,6 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.setFlow(QListWidget.LeftToRight)
         self.image_list_widget.setWrapping(True)
         self.image_list_widget.setItemAlignment(Qt.AlignCenter)
-        
-        # 드래그 앤 드롭 기능 추가
         self.image_list_widget.setDragEnabled(True)
         self.image_list_widget.setAcceptDrops(True)
         self.image_list_widget.viewport().setAcceptDrops(True)
@@ -175,14 +174,29 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.dragMoveEvent = self.drag_move_event
         self.image_list_widget.dropEvent = self.drop_event
 
-        image_layout.addWidget(self.image_list_widget)
-
         # 파일 탐색기 열기 버튼 추가
-        upload_image_button = QPushButton("Upload Image")
+        upload_image_button = QPushButton()
+        upload_image_button.setIcon(QIcon(Icons.folder_open))
+        upload_image_button.setStyleSheet(Style.mini_button_style)
         upload_image_button.clicked.connect(self.open_file_dialog)
+        upload_image_button.setFixedSize(50,50)
+
+        capture_button = QPushButton()
+        capture_button.setIcon(QIcon(Icons.camera))
+        capture_button.setStyleSheet(Style.mini_button_style)
+        capture_button.setFixedSize(50,50)
+        capture_button.clicked.connect(self.open_capture_window)
+        
+        image_layout.addWidget(capture_button)
         image_layout.addWidget(upload_image_button)
+        image_layout.addWidget(self.image_list_widget)
         
         return image_layout
+    
+    def open_capture_window(self):
+        capture_window = CaptureWindow()
+        capture_window.exec_()
+        pass
     
     def show_window(self, show_window):
         """화면 """
