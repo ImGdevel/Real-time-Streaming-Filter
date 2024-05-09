@@ -1,18 +1,18 @@
 import sys
 import cv2
+import numpy as np
 from PySide6.QtCore import QTimer, Signal, Qt
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
-from models import ObjectDetect
+from models import Filtering
 
 class CaptureWindow(QDialog):
-    photo_captured = Signal(QImage)
+    photo_captured = Signal(np.ndarray)
 
     def __init__(self):
         super().__init__()
+        self.filtering = Filtering()
         
-        #self.face_detector = ObjectDetect()
-
         self.setWindowTitle("Face Capture")
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)  # 종료 버튼만 있는 Dialog
 
@@ -38,13 +38,15 @@ class CaptureWindow(QDialog):
         self.cap = cv2.VideoCapture(0)
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-        self.timer.start(1000)  # 30 fps
+        self.timer.start(1000/30)  # 30 fps
 
     def update_frame(self):
         ret, frame = self.cap.read()
         if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            processed_img = self.filtering.face_capture(frame)
+
+            frame = cv2.cvtColor(processed_img, cv2.COLOR_BGR2RGB)
+            gray = cv2.cvtColor(processed_img, cv2.COLOR_BGR2GRAY)
             
             #faces = self.face_detector.origin_detect(frame)
             # for (x, y, w, h) in faces:
@@ -62,7 +64,7 @@ class CaptureWindow(QDialog):
             q_img = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
             
             #캡쳐 이미지 전달
-            self.photo_captured.emit(q_img)
+            self.photo_captured.emit(frame)
             # 종료
             self.close_and_release_capture()
 
