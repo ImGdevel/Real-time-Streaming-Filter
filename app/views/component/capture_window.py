@@ -3,20 +3,22 @@ import cv2
 from PySide6.QtCore import QTimer, Signal, Qt
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
-
+from models import ObjectDetect
 
 class CaptureWindow(QDialog):
     photo_captured = Signal(QImage)
 
     def __init__(self):
         super().__init__()
+        
+        #self.face_detector = ObjectDetect()
 
         self.setWindowTitle("Face Capture")
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)  # 종료 버튼만 있는 Dialog
 
         self.video_frame = QLabel()
-        self.capture_button = QPushButton("Capture")
-        self.close_button = QPushButton("Close")
+        self.capture_button = QPushButton("캡쳐")
+        self.close_button = QPushButton("취소")
 
         layout = QVBoxLayout()
         layout.addWidget(self.video_frame)
@@ -36,20 +38,18 @@ class CaptureWindow(QDialog):
         self.cap = cv2.VideoCapture(0)
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-        self.timer.start(1000 / 30)  # 30 fps
-
-    def closeEvent(self, event):
-        self.close_and_release_capture()
-        event.accept()
+        self.timer.start(1000)  # 30 fps
 
     def update_frame(self):
         ret, frame = self.cap.read()
         if ret:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
-            for (x, y, w, h) in faces:
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            
+            #faces = self.face_detector.origin_detect(frame)
+            # for (x, y, w, h) in faces:
+            #     cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
+                
             height, width, channel = frame.shape
             bytes_per_line = 3 * width
             q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888)
@@ -58,12 +58,18 @@ class CaptureWindow(QDialog):
     def capture_frame(self):
         ret, frame = self.cap.read()
         if ret:
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            q_img = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
-            self.photo_captured.emit(q_img)
+            #캡쳐 이미지 전달
+            self.photo_captured.emit(frame)
+            # 종료
             self.close_and_release_capture()
 
     def close_and_release_capture(self):
+        """종료시 캠 및 Time반환"""
         self.timer.stop()
         self.cap.release()
         self.close()
+        
+    def closeEvent(self, event):
+        """종료 메서드"""
+        self.close_and_release_capture()
+        event.accept()
