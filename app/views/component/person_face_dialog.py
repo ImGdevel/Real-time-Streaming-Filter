@@ -139,14 +139,10 @@ class PersonFaceDialog(QDialog):
         self.text_layout = TitleEdit()
         self.text_layout.onEditEvent.connect(self.change_person_name)
 
-        image_layout = self.setup_image_layout()
-
-        #add_button = QPushButton("Register")
-        #add_button.clicked.connect(self.update_registered_person)
+        image_frame = self.setup_image_layout()
 
         face_registration_layout.addWidget(self.text_layout)
-        face_registration_layout.addLayout(image_layout)
-        #face_registration_layout.addWidget(add_button)
+        face_registration_layout.addWidget(image_frame)
         
         return face_registration_layout
     
@@ -154,7 +150,8 @@ class PersonFaceDialog(QDialog):
 
     def setup_image_layout(self):
         """이미지 업로드 레이아웃 설정 메서드"""
-        image_layout = QVBoxLayout()
+        frame = QWidget()
+        image_layout = QGridLayout()
         
         self.image_list_widget = QListWidget()
         self.image_list_widget.setStyleSheet(Style.frame_inner_style)
@@ -187,11 +184,12 @@ class PersonFaceDialog(QDialog):
         capture_button.setFixedSize(50,50)
         capture_button.clicked.connect(self.open_capture_window)
         
-        image_layout.addWidget(capture_button)
-        image_layout.addWidget(upload_image_button)
-        image_layout.addWidget(self.image_list_widget)
+        image_layout.addWidget(capture_button,0,0)
+        image_layout.addWidget(upload_image_button,0,1)
+        image_layout.addWidget(self.image_list_widget,1, 0, 1, 2)
         
-        return image_layout
+        frame.setLayout(image_layout)
+        return frame
     
     def open_capture_window(self):
         capture_window = CaptureWindow()

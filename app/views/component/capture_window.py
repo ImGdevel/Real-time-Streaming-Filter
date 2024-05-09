@@ -39,7 +39,7 @@ class CaptureWindow(QDialog):
         self.timer.start(1000 / 30)  # 30 fps
 
     def closeEvent(self, event):
-        self.release_capture()
+        self.close_and_release_capture()
         event.accept()
 
     def update_frame(self):
