@@ -1,30 +1,31 @@
 import os
+import cv2
 import dlib
 import face_recognition
 import re
 import pickle
-
+from PySide6.QtGui import QImage
+import qimage2ndarray
 
 #이미지에서 얼굴 특징을 추출하여 반환하는 함수
-def extract_face_features(image_path):
+def extract_face_features(image):
     """
     주어진 이미지 파일에서 얼굴 특징을 추출합니다.
     
     Args:
-    - image_path: 이미지 파일의 경로
+    - image: 이미지 np.array
     
     Returns:
-    - 얼굴 특징을 나타내는 인코딩 값. 얼굴이 없는 경우 None을 반환합니다.
+    - 얼굴 특징을 나타내는 인코딩 값. 얼굴이 없는 경우 None을 반환합니다. 
     """
-    image = face_recognition.load_image_file(image_path)
     face_landmarks_list = face_recognition.face_landmarks(image)
     if len(face_landmarks_list) > 1:
-        print("Too many faces in ", image_path)
+        print("Too many faces in image")
         return None
     elif len(face_landmarks_list) > 0:
         return face_recognition.face_encodings(image)[0]
     else:
-        print("Cannot found face in ", image_path)
+        print("Cannot found face in image")
         return None
 
 # "name" + _ + i 로 되어있는 딕셔너리에서 이름만 추출하는 함수
@@ -139,13 +140,13 @@ def face_encoding_box(frame, box):
     return encoding
 
 # 사람 얼굴 사진을 등록하는 함수
-def register_person(person_name, image_path, known_faces_path = './models/known_faces.pickle'):
+def register_person(person_name, qimage: QImage, known_faces_path = './models/known_faces.pickle'):
     """
     사람의 사진을 등록하고 얼굴 특징을 저장합니다.
     
     Args:
     - person_name: 사람의 이름
-    - image_path: 사진 파일 경로
+    - q_img: QImage 데이터
     - known_faces_path: 얼굴 특징을 저장하는 파일 경로
     
     Returns:
@@ -158,9 +159,14 @@ def register_person(person_name, image_path, known_faces_path = './models/known_
     else:
         person_faces = {}
 
+    if qimage.format() != QImage.Format_ARGB32:
+        # QImage를 32비트 이미지로 변환
+        qimage = qimage.convertToFormat(QImage.Format_ARGB32)
 
+    image = qimage2ndarray.rgb_view(qimage)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     
-    face_features = extract_face_features(image_path)
+    face_features = extract_face_features(image)
     if face_features is not None:
         max_face_number = find_max_face_number(person_name, person_faces) + 1
         face_code = person_name + "_" + str(max_face_number)
