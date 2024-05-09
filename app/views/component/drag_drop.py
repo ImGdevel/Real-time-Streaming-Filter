@@ -15,6 +15,8 @@ class DragDropLabel(QLabel):
         self.initUI()
 
     def initUI(self):
+        self.currunt_exm = None
+        self.currunt_filt = None
         self.layout = QHBoxLayout()
         self.dropbox_lable = QLabel()
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
@@ -149,8 +151,10 @@ class DragDropLabel(QLabel):
             self.setFilteredView(self.currunt_filt)
     
     def emptyExmLabel(self):
-        self.dropbox_lable.setPixmap(None)
+        self.dropbox_lable.clear()
+        self.dropbox_lable.setText('Original')
 
     def emptyFiletLabel(self):
-        self.filtered_label.setPixmap(None)
+        self.filtered_label.clear()
+        self.filtered_label.setText('Filtered')
 
