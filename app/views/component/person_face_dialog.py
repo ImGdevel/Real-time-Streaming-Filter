@@ -10,7 +10,7 @@ from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .capture_window import CaptureWindow
 from utils import Style, Icons
-from models import Filtering
+from models.FaceFilter import *
 
 class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
@@ -21,7 +21,6 @@ class PersonFaceDialog(QDialog):
         self.current_person = None
         self.setStyleSheet(Style.frame_style)
 
-        self.face_detector = Filtering()
         
         self._initUI()
 
@@ -186,8 +185,13 @@ class PersonFaceDialog(QDialog):
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
         print("photo type", type(photo))
-        self.face_setting_processor.add_person_encoding_by_name_from_img(self.current_person.face_name, photo)
+        success = extract_face_features_by_img(photo)
+        if success is not None:
+            self.face_setting_processor.add_person_encoding_by_name_from_img(self.current_person.face_name, photo)
+        else:
+            raise ValueError("얼굴이 하나 존재해야 한다.")
         print("Received photo from CaptureWindow")
+        self.update_image_list()
     
     def show_window(self, show_window):
         """화면 """
