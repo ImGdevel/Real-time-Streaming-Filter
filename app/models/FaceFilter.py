@@ -4,7 +4,6 @@ import dlib
 import face_recognition
 import re
 import pickle
-from PySide6.QtGui import QImage
 import qimage2ndarray
 
 #이미지에서 얼굴 특징을 추출하여 반환하는 함수
@@ -140,7 +139,7 @@ def face_encoding_box(frame, box):
     return encoding
 
 # 사람 얼굴 사진을 등록하는 함수
-def register_person(person_name, qimage: QImage, known_faces_path = './models/known_faces.pickle'):
+def register_person(person_name, image, known_faces_path = './models/known_faces.pickle'):
     """
     사람의 사진을 등록하고 얼굴 특징을 저장합니다.
     
@@ -159,13 +158,6 @@ def register_person(person_name, qimage: QImage, known_faces_path = './models/kn
     else:
         person_faces = {}
 
-    if qimage.format() != QImage.Format_ARGB32:
-        # QImage를 32비트 이미지로 변환
-        qimage = qimage.convertToFormat(QImage.Format_ARGB32)
-
-    image = qimage2ndarray.rgb_view(qimage)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    
     face_features = extract_face_features(image)
     if face_features is not None:
         max_face_number = find_max_face_number(person_name, person_faces) + 1

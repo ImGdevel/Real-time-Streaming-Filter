@@ -147,7 +147,7 @@ class PersonFaceDialog(QDialog):
         
         return face_registration_layout
     
-    def add_face_process(self, image_files):
+    def add_face_process(self, images: list[QPixmap]):
         """이미지 등록 프로세스"""
         self.progress_dialog = QProgressDialog()
         self.progress_dialog.setWindowTitle("Progress")
@@ -156,7 +156,7 @@ class PersonFaceDialog(QDialog):
         self.progress_dialog.setRange(0, 0)
         self.progress_dialog.canceled.connect(self.cancel_progress)
         
-        self.face_registration_processor.setup(image_files, self.current_person)
+        self.face_registration_processor.setup(images, self.current_person)
         self.face_registration_processor.start()
         
         self.progress_dialog.exec()
@@ -223,6 +223,8 @@ class PersonFaceDialog(QDialog):
         file_paths, _ = QFileDialog.getOpenFileNames(self, "Open Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
         
         if file_paths:
+            #file_paths 를 QPizmap으로 변환
+            
             self.add_face_process(file_paths)
 
     def update_image_list(self):
@@ -283,3 +285,14 @@ class PersonFaceDialog(QDialog):
             self.add_face_process(image_files)
         else:
             event.ignore()
+
+    def convert_paths_to_images(file_paths):
+        """Convert file paths to QImage objects."""
+        images = []
+        for path in file_paths:
+            image = QImage(path)
+            if not image.isNull():
+                images.append(image)
+            else:
+                print(f"Failed to load image from {path}")
+        return images
