@@ -147,3 +147,10 @@ class DragDropLabel(QLabel):
             print("refreashed")
         if self.currunt_filt:
             self.setFilteredView(self.currunt_filt)
+    
+    def emptyExmLabel(self):
+        self.dropbox_lable.setPixmap(None)
+
+    def emptyFiletLabel(self):
+        self.filtered_label.setPixmap(None)
+
