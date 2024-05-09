@@ -382,6 +382,5 @@ class FilterSettingView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
-        self.set_current_filter(None)
-        pass
+        self.set_current_filter(self.current_filter)
         
