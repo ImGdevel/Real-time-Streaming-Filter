@@ -68,6 +68,8 @@ class FaceManager:
                     face.encoding_list[face_code] = image
                     self.save_person_face()
                     return True
+                else:
+                    raise ValueError("얼굴이 인식되지 않는 사진입니다.")
                 
         raise ValueError("존재하지 않는 face_name입니다")   
     
