@@ -149,7 +149,7 @@ class FilterSettingView(QWidget):
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
-        mosaic_setting_widget = MosaicSettingWidget()
+        self.mosaic_setting_widget = MosaicSettingWidget()
         
         content01 =  ContentLabeling()
         content01.setLabel("필터링 인물 설정")
@@ -161,7 +161,7 @@ class FilterSettingView(QWidget):
         
         content03 =  ContentLabeling()
         content03.setLabel("모자이크 블러 설정")
-        content03.setContent(mosaic_setting_widget)
+        content03.setContent(self.mosaic_setting_widget)
         
 
 
@@ -237,6 +237,7 @@ class FilterSettingView(QWidget):
 
         elif index == 2:
             self.settings_content.setCurrentIndex(2)
+            self.mosaic_setting_widget.setup_mosaic_setting(self.current_filter)
             self.button3.setChecked(True)
             self.button2.setChecked(False)
             self.button1.setChecked(False)

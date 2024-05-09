@@ -23,7 +23,7 @@ class MosaicSettingWidget(QWidget):
         default_mosaic_layout = QGridLayout()
         default_mosaic_layout.setSpacing(10)
 
-        intensity_label = QLabel("블러 강도 ")
+        intensity_label = QLabel("블러 강도")
         self.intensity_slider = QSlider(Qt.Horizontal)
         self.intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
