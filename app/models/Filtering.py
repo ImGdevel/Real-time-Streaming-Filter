@@ -38,6 +38,31 @@ class Filtering:
         self.init_id = False
         self.filter_change = False
 
+    def face_capture(self, img):
+        boxList = self.object.face_detect(img)
+        for box in boxList:
+            cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 255, 255), 2)
+        return img
+        # print("boxList",boxList)
+        # recognized_face = []
+        for box in boxList:
+            feature = extract_face_features_by_img(img,[box])
+            if feature is None:
+                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
+            else:
+                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
+        #         recognized_face.append(box)
+        # if len(recognized_face) == 0:
+        #     # raise ValueError("현재 화면에 인식 가능한 얼굴이 없습니다.")
+        #     return img, False
+        # elif len(recognized_face) > 1:
+        #     # raise ValueError("현재 화면에 두 사람 이상 존재하고 있습니다.")
+        #     return img, False
+        # else:
+        #     return img, True
+
+
+
     def face_filter(self, img, results):
         results[-1] = []
         known_face_ids = []
@@ -157,7 +182,7 @@ class Filtering:
             blurred_roi = cv2.blur(roi, (blur_w, blur_h))
             
             # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
-            img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blurred_roi
+            img[y1:y2, x1:x2] = blurred_roi
             
         return img
 

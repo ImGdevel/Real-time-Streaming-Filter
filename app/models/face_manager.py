@@ -49,7 +49,7 @@ class FaceManager:
         self.save_person_face()
 
 
-    def add_person_encoding_by_name(self, face_name: str, file_path):
+    def add_person_encoding_by_name_from_file(self, face_name: str, file_path):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
         #print("add person encoding")
         face_encoding = cv2.imread(file_path)
@@ -61,6 +61,21 @@ class FaceManager:
                     max_face_number += 1
                     face_code = face_name + "_" + str(max_face_number)
                     face.encoding_list[face_code] = face_encoding
+                    self.save_person_face()
+                    return True
+                
+        raise ValueError("존재하지 않는 face_name입니다")   
+    
+    def add_person_encoding_by_name_from_img(self, face_name: str, img):
+        for face in self.face_list:
+            print("face.face_name", face.face_name)
+            print("face_name",face_name)
+            if face.face_name == face_name:
+                if  register_person_by_img(str(face.face_id), img, self.path_manager.load_known_faces_path()):
+                    max_face_number = find_max_face_number(face_name, face.encoding_list)
+                    max_face_number += 1
+                    face_code = face_name + "_" + str(max_face_number)
+                    face.encoding_list[face_code] = img
                     self.save_person_face()
                     return True
                 
