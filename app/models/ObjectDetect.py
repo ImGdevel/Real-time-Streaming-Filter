@@ -54,6 +54,14 @@ class ObjectDetect:
             self.sticker_id[face] = []
         #print("sticker_id: ", self.sticker_id)
 
+    def face_detect(self, img):
+        results = self.detect(img, [264], self.modelManager.orginModel, self.orginNames)
+        boxList = []
+        for result in results:
+            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]]
+            boxList.append(box)
+        return boxList
+
     def detect(self, img, filter_classes, model, names):
         """
         객체인식 결과를 반환한다.
