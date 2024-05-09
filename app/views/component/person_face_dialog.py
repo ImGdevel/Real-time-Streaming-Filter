@@ -195,8 +195,11 @@ class PersonFaceDialog(QDialog):
     
     def open_capture_window(self):
         capture_window = CaptureWindow()
+        capture_window.photo_captured.connect(self.receive_photo)
         capture_window.exec_()
-        pass
+        
+    def receive_photo(self, photo):
+        print("Received photo from CaptureWindow")
     
     def show_window(self, show_window):
         """화면 """
@@ -288,6 +291,9 @@ class PersonFaceDialog(QDialog):
 
         self.face_registration_processor.start()
         self.progress_dialog.exec()
+
+    
+
     
 
     def add_image(self, img: str):
