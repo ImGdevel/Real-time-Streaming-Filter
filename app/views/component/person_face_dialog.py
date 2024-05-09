@@ -4,13 +4,16 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtGui import QPixmap, QIcon, QImage
 from controllers import PersonFaceSettingController, FaceRegistrationProcessor
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .capture_window import CaptureWindow
 from utils import Style, Icons
 from models import Filtering
+from models.FaceFilter import *
+import cv2
+import numpy as np
 
 class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
@@ -185,8 +188,8 @@ class PersonFaceDialog(QDialog):
         
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
-        print("photo type", type(photo))
-        self.face_setting_processor.add_person_encoding_by_name_from_img(self.current_person.face_name, photo)
+        self.add_face_process([photo])
+        
         print("Received photo from CaptureWindow")
     
     def show_window(self, show_window):
@@ -227,9 +230,12 @@ class PersonFaceDialog(QDialog):
         file_paths, _ = QFileDialog.getOpenFileNames(self, "Open Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
         
         if file_paths:
+            images = []
             #file_paths 를 QPizmap으로 변환
-            
-            self.add_face_process(file_paths)
+            for path in file_paths:
+                image = cv2.imread(path)
+                images.append(image)
+            self.add_face_process(images)
 
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
@@ -240,9 +246,9 @@ class PersonFaceDialog(QDialog):
             for encoding_value in image_list:
                 self.add_image(encoding_value)
                 
-    def add_image(self, img: str):
+    def add_image(self, img: QImage):
         """이미지 리스트에 이미지 등록"""
-        pixmap = QPixmap(img)  # 이미지 경로를 QPixmap으로 변환
+        pixmap = QPixmap(img)
         pixmap = pixmap.scaled(140, 140, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
         icon = QIcon(pixmap)
         item = QListWidgetItem(icon, None)
@@ -289,14 +295,3 @@ class PersonFaceDialog(QDialog):
             self.add_face_process(image_files)
         else:
             event.ignore()
-
-    def convert_paths_to_images(file_paths):
-        """Convert file paths to QImage objects."""
-        images = []
-        for path in file_paths:
-            image = QImage(path)
-            if not image.isNull():
-                images.append(image)
-            else:
-                print(f"Failed to load image from {path}")
-        return images

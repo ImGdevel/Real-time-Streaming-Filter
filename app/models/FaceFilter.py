@@ -7,7 +7,7 @@ import pickle
 import qimage2ndarray
 
 #이미지에서 얼굴 특징을 추출하여 반환하는 함수
-def extract_face_features(image):
+def extract_face_features(image, boxList = None):
     """
     주어진 이미지 파일에서 얼굴 특징을 추출합니다.
     
@@ -16,27 +16,6 @@ def extract_face_features(image):
     
     Returns:
     - 얼굴 특징을 나타내는 인코딩 값. 얼굴이 없는 경우 None을 반환합니다. 
-    """
-    face_landmarks_list = face_recognition.face_landmarks(image)
-    if len(face_landmarks_list) > 1:
-        print("Too many faces in image")
-        return None
-    elif len(face_landmarks_list) > 0:
-        return face_recognition.face_encodings(image)[0]
-    else:
-        print("Cannot found face in image")
-        return None
-
-#이미지에서 얼굴 특징을 추출하여 반환하는 함수
-def extract_face_features_by_img(image, boxList = None):
-    """
-    주어진 이미지 파일에서 얼굴 특징을 추출합니다.
-    
-    Args:
-    - image: 이미지 numpy배열
-    
-    Returns:
-    - 얼굴 특징을 나타내는 인코딩 값. 얼굴이 없는 경우 None을 반환합니다.
     """
     if boxList is None:
         face_landmarks_list = face_recognition.face_landmarks(image)
@@ -47,14 +26,14 @@ def extract_face_features_by_img(image, boxList = None):
             locations.append(location)
         face_landmarks_list = face_recognition.face_landmarks(image, locations)
     if len(face_landmarks_list) > 1:
-        print("Too many faces")
+        print("Too many faces in image")
         return None
     elif len(face_landmarks_list) > 0:
-        print("face_landmark:",face_landmarks_list)
         return face_recognition.face_encodings(image)[0]
     else:
-        print("Cannot found face")
+        print("Cannot found face in image")
         return None
+
     
 # "name" + _ + i 로 되어있는 딕셔너리에서 이름만 추출하는 함수
 def extract_name(name_i):
@@ -203,43 +182,6 @@ def register_person(person_name, image, known_faces_path = './models/known_faces
     print("No faces found for :", person_name)
     return False
 
-# 사람 얼굴 사진을 등록하는 함수
-def register_person_by_img(person_name, image, known_faces_path = './models/known_faces.pickle'):
-    """
-    사람의 사진을 등록하고 얼굴 특징을 저장합니다.
-    
-    Args:
-    - person_name: 사람의 이름
-    - image_path: 사진 파일 경로
-    - known_faces_path: 얼굴 특징을 저장하는 파일 경로
-    
-    Returns:
-    - True: 얼굴 특징이 성공적으로 등록되었을 경우
-    - False: 얼굴 특징이 등록되지 않았거나 이미지에서 얼굴을 찾지 못한 경우
-    """
-
-    if os.path.exists(known_faces_path):
-        person_faces = load_known_faces(known_faces_path)
-    else:
-        person_faces = {}
-
-
-    
-    face_features = extract_face_features_by_img(image)
-    if face_features is not None:
-        max_face_number = find_max_face_number(person_name, person_faces) + 1
-        face_code = person_name + "_" + str(max_face_number)
-        person_faces[face_code] = face_features           
-        
-        print("register FaceFilter :", face_code)
-        
-        with open(known_faces_path, 'wb') as f:
-            pickle.dump(person_faces, f)
-
-        return True
-
-    print("No faces found for :", person_name)
-    return False
 
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
