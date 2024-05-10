@@ -42,7 +42,7 @@ class RealStreamProcessor(QThread):
         ESC_KEY=27
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
-        capture = self.WindowCapture(region=(100, 100, 500, 400), capture_rate=FRAME_RATE, processor=self)
+        capture = self.WindowCapture(region=(0, 0, 600, 500), capture_rate=FRAME_RATE, processor=self)
         
 
         while True:
