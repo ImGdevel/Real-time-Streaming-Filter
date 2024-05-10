@@ -17,6 +17,7 @@ import numpy as np
 
 class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
+    webcam_on = Signal()
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -184,6 +185,7 @@ class PersonFaceDialog(QDialog):
     def open_capture_window(self):
         """사진 캡쳐 페이지 Open"""
         try:
+            self.webcam_on.emit()
             capture_window = CaptureWindow()
             capture_window.photo_captured.connect(self.receive_photo_from_capture)
             capture_window.exec_()

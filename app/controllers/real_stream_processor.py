@@ -29,7 +29,6 @@ class RealStreamProcessor(QThread):
             #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
-                print("frame type:",type(frame))
                 processed_frame = self.process_frame(frame)  # 프레임 처리
                 frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 

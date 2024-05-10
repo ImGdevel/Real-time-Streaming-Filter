@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, QButtonGroup,
     QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy, QDialog
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
@@ -14,6 +14,7 @@ from utils import Colors, Style, Icons
 
 
 class FilterSettingView(QWidget):
+    webcam_on = Signal()
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -284,6 +285,7 @@ class FilterSettingView(QWidget):
         
         self.person_face_setting_window = PersonFaceDialog()
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
+        self.person_face_setting_window.webcam_on.connect(self.webcamOn)
         
         face_layout.addLayout(registered_faces_list_layout, 2)
         face_layout.addLayout(available_faces_list_layout, 1)
@@ -390,4 +392,6 @@ class FilterSettingView(QWidget):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
         self.set_current_filter(self.current_filter)
-        
+
+    def webcamOn(self):
+        self.webcam_on.emit()
