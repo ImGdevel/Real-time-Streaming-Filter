@@ -4,10 +4,11 @@ from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager
 import time
 
+
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
     frame_ready = Signal(QImage)
-
+    
     def __init__(self):
         super().__init__()
         self.video_cap = cv2.VideoCapture(0)  # 웹캠 캡처 객체
@@ -18,31 +19,42 @@ class RealStreamProcessor(QThread):
         self.is_flipped = True  # 화면 좌우 뒤집기 상태
         self.current_webcam = 0
 
+    class WindowCapture:
+        def __init__(self, window_name=None, capture_rate=30, region=None, processor = None):
+            self.window_name = window_name
+            self.wait_time = 1/capture_rate
+            self.region = region
+            self.processor = processor
+            self.frame=self.screenshot()
+            
+
+        def screenshot(self):
+            import pyautogui
+            import numpy as np
+            region = self.region
+            frame = cv2.cvtColor(np.asarray(pyautogui.screenshot(region=region)), cv2.COLOR_RGB2BGR)
+            
+            processed_frame = self.processor.process_frame(frame)
+
+            return processed_frame
+
     def run(self):
-        '''스레드 실행 메서드 - 웹캠에서 프레임을 읽어와 RGB 형식으로 변환.'''
-        self.is_running = True
+        ESC_KEY=27
+        FRAME_RATE = 60
+        SLEEP_TIME = 1/FRAME_RATE
+        capture = self.WindowCapture(region=(100, 100, 500, 400), capture_rate=FRAME_RATE, processor=self)
+        
 
-        if self.video_cap is None:
-            self.video_cap = cv2.VideoCapture(self.current_webcam)
-
-        while self.is_running and self.video_cap.isOpened():
-            #start = time.time()
-            ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
-            if ret:
-                print("frame type:",type(frame))
-                processed_frame = self.process_frame(frame)  # 프레임 처리
-                frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
-
-                if self.is_flipped:
-                    frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
-
-                height, width, channel = frame_rgb.shape
-                bytes_per_line = 3 * width
-                q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
-                self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
-            #end = time.time()
-            #result = end - start
-            #print("time: "+ str(result))
+        while True:
+            start=time.time()
+            frame = capture.screenshot()
+            cv2.imshow("frame1",frame)
+            delta= time.time()-start
+            if delta <SLEEP_TIME:
+                time.sleep(SLEEP_TIME-delta)
+            key= cv2.waitKey(1) & 0xFF
+            if key== ESC_KEY:
+                break
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
