@@ -223,6 +223,7 @@ class PersonFaceDialog(QDialog):
         """사람 삭제"""
         self.face_setting_processor.delete_person_face_by_id(self.current_person.face_id)
         self.registered_person_list.update_list()
+        self.updateEvent.emit()
         self.show_window(False)
 
     def open_file_dialog(self):
