@@ -49,7 +49,7 @@ class RealStreamProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        boxesList = self.filtering.video_filtering(frame)    
+        boxesList = self.filtering.filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:

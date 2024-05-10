@@ -28,7 +28,7 @@ class ImageProcessor():
             # 이미지 처리 
             #blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = self.filtering.square_blur(image, boxesList)
             
 
@@ -59,7 +59,7 @@ class ImageProcessor():
             # 이미지 처리 
             blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = image
             for key in boxesList.keys():
                 if key == -1:
