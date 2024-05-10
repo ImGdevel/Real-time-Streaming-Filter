@@ -27,6 +27,7 @@ class TitleEdit(QWidget):
         self.title_edit_button.setMaximumWidth(70)
         self.title_edit_button.setFixedSize(60,30)
         self.title_edit_button.setStyleSheet(Style.mini_button_style)
+        self.title_edit_button.setFocusPolicy(Qt.NoFocus)
         self.title_edit_button.clicked.connect(self.toggle_edit_mode)
 
         title_layout.addWidget(self.title_label)
@@ -50,7 +51,6 @@ class TitleEdit(QWidget):
     def set_edit_mode(self):
         self.edit_mode = True
         self.title_edit_button.setText("저장")
-        
         self.filter_name_line_edit.setText(self.title_label.text())
         filter_name_layout = self.title_label.parentWidget().layout()
         filter_name_layout.replaceWidget(self.title_label, self.filter_name_line_edit)

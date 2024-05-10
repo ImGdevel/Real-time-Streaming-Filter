@@ -72,6 +72,7 @@ class VideoView(QWidget):
         filePath, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.flv);;All Files (*)", options=options)
         if filePath:
             self.origin_video_path = filePath
+            self.video_processor.set_origin_video(filePath)
             self.play_video(filePath)
 
     def play_video(self, video_path):

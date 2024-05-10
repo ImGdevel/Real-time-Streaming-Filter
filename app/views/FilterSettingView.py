@@ -149,7 +149,7 @@ class FilterSettingView(QWidget):
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
-        mosaic_setting_widget = MosaicSettingWidget()
+        self.mosaic_setting_widget = MosaicSettingWidget()
         
         content01 =  ContentLabeling()
         content01.setLabel("필터링 인물 설정")
@@ -161,7 +161,7 @@ class FilterSettingView(QWidget):
         
         content03 =  ContentLabeling()
         content03.setLabel("모자이크 블러 설정")
-        content03.setContent(mosaic_setting_widget)
+        content03.setContent(self.mosaic_setting_widget)
         
 
 
@@ -237,6 +237,7 @@ class FilterSettingView(QWidget):
 
         elif index == 2:
             self.settings_content.setCurrentIndex(2)
+            self.mosaic_setting_widget.setup_mosaic_setting(self.current_filter)
             self.button3.setChecked(True)
             self.button2.setChecked(False)
             self.button1.setChecked(False)
@@ -310,9 +311,8 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
-            print("[Log] : 선택된 필터 > ", filter_data)
+            print("[Log] : 선택된 필터 > ", filter_name)
             self.filter_list_widget.set_select_item(filter_name)
-            print("이름 지정: ", filter_name)
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
@@ -381,6 +381,5 @@ class FilterSettingView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
-        self.set_current_filter(None)
-        pass
+        self.set_current_filter(self.current_filter)
         

@@ -152,7 +152,7 @@ class RealStreamView(QWidget):
         list_label.setStyleSheet(Style.list_frame_label)
         
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.set_items_event(self.set_filter_option)
+        self.filter_list_widget.set_items_event(self.set_current_filter)
         
         layout.addWidget(list_label)
         layout.addWidget(self.filter_list_widget)
@@ -276,17 +276,19 @@ class RealStreamView(QWidget):
         '''웹캠 변경 메서드'''
         self.streaming_processor.set_web_cam(index)
 
-    def set_filter_option(self, filter_name = None):
+    def set_current_filter(self, filter_name = None):
         '''필터 옵션 선택'''
-        self.current_filter = filter_name
-        self.streaming_processor.set_filter(self.current_filter)
-
-        if filter_name is not None:
+        if filter_name is not None and self.filter_controller.get_filter(filter_name):
+            print("[Log] : 선택된 필터 > ", filter_name)
+            self.current_filter = filter_name
+            self.streaming_processor.set_filter(filter_name)
             self.show_setting(True)
-            self.setup_settings(self.current_filter)
+            self.setup_settings(filter_name)
         else:
+            print("[Log] : 필터 미선택")
+            self.streaming_processor.set_filter(None)
             self.show_setting(False)
-
+            
     def update_filter(self):
         if self.current_filter:
             self.streaming_processor.set_filter(self.current_filter)
@@ -325,11 +327,12 @@ class RealStreamView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
-        self.set_filter_option()
-        self.show_setting(False)
+        self.set_current_filter(self.current_filter)
 
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
+        self.streaming_processor.wait()
         self.timer.stop()
-
+        del self.streaming_processor
+        del self.timer

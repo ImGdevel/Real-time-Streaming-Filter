@@ -20,13 +20,16 @@ class VideoProcessor(QThread):
         self.temp_video_path : str = None
         self.video_path : str = None
         self.is_running : bool = False
-
+        self.origin_video_path : str = None
 
     def run(self):
-        self.filtering_video(self.video_path)
+        self.filtering_video(self.origin_video_path)
         
     def set_video(self, video_path):
         self.video_path = video_path
+
+    def set_origin_video(self, origin_video_path):
+        self.origin_video_path = origin_video_path
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path):

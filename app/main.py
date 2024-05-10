@@ -166,12 +166,12 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
 if __name__ == "__main__":
-    try:
-        app = QApplication(sys.argv)
+    #try:
+    app = QApplication(sys.argv)
 
-        window = MainWindow()
-        window.show()
+    window = MainWindow()
+    window.show()
 
-        sys.exit(app.exec())
-    except Exception as e:
-        print("An error occurred:", e.__class__.__name__)
+    sys.exit(app.exec())
+    #except Exception as e:
+        #print("An error occurred:", e.__class__.__name__)

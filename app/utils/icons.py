@@ -17,7 +17,8 @@ class Icons:
     clone = resource_path('resources/icons/cil-clone.png')
     plus = resource_path('resources/icons/cil-plus.png')
     dust_bin = resource_path('resources/icons/cil-dust-bin.png')
-    smiley_sticker = resource_path('resources/icons/cil-smiley-sticker')
+    smiley_sticker = resource_path('resources/icons/cil-smiley-sticker.png')
     folder_open = resource_path('resources/icons/cil-folder-open')
     reload = resource_path('resources/icons/cil-reload.png')
+    camera = resource_path('resources/icons/cil-camera.png')
     
