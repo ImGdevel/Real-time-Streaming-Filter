@@ -1,11 +1,11 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget,
-    QLineEdit, QLabel, QFileDialog, QScrollArea, QWidget
+    QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton,
+    QLineEdit, QLabel, QFileDialog, QWidget
 )
-from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QPixmap, QIcon, QImage
 from models import StickerManager
+from .title_bar import TitleBar
 from utils import Style, Icons
 import cv2
 import numpy as np
@@ -15,43 +15,62 @@ class StickerRegisteredDialog(QDialog):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(Style.frame_style)
+        self.setStyleSheet(Style.dialog_style)
         self.replace_manager = StickerManager()
         self.person_id = None
         self._initUI()
 
     def _initUI(self):
         self.setWindowTitle("Registered Face View")
-        self.setFixedSize(320, 400)
-
+        self.setFixedSize(400, 355)
 
         main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         main_layout.setAlignment(Qt.AlignCenter)
+        
+        # 새로운 타이틀 바 생성
+        self.title_bar = TitleBar(self)
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        self.title_bar.setFixedHeight(40)
+        
+        content = QWidget()
+        content.setStyleSheet(Style.frame_style)
+        content_layout = QHBoxLayout()
 
         register_button = QPushButton()
-        register_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
         register_button.setIcon(QIcon(Icons.folder_open))
         register_button.setFixedSize(40, 40)
         register_button.clicked.connect(self.open_image)
-        main_layout.addWidget(register_button)
+        
 
         self.image_label = QLabel()
         self.image_label.setFixedSize(300, 300)
         self.image_label.setStyleSheet("border: 2px solid #808080")
-        main_layout.addWidget(self.image_label)
-
-        button_layout = QHBoxLayout()
+        
+        set_frame = QWidget()
+        
         save_button = QPushButton("등록")
-        save_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        save_button.setFixedSize(50,50)
+        save_button.setStyleSheet(Style.mini_button_style)
         save_button.clicked.connect(self.save)
-        button_layout.addWidget(save_button)
 
         cancel_button = QPushButton("취소")
-        cancel_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        cancel_button.setStyleSheet(Style.mini_button_style)
+        cancel_button.setFixedSize(50,50)
         cancel_button.clicked.connect(self.cancel)
-        button_layout.addWidget(cancel_button)
-
-        main_layout.addLayout(button_layout)
+        
+        button_layout = QGridLayout()
+        button_layout.addWidget(save_button,0,0)
+        button_layout.addWidget(cancel_button,1,0)
+        set_frame.setLayout(button_layout)
+        
+        content_layout.addWidget(self.image_label)
+        content_layout.addWidget(set_frame)
+        content.setLayout(content_layout)
+        
+        main_layout.addWidget(self.title_bar)
+        main_layout.addWidget(content)
 
         self.setLayout(main_layout)
 
