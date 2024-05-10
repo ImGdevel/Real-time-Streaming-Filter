@@ -279,13 +279,13 @@ class RealStreamView(QWidget):
     def set_current_filter(self, filter_name = None):
         '''필터 옵션 선택'''
         if filter_name is not None and self.filter_controller.get_filter(filter_name):
-            print("필터 선택", filter_name)
+            print("[Log] : 선택된 필터 > ", filter_name)
             self.current_filter = filter_name
             self.streaming_processor.set_filter(filter_name)
             self.show_setting(True)
             self.setup_settings(filter_name)
         else:
-            print("필터 해제")
+            print("[Log] : 필터 미선택")
             self.streaming_processor.set_filter(None)
             self.show_setting(False)
             

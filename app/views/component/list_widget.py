@@ -34,6 +34,7 @@ class ListWidget(QListWidget):
         widget.userData = item_data
         widget.setMinimumHeight(40)
         widget.setGraphicsEffect(Style.shadow(self)) 
+        widget.setFocusPolicy(Qt.NoFocus)
 
         widget.clicked.connect(self.emit_button_clicked)
 
@@ -243,4 +244,5 @@ class AvailableFacesListWidget(ListWidget):
         if widget:
             self.set_select_item(widget.objectName())
             self.onClickItemEvent.emit(widget.userData)  # ObjectName을 시그널로 전달
+            
     

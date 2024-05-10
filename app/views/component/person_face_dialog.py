@@ -74,12 +74,14 @@ class PersonFaceDialog(QDialog):
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
+        add_button.setFocusPolicy(Qt.NoFocus)
         add_button.clicked.connect(self.add_person)
         
         delete_button = QPushButton()
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
+        delete_button.setFocusPolicy(Qt.NoFocus)
         delete_button.clicked.connect(self.delete_person)
 
         # Add Filter, Delete Filter 버튼
@@ -124,6 +126,7 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.setAcceptDrops(True)
         self.image_list_widget.viewport().setAcceptDrops(True)
         self.image_list_widget.setDropIndicatorShown(True)
+        self.image_list_widget.setFocusPolicy(Qt.NoFocus)
         
         self.image_list_widget.dragEnterEvent = self.drag_enter_event
         self.image_list_widget.dragMoveEvent = self.drag_move_event
@@ -134,12 +137,14 @@ class PersonFaceDialog(QDialog):
         upload_image_button.setIcon(QIcon(Icons.folder_open))
         upload_image_button.setStyleSheet(Style.mini_button_style)
         upload_image_button.clicked.connect(self.open_file_dialog)
+        upload_image_button.setFocusPolicy(Qt.NoFocus)
         upload_image_button.setFixedSize(50,50)
 
         capture_button = QPushButton()
         capture_button.setIcon(QIcon(Icons.camera))
         capture_button.setStyleSheet(Style.mini_button_style)
         capture_button.setFixedSize(50,50)
+        capture_button.setFocusPolicy(Qt.NoFocus)
         capture_button.clicked.connect(self.open_capture_window)
         
         image_layout = QGridLayout()
@@ -189,8 +194,6 @@ class PersonFaceDialog(QDialog):
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
         self.add_face_process([photo])
-        
-        print("Received photo from CaptureWindow")
         self.update_image_list()
     
     def show_window(self, show_window):
@@ -200,11 +203,11 @@ class PersonFaceDialog(QDialog):
         else:
             self.stacked_widget.setCurrentIndex(1)
 
-    def change_current_registered_person(self, index: str):
+    def change_current_registered_person(self, current_person_index):
         """등록된 사람 선택하는 메서드"""
         self.show_window(True)
-        person_info = self.face_setting_processor.get_person_face_by_id(int(index)) # 등록된 사람 가져오기 -> Face 객체
-
+        self.registered_person_list.update_list()
+        person_info = self.face_setting_processor.get_person_face_by_id(int(current_person_index)) # 등록된 사람 가져오기 -> Face 객체
         if not person_info is None:
             self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
             self.text_layout.set_title(self.current_person.face_name) #title 변경
@@ -259,11 +262,14 @@ class PersonFaceDialog(QDialog):
     def change_person_name(self, new_name):
         """이름 변경"""
         if self.current_person:
+            if self.current_person.face_name == new_name:
+                return
             if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
-                self.text_layout.set_title(new_name) #title 변경
-                self.current_person.face_name = new_name
-                self.registered_person_list.update_list()
+                self.change_current_registered_person(self.current_person.face_id)
                 self.updateEvent.emit()
+            else:
+                QMessageBox.warning(None, "경고", "이미 등록된 사람이 있습니다.", QMessageBox.Ok)
+                self.change_current_registered_person(self.current_person.face_id)
 
     # def update_registered_person(self):
     #     """사람 등록"""
@@ -294,6 +300,11 @@ class PersonFaceDialog(QDialog):
             event.accept()
             
             image_files = [url.toLocalFile() for url in event.mimeData().urls()]
-            self.add_face_process(image_files)
+            images = []
+            #file_paths 를 QPizmap으로 변환
+            for path in image_files:
+                image = cv2.imread(path)
+                images.append(image)
+            self.add_face_process(images)
         else:
             event.ignore()

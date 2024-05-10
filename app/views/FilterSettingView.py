@@ -311,9 +311,8 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
-            print("[Log] : 선택된 필터 > ", filter_data)
+            print("[Log] : 선택된 필터 > ", filter_name)
             self.filter_list_widget.set_select_item(filter_name)
-            print("이름 지정: ", filter_name)
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
