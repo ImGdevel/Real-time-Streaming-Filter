@@ -54,9 +54,7 @@ class ListWidget(QListWidget):
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
         widget = self.sender()
-        
         if widget:
-            self.set_select_item(widget.objectName())
             self.onClickItemEvent.emit(widget.objectName())  # ObjectName을 시그널로 전달
 
         

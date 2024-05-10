@@ -58,6 +58,8 @@ class FilterManager:
 
     def get_filter(self, filter_name: str) -> Union[Filter, None]:
         """이름을 기반으로 필터를 가져옵니다."""
+        if filter_name is None:
+            return False
         for filter_obj in self.filter_list:
             if filter_obj.name == filter_name:
                 return filter_obj
