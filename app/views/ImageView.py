@@ -130,16 +130,17 @@ class ImageView(QWidget):
             self.file_view_widget.addNewFile(add_urls)
 
     def changeImage(self, url):
-        file_path = url.toLocalFile()
-        self.dropbox_widget.setExampleView(file_path)
-        self.dropbox_widget.currunt_exm = file_path
-        if self.filtered_image.get(url.toLocalFile()) != None:
-            print("in")
-            self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
-            self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
-        else :
-            self.dropbox_widget.currunt_filt = None
-            self.dropbox_widget.emptyFiletLabel()
+        if url.toLocalFile() != self.dropbox_widget.currunt_exm:
+            file_path = url.toLocalFile()
+            self.dropbox_widget.setExampleView(file_path)
+            self.dropbox_widget.currunt_exm = file_path
+            if self.filtered_image.get(url.toLocalFile()) != None:
+                print("in")
+                self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
+                self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
+            else :
+                self.dropbox_widget.currunt_filt = None
+                self.dropbox_widget.emptyFiletLabel()
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
