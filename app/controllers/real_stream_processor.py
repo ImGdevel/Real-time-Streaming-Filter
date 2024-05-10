@@ -43,7 +43,7 @@ class RealStreamProcessor(QThread):
             #end = time.time()
             #result = end - start
             #print("time: "+ str(result))
-        # 종료 후 프레임을 색
+        # 종료 후 프레임 비우기
         self.frame_clear(height, width)
 
     def process_frame(self, frame):
