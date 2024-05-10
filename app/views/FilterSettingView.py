@@ -53,6 +53,7 @@ class FilterSettingView(QWidget):
         frame = QWidget()
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
+        frame.setMinimumWidth(200)
         
         left_layout = QVBoxLayout()
         

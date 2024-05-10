@@ -26,20 +26,20 @@ class RealStreamView(QWidget):
 
     def initUI(self):
         '''GUI 초기화 메서드'''
-        self.stream_main_layout = QGridLayout()  # 레이아웃 설정
+        stream_main_layout = QGridLayout()  # 레이아웃 설정
 
         toolbar = self.setup_toolbar()
         video_widget = self.setup_video_layer()
         bottom_widget = self.setup_bottom_layer()
 
-        self.stream_main_layout.addWidget(toolbar, 0, 0)
-        self.stream_main_layout.addWidget(video_widget, 0, 1)
-        self.stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
+        stream_main_layout.addWidget(toolbar, 0, 0)
+        stream_main_layout.addWidget(video_widget, 0, 1)
+        stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
         
-        self.stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
-        self.stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
 
-        self.setLayout(self.stream_main_layout)
+        self.setLayout(stream_main_layout)
 
 
     def setup_toolbar(self):
