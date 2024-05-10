@@ -1,5 +1,5 @@
 import cv2
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QImage, QColor
 from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager
 import time
@@ -29,7 +29,6 @@ class RealStreamProcessor(QThread):
             #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
-                print("frame type:",type(frame))
                 processed_frame = self.process_frame(frame)  # 프레임 처리
                 frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
@@ -43,11 +42,13 @@ class RealStreamProcessor(QThread):
             #end = time.time()
             #result = end - start
             #print("time: "+ str(result))
+        # 종료 후 프레임 비우기
+        self.frame_clear(height, width)
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        boxesList = self.filtering.video_filtering(frame)    
+        boxesList = self.filtering.filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
@@ -60,6 +61,12 @@ class RealStreamProcessor(QThread):
                     processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
     
         return processed_frame
+    
+    def frame_clear(self, width, height):
+        empty_frame = QImage(width, height, QImage.Format_RGB888)
+        empty_frame.fill(QColor(23, 26, 30))
+        self.frame_ready.emit(empty_frame)
+        pass
     
     def set_filter(self, filter):
         """필터 설정"""

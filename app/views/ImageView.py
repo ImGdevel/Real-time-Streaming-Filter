@@ -40,6 +40,7 @@ class ImageView(QWidget):
         self.file_view_widget.image_change.connect(self.changeImage)
 
         setting_frame = QWidget()
+        setting_frame.setMinimumWidth(200)
         setting_frame.setStyleSheet(Style.frame_style)
         setting_frame.setGraphicsEffect(Style.shadow(setting_frame))
         
@@ -68,8 +69,6 @@ class ImageView(QWidget):
         download_button.clicked.connect(self.Download)
         self.setting_widget.addWidget(download_button)
         
-        setting_frame.setMinimumSize(100, 150)
-        setting_frame.setMaximumWidth(235)
         setting_layout = QVBoxLayout()
         setting_layout.setContentsMargins(0,0,0,0)
         setting_layout.addWidget(self.setting_widget)
@@ -81,6 +80,9 @@ class ImageView(QWidget):
 
         layout.setRowStretch(0, 2)
         layout.setRowStretch(1, 1)
+        
+        layout.setColumnStretch(0, 5)
+        layout.setColumnStretch(1, 1)
 
         self.setLayout(layout)
 
