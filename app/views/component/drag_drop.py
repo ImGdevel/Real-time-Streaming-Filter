@@ -15,6 +15,8 @@ class DragDropLabel(QLabel):
         self.initUI()
 
     def initUI(self):
+        self.currunt_exm = None
+        self.currunt_filt = None
         self.layout = QHBoxLayout()
         self.dropbox_lable = QLabel()
         self.dropbox_lable.setAlignment(Qt.AlignCenter)
@@ -37,10 +39,9 @@ class DragDropLabel(QLabel):
                     font-family:'Malgun Gothic';
             }
         ''')
-        self.filtered_label.setMinimumWidth(432)
 
-        self.layout.addWidget(self.dropbox_lable)
-        self.layout.addWidget(self.filtered_label)
+        self.layout.addWidget(self.dropbox_lable, 1)
+        self.layout.addWidget(self.filtered_label, 1)
         self.setLayout(self.layout)
         
     def find_image(self, mimedata):
@@ -96,6 +97,7 @@ class DragDropLabel(QLabel):
 
         # Choose the smallest scaling factor to maintain aspect ratio
         scale_factor = min(width_factor, height_factor)
+        print("factor ",scale_factor)
 
         # Scale pixmap with maintaining aspect ratio
         scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor), 
@@ -147,3 +149,12 @@ class DragDropLabel(QLabel):
             print("refreashed")
         if self.currunt_filt:
             self.setFilteredView(self.currunt_filt)
+    
+    def emptyExmLabel(self):
+        self.dropbox_lable.clear()
+        self.dropbox_lable.setText('Original')
+
+    def emptyFiletLabel(self):
+        self.filtered_label.clear()
+        self.filtered_label.setText('Filtered')
+

@@ -40,6 +40,7 @@ class ImageView(QWidget):
         self.file_view_widget.image_change.connect(self.changeImage)
 
         setting_frame = QWidget()
+        setting_frame.setMinimumWidth(200)
         setting_frame.setStyleSheet(Style.frame_style)
         setting_frame.setGraphicsEffect(Style.shadow(setting_frame))
         
@@ -68,8 +69,6 @@ class ImageView(QWidget):
         download_button.clicked.connect(self.Download)
         self.setting_widget.addWidget(download_button)
         
-        setting_frame.setMinimumSize(100, 150)
-        setting_frame.setMaximumWidth(235)
         setting_layout = QVBoxLayout()
         setting_layout.setContentsMargins(0,0,0,0)
         setting_layout.addWidget(self.setting_widget)
@@ -81,6 +80,9 @@ class ImageView(QWidget):
 
         layout.setRowStretch(0, 2)
         layout.setRowStretch(1, 1)
+        
+        layout.setColumnStretch(0, 5)
+        layout.setColumnStretch(1, 1)
 
         self.setLayout(layout)
 
@@ -101,6 +103,11 @@ class ImageView(QWidget):
             if self.filtered_image:
                 self.dropbox_widget.currunt_filt = self.filtered_image[self.urls[i].toLocalFile()]
             self.dropbox_widget.refreashWidget()
+        elif not self.urls:
+            self.dropbox_widget.emptyExmLabel()
+            self.dropbox_widget.currunt_exm = None
+            self.dropbox_widget.emptyFiletLabel()
+            self.dropbox_widget.currunt_filt = None
 
 
     def set_filter_option(self, index):
@@ -119,16 +126,23 @@ class ImageView(QWidget):
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
             self.dropbox_widget.currunt_exm = file_path
+            if self.dropbox_widget.currunt_filt != None:
+                self.dropbox_widget.currunt_filt = None
+                self.dropbox_widget.emptyFiletLabel()
             self.file_view_widget.addNewFile(add_urls)
 
     def changeImage(self, url):
-        file_path = url.toLocalFile()
-        self.dropbox_widget.setExampleView(file_path)
-        self.dropbox_widget.currunt_exm = file_path
-        if self.filtered_image:
-            print("in")
-            self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
-            self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
+        if url.toLocalFile() != self.dropbox_widget.currunt_exm:
+            file_path = url.toLocalFile()
+            self.dropbox_widget.setExampleView(file_path)
+            self.dropbox_widget.currunt_exm = file_path
+            if self.filtered_image.get(url.toLocalFile()) != None:
+                print("in")
+                self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
+                self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
+            else :
+                self.dropbox_widget.currunt_filt = None
+                self.dropbox_widget.emptyFiletLabel()
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)

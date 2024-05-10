@@ -3,3 +3,4 @@ from .filter_setting_controller import FilterSettingController
 from .face_setting_controller import PersonFaceSettingController
 from .image_processor import ImageProcessor
 from .video_processor import VideoProcessor
+from .face_registration_processor import FaceRegistrationProcessor

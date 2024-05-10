@@ -64,11 +64,13 @@ class StickerManager:
         if img_id in sticker_images:
             img = sticker_images[img_id]
 
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+            img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGBA)  # BGR을 RGB로 변환
             height, width, channel = img.shape
-            bytes_per_line = 3 * width
-            q_img = QImage(img.data, width, height, bytes_per_line, QImage.Format_RGB888)
 
+            bytes_per_line = channel * width
+            
+            q_img = QImage(img.data, width, height, bytes_per_line, QImage.Format_RGBA8888)
+            
             return q_img
 
     def delete_img(self, img_id):

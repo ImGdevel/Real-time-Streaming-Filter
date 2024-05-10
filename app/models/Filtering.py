@@ -38,6 +38,28 @@ class Filtering:
         self.init_id = False
         self.filter_change = False
 
+    def face_capture(self, img):
+        boxList = self.object.face_detect(img)
+        for box in boxList:
+            cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 255, 255), 2)
+        return img
+        #     feature = extract_face_features(img,[box])
+        #     if feature is None:
+        #         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
+        #     else:
+        #         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
+        #         recognized_face.append(box)
+        # if len(recognized_face) == 0:
+        #     # raise ValueError("현재 화면에 인식 가능한 얼굴이 없습니다.")
+        #     return img
+        # elif len(recognized_face) > 1:
+        #     # raise ValueError("현재 화면에 두 사람 이상 존재하고 있습니다.")
+        #     return img
+        # else:
+        #     return img
+
+
+
     def face_filter(self, img, results):
         results[-1] = []
         known_face_ids = []
@@ -119,10 +141,12 @@ class Filtering:
         return results
     
     def blur(self, img, boxesList):
+        if self.current_filter_info is None:
+            return img
         if self.current_filter_info.mosaic_blur_shape == "rect":
-            self.square_blur(img, boxesList)
+            return self.square_blur(img, boxesList)
         else:
-            self.elliptical_blur(img, boxesList)
+            return self.elliptical_blur(img, boxesList)
 
 
     def square_blur(self,img, boxesList):
@@ -137,6 +161,8 @@ class Filtering:
         Returns:
             img (numpy.ndarray): 지정된 영역에 블러가 적용된 수정된 이미지입니다.
         """
+        if self.current_filter_info is None:
+            return img
         blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
 
@@ -153,11 +179,13 @@ class Filtering:
             blurred_roi = cv2.blur(roi, (blur_w, blur_h))
             
             # blur 적용된 ROI를 원본 이미지에 다시 넣어줌
-            img[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = blurred_roi
+            img[y1:y2, x1:x2] = blurred_roi
             
         return img
 
     def elliptical_blur(self, img, boxesList):
+        if self.current_filter_info is None:
+            return img
         blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
             if len(box) == 0:
@@ -253,7 +281,7 @@ class Filtering:
     def change_filter(self, current_filter:Filter = None):
         """필터를 변경한다"""
         if current_filter is None :
-            self.current_filter_info = Filter("test")
+            self.current_filter_info = None
         else :
             self.current_filter_info = current_filter
             if self.current_filter_info.face_filter_on:

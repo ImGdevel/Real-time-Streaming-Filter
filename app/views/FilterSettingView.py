@@ -53,6 +53,7 @@ class FilterSettingView(QWidget):
         frame = QWidget()
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
+        frame.setMinimumWidth(200)
         
         left_layout = QVBoxLayout()
         
@@ -149,7 +150,7 @@ class FilterSettingView(QWidget):
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
-        mosaic_setting_widget = MosaicSettingWidget()
+        self.mosaic_setting_widget = MosaicSettingWidget()
         
         content01 =  ContentLabeling()
         content01.setLabel("필터링 인물 설정")
@@ -161,7 +162,7 @@ class FilterSettingView(QWidget):
         
         content03 =  ContentLabeling()
         content03.setLabel("모자이크 블러 설정")
-        content03.setContent(mosaic_setting_widget)
+        content03.setContent(self.mosaic_setting_widget)
         
 
 
@@ -237,6 +238,7 @@ class FilterSettingView(QWidget):
 
         elif index == 2:
             self.settings_content.setCurrentIndex(2)
+            self.mosaic_setting_widget.setup_mosaic_setting(self.current_filter)
             self.button3.setChecked(True)
             self.button2.setChecked(False)
             self.button1.setChecked(False)
@@ -302,6 +304,7 @@ class FilterSettingView(QWidget):
     def set_current_filter(self, filter_name = None):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
+        self.current_filter = filter_name
         if filter_name == None or filter_name == "":
             self.show_filter_setting_page(False)
             return
@@ -309,13 +312,11 @@ class FilterSettingView(QWidget):
         filter_data = self.filter_setting_processor.get_filter(filter_name)
 
         if filter_data:
-            print("[Log] : 선택된 필터 > ", filter_data)
+            print("[Log] : 선택된 필터 > ", filter_name)
             self.filter_list_widget.set_select_item(filter_name)
-            self.current_filter = filter_name
             self.filter_title_label.set_title(filter_name)
             #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
-            
             self.show_filter_setting_page(True)
         else:
             print(f"[Log] : Filter '{filter_name}' not found")
@@ -344,7 +345,8 @@ class FilterSettingView(QWidget):
     # 인물 등록창 Open
     def open_person_face_setting_dialog(self):
         """얼굴 추가 창을 띄운다."""
-        self.person_face_setting_window.exec()
+        self.person_face_setting_window.show()
+
 
     # 얼굴 수정 사항 완료시
     def update_person_face_setting_dialog_event(self):
@@ -355,16 +357,15 @@ class FilterSettingView(QWidget):
     # 필터 이름 업데이트
     def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter == new_name or new_name == "" or new_name == None:
-            #잘못된 입력, 돌아감
-            pass
-        elif self.filter_setting_processor.get_filter(new_name):
-            #필터 이름 중복
-            QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
-        else:
-            #필터 이름 변경
-            self.filter_setting_processor.update_filter_name(self.current_filter, new_name)
-            self.set_current_filter(new_name)
+        if self.current_filter:
+            if self.current_filter == new_name:
+                return
+            if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
+                self.set_current_filter(new_name)
+            else:
+                QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                self.set_current_filter(self.current_filter)
+            
 
     # 필터 정보 저장
     def apply_filter_settings(self):
@@ -381,6 +382,5 @@ class FilterSettingView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
-        self.set_current_filter(None)
-        pass
+        self.set_current_filter(self.current_filter)
         
