@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
-from PySide6.QtGui import QPixmap, QIcon, QImage
+from PySide6.QtGui import QPixmap, QIcon, QImage, QValidator
 from controllers import PersonFaceSettingController, FaceRegistrationProcessor
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
@@ -261,15 +261,25 @@ class PersonFaceDialog(QDialog):
 
     def change_person_name(self, new_name):
         """이름 변경"""
-        if self.current_person:
-            if self.current_person.face_name == new_name:
-                return
-            if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
-                self.change_current_registered_person(self.current_person.face_id)
-                self.updateEvent.emit()
-            else:
-                QMessageBox.warning(None, "경고", "이미 등록된 사람이 있습니다.", QMessageBox.Ok)
-                self.change_current_registered_person(self.current_person.face_id)
+        validator = self.text_layout.filter_name_line_edit.validator()
+        state, _, _ = validator.validate(new_name,0)
+        print("update face name:", state)
+
+        if state == QValidator.Acceptable:
+            if self.current_person:
+                if self.current_person.face_name == new_name:
+                    return
+                if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
+                    self.change_current_registered_person(self.current_person.face_id)
+                    self.updateEvent.emit()
+                else:
+                    QMessageBox.warning(None, "경고", "이미 등록된 사람이 있습니다.", QMessageBox.Ok)
+                    self.change_current_registered_person(self.current_person.face_id)
+        else:
+                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)
+                    self.change_current_registered_person(self.current_person.face_id)
+
+            
 
     # def update_registered_person(self):
     #     """사람 등록"""

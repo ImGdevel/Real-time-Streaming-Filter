@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
     QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy, QDialog
 )
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon, QFont
+from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
     TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
@@ -357,15 +357,22 @@ class FilterSettingView(QWidget):
     # 필터 이름 업데이트
     def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter:
-            if self.current_filter == new_name:
-                return
-            if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
-                self.set_current_filter(new_name)
-            else:
-                QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
-                self.set_current_filter(self.current_filter)
-            
+        validator = self.filter_title_label.filter_name_line_edit.validator()
+        state, _, _ = validator.validate(new_name,0)
+        print("update filter name:", state)
+        if state == QValidator.Acceptable:
+            if self.current_filter:
+                if self.current_filter == new_name:
+                    return
+                if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
+                    self.set_current_filter(new_name)
+                else:
+                    QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                    self.set_current_filter(self.current_filter)
+        else:
+                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)         
+                    self.set_current_filter(self.current_filter)
+
 
     # 필터 정보 저장
     def apply_filter_settings(self):
