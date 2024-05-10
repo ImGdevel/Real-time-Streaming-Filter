@@ -43,23 +43,20 @@ class Filtering:
         for box in boxList:
             cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 255, 255), 2)
         return img
-        # print("boxList",boxList)
-        # recognized_face = []
-        for box in boxList:
-            feature = extract_face_features_by_img(img,[box])
-            if feature is None:
-                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
-            else:
-                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
+        #     feature = extract_face_features(img,[box])
+        #     if feature is None:
+        #         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
+        #     else:
+        #         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
         #         recognized_face.append(box)
         # if len(recognized_face) == 0:
         #     # raise ValueError("현재 화면에 인식 가능한 얼굴이 없습니다.")
-        #     return img, False
+        #     return img
         # elif len(recognized_face) > 1:
         #     # raise ValueError("현재 화면에 두 사람 이상 존재하고 있습니다.")
-        #     return img, False
+        #     return img
         # else:
-        #     return img, True
+        #     return img
 
 
 

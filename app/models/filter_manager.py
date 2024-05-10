@@ -5,7 +5,7 @@ from .path_manager import PathManager
 
 class FilterManager:
     _instance = None
-    filter_list: list = []
+    filter_list: list[Filter] = []
     path_manager = PathManager()
     # face_manager = FaceManager()
 

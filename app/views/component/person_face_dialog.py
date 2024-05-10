@@ -4,13 +4,16 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtGui import QPixmap, QIcon, QImage
 from controllers import PersonFaceSettingController, FaceRegistrationProcessor
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .capture_window import CaptureWindow
 from utils import Style, Icons
+from models import Filtering
 from models.FaceFilter import *
+import cv2
+import numpy as np
 
 class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
@@ -21,6 +24,7 @@ class PersonFaceDialog(QDialog):
         self.current_person = None
         self.setStyleSheet(Style.frame_style)
 
+        self.face_detector = Filtering()
         
         self._initUI()
 
@@ -149,7 +153,7 @@ class PersonFaceDialog(QDialog):
         
         return face_registration_layout
     
-    def add_face_process(self, image_files):
+    def add_face_process(self, images: list[QPixmap]):
         """이미지 등록 프로세스"""
         self.progress_dialog = QProgressDialog()
         self.progress_dialog.setWindowTitle("Progress")
@@ -158,7 +162,7 @@ class PersonFaceDialog(QDialog):
         self.progress_dialog.setRange(0, 0)
         self.progress_dialog.canceled.connect(self.cancel_progress)
         
-        self.face_registration_processor.setup(image_files, self.current_person)
+        self.face_registration_processor.setup(images, self.current_person)
         self.face_registration_processor.start()
         
         self.progress_dialog.exec()
@@ -184,12 +188,8 @@ class PersonFaceDialog(QDialog):
         
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
-        print("photo type", type(photo))
-        success = extract_face_features_by_img(photo)
-        if success is not None:
-            self.face_setting_processor.add_person_encoding_by_name_from_img(self.current_person.face_name, photo)
-        else:
-            raise ValueError("얼굴이 하나 존재해야 한다.")
+        self.add_face_process([photo])
+        
         print("Received photo from CaptureWindow")
         self.update_image_list()
     
@@ -231,7 +231,12 @@ class PersonFaceDialog(QDialog):
         file_paths, _ = QFileDialog.getOpenFileNames(self, "Open Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
         
         if file_paths:
-            self.add_face_process(file_paths)
+            images = []
+            #file_paths 를 QPizmap으로 변환
+            for path in file_paths:
+                image = cv2.imread(path)
+                images.append(image)
+            self.add_face_process(images)
 
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
@@ -242,9 +247,9 @@ class PersonFaceDialog(QDialog):
             for encoding_value in image_list:
                 self.add_image(encoding_value)
                 
-    def add_image(self, img: str):
+    def add_image(self, img: QImage):
         """이미지 리스트에 이미지 등록"""
-        pixmap = QPixmap(img)  # 이미지 경로를 QPixmap으로 변환
+        pixmap = QPixmap(img)
         pixmap = pixmap.scaled(140, 140, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
         icon = QIcon(pixmap)
         item = QListWidgetItem(icon, None)

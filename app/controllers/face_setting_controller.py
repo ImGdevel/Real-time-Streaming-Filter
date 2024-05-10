@@ -18,16 +18,13 @@ class PersonFaceSettingController:
         """person_face 추가 메서드"""
         self.face_manager.add_person_face()
 
-    def add_person_encoding_by_name(self, face_name: str, file_path):
+    def add_person_encoding_by_name(self, face_name: str, image):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        return self.face_manager.add_person_encoding_by_name_from_file(face_name, file_path)
-    
-    def add_person_encoding_by_name_from_img(self, face_name: str, img):
-        return self.face_manager.add_person_encoding_by_name_from_img(face_name, img)
+        return self.face_manager.add_person_encoding_by_name(face_name, image)
 
-    def add_person_encoding_by_id(self, face_id: int, file_path):
+    def add_person_encoding_by_id(self, face_id: int, image):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        return self.face_manager.add_person_encoding_by_id(face_id, file_path)
+        return self.face_manager.add_person_encoding_by_id(face_id, image)
 
     def delete_person_face_by_name(self, person_name: str):
         """person_face 삭제 메서드"""
