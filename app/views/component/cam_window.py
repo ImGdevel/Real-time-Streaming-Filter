@@ -64,6 +64,7 @@ class CamWindow(QDialog):
                             
         self.video_label = QLabel(self)
         self.video_label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        self.video_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         layout.addWidget(self.video_label)
