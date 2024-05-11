@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtCore import Qt, QThread, Signal, QUrl
 from views.component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget, ContentLabeling
 from controllers import ImageProcessor
 from utils import Colors, Style
@@ -151,7 +151,7 @@ class ImageView(QWidget):
             progress_dialog.show()
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
             print(self.filtered_image)
-            self.changeImage(self.dropbox_widget.currunt_exm)
+            self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
     
     def Download(self):
         if self.filtered_image:
