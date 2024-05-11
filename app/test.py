@@ -39,42 +39,6 @@ class ImageEditor(QMainWindow):
         self.save_button = QPushButton("이미지 저장")
         self.save_button.clicked.connect(self.save_image)
         self.layout.addWidget(self.save_button)
-        
-        self.crop_button = QPushButton("잘라내기")
-        self.crop_button.clicked.connect(self.crop_image)
-        self.layout.addWidget(self.crop_button)
-        
-        self.reset_button = QPushButton("초기화")
-        #self.reset_button.clicked.connect(self.reset_image)
-        self.layout.addWidget(self.reset_button)
-
-        # # 슬라이더 추가
-        # self.slider_x = QSlider(Qt.Horizontal)
-        # self.slider_x.setMinimum(-200)
-        # self.slider_x.setMaximum(200)
-        # self.slider_x.setValue(0)
-        # self.slider_x.setTickInterval(10)
-        # self.slider_x.setTickPosition(QSlider.TicksBelow)
-        # self.slider_x.valueChanged.connect(self.update_image_position)
-        # self.layout.addWidget(self.slider_x)
-
-        # self.slider_y = QSlider(Qt.Horizontal)
-        # self.slider_y.setMinimum(-200)
-        # self.slider_y.setMaximum(200)
-        # self.slider_y.setValue(0)
-        # self.slider_y.setTickInterval(10)
-        # self.slider_y.setTickPosition(QSlider.TicksBelow)
-        # self.slider_y.valueChanged.connect(self.update_image_position)
-        # self.layout.addWidget(self.slider_y)
-
-        # self.slider_scale = QSlider(Qt.Horizontal)
-        # self.slider_scale.setMinimum(1)
-        # self.slider_scale.setMaximum(3)
-        # self.slider_scale.setValue(1)
-        # self.slider_scale.setTickInterval(0.1)
-        # self.slider_scale.setTickPosition(QSlider.TicksBelow)
-        # self.slider_scale.valueChanged.connect(self.update_image_scale)
-        # self.layout.addWidget(self.slider_scale)
 
         self.edit_image = None  # 원본 이미지 저장용 변수
         self.edit_image = None  # 편집된 이미지 저장용 변수
@@ -98,74 +62,6 @@ class ImageEditor(QMainWindow):
             self.show_image(image_scaled)
 
 
-
-
-    def crop_image(self):
-        if self.edit_image:
-            # 이미지의 크기를 계산합니다.
-            image_width = int(self.edit_image.width() * self.image_scale)
-            image_height = int(self.edit_image.height() * self.image_scale)
-
-            # 잘라낼 영역의 크기를 계산합니다.
-            crop_width = min(self.image_frame.width(), image_width - self.image_posX)
-            crop_height = min(self.image_frame.height(), image_height - self.image_posY)
-
-            # 잘라낸 이미지를 얻습니다.
-            cropped_image = self.edit_image.copy(self.image_posX, self.image_posY, crop_width, crop_height)
-
-            # 잘라낸 이미지를 보여줍니다.
-            self.image_label.setPixmap(cropped_image)
-
-            # 잘라낸 이미지를 edit_image에 저장하여 다음 작업에 사용합니다.
-            self.cut_image = cropped_image
-            
-            print("수정된 이미지", self.edit_image)
-            
-            
-    def crop_and_fill(self, image : QPixmap, target_size):
-        # 이미지를 원하는 크기로 잘라냅니다.
-        target_size = self.image_label()
-        cropped_image = image.copy(0, 0, target_size.width(), target_size.height())
-        
-        # 새로운 크기로 이미지를 만듭니다.
-        new_image = QPixmap(target_size)
-        new_image.fill(Qt.transparent)
-
-        painter = QPainter(new_image)
-        painter.drawPixmap((target_size.width() - cropped_image.width()) // 2, (target_size.height() - cropped_image.height()) // 2, cropped_image)
-        painter.end()
-        
-        self.show_image(painter)
-        
-        return new_image
-
-
-
-    def update_image_scale(self):
-        # 슬라이더 값을 기반으로 이미지를 확대 또는 축소합니다.
-        #transform = QTransform().translate(self.image_posX, self.image_posY).scale(self.image_scale, self.image_scale)
-        #transformed_pixmap = self.origin_image.transformed(transform, Qt.SmoothTransformation)
-        
-        #print(transformed_pixmap)
-        #self.edit_image = transformed_pixmap
-        #self.image_label.setPixmap(self.edit_image)
-        #self.image_label.move(self.image_posX, self.image_posY)
-        pass
-
-
-    def update_image_position(self):
-
-        self.image_label.move(self.image_posX, self.image_posY)
-        pass
-        
-        
-        
-        
-    def show_image(self, img : QPixmap):
-        
-        self.image_label.setPixmap(img)
-        
-    
     
     def mousePressEvent(self, event):
         if event.buttons() == Qt.LeftButton:
@@ -176,7 +72,6 @@ class ImageEditor(QMainWindow):
             self.new_pos = event.globalPosition() - self.offset
             self.image_posX = self.new_pos.x()
             self.image_posY = self.new_pos.y()
-            self.update_image_position()
 
     def wheelEvent(self, event):
         if self.edit_image:
@@ -187,13 +82,45 @@ class ImageEditor(QMainWindow):
             else:
                 # 휠을 아래로 굴리면 이미지 축소
                 self.image_scale *= 0.9
-            self.update_image_scale()
             
-    def save_image(self):
-        if self.edit_image:
-            file_path, _ = QFileDialog.getSaveFileName(self, "이미지 저장", "", "이미지 파일 (*.png *.jpg *.jpeg *.bmp *.gif)")
-            if file_path:
-                self.edit_image.save(file_path)
+    def applay_image(self):
+        pass
+        
+            
+    def show_image(self, img : QPixmap):
+        self.image_label.setPixmap(img)
+        
+            
+    def save_image(self, img: QImage):
+        if img:
+            print(self.image_posX, "/" ,self.image_posY, "/", self.image_scale)
+            img = self.edit_image(self.origin_image, self.image_label , self.image_label, self.image_posX, self.image_posY, self.image_scale)
+            img.save("output_image", "png")
+            
+    def edit_image(input_image_path : QPixmap, width, height, x_offset: int = 0, y_offset : int = 0, scale : float = 1)  -> QImage:
+        # Load input image
+        original_image = input_image_path
+
+        # Scale the image
+        scaled_image = original_image.scaled(original_image.width() * scale, original_image.height() * scale, Qt.KeepAspectRatio)
+
+        # Create a new image with transparent background
+        new_image = QImage(width, height, QImage.Format_ARGB32)
+        new_image.fill(Qt.transparent)
+
+        # Calculate the position to paste the scaled image
+        paste_x = (width - scaled_image.width()) // 2 + x_offset
+        paste_y = (height - scaled_image.height()) // 2 + y_offset
+
+        # Create a QPainter object for the new image
+        painter = QPainter(new_image)
+        painter.setCompositionMode(QPainter.CompositionMode_Source)
+        painter.drawPixmap(paste_x, paste_y, scaled_image)
+        painter.end()
+
+        return new_image
+                
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
