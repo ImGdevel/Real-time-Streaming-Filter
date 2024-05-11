@@ -130,7 +130,7 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setFixedSize(30, 30)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
-        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
+        self.refreash_webcam_button.clicked.connect(self.refresh_webcam_combox)        
 
         # 중단 레이아웃 설정
         video_options_layout.addWidget(webcam_combo_label, 0, 0)
@@ -265,13 +265,7 @@ class RealStreamView(QWidget):
                 
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
-        if self.streaming_processor.isRunning():
-            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
-            self.streaming_processor.pause()
-            self.timer.stop()
-            if self.streaming_processor.capture_mode == 0:
-                self.streaming_processor.stop()
-        self.play_pause_button.setChecked(False)
+        self.running_webcam_stop()
         self.streaming_processor.set_capture_area()
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
         #raise NotImplementedError("This function is not implemented yet")
@@ -327,12 +321,14 @@ class RealStreamView(QWidget):
         
         return name_list
     
-    def refreash_webcam_combox(self):
+    def refresh_webcam_combox(self):
+        print("refresh")
+        self.running_webcam_stop()
         namelist = self.detect_webcams()
         combox = QComboBox()
         combox.addItems(namelist)
         self.webcam_combo = combox
-        self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
+        self.streaming_processor.set_webcam_mode()
 
     def render(self):
         """페이지 refesh"""
@@ -346,3 +342,18 @@ class RealStreamView(QWidget):
         self.timer.stop()
         del self.streaming_processor
         del self.timer
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
+
+    def running_webcam_stop(self):
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+        else:
+            if self.streaming_processor.capture_mode == 0:
+                if self.streaming_processor.webcam_on:
+                    self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)

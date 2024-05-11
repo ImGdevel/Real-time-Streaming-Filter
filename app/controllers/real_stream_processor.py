@@ -19,6 +19,7 @@ class RealStreamProcessor(QThread):
 
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = True  # 화면 좌우 뒤집기 상태
+        self.webcam_on = False
         self.current_webcam = 0
         self.capture_mode = 0
         self.capture_area = None
@@ -81,6 +82,7 @@ class RealStreamProcessor(QThread):
             self.video_cap = cv2.VideoCapture(self.current_webcam)
 
         while self.is_running and self.video_cap.isOpened():
+            self.webcam_on = True
             #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
@@ -176,6 +178,7 @@ class RealStreamProcessor(QThread):
         '''웹캠 설정'''
         if self.isRunning():
             self.pause()  # 스레드가 실행 중이면 중지
+        print("set_web_cam")
         self.capture_mode = 0
         if self.current_webcam != web_cam:  # 새로운 웹캠이 이전과 다를 경우에만 설정 변경
             if self.video_cap is not None:
@@ -185,3 +188,6 @@ class RealStreamProcessor(QThread):
 
         if self.isRunning():
             self.start()  # 스레드를 다시 시작
+    
+    def set_webcam_mode(self):
+        self.capture_mode = 0
