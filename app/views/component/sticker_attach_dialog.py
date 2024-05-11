@@ -44,7 +44,6 @@ class StickerRegisteredDialog(QDialog):
         register_button.setIcon(QIcon(Icons.folder_open))
         register_button.setFixedSize(40, 40)
         register_button.clicked.connect(self.load_image)
-        main_layout.addWidget(register_button)
 
         self.image_label = QLabel()
         self.image_label.setFixedSize(300, 300)
@@ -53,13 +52,13 @@ class StickerRegisteredDialog(QDialog):
         set_frame = QWidget()
         
         save_button = QPushButton("등록")
-        save_button.setFixedSize(50,50)
+        save_button.setFixedHeight(30)
         save_button.setStyleSheet(Style.mini_button_style)
         save_button.clicked.connect(self.save_image)
 
         cancel_button = QPushButton("취소")
         cancel_button.setStyleSheet(Style.mini_button_style)
-        cancel_button.setFixedSize(50,50)
+        cancel_button.setFixedHeight(30)
         cancel_button.clicked.connect(self.cancel)
         
         self.x_offset_slider = QSlider(Qt.Horizontal)
@@ -89,15 +88,14 @@ class StickerRegisteredDialog(QDialog):
         self.origin_image = None  # 원본 이미지 저장용 변수
         self.edit_image = None  # 편집된 이미지 저장용 변수
         self.offset = QPoint()  # 이미지 이동을 위한 마우스 클릭 시 좌표 저장
-
-        main_layout.addLayout(button_layout)
         
         button_layout = QGridLayout()
-        button_layout.addWidget(save_button,0,0)
-        button_layout.addWidget(cancel_button,1,0)
-        button_layout.addWidget(self.x_offset_slider,2,0)
-        button_layout.addWidget(self.y_offset_slider,3,0)
-        button_layout.addWidget(self.scale_slider,4,0)
+        button_layout.addWidget(register_button,0,0)
+        button_layout.addWidget(self.x_offset_slider,1,0)
+        button_layout.addWidget(self.y_offset_slider,2,0)
+        button_layout.addWidget(self.scale_slider,3,0)
+        button_layout.addWidget(save_button,4,0)
+        button_layout.addWidget(cancel_button,5,0)
         set_frame.setLayout(button_layout)
         
         content_layout.addWidget(self.image_label)
@@ -120,9 +118,9 @@ class StickerRegisteredDialog(QDialog):
                 self.init_image(pixmap)
 
     def save_image(self):
-        if self.origin_image:
+        if self.edit_image:
             print("이미지 저장")
-            img = self.edit_image_set(self.origin_image, self.origin_image.width(), self.origin_image.width(), self.image_posX * self.aspect_ratio, self.image_posY * self.aspect_ratio, self.image_scale)
+            img = self.edit_image_set(self.edit_image, self.image_label.width(), self.image_label.height(), self.image_posX, self.image_posY , self.image_scale)
 
             nparry_img = self.qimage_to_cv_image(img)
             sticker_id = self.replace_manager.register_img(nparry_img)
