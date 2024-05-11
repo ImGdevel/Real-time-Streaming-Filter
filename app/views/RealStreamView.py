@@ -172,9 +172,6 @@ class RealStreamView(QWidget):
         self.video_box.setFixedWidth(725)
         frame.setLayout(video_layout)
 
-        self.cam_dialog = CamWindow()
-        self.streaming_processor.frame_ready.connect(self.cam_dialog.update_frame)
-
         # self.cam_dialog = QDialog()
         # layer = QGridLayout()
         # layer.setContentsMargins(0,0,0,0)
@@ -281,8 +278,9 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
+        self.cam_dialog = CamWindow()
+        self.streaming_processor.frame_ready.connect(self.cam_dialog.update_frame)
         self.cam_dialog.show()
-        # 웹캠 새장 로직 추가
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
