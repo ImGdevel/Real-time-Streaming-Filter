@@ -154,14 +154,19 @@ class RealStreamProcessor(QThread):
     def set_capture_area(self):
         if self.isRunning():
             self.pause()  # 스레드가 실행 중이면 중지
-        self.capture_mode = 1
+        
         app = DragArea.BlockClicksWindow()
         DragArea.create_window_on_each_display(app)
         app.start_event_handling()
         app.run()
-
+        
         x1,y1,x2,y2 = app.clicked_coordinates
-        self.capture_area = (min(x1,x2),min(y1,y2),abs(x1-x2),abs(y1-y2))
+        w = abs(x1-x2) 
+        h = abs(y1-y2)
+        if w == 0 | h == 0:
+            return
+        self.capture_mode = 1
+        self.capture_area = (min(x1,x2),min(y1,y2), w, h)
         print("Clicked coordinates:", self.capture_area)
 
 
