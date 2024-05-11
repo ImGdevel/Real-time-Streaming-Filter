@@ -24,7 +24,7 @@ class StickerRegisteredDialog(QDialog):
 
     def _initUI(self):
         self.setWindowTitle("Registered Face View")
-        self.setFixedSize(320, 400)
+        self.setFixedSize(660, 505)
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -46,7 +46,7 @@ class StickerRegisteredDialog(QDialog):
         register_button.clicked.connect(self.load_image)
 
         self.image_label = QLabel()
-        self.image_label.setFixedSize(300, 300)
+        self.image_label.setFixedSize(450, 450)
         self.image_label.setStyleSheet("border: 2px solid #808080")
         
         set_frame = QWidget()
@@ -62,16 +62,16 @@ class StickerRegisteredDialog(QDialog):
         cancel_button.clicked.connect(self.cancel)
         
         self.x_offset_slider = QSlider(Qt.Horizontal)
-        self.x_offset_slider.setMaximum(400)
-        self.x_offset_slider.setMinimum(-400)
+        self.x_offset_slider.setMaximum(200)
+        self.x_offset_slider.setMinimum(-200)
         self.x_offset_slider.setValue(0)
         self.x_offset_slider.setTickInterval(10)
         self.x_offset_slider.valueChanged.connect(self.update_x_offset)
         
 
         self.y_offset_slider = QSlider(Qt.Horizontal)
-        self.y_offset_slider.setMaximum(400)
-        self.y_offset_slider.setMinimum(-400)
+        self.y_offset_slider.setMaximum(200)
+        self.y_offset_slider.setMinimum(-200)
         self.y_offset_slider.setValue(0)
         self.y_offset_slider.setTickInterval(10)
         self.y_offset_slider.valueChanged.connect(self.update_y_offset)
