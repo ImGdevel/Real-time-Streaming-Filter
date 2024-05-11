@@ -98,7 +98,7 @@ class StickerRegisteredDialog(QDialog):
             print("이미지 저장")
             img = self.edit_image_set(self.origin_image, self.origin_image.width(), self.origin_image.width(), self.image_posX * self.aspect_ratio, self.image_posY * self.aspect_ratio, self.image_scale)
 
-            nparry_img = self.qImage2array(img)
+            nparry_img = self.qimage_to_cv_image(img)
             sticker_id = self.replace_manager.register_img(nparry_img)
             self.onEventSave.emit(self.person_id, sticker_id)
             self.close()
@@ -195,13 +195,23 @@ class StickerRegisteredDialog(QDialog):
     
     def cancel(self):
         self.close()
+    
+    def qimage_to_cv_image(self, qimage: QImage):
+        width = qimage.width()
+        height = qimage.height()
+        bytes_per_line = qimage.bytesPerLine()
+        image_format = qimage.format()
 
-    # 이미지를 OpenCV 형식으로 변환하는 메소드
-    def qImage2array(self, qimage : QImage):
-        if  qimage.format() != QImage.Format_ARGB32:
+        if image_format == QImage.Format_ARGB32 or image_format == QImage.Format_RGB32:
+            # QImage에서 numpy 배열로 직접 변환합니다.
+            ptr = qimage.bits()
+            arr = np.array(ptr).reshape((height, width, 4))  # 4 채널(알파 포함) 이미지
+        else:
+            # 포맷이 다를 경우 QImage를 ARGB32 포맷으로 변환합니다.
             qimage = qimage.convertToFormat(QImage.Format_ARGB32)
+            ptr = qimage.bits()
+            arr = np.array(ptr).reshape((height, width, 4))  # 4 채널(알파 포함) 이미지
 
-        img = qimage2ndarray.rgb_view(qimage)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        
-        return img
+        # OpenCV 형식으로 변환합니다. (BGR 형식)
+        #cv_image = cv2.cvtColor(arr, cv2.COLOR_RGBA2BGRA)
+        return arr
