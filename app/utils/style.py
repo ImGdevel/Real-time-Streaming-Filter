@@ -81,7 +81,7 @@ class Style:
     dialog_style = f"""
 
         background-color: {Colors.base_color_04};
-        border: 1px solid {Colors.base_color_05};
+        border: 1px solid {Colors.base_color_07};
         color: white;
         border-radius: 0px;  
         padding: 0px;
