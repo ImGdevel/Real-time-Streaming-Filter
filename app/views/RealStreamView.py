@@ -8,7 +8,7 @@ from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ShadowWidget, ObjectFilterSettngWidget, 
-    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
+    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow
 )
 import cv2
 
@@ -173,14 +173,15 @@ class RealStreamView(QWidget):
         self.video_box.setFixedWidth(725)
         frame.setLayout(video_layout)
 
-        self.cam_dialog = QDialog()
-        layer = QGridLayout()
-        layer.setContentsMargins(0,0,0,0)
-        self.dialog_videolable = QLabel()
-        self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
-        layer.addWidget(self.dialog_videolable)
-        self.cam_dialog.setLayout(layer)
+        # self.cam_dialog = QDialog()
+        # layer = QGridLayout()
+        # layer.setContentsMargins(0,0,0,0)
+        # self.dialog_videolable = QLabel()
+        # self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
+        # self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
+        
+        # layer.addWidget(self.dialog_videolable)
+        # self.cam_dialog.setLayout(layer)
 
         return frame
         
@@ -287,8 +288,9 @@ class RealStreamView(QWidget):
     
     def open_new_window(self):
         '''새창 메서드'''
+        self.cam_dialog = CamWindow()
+        self.streaming_processor.frame_ready.connect(self.cam_dialog.update_frame)
         self.cam_dialog.show()
-        # 웹캠 새장 로직 추가
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
@@ -317,7 +319,7 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-        self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+        
     
     def detect_webcams(self):
         # 연결된 카메라 장치를 검색합니다.
