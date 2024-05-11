@@ -90,7 +90,8 @@ class StickerRegisteredDialog(QDialog):
         if sticker_id != -1:
             img = self.replace_manager.load_Qimg_to_id(sticker_id)
             if img is not None:
-                self.show_image(img)
+                pixmap = QPixmap.fromImage(img)
+                self.init_image(pixmap)
 
     def save_image(self):
         if self.origin_image:
@@ -107,17 +108,23 @@ class StickerRegisteredDialog(QDialog):
         filename, _ = QFileDialog.getOpenFileName(self, "이미지 불러오기", "", "이미지 파일 (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
         if filename:
             image = QPixmap(filename)
+            
             if image is None or image.width() == 0:
                 raise ValueError("image error")
-        
-            self.origin_image = image
+            self.init_image(image)
+
             
-            self.edit_image = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.aspect_ratio = (image.width() / self.edit_image.width())
-            self.image_scale = 1
-            self.image_posX = 0
-            self.image_posY = 0
-            self.show_image(image)
+            
+    def init_image(self, image):
+        self.origin_image = image
+            
+        self.edit_image = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.aspect_ratio = (image.width() / self.edit_image.width())
+        self.image_scale = 1
+        self.image_posX = 0
+        self.image_posY = 0
+        self.show_image(image)
+        
             
     def update_x_offset(self, value):
         self.image_posX = value
@@ -167,7 +174,8 @@ class StickerRegisteredDialog(QDialog):
         img  = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.image_label.setPixmap(img)
             
-    def edit_image_set(self, input_image : QPixmap, width : int, height : int, x_offset: int = 0, y_offset : int = 0, scale : float = 1)  -> QImage:
+    def edit_image_set(self, input_image : QPixmap, width : int, height : int, 
+                       x_offset: int = 0, y_offset : int = 0, scale : float = 1)  -> QImage:
         original_image = input_image
 
         scaled_image = original_image.scaled(original_image.width() * scale, original_image.height() * scale, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -191,11 +199,9 @@ class StickerRegisteredDialog(QDialog):
     # 이미지를 OpenCV 형식으로 변환하는 메소드
     def qImage2array(self, qimage : QImage):
         if  qimage.format() != QImage.Format_ARGB32:
-                # QImage를 32비트 이미지로 변환
             qimage = qimage.convertToFormat(QImage.Format_ARGB32)
 
-            img = qimage2ndarray.rgb_view(qimage)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    
+        img = qimage2ndarray.rgb_view(qimage)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         
-            return img
+        return img
