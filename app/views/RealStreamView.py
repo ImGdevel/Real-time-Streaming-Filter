@@ -264,6 +264,13 @@ class RealStreamView(QWidget):
                 
     def stop_webcam(self):
         '''웹캠 정지 메서드'''
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)
         self.streaming_processor.set_capture_area()
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
         #raise NotImplementedError("This function is not implemented yet")
