@@ -43,28 +43,10 @@ class Filtering:
         for box in boxList:
             cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 255, 255), 2)
         return img
-        # print("boxList",boxList)
-        # recognized_face = []
-        for box in boxList:
-            feature = extract_face_features_by_img(img,[box])
-            if feature is None:
-                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (255, 0, 0), 2)
-            else:
-                cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
-        #         recognized_face.append(box)
-        # if len(recognized_face) == 0:
-        #     # raise ValueError("현재 화면에 인식 가능한 얼굴이 없습니다.")
-        #     return img, False
-        # elif len(recognized_face) > 1:
-        #     # raise ValueError("현재 화면에 두 사람 이상 존재하고 있습니다.")
-        #     return img, False
-        # else:
-        #     return img, True
-
 
 
     def face_filter(self, img, results):
-        results[-1] = []
+        results[-1] = [] 
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
@@ -94,48 +76,27 @@ class Filtering:
                 results[-2].append(box)
         return results
 
-    def filtering(self, img):
-        """
-        감지된 객체와 선택적으로 얼굴을 기반으로 이미지를 필터링합니다.
-
-        Args:
-            img (numpy.ndarray): 입력 이미지입니다.
-            objects (list): 감지할 객체의 목록입니다.
-            face (bool, optional): 얼굴을 감지할지 여부입니다. 기본값은 None입니다.
-
-        Returns:
-            list: 감지된 객체의 바운딩 박스 목록입니다.
-        """
-        if self.current_filter_info is None:
-            return dict()
-
-        results = dict()
-        results = self.face_filter(img, results)
-        
-        results = self.filter_state_check(results)
-
-        results = self.object_filter(img, results)
-        for key, result in results.items():
-            boxes = []
-            for value in result:
-                if len(value) != 0 and key != -2:
-                    box = [value[0][0], value[0][1], value[0][0]+value[0][2], value[0][1]+value[0][3]]
-                    boxes.append(box)
-            results[key] = boxes
-        return results
-    
-    def video_filtering(self, img):
+    def filtering(self, img, is_video=True):
         if self.current_filter_info is None:
             return dict()
 
         results = dict()
         results = self.face_filter(img, results)
 
-        if len(results) != 0:
-            results = self.object.object_track(img, results)
-        if self.init_id is True:
-            self.object.init_exclude_id()
-            self.init_id = False
+        if is_video:
+            if len(results) != 0:
+                results = self.object.object_track(img, results)
+            if self.init_id is True:
+                self.object.init_exclude_id()
+                self.init_id = False
+        else:
+            for key, result in results.items():
+                boxes = []
+                for value in result:
+                    if len(value) != 0:
+                        box = [value[0][0], value[0][1], value[0][0]+value[0][2], value[0][1]+value[0][3]]
+                        boxes.append(box)
+                results[key] = boxes
 
         results = self.filter_state_check(results)
 

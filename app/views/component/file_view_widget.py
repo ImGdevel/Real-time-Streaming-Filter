@@ -1,7 +1,7 @@
 from utils.colors import Colors
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QFileDialog, QVBoxLayout, QScrollArea, QLabel, QBoxLayout, QMessageBox
 from PySide6.QtCore import Qt, QUrl, Signal, QMimeDatabase
-from PySide6.QtGui import QDragEnterEvent, QIcon
+from PySide6.QtGui import QDragEnterEvent, QIcon, QDesktopServices
 from .image_item import ImageItem
 import os
 from urllib.parse import urlparse
@@ -37,7 +37,8 @@ class FileViewWidget(QWidget):
         self.file_view_label.setAcceptDrops(True)
         self.file_view_label.dragEnterEvent = self.dragEnterEvent
         self.file_view_label.dropEvent = self.dropEvent
-
+        self.scroll_layout.addStretch()
+        self.scroll_layout.setDirection(QBoxLayout.RightToLeft)
         #button
         self.button_widget = QWidget()
         self.button_layout = QVBoxLayout()
@@ -94,10 +95,10 @@ class FileViewWidget(QWidget):
         for i, file_info in enumerate(urls):
             file_widget = ImageItem(file_info)
             file_widget.delet_signal.connect(self.removeFile)
+            file_widget.doubleclick_signal.connect(self.itemDoubleClicked)
             file_widget.setFixedSize(120, 120)
             self.scroll_layout.addWidget(file_widget)
             self.count += 1
-        self.scroll_layout.addStretch()
 
     def removeFile(self, widget):
         if self.remove_mode:
@@ -138,5 +139,17 @@ class FileViewWidget(QWidget):
 
     def getUrls(self):
         return self.urls
+    
+    def itemDoubleClicked(self, url):
+        if not self.remove_mode:
+            self.show_image(url)
 
+    def show_image(self, file_path):
+        if file_path:
+            self.open_file(file_path)
+        else:
+            QMessageBox.critical(self, "Error", "Failed to load image")
+    
+    def open_file(self, file_path):
+        QDesktopServices.openUrl(file_path)
 

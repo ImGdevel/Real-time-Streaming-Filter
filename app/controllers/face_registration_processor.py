@@ -1,37 +1,46 @@
-from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtCore import Signal, QThread
+from PySide6.QtGui import QPixmap, QImage
 from controllers import PersonFaceSettingController
+import cv2
+import numpy as np
 
 class FaceRegistrationProcessor(QThread):
     countChanged = Signal(int)
-    addItem = Signal(str)
-    finished = Signal(list)
+    addItem = Signal(QImage)
+    finished = Signal()
 
     def __init__(self):
         super().__init__()
         self._is_canceled = False
         self.face_setting_processor = PersonFaceSettingController()
-
-    def setup(self, image_files, person):
-        self.image_files = image_files
+        self.ndarray_images = []
+        self.current_person = None
+        
+    def setup(self, images: list[np.ndarray], person):
+        """Initialize images and person."""
+        self.ndarray_images = images
         self.current_person = person
 
     def run(self):
-        failed_registration_images = []
         try:
-            for idx, file_path in enumerate(self.image_files):
-                if not self.current_person.face_name is None:
-                    if self.face_setting_processor.add_person_encoding_by_name(self.current_person.face_name, file_path):  # 인코딩 하는 로직 인코딩이 성공하면 True / 실패하면 False
-                        self.addItem.emit(file_path)
-                    else:
-                        print(f"이미지 등록 실패: {file_path}")
-                        failed_registration_images.append(file_path)
-        except Exception as e:
-            print("이미지 등록 오류: ", e)
-            
+            if self.current_person.face_name is None:
+                raise ValueError("Person's face name is not set.")
+                
+            for ndarray in self.ndarray_images:
+                image = ndarray
+                if self.face_setting_processor.add_person_encoding_by_name(self.current_person.face_name, image):
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    height, width, channel = image.shape
+                    bytes_per_line = 3 * width
+                    q_image = QImage(image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                    self.addItem.emit(q_image)
+                else:
+                    print("Image registration failed")
+        except ValueError as e:
+            print("Image registration error:", e)
         finally:
-            self.finished.emit(failed_registration_images)
+            self.finished.emit()
 
     def cancel(self):
+        """Cancel the registration process."""
         self._is_canceled = True
-

@@ -76,12 +76,10 @@ class ObjectDetect:
         
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, show=False)[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, show=False)[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
-            if confidence < self.CONFIDENCE_THRESHOLD:
-                continue
             xmin, ymin, xmax, ymax = int(data[0]), int(data[1]), int(data[2]), int(data[3])
             label = names[int(data[5])]
             results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
@@ -107,7 +105,20 @@ class ObjectDetect:
         Returns:
             list: 탐지된 객체의 바운딩 박스 목록입니다.
         """
-        return self.detect(img, self.customFilterClasses, self.modelManager.customModel, self.customNames)
+        results = self.detect(img, self.customFilterClasses, self.modelManager.customModel, self.customNames)
+        temp = results
+        for result in temp:
+            if result[2] == "middlefinger":
+                if result[1] < 0.8:
+                    results.remove(result)
+            elif result[2] == 'knife':
+                if result[1] < 0.3:
+                    results.remove(result)
+            else:
+                if result[1] < 0.2:
+                    results.remove(result)
+            
+        return results
     
     def object_track(self, img, results):
         """주어진 이미지와 좌표에 대한 객체 추적 결과를 반환한다."""

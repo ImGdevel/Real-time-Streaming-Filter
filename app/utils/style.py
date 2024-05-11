@@ -18,6 +18,26 @@ class Style:
         resized_pixmap = pixmap.scaled(width, height)
         return QIcon(resized_pixmap)
     
+    title_bar_style = f"""
+            background-color: {Colors.base_color_03};
+            color: {Colors.textColor01};
+            padding: 10px;
+            border-radius: 0px;  
+            
+    """
+    
+    title_bar_button = f"""
+            QPushButton {{
+                background-color: {Colors.base_color_03};
+                font-size: 18px;
+                border-radius: 5px;  
+                border: none;
+                margin-right: 5px;
+            }}
+            QPushButton:hover {{
+                background-color: {Colors.base_color_06};
+            }}
+        """
 
     push_button = f"""
         QPushButton {{
@@ -59,10 +79,11 @@ class Style:
     """
     
     dialog_style = f"""
-        background-color: {Colors.base_color_06};
-        border: 2px solid #808080;
+
+        background-color: {Colors.base_color_04};
+        border: 1px solid {Colors.base_color_05};
         color: white;
-        border-radius: 5px;  
+        border-radius: 0px;  
         padding: 0px;
     """
     

@@ -1,7 +1,14 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit
 from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QFontMetrics
+from PySide6.QtGui import QFontMetrics, QValidator
 from utils import Colors, Style
+
+class SpaceValidator(QValidator):
+    def validate(self, string, pos):
+        if string.strip() == "":
+            return QValidator.Intermediate, string, pos
+        else:
+            return QValidator.Acceptable, string, pos
 
 class TitleEdit(QWidget):
     onEditEvent = Signal(str)
@@ -21,12 +28,14 @@ class TitleEdit(QWidget):
 
         self.filter_name_line_edit = QLineEdit(self.current_title)
         self.filter_name_line_edit.setStyleSheet(Style.line_edit_style)
+        self.filter_name_line_edit.setValidator(SpaceValidator())
         self.filter_name_line_edit.hide()  # Hide initially
 
         self.title_edit_button = QPushButton("변경")
         self.title_edit_button.setMaximumWidth(70)
         self.title_edit_button.setFixedSize(60,30)
         self.title_edit_button.setStyleSheet(Style.mini_button_style)
+        self.title_edit_button.setFocusPolicy(Qt.NoFocus)
         self.title_edit_button.clicked.connect(self.toggle_edit_mode)
 
         title_layout.addWidget(self.title_label)
@@ -50,7 +59,6 @@ class TitleEdit(QWidget):
     def set_edit_mode(self):
         self.edit_mode = True
         self.title_edit_button.setText("저장")
-        
         self.filter_name_line_edit.setText(self.title_label.text())
         filter_name_layout = self.title_label.parentWidget().layout()
         filter_name_layout.replaceWidget(self.title_label, self.filter_name_line_edit)

@@ -4,16 +4,20 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QListWidgetItem, QProgressDialog
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QThread
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtGui import QPixmap, QIcon, QImage, QValidator
 from controllers import PersonFaceSettingController, FaceRegistrationProcessor
 from .list_widget import AvailableFacesListWidget
 from .title_edit import TitleEdit
 from .capture_window import CaptureWindow
 from utils import Style, Icons
+from models import Filtering
 from models.FaceFilter import *
+import cv2
+import numpy as np
 
 class PersonFaceDialog(QDialog):
     updateEvent = Signal() 
+    webcam_on = Signal()
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,6 +25,7 @@ class PersonFaceDialog(QDialog):
         self.current_person = None
         self.setStyleSheet(Style.frame_style)
 
+        self.face_detector = Filtering()
         
         self._initUI()
 
@@ -70,12 +75,14 @@ class PersonFaceDialog(QDialog):
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
+        add_button.setFocusPolicy(Qt.NoFocus)
         add_button.clicked.connect(self.add_person)
         
         delete_button = QPushButton()
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
+        delete_button.setFocusPolicy(Qt.NoFocus)
         delete_button.clicked.connect(self.delete_person)
 
         # Add Filter, Delete Filter 버튼
@@ -120,6 +127,7 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.setAcceptDrops(True)
         self.image_list_widget.viewport().setAcceptDrops(True)
         self.image_list_widget.setDropIndicatorShown(True)
+        self.image_list_widget.setFocusPolicy(Qt.NoFocus)
         
         self.image_list_widget.dragEnterEvent = self.drag_enter_event
         self.image_list_widget.dragMoveEvent = self.drag_move_event
@@ -130,12 +138,14 @@ class PersonFaceDialog(QDialog):
         upload_image_button.setIcon(QIcon(Icons.folder_open))
         upload_image_button.setStyleSheet(Style.mini_button_style)
         upload_image_button.clicked.connect(self.open_file_dialog)
+        upload_image_button.setFocusPolicy(Qt.NoFocus)
         upload_image_button.setFixedSize(50,50)
 
         capture_button = QPushButton()
         capture_button.setIcon(QIcon(Icons.camera))
         capture_button.setStyleSheet(Style.mini_button_style)
         capture_button.setFixedSize(50,50)
+        capture_button.setFocusPolicy(Qt.NoFocus)
         capture_button.clicked.connect(self.open_capture_window)
         
         image_layout = QGridLayout()
@@ -149,7 +159,7 @@ class PersonFaceDialog(QDialog):
         
         return face_registration_layout
     
-    def add_face_process(self, image_files):
+    def add_face_process(self, images: list[QPixmap]):
         """이미지 등록 프로세스"""
         self.progress_dialog = QProgressDialog()
         self.progress_dialog.setWindowTitle("Progress")
@@ -158,7 +168,7 @@ class PersonFaceDialog(QDialog):
         self.progress_dialog.setRange(0, 0)
         self.progress_dialog.canceled.connect(self.cancel_progress)
         
-        self.face_registration_processor.setup(image_files, self.current_person)
+        self.face_registration_processor.setup(images, self.current_person)
         self.face_registration_processor.start()
         
         self.progress_dialog.exec()
@@ -175,6 +185,7 @@ class PersonFaceDialog(QDialog):
     def open_capture_window(self):
         """사진 캡쳐 페이지 Open"""
         try:
+            self.webcam_on.emit()
             capture_window = CaptureWindow()
             capture_window.photo_captured.connect(self.receive_photo_from_capture)
             capture_window.exec_()
@@ -184,13 +195,7 @@ class PersonFaceDialog(QDialog):
         
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
-        print("photo type", type(photo))
-        success = extract_face_features_by_img(photo)
-        if success is not None:
-            self.face_setting_processor.add_person_encoding_by_name_from_img(self.current_person.face_name, photo)
-        else:
-            raise ValueError("얼굴이 하나 존재해야 한다.")
-        print("Received photo from CaptureWindow")
+        self.add_face_process([photo])
         self.update_image_list()
     
     def show_window(self, show_window):
@@ -200,11 +205,11 @@ class PersonFaceDialog(QDialog):
         else:
             self.stacked_widget.setCurrentIndex(1)
 
-    def change_current_registered_person(self, index: str):
+    def change_current_registered_person(self, current_person_index):
         """등록된 사람 선택하는 메서드"""
         self.show_window(True)
-        person_info = self.face_setting_processor.get_person_face_by_id(int(index)) # 등록된 사람 가져오기 -> Face 객체
-
+        self.registered_person_list.update_list()
+        person_info = self.face_setting_processor.get_person_face_by_id(int(current_person_index)) # 등록된 사람 가져오기 -> Face 객체
         if not person_info is None:
             self.current_person = person_info # 현제 선택된 사람을 person_info로 업데이트
             self.text_layout.set_title(self.current_person.face_name) #title 변경
@@ -223,6 +228,7 @@ class PersonFaceDialog(QDialog):
         """사람 삭제"""
         self.face_setting_processor.delete_person_face_by_id(self.current_person.face_id)
         self.registered_person_list.update_list()
+        self.updateEvent.emit()
         self.show_window(False)
 
     def open_file_dialog(self):
@@ -231,7 +237,12 @@ class PersonFaceDialog(QDialog):
         file_paths, _ = QFileDialog.getOpenFileNames(self, "Open Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)", options=options)
         
         if file_paths:
-            self.add_face_process(file_paths)
+            images = []
+            #file_paths 를 QPizmap으로 변환
+            for path in file_paths:
+                image = cv2.imread(path)
+                images.append(image)
+            self.add_face_process(images)
 
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
@@ -242,9 +253,9 @@ class PersonFaceDialog(QDialog):
             for encoding_value in image_list:
                 self.add_image(encoding_value)
                 
-    def add_image(self, img: str):
+    def add_image(self, img: QImage):
         """이미지 리스트에 이미지 등록"""
-        pixmap = QPixmap(img)  # 이미지 경로를 QPixmap으로 변환
+        pixmap = QPixmap(img)
         pixmap = pixmap.scaled(140, 140, Qt.KeepAspectRatio)  # 크기 조절 (비율 유지)
         icon = QIcon(pixmap)
         item = QListWidgetItem(icon, None)
@@ -252,12 +263,25 @@ class PersonFaceDialog(QDialog):
 
     def change_person_name(self, new_name):
         """이름 변경"""
-        if self.current_person:
-            if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
-                self.text_layout.set_title(new_name) #title 변경
-                self.current_person.face_name = new_name
-                self.registered_person_list.update_list()
-                self.updateEvent.emit()
+        validator = self.text_layout.filter_name_line_edit.validator()
+        state, _, _ = validator.validate(new_name,0)
+        print("update face name:", state)
+
+        if state == QValidator.Acceptable:
+            if self.current_person:
+                if self.current_person.face_name == new_name:
+                    return
+                if self.face_setting_processor.update_person_name_by_name(self.current_person.face_name , new_name):
+                    self.change_current_registered_person(self.current_person.face_id)
+                    self.updateEvent.emit()
+                else:
+                    QMessageBox.warning(None, "경고", "이미 등록된 사람이 있습니다.", QMessageBox.Ok)
+                    self.change_current_registered_person(self.current_person.face_id)
+        else:
+                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)
+                    self.change_current_registered_person(self.current_person.face_id)
+
+            
 
     # def update_registered_person(self):
     #     """사람 등록"""
@@ -288,6 +312,11 @@ class PersonFaceDialog(QDialog):
             event.accept()
             
             image_files = [url.toLocalFile() for url in event.mimeData().urls()]
-            self.add_face_process(image_files)
+            images = []
+            #file_paths 를 QPizmap으로 변환
+            for path in image_files:
+                image = cv2.imread(path)
+                images.append(image)
+            self.add_face_process(images)
         else:
             event.ignore()

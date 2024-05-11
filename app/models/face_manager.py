@@ -1,6 +1,7 @@
 from .face_info import Face
 from .FaceFilter import *
 import cv2
+import numpy as np
 from .path_manager import PathManager
 from PySide6.QtGui import QImage
 from .filter_manager import FilterManager
@@ -8,7 +9,7 @@ from .filter_manager import FilterManager
 class FaceManager:
 
     _instance = None
-    face_list = []
+    face_list : list[Face] = []
     filter_manager = FilterManager()
 
     def __new__(cls, *args, **kwargs):
@@ -49,50 +50,60 @@ class FaceManager:
         self.save_person_face()
 
 
-    def add_person_encoding_by_name_from_file(self, face_name: str, file_path):
-        """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        #print("add person encoding")
-        face_encoding = cv2.imread(file_path)
+    def add_person_encoding_by_name(self, face_name: str, image: np.ndarray):
+        """face_name과 image를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
+        # if qimage.format() != QImage.Format_ARGB32:
+        #     # QImage를 32비트 이미지로 변환
+        #     qimage = qimage.convertToFormat(QImage.Format_ARGB32)
 
+        # image = qimage2ndarray.rgb_view(qimage)
+        # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        
         for face in self.face_list:
             if face.face_name == face_name:
-                if  register_person(str(face.face_id), file_path, self.path_manager.load_known_faces_path()):
+                if  register_person(str(face.face_id), image, self.path_manager.load_known_faces_path()):
                     max_face_number = find_max_face_number(face_name, face.encoding_list)
                     max_face_number += 1
                     face_code = face_name + "_" + str(max_face_number)
-                    face.encoding_list[face_code] = face_encoding
+                    face.encoding_list[face_code] = image
                     self.save_person_face()
                     return True
+                else:
+                    raise ValueError("얼굴이 인식되지 않는 사진입니다.")
                 
         raise ValueError("존재하지 않는 face_name입니다")   
     
-    def add_person_encoding_by_name_from_img(self, face_name: str, img):
-        for face in self.face_list:
-            print("face.face_name", face.face_name)
-            print("face_name",face_name)
-            if face.face_name == face_name:
-                if  register_person_by_img(str(face.face_id), img, self.path_manager.load_known_faces_path()):
-                    max_face_number = find_max_face_number(face_name, face.encoding_list)
-                    max_face_number += 1
-                    face_code = face_name + "_" + str(max_face_number)
-                    face.encoding_list[face_code] = img
-                    self.save_person_face()
-                    return True
+    # def add_person_encoding_by_name_from_img(self, face_name: str, img):
+    #     for face in self.face_list:
+    #         print("face.face_name", face.face_name)
+    #         print("face_name",face_name)
+    #         if face.face_name == face_name:
+    #             if  register_person_by_img(str(face.face_id), img, self.path_manager.load_known_faces_path()):
+    #                 max_face_number = find_max_face_number(face_name, face.encoding_list)
+    #                 max_face_number += 1
+    #                 face_code = face_name + "_" + str(max_face_number)
+    #                 face.encoding_list[face_code] = img
+    #                 self.save_person_face()
+    #                 return True
                 
-        raise ValueError("존재하지 않는 face_name입니다")
+        # raise ValueError("존재하지 않는 face_name입니다")
 
-    def add_person_encoding_by_id(self, face_id: int, file_path):
+    def add_person_encoding_by_id(self, face_id: int, image: np.ndarray):
         """face_name과 file_path를 전달하면 face_name과 일치하는 객체에 배열을 추가"""
-        #print("add person encoding")
-        face_encoding = cv2.imread(file_path)
+        # if qimage.format() != QImage.Format_ARGB32:
+        #     # QImage를 32비트 이미지로 변환
+        #     qimage = qimage.convertToFormat(QImage.Format_ARGB32)
 
+        # image = qimage2ndarray.rgb_view(qimage)
+        # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        
         for face in self.face_list:
             if face.face_id == face_id:
-                if  register_person(str(face.face_id), file_path, self.path_manager.load_known_faces_path()):
+                if  register_person(str(face.face_id), image, self.path_manager.load_known_faces_path()):
                     max_face_number = find_max_face_number(face_id, face.encoding_list)
                     max_face_number += 1
                     face_code = face_id + "_" + str(max_face_number)
-                    face.encoding_list[face_code] = face_encoding
+                    face.encoding_list[face_code] = image
                     self.save_person_face()
                     return True
                 

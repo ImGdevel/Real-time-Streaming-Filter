@@ -68,6 +68,11 @@ class MainWindow(QMainWindow):
         widgets.btn_image.clicked.connect(self.buttonClick)
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
 
+        # WebCam State
+        self.webcam_state = False
+        self.streaming_widget.webcam_on.connect(self.webcamState)
+        self.filter_setting_widget.webcam_on.connect(self.streamingStop)
+
         self.show()
 
         # SET CUSTOM THEME
@@ -164,6 +169,17 @@ class MainWindow(QMainWindow):
             print('Mouse click: LEFT CLICK')
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
+
+    # Manage Webcam State
+    def webcamState(self):
+        if not self.webcam_state:
+            self.webcam_state = True
+    
+    def streamingStop(self):
+        if self.webcam_state is True:
+            print("webcam stop")
+            self.streaming_widget.stop_webcam()
+            self.webcam_state = False
 
 if __name__ == "__main__":
     #try:

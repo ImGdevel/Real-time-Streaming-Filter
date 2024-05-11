@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QLabel, QSizePolicy, QGridLayout, QSpacerItem, QLi
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication, QPoint
 from PySide6.QtGui import QPixmap, QIcon, QImage, QPainter
 from models import StickerManager
+from .title_bar import TitleBar
 from utils import Style, Icons
 import cv2
 import numpy as np
@@ -16,7 +17,7 @@ class StickerRegisteredDialog(QDialog):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(Style.frame_style)
+        self.setStyleSheet(Style.dialog_style)
         self.replace_manager = StickerManager()
         self.person_id = None
         self._initUI()
@@ -26,10 +27,20 @@ class StickerRegisteredDialog(QDialog):
         self.setFixedSize(320, 400)
 
         main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         main_layout.setAlignment(Qt.AlignCenter)
+        
+        # 새로운 타이틀 바 생성
+        self.title_bar = TitleBar(self)
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        self.title_bar.setFixedHeight(40)
+        
+        content = QWidget()
+        content.setStyleSheet(Style.frame_style)
+        content_layout = QHBoxLayout()
 
         register_button = QPushButton()
-        register_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
         register_button.setIcon(QIcon(Icons.folder_open))
         register_button.setFixedSize(40, 40)
         register_button.clicked.connect(self.load_image)
@@ -38,18 +49,18 @@ class StickerRegisteredDialog(QDialog):
         self.image_label = QLabel()
         self.image_label.setFixedSize(300, 300)
         self.image_label.setStyleSheet("border: 2px solid #808080")
-        main_layout.addWidget(self.image_label)
-
-        button_layout = QHBoxLayout()
+        
+        set_frame = QWidget()
+        
         save_button = QPushButton("등록")
-        save_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        save_button.setFixedSize(50,50)
+        save_button.setStyleSheet(Style.mini_button_style)
         save_button.clicked.connect(self.save_image)
-        button_layout.addWidget(save_button)
 
         cancel_button = QPushButton("취소")
-        cancel_button.setStyleSheet("border: 2px solid #808080; padding: 5px")
+        cancel_button.setStyleSheet(Style.mini_button_style)
+        cancel_button.setFixedSize(50,50)
         cancel_button.clicked.connect(self.cancel)
-        button_layout.addWidget(cancel_button)
         
         self.x_offset_slider = QSlider(Qt.Horizontal)
         self.x_offset_slider.setMaximum(400)
@@ -57,7 +68,7 @@ class StickerRegisteredDialog(QDialog):
         self.x_offset_slider.setValue(0)
         self.x_offset_slider.setTickInterval(10)
         self.x_offset_slider.valueChanged.connect(self.update_x_offset)
-        button_layout.addWidget(self.x_offset_slider)
+        
 
         self.y_offset_slider = QSlider(Qt.Horizontal)
         self.y_offset_slider.setMaximum(400)
@@ -65,7 +76,7 @@ class StickerRegisteredDialog(QDialog):
         self.y_offset_slider.setValue(0)
         self.y_offset_slider.setTickInterval(10)
         self.y_offset_slider.valueChanged.connect(self.update_y_offset)
-        button_layout.addWidget(self.y_offset_slider)
+        
 
         self.scale_slider = QSlider(Qt.Horizontal)
         self.scale_slider.setMaximum(200)
@@ -73,13 +84,28 @@ class StickerRegisteredDialog(QDialog):
         self.scale_slider.setValue(100)
         self.scale_slider.setTickInterval(10)
         self.scale_slider.valueChanged.connect(self.update_scale)
-        button_layout.addWidget(self.scale_slider)
+        
 
         self.origin_image = None  # 원본 이미지 저장용 변수
         self.edit_image = None  # 편집된 이미지 저장용 변수
         self.offset = QPoint()  # 이미지 이동을 위한 마우스 클릭 시 좌표 저장
 
         main_layout.addLayout(button_layout)
+        
+        button_layout = QGridLayout()
+        button_layout.addWidget(save_button,0,0)
+        button_layout.addWidget(cancel_button,1,0)
+        button_layout.addWidget(self.x_offset_slider,2,0)
+        button_layout.addWidget(self.y_offset_slider,3,0)
+        button_layout.addWidget(self.scale_slider,4,0)
+        set_frame.setLayout(button_layout)
+        
+        content_layout.addWidget(self.image_label)
+        content_layout.addWidget(set_frame)
+        content.setLayout(content_layout)
+        
+        main_layout.addWidget(self.title_bar)
+        main_layout.addWidget(content)
 
         self.setLayout(main_layout)
 
@@ -113,11 +139,8 @@ class StickerRegisteredDialog(QDialog):
                 raise ValueError("image error")
             self.init_image(image)
 
-            
-            
-    def init_image(self, image):
+    def init_image(self, image : QPixmap):
         self.origin_image = image
-            
         self.edit_image = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.aspect_ratio = (image.width() / self.edit_image.width())
         self.image_scale = 1
