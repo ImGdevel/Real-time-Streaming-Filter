@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QFileDialog
+from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage, QPainter
 from PyQt5.QtCore import Qt
 
-def edit_image(input_image_path, output_image_path, width, height):
+def edit_image(input_image_path, output_image_path, width, height, x_offset=0, y_offset=0):
     # Load input image
     original_image = QPixmap(input_image_path)
 
@@ -12,8 +12,8 @@ def edit_image(input_image_path, output_image_path, width, height):
     new_image.fill(Qt.transparent)
 
     # Calculate the position to paste the original image
-    paste_x = (width - original_image.width()) // 2
-    paste_y = (height - original_image.height()) // 2
+    paste_x = (width - original_image.width()) // 2 + x_offset
+    paste_y = (height - original_image.height()) // 2 + y_offset
 
     # Create a QPainter object for the new image
     painter = QPainter(new_image)
@@ -43,7 +43,11 @@ if __name__ == "__main__":
         desired_width = 400
         desired_height = 400
 
+        # Define the offsets for image positioning (default: 0, 0)
+        x_offset = -150
+        y_offset = -150
+
         # Edit the image
-        edit_image(input_image_path, output_image_path, desired_width, desired_height)
+        edit_image(input_image_path, output_image_path, desired_width, desired_height, x_offset, y_offset)
 
     sys.exit(app.exec_())
