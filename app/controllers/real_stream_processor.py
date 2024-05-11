@@ -88,8 +88,8 @@ class RealStreamProcessor(QThread):
                 processed_frame = self.process_frame(frame)  # 프레임 처리
                 frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
-                if self.is_flipped:
-                    frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
+                # if self.is_flipped:
+                #     frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
