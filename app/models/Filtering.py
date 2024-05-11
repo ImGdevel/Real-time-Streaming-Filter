@@ -46,7 +46,6 @@ class Filtering:
 
 
     def face_filter(self, img, results):
-        results[-1] = [] 
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
@@ -67,8 +66,6 @@ class Filtering:
         return results
     
     def object_filter(self, img, results):
-        results[-2] = []
-
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in self.current_filter_info.object_filter:
@@ -81,6 +78,8 @@ class Filtering:
             return dict()
 
         results = dict()
+        results[-2] = []
+        results[-1] = [] 
         results = self.face_filter(img, results)
 
         if is_video:
@@ -101,7 +100,7 @@ class Filtering:
         results = self.filter_state_check(results)
 
         results = self.object_filter(img, results)
-
+        # print("results:",results)
         return results
     
     def blur(self, img, boxesList):

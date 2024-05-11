@@ -111,11 +111,8 @@ class ObjectDetect:
             if result[2] == "middlefinger":
                 if result[1] < 0.8:
                     results.remove(result)
-            elif result[2] == 'knife':
-                if result[1] < 0.3:
-                    results.remove(result)
             else:
-                if result[1] < 0.2:
+                if result[1] < 0.3:
                     results.remove(result)
             
         return results
@@ -128,6 +125,7 @@ class ObjectDetect:
         tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
         last_results = dict()
         last_results[-1] = []
+        last_results[-2] = []
         for track in tracks:
             float_box = track.to_ltrb(orig=True).tolist()
             int_box = [int(float_box[0]), int(float_box[1]), int(float_box[2]), int(float_box[3])]
