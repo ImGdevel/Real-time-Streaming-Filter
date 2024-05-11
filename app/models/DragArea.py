@@ -14,6 +14,33 @@ class BlackWindow:
         self.overlay.attributes("-alpha", 0.5)  # 투명도 조절
         # 이벤트 바인딩: 마우스 클릭 이벤트를 무시하도록 합니다.
         self.overlay.bind("<Button-1>", lambda event: "break")
+        self.canvas = tk.Canvas(self.overlay, bg="black", highlightthickness=0)
+
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+
+        self.start_x = None
+        self.start_y = None
+        self.rect_id = None
+
+        self.canvas.bind("<Button-1>", self.on_button_press)
+        self.canvas.bind("<B1-Motion>", self.on_button_motion)
+        self.canvas.bind("<ButtonRelease-1>", self.on_button_release)
+
+    def on_button_press(self, event):
+        self.start_x = event.x
+        self.start_y = event.y
+
+    def on_button_motion(self, event):
+        if self.rect_id:
+            self.canvas.delete(self.rect_id)
+        x0, y0 = self.start_x, self.start_y
+        x1, y1 = event.x, event.y
+        self.rect_id = self.canvas.create_rectangle(x0, y0, x1, y1, outline="white", width=2, fill="white", stipple="gray50")
+
+    def on_button_release(self, event):
+        if self.rect_id:
+            self.canvas.delete(self.rect_id)
+            self.rect_id = None
 
 class BlockClicksWindow:
     def __init__(self):
