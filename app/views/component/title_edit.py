@@ -1,7 +1,14 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit
 from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QFontMetrics
+from PySide6.QtGui import QFontMetrics, QValidator
 from utils import Colors, Style
+
+class SpaceValidator(QValidator):
+    def validate(self, string, pos):
+        if string.strip() == "":
+            return QValidator.Intermediate, string, pos
+        else:
+            return QValidator.Acceptable, string, pos
 
 class TitleEdit(QWidget):
     onEditEvent = Signal(str)
@@ -21,6 +28,7 @@ class TitleEdit(QWidget):
 
         self.filter_name_line_edit = QLineEdit(self.current_title)
         self.filter_name_line_edit.setStyleSheet(Style.line_edit_style)
+        self.filter_name_line_edit.setValidator(SpaceValidator())
         self.filter_name_line_edit.hide()  # Hide initially
 
         self.title_edit_button = QPushButton("변경")

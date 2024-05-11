@@ -100,8 +100,8 @@ class DragDropLabel(QLabel):
         print("factor ",scale_factor)
 
         # Scale pixmap with maintaining aspect ratio
-        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor), 
-                                    int(image_size.height() * scale_factor), 
+        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor) - 15, 
+                                    int(image_size.height() * scale_factor) - 15, 
                                     Qt.KeepAspectRatio)
 
         self.dropbox_lable.setPixmap(scaled_pixmap)
@@ -133,13 +133,15 @@ class DragDropLabel(QLabel):
         scale_factor = min(width_factor, height_factor)
 
         # Scale pixmap while maintaining aspect ratio
-        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor), 
-                                    int(image_size.height() * scale_factor), 
+        scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor) -15, 
+                                    int(image_size.height() * scale_factor) -15, 
                                     Qt.KeepAspectRatio)
 
         self.filtered_label.setPixmap(scaled_pixmap)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        frame_size = self.size()
+        self.dropbox_lable.resize(frame_size.width()/2 - 15, frame_size.height() - 15)
         self.refreashWidget()
         return super().resizeEvent(event)
     

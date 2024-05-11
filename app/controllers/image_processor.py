@@ -28,7 +28,7 @@ class ImageProcessor():
             # 이미지 처리 
             #blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = self.filtering.square_blur(image, boxesList)
             
 
@@ -59,7 +59,7 @@ class ImageProcessor():
             # 이미지 처리 
             blur_ratio = 50
 
-            boxesList = self.filtering.filtering(image)
+            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = image
             for key in boxesList.keys():
                 if key == -1:
@@ -145,51 +145,3 @@ class ImageProcessor():
             self.filtering.set_filter(current_filter)
 
             
-
-
-
-
-
-
-    # 이미지를 OpenCV 형식으로 변환하는 메소드
-    def QImage_to_cv2(self, qimage):
-        if qimage.format() != QImage.Format_RGB888:
-            # QImage의 형식이 RGB888이 아니면 변환
-            qimage = qimage.convertToFormat(QImage.Format_RGB888)
-        
-        width = qimage.width()
-        height = qimage.height()
-        
-        # QImage에서 데이터를 가져와서 numpy 배열로 변환
-        ptr = qimage.bits()
-        ptr.setsize(qimage.byteCount())
-        arr = np.array(ptr).reshape(height, width, 3)  # 3 channels for RGB
-        
-        # OpenCV의 BGR 형식으로 변환
-        cv_img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
-        
-        return cv_img
-
-
-
-    # def QImage_to_cv2(self, qimage):
-    #     """
-    #     QImage를 numpy 배열로 변환합니다.
-        
-    #     Args:
-    #     - qimage: 변환할 QImage 객체
-        
-    #     Returns:
-    #     - 변환된 numpy 배열
-    #     """
-    #     width = qimage.width()
-    #     height = qimage.height()
-    #     byte_per_line = qimage.bytesPerLine()
-    #     image_format = qimage.format()
-  
-    #     # QImage를 numpy 배열로 변환
-    #     ptr = qimage.constBits()
-    #     ptr.setsize(qimage.byteCount())
-    #     img_arr = np.array(ptr).reshape(height, width, -1)
-
-    #     return img_arr

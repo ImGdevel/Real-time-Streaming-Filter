@@ -3,16 +3,17 @@ from PySide6.QtWidgets import (
     QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, QStackedWidget
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer, QSize, Signal
 from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ShadowWidget, ObjectFilterSettngWidget, 
-    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling
+    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow
 )
 import cv2
 
 class RealStreamView(QWidget):
+    webcam_on = Signal()
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -91,7 +92,7 @@ class RealStreamView(QWidget):
         self.stop_button.setFixedSize(50,50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
         self.stop_button.setIcon(QIcon(Icons.stop_button))
-        self.stop_button.clicked.connect(self.stop_webcam)
+        self.stop_button.clicked.connect(self.record_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
@@ -172,14 +173,15 @@ class RealStreamView(QWidget):
         self.video_box.setFixedWidth(725)
         frame.setLayout(video_layout)
 
-        self.cam_dialog = QDialog()
-        layer = QGridLayout()
-        layer.setContentsMargins(0,0,0,0)
-        self.dialog_videolable = QLabel()
-        self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
-        layer.addWidget(self.dialog_videolable)
-        self.cam_dialog.setLayout(layer)
+        # self.cam_dialog = QDialog()
+        # layer = QGridLayout()
+        # layer.setContentsMargins(0,0,0,0)
+        # self.dialog_videolable = QLabel()
+        # self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
+        # self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
+        
+        # layer.addWidget(self.dialog_videolable)
+        # self.cam_dialog.setLayout(layer)
 
         return frame
         
@@ -254,6 +256,7 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
+                self.webcam_on.emit()
                 self.play_pause_button.setIcon(QIcon(Icons.play_button))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
@@ -262,15 +265,32 @@ class RealStreamView(QWidget):
                 self.streaming_processor.pause()
                 self.timer.stop()
                 
-    def stop_webcam(self):
+    def record_webcam(self):
         '''웹캠 정지 메서드'''
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)
+        self.streaming_processor.set_capture_area()
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
-        raise NotImplementedError("This function is not implemented yet")
+        #raise NotImplementedError("This function is not implemented yet")
+    
+    def stop_webcam(self):
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+        self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)
     
     def open_new_window(self):
         '''새창 메서드'''
+        self.cam_dialog = CamWindow()
+        self.streaming_processor.frame_ready.connect(self.cam_dialog.update_frame)
         self.cam_dialog.show()
-        # 웹캠 새장 로직 추가
     
     def change_webcam(self, index):
         '''웹캠 변경 메서드'''
@@ -299,7 +319,7 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-        self.dialog_videolable.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+        
     
     def detect_webcams(self):
         # 연결된 카메라 장치를 검색합니다.

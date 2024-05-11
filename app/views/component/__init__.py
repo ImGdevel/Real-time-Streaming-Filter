@@ -10,3 +10,4 @@ from .shadow_frame import ShadowWidget
 from .object_filters_widget import ObjectFilterSettngWidget
 from .mosaic_setting_widget import MosaicSettingWidget
 from .labeling import ContentLabeling
+from .cam_window import CamWindow
