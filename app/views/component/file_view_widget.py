@@ -44,11 +44,13 @@ class FileViewWidget(QWidget):
         self.button_layout = QVBoxLayout()
 
         self.remove_button = QPushButton()
+        self.remove_button.setToolTip("파일삭제")
         self.remove_button.setFixedSize(50, 50)
         self.remove_button.setIcon(QIcon(Icons.dust_bin))
         self.remove_button.clicked.connect(self.setRemoveMode)
         
         self.file_explorer_button = QPushButton()
+        self.file_explorer_button.setToolTip('파일탐색')
         self.file_explorer_button.setFixedSize(50, 50)
         self.file_explorer_button.setIcon(QIcon(Icons.folder_open))
         self.file_explorer_button.clicked.connect(self.openFileExplorer)
