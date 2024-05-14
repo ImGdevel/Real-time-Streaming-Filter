@@ -1,6 +1,7 @@
 import sys
 import os
 import platform
+import warnings
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QFile
 from modules import Ui_MainWindow
@@ -166,9 +167,9 @@ class MainWindow(QMainWindow):
     # ///////////////////////////////////////////////////////////////
     def mousePressEvent(self, event):
         # SET DRAG POS WINDOW
+        warnings.filterwarnings("ignore", category=DeprecationWarning, message=".*globalPos.*")
         self.dragPos = event.globalPos()
-
-        return
+        return 
         # PRINT MOUSE EVENTS
         if event.buttons() == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
