@@ -8,9 +8,7 @@ from PySide6.QtGui import QPixmap, QIcon, QImage, QPainter
 from models import StickerManager
 from .title_bar import TitleBar
 from utils import Style, Icons
-import cv2
 import numpy as np
-import qimage2ndarray
 
 class StickerRegisteredDialog(QDialog):
     onEventSave = Signal(int, int)
@@ -33,6 +31,7 @@ class StickerRegisteredDialog(QDialog):
         
         # 새로운 타이틀 바 생성
         self.title_bar = TitleBar(self)
+        self.title_bar.set_title("페이스 스티커 등록")
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
         self.title_bar.setFixedHeight(40)
         
@@ -119,13 +118,11 @@ class StickerRegisteredDialog(QDialog):
 
     def save_image(self):
         if self.edit_image:
-            print("이미지 저장")
             img = self.edit_image_set(self.edit_image, self.image_label.width(), self.image_label.height(), self.image_posX, self.image_posY , self.image_scale)
-
             nparry_img = self.qimage_to_cv_image(img)
             sticker_id = self.replace_manager.register_img(nparry_img)
             self.onEventSave.emit(self.person_id, sticker_id)
-            self.close()
+        self.close()
         
     def load_image(self):
         options = QFileDialog.Options()
@@ -138,6 +135,7 @@ class StickerRegisteredDialog(QDialog):
             self.init_image(image)
 
     def init_image(self, image : QPixmap):
+        self.is_sticker_seletecd = True
         self.origin_image = image
         self.edit_image = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.aspect_ratio = (image.width() / self.edit_image.width())
@@ -148,16 +146,19 @@ class StickerRegisteredDialog(QDialog):
         
             
     def update_x_offset(self, value):
-        self.image_posX = value
-        self.applay_image()
+        if self.origin_image:
+            self.image_posX = value
+            self.applay_image()
 
     def update_y_offset(self, value):
-        self.image_posY = value
-        self.applay_image()
+        if self.origin_image:
+            self.image_posY = value
+            self.applay_image()
 
     def update_scale(self, value):
-        self.image_scale = value / 100
-        self.applay_image()
+        if self.origin_image:
+            self.image_scale = value / 100
+            self.applay_image()
 
     def mousePressEvent(self, event):
         if event.buttons() == Qt.LeftButton:
@@ -186,10 +187,10 @@ class StickerRegisteredDialog(QDialog):
             self.applay_image()
             
     def applay_image(self):
-        print("X(", self.image_posX, ")  Y(" ,self.image_posY, ") Scale(", self.image_scale , ")")
-        img = self.edit_image_set(self.edit_image,self.image_label.width(), self.image_label.height(), self.image_posX, self.image_posY, self.image_scale)
-        pixmap = QPixmap.fromImage(img)
-        self.show_image(pixmap)
+        if self.edit_image:
+            img = self.edit_image_set(self.edit_image, self.image_label.width(), self.image_label.height(), self.image_posX, self.image_posY, self.image_scale)
+            pixmap = QPixmap.fromImage(img)
+            self.show_image(pixmap)
 
     def show_image(self, image : QPixmap):
         img  = image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
