@@ -1,3 +1,4 @@
+import time
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
@@ -82,13 +83,17 @@ class VideoView(QWidget):
         if filePath:
             self.origin_video_path = filePath
             self.video_processor.set_origin_video(filePath)
+            self.video_processor.is_complete = True
             self.play_video(filePath)
 
     def play_video(self, video_path):
         """영상 재생"""
-        self.video_processor.set_video(video_path)
-        self.video_player.set_video(video_path)
-        self.video_player.start_video()
+        if self.video_processor.is_complete is True :
+            self.video_processor.set_video(video_path)
+            self.video_player.set_video(video_path)
+            self.video_player.start_video()
+        else :
+            pass
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
@@ -101,6 +106,9 @@ class VideoView(QWidget):
             self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
             self.video_processor.progressChanged.connect(self.setProgress)
             self.progress_dialog.canceled.connect(self.cancelCounting) # 취소시
+
+            self.video_player.pause_video()
+
             self.video_processor.start()
 
             self.progress_dialog.exec_()
@@ -116,11 +124,16 @@ class VideoView(QWidget):
     def cancelCounting(self):
         """인코딩 취소시"""
         self.video_processor.encoding_cancel()
+        print("원래 비디오 재생할게요?")
+        self.encoding_video_path = self.origin_video_path
+        self.play_video(self.origin_video_path)
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
-        self.encoding_video_path = video_path
-        self.play_video(video_path)
+        if self.video_processor.is_complete is True :
+            self.encoding_video_path = video_path
+            self.play_video(video_path)
+
     
     def download_video(self):
         """영상 다운로드"""

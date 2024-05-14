@@ -21,6 +21,7 @@ class VideoProcessor(QThread):
         self.video_path : str = None
         self.is_running : bool = False
         self.origin_video_path : str = None
+        self.is_complete = True
 
     def run(self):
         self.filtering_video(self.origin_video_path)
@@ -33,7 +34,7 @@ class VideoProcessor(QThread):
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path):
-        
+        self.is_complete = False
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
         total_elements = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -58,14 +59,20 @@ class VideoProcessor(QThread):
 
             ret, frame = cap.read()  # 프레임 읽기            
             if not ret:
+                self.is_complete = True
                 break  # 동영상 끝에 도달하면 반복 중지
 
             processed_frame = self.process_frame(frame)
             output_video.write(processed_frame)
-
+    
         cap.release()
         cv2.destroyAllWindows()
-        self.encodingVideoPathEvent.emit(self.temp_video_path)
+        if self.is_complete is True:
+            self.encodingVideoPathEvent.emit(self.temp_video_path)
+        else:
+            self.is_complete = True
+
+
 
 
     def process_frame(self, frame):
