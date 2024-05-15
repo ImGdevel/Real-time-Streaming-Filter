@@ -11,6 +11,7 @@ import time, os
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
     frame_ready = Signal(QImage)
+    screen_size = Signal(tuple)
     
     def __init__(self):
         super().__init__()
@@ -155,9 +156,11 @@ class RealStreamProcessor(QThread):
     def pause(self):
         '''스레드 일시 중지'''
         self.is_running = False
+        if self.is_record:
+            self.is_record = False
+            self.output_video.release()
         self.filtering.tracking_id_init()
-        self.is_record = False
-        self.output_video.release()
+        
         self.wait()
 
     def stop(self):
@@ -185,6 +188,7 @@ class RealStreamProcessor(QThread):
         self.capture_mode = 1
         self.capture_area = (min(x1,x2),min(y1,y2), w, h)
         print("Clicked coordinates:", self.capture_area)
+        self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
 
 
 

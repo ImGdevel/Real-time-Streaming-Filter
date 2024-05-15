@@ -49,7 +49,7 @@ class RealStreamView(QWidget):
         '''툴바 설정 메서드'''
         toolbar = QWidget()  # 툴바 위젯
         toolbar.setMaximumWidth(250)  # 크기 설정
-        toolbar.setStyleSheet(Style.frame_style)
+        toolbar.setStyleSheet(Style.frame_style_background)
         toolbar.setGraphicsEffect(Style.shadow(toolbar))
         
         # 툴바 레이아웃 설정
@@ -119,29 +119,37 @@ class RealStreamView(QWidget):
         '''중단 비디오 옵션 설정 메서드'''
         frame = QWidget()
         frame.setFixedHeight(100)
-        frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
         
-        video_options_layout = QGridLayout()
-        button_group =  QButtonGroup()
-        button_group.setExclusive(True)
-
-        # 웹캠 선택 콤보박스
-        webcam_button = QPushButton("웹 캠")
-        webcam_button.setCheckable(True)
-        #webcam_button.setIcon(Icons.cam)
-        webcam_button.clicked.connect(lambda: self.select_video_option(0))
-        button_group.addButton(webcam_button)
+        video_options_layout = QVBoxLayout()
+        video_options_layout.setAlignment(Qt.AlignTop)
+        video_options_layout.setContentsMargins(0,0,0,0)
+        video_options_layout.setSpacing(0)
         
-        screen_capture_button = QPushButton("화면 캡쳐")
-        screen_capture_button.setCheckable(True)
-        #screen_capture_button.setIcon(Icons.screen_desktop)
-        screen_capture_button.clicked.connect(lambda: self.select_video_option(1))
-        button_group.addButton(screen_capture_button)
+        button_layout_frame = QWidget()
+        button_layout = QHBoxLayout()
+        button_layout.setContentsMargins(0,0,0,0)
+        button_layout.setSpacing(0)
+        button_layout.setAlignment(Qt.AlignLeft)
+        # 웹캠 선택 콤보박스
+        self.webcam_button = QPushButton("웹 캠")
+        self.webcam_button.setFixedSize(80,30)
+        self.webcam_button.setStyleSheet(Style.cam_button_selected)
+        self.webcam_button.clicked.connect(lambda: self.select_video_option(0))
+        
+        self.screen_button = QPushButton("화면 캡쳐")
+        self.screen_button.setFixedSize(80,30)
+        self.screen_button.setStyleSheet(Style.cam_button)
+        self.screen_button.clicked.connect(lambda: self.select_video_option(1))
+    
+        button_layout.addWidget(self.webcam_button)
+        button_layout.addWidget(self.screen_button)
+        button_layout_frame.setLayout(button_layout)
         
         # 웹캠 선택시 내용 출력
         webcam_content_widget = QWidget()
         webcam_content_laytout = QHBoxLayout()
+        #webcam_content_laytout.setContentsMargins(0,0,0,0)
         
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
@@ -162,6 +170,7 @@ class RealStreamView(QWidget):
         #화면 캡쳐시 내용 출력
         screen_capture_content_widget = QWidget()
         screen_capture_content_laytout = QHBoxLayout()
+        screen_capture_content_laytout.setSpacing(10)
         
         self.screen_capture_button = QPushButton()
         self.screen_capture_button.setFixedSize(40, 40)
@@ -169,19 +178,22 @@ class RealStreamView(QWidget):
         self.screen_capture_button.setIcon(QIcon(Icons.screen_desktop))
         self.screen_capture_button.clicked.connect(self.set_screen_capture_area)
         
-        screen_capture_content_laytout.addWidget(self.screen_capture_button)
+        self.screen_size_label = QLabel("screen : ")
+        self.screen_size_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.streaming_processor.screen_size.connect(self.set_screen_size)
+        
+        screen_capture_content_laytout.addWidget(self.screen_capture_button, 1)
+        screen_capture_content_laytout.addWidget(self.screen_size_label, 6)
         screen_capture_content_widget.setLayout(screen_capture_content_laytout)
         
         self.video_options_content = QStackedWidget()
+        self.video_options_content.setStyleSheet(Style.frame_style)
         self.video_options_content.addWidget(webcam_content_widget)
         self.video_options_content.addWidget(screen_capture_content_widget)
         
-        video_options_layout.addWidget(webcam_button,0,0)
-        video_options_layout.addWidget(screen_capture_button,0,1)
-        video_options_layout.addWidget(self.video_options_content,1,0,2,2)
         
-        video_options_layout.setColumnStretch(0, 1) 
-        video_options_layout.setColumnStretch(1, 1)
+        video_options_layout.addWidget(button_layout_frame)
+        video_options_layout.addWidget(self.video_options_content)
         
         frame.setLayout(video_options_layout)
         return frame
@@ -215,19 +227,9 @@ class RealStreamView(QWidget):
         self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         video_layout.addWidget(self.video_box)
-        self.video_box.setMaximumWidth(625)
+        self.video_box.setMaximumWidth(725)
         frame.setLayout(video_layout)
-
-        # self.cam_dialog = QDialog()
-        # layer = QGridLayout()
-        # layer.setContentsMargins(0,0,0,0)
-        # self.dialog_videolable = QLabel()
-        # self.dialog_videolable.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        # self.dialog_videolable.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         
-        # layer.addWidget(self.dialog_videolable)
-        # self.cam_dialog.setLayout(layer)
-
         return frame
         
 
@@ -368,10 +370,20 @@ class RealStreamView(QWidget):
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
     
     def select_video_option(self, index):
-        
-        self.video_options_content.setCurrentIndex(index)
-        
-        pass
+        if index == 0:  # 웹캠 선택
+            self.webcam_button.setStyleSheet(Style.cam_button_selected)
+            self.screen_button.setStyleSheet(Style.cam_button)
+            self.video_options_content.setCurrentIndex(0)
+        elif index == 1:  # 화면 캡쳐 선택
+            self.screen_button.setStyleSheet(Style.cam_button_selected)
+            self.webcam_button.setStyleSheet(Style.cam_button)
+            self.video_options_content.setCurrentIndex(1)
+            
+    
+    def set_screen_size(self, size : str):
+        """스크린 사이즈 텍스트"""
+        screen_size = "screen : " + str(size[0]) + "x" + str(size[1])
+        self.screen_size_label.setText(screen_size)
     
     def detect_webcams(self):
         # 연결된 카메라 장치를 검색합니다.

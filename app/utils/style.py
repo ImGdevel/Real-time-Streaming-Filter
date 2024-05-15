@@ -70,6 +70,13 @@ class Style:
         padding: 0px;
     """
     
+    frame_style_background = f"""
+        background-color: {Colors.base_color_04};
+        color: white;
+        border-radius: 5px;
+        padding: 0px;
+    """
+    
     frame_style_line = f"""
         background-color: {Colors.base_color_06};
         color: white;
@@ -257,4 +264,30 @@ class Style:
             background-color: {Colors.base_color_04};
         }}
 
+    """
+    
+    
+    cam_button = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_05};
+            border: none;
+            border-radius: 0px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 15px;
+            padding: 0px;
+        }}
+        
+    """
+    
+    cam_button_selected = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: none;
+            border-radius: 0px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 15px;
+            padding: 0px;
+        }}
     """
