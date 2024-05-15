@@ -131,7 +131,7 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setFixedSize(30, 30)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
-        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox())        
+        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox)
 
         # 중단 레이아웃 설정
         video_options_layout.addWidget(webcam_combo_label, 0, 0)
@@ -170,7 +170,7 @@ class RealStreamView(QWidget):
         self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
         self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
         video_layout.addWidget(self.video_box)
-        self.video_box.setFixedWidth(725)
+        self.video_box.setMaximumWidth(625)
         frame.setLayout(video_layout)
 
         # self.cam_dialog = QDialog()
@@ -253,20 +253,19 @@ class RealStreamView(QWidget):
     # method
     def toggle_webcam(self):
         '''웹캠 토글 메서드'''
-        if self.play_pause_button.isChecked():
-            if not self.streaming_processor.isRunning():
-                self.streaming_processor.start()
-                self.webcam_on.emit()
-                self.play_pause_button.setIcon(QIcon(Icons.play_button))
-                self.timer.start(0)  # 비동기적으로 프레임 업데이트
+        if not self.streaming_processor.is_running:
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.play_pause_button.setToolTip("실시간 스트리밍 중지")
+            self.streaming_processor.start()
+            self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
-            if self.streaming_processor.isRunning():
-                self.play_pause_button.setIcon(QIcon(Icons.puse_button))
-                self.streaming_processor.pause()
-                self.timer.stop()
-                
-    def record_webcam(self):
-        '''웹캠 정지 메서드'''
+            self.play_pause_button.setIcon(QIcon(Icons.play_button))
+            self.play_pause_button.setToolTip("실시간 스트리밍 시작")
+            self.streaming_processor.pause()
+            self.timer.stop()
+            
+    def screen_video_capture(self):
+        '''화면 캡쳐 녹화'''
         if self.streaming_processor.isRunning():
             self.play_pause_button.setIcon(QIcon(Icons.puse_button))
             self.streaming_processor.pause()
@@ -275,8 +274,11 @@ class RealStreamView(QWidget):
                 self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
         self.streaming_processor.set_capture_area()
+                
+    def record_video(self):
+        '''웹캠 정지 메서드'''
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
-        #raise NotImplementedError("This function is not implemented yet")
+        raise NotImplementedError("This function is not implemented yet")
     
     def stop_webcam(self):
         if self.streaming_processor.isRunning():
