@@ -37,7 +37,7 @@ class RealStreamView(QWidget):
         stream_main_layout.addWidget(video_widget, 0, 1)
         stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
         
-        stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(0, 7)  # 상단 행 스트레칭 비율
         stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
 
         self.setLayout(stream_main_layout)
@@ -56,14 +56,15 @@ class RealStreamView(QWidget):
         
         # 상단 핵심 버튼 설정
         core_buttons_widget = self.setup_core_buttons()
-        toolbar_layout.addWidget(core_buttons_widget)
-
+    
         # 중단 설정 (웹캠 선택, 비디오 배율)
         video_options_widget = self.setup_video_options()
-        toolbar_layout.addWidget(video_options_widget)
-
+    
         # 하단 필터 리스트
         filter_list_layout = self.setup_filter_list()
+        
+        toolbar_layout.addWidget(core_buttons_widget)
+        toolbar_layout.addWidget(video_options_widget)
         toolbar_layout.addWidget(filter_list_layout)
 
         toolbar.setLayout(toolbar_layout)
@@ -87,18 +88,18 @@ class RealStreamView(QWidget):
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
-        # 일시정지 버튼
+        # 녹화 버튼
         self.stop_button = QPushButton()
-        self.stop_button.setFixedSize(50,50)
+        self.stop_button.setFixedSize(50, 50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
-        self.stop_button.setIcon(QIcon(Icons.stop_button))
-        self.stop_button.clicked.connect(self.record_webcam)
+        self.stop_button.setIcon(QIcon(Icons.recode))
+        self.stop_button.clicked.connect(self.record_video)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
-        self.new_window_button.setFixedSize(50,50)
+        self.new_window_button.setFixedSize(50, 50)
         self.new_window_button.setStyleSheet(Style.mini_button_style)
-        self.new_window_button.setIcon(QIcon(Icons.clone))
+        self.new_window_button.setIcon(QIcon(Icons.browser))
         self.new_window_button.clicked.connect(self.open_new_window)
 
         # 상단 버튼 레이아웃 설정
@@ -113,14 +114,14 @@ class RealStreamView(QWidget):
     def setup_video_options(self):
         '''중단 비디오 옵션 설정 메서드'''
         frame = QWidget()
-        frame.setMaximumHeight(120)
+        frame.setMaximumHeight(130)
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
         
         video_options_layout = QGridLayout()
 
         # 웹캠 선택 콤보박스
-        webcam_combo_label = QLabel("Webcam")
+        webcam_combo_label = QLabel("웹 캠 설정")
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.webcam_list = self.detect_webcams()
