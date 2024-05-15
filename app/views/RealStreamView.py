@@ -129,13 +129,13 @@ class RealStreamView(QWidget):
         webcam_button = QPushButton("웹 캠")
         webcam_button.setCheckable(True)
         #webcam_button.setIcon(Icons.cam)
-        webcam_button.clicked.connect(self.select_video_option)
+        webcam_button.clicked.connect(lambda: self.select_video_option(0))
         button_group.addButton(webcam_button)
         
         screen_capture_button = QPushButton("화면 캡쳐")
         screen_capture_button.setCheckable(True)
         #screen_capture_button.setIcon(Icons.screen_desktop)
-        screen_capture_button.clicked.connect(self.select_video_option)
+        screen_capture_button.clicked.connect(lambda: self.select_video_option(1))
         button_group.addButton(screen_capture_button)
         
         # 웹캠 선택시 내용 출력
@@ -165,7 +165,7 @@ class RealStreamView(QWidget):
         self.screen_capture_button = QPushButton()
         self.screen_capture_button.setFixedSize(40, 40)
         self.screen_capture_button.setStyleSheet(Style.mini_button_style)
-        self.screen_capture_button.setIcon(QIcon(Icons.reload))
+        self.screen_capture_button.setIcon(QIcon(Icons.screen_desktop))
         self.screen_capture_button.clicked.connect(self.set_screen_capture_area)
         
         screen_capture_content_laytout.addWidget(self.screen_capture_button)
@@ -367,6 +367,8 @@ class RealStreamView(QWidget):
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
     
     def select_video_option(self, index):
+        
+        self.video_options_content.setCurrentIndex(index)
         
         pass
     
