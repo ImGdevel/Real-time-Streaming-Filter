@@ -65,6 +65,7 @@ class VideoView(QWidget):
         self.button3.setIcon(QIcon(Icons.folder_open))
         self.button3.clicked.connect(self.openFileDialog)
         self.button3.setFixedSize(50, 50)
+        self.button3.setToolTip("파일탐색")
         setting_widget.addWidget(list_frame)
 
         setting_button_layout = QVBoxLayout()

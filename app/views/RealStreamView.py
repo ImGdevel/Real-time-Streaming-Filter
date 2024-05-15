@@ -102,7 +102,7 @@ class RealStreamView(QWidget):
         self.new_window_button = QPushButton()
         self.new_window_button.setFixedSize(50, 50)
         self.new_window_button.setStyleSheet(Style.mini_button_style)
-        self.new_window_button.setToolTip("새 창 보기")
+        self.new_window_button.setToolTip("새 창")
         self.new_window_button.setIcon(QIcon(Icons.browser))
         self.new_window_button.clicked.connect(self.open_new_window)
 
@@ -161,6 +161,7 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setFixedSize(30, 30)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
+        self.refreash_webcam_button.setToolTip('새로고침')
         self.refreash_webcam_button.clicked.connect(self.refresh_webcam_combox)
         
         webcam_content_laytout.addWidget(self.webcam_combo)
@@ -176,6 +177,7 @@ class RealStreamView(QWidget):
         self.screen_capture_button.setFixedSize(40, 40)
         self.screen_capture_button.setStyleSheet(Style.mini_button_style)
         self.screen_capture_button.setIcon(QIcon(Icons.screen_desktop))
+        self.screen_capture_button.setToolTip('영역 선택')
         self.screen_capture_button.clicked.connect(self.set_screen_capture_area)
         
         self.screen_size_label = QLabel("screen : ")
