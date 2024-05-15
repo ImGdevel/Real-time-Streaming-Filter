@@ -31,7 +31,7 @@ class StickerRegisteredDialog(QDialog):
         
         # 새로운 타이틀 바 생성
         self.title_bar = TitleBar(self)
-        self.title_bar.set_title("페이스 스티커 등록")
+        self.title_bar.set_title("얼굴 스티커 등록")
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
         self.title_bar.setFixedHeight(40)
         

@@ -369,24 +369,21 @@ class FilterSettingView(QWidget):
                 if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
                     self.set_current_filter(new_name)
                 else:
-                    QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("이미 존재하는 필터 입니다")
+                    msg.setWindowTitle("경고")
+                    msg.exec_()
                     self.set_current_filter(self.current_filter)
         else:
-                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)         
-                    self.set_current_filter(self.current_filter)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("유효하지 않은 이름입니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()      
+            self.set_current_filter(self.current_filter)
 
 
-    # 필터 정보 저장
-    def apply_filter_settings(self):
-        """세팅된 필터링 정보 저장"""
-        return
-        # registered_faces_list_widget의 내용 가져오기
-        updated_face_filter = self.registered_faces_list_widget.get_items_data()
-        updated_filtering_object = self.current_filter_object_list
-
-        # 현재 선택된 필터 정보 업데이트
-        self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
-        
     # 페이지 리프레쉬
     def render(self):
         """페이지 refesh"""

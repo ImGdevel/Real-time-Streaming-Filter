@@ -21,6 +21,7 @@ class Style:
     title_bar_style = f"""
             background-color: {Colors.base_color_03};
             color: {Colors.textColor01};
+            font-size: 16px;
             padding: 10px;
             border-radius: 0px;  
             
@@ -276,6 +277,9 @@ class Style:
             border-top-right-radius: 10px;
             font-size: 15px;
             padding: 0px;
+        }}
+        QPushButton:hover {{
+            background-color: {Colors.base_color_07};
         }}
         
     """

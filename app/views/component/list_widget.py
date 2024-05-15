@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import ( 
     QFrame, QWidget, QHBoxLayout,  QVBoxLayout,
     QListWidget, QListWidgetItem, QPushButton, 
-    QGraphicsDropShadowEffect, QButtonGroup, QLabel
+    QGraphicsDropShadowEffect, QButtonGroup, QLabel, QMessageBox
 )
 from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QIcon
@@ -186,21 +186,31 @@ class RegisteredFacesListWidget(ListWidget):
         return widget
     
     def show_sticker_dialog(self):
-        self.sticker_dialog = StickerRegisteredDialog()
-        self.sticker_dialog.onEventSave.connect(self.register_sticker)
-    
-        button = self.sender()
-        if button:
-            parent_widget = button.parentWidget()
-            if parent_widget:
-                person_id = int(parent_widget.userData)
-                sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
-                self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
-                
-                self.sticker_dialog.exec_()
+        try:
+            self.sticker_dialog = StickerRegisteredDialog()
+            self.sticker_dialog.onEventSave.connect(self.register_sticker)
+        
+            button = self.sender()
+            if button:
+                parent_widget = button.parentWidget()
+                if parent_widget:
+                    person_id = int(parent_widget.userData)
+                    sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
+                    self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
+                    
+                    
+                    
+                    self.sticker_dialog.exec_()
+        except ValueError as e:
+            if e == "image error":
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("이미지를 가져오지 못했습니다")
+                msg.setWindowTitle("경고")
+                msg.exec_()
+            
                 
     def remove_button(self, button_widget):
-        print(button_widget)
         self.filter_setting_processor.delete_face_in_filter(self.filter_name, int(button_widget))
         self.update_list()
         self.onEventUpdate.emit()
