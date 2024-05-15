@@ -22,4 +22,15 @@ class Icons:
     reload = resource_path('resources/icons/cil-reload.png')
     camera = resource_path('resources/icons/cil-camera.png')
     loading = resource_path('resources/icons/cil-loading.png')
+    browser = resource_path('resources/icons/cil-browser.png')
+    devices = resource_path('resources/icons/cil-devices.png')
+    recode = resource_path('resources/icons/cil-camera-roll.png')
+    arrow_left = resource_path('resources/icons/cil-caret-left.png')
+    arrow_right = resource_path('resources/icons/cil-caret-right.png')
+    arrow_top = resource_path('resources/icons/cil-caret-top.png')
+    arrow_bottom = resource_path('resources/icons/cil-caret-bottom.png')
+    screen_desktop = resource_path('resources/icons/cil-screen-desktop.png')
+    cam = resource_path('resources/icons/cil-cam.png')
+    
+    
     

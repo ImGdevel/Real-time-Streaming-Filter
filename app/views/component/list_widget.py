@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import ( 
     QFrame, QWidget, QHBoxLayout,  QVBoxLayout,
     QListWidget, QListWidgetItem, QPushButton, 
-    QGraphicsDropShadowEffect, QButtonGroup
+    QGraphicsDropShadowEffect, QButtonGroup, QLabel
 )
 from PySide6.QtCore import Signal, Qt, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QIcon
@@ -26,6 +26,7 @@ class ListWidget(QListWidget):
         widget = self.create_button(item_name, item_data)
         self.setItemWidget(item, widget)
         item.setSizeHint(widget.sizeHint())
+        return widget
 
     def create_button(self, item_name: str, item_data = None):
         widget = QPushButton(item_name)
@@ -155,8 +156,13 @@ class RegisteredFacesListWidget(ListWidget):
         button.setObjectName(item_name)
         button.setStyleSheet(Style.list_button_style_none_line)
         button.setMinimumHeight(40)
-        
         button.clicked.connect(self.emit_button_clicked)
+        
+        state_label = QLabel("필터링 예외")
+        state_label.setObjectName("state_label")
+        state_label.setStyleSheet(Style.frame_style_none_line)
+        state_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        state_label.setFixedWidth(150)
         
         button02 = QPushButton()
         button02.setIcon(QIcon(Icons.smiley_sticker))
@@ -172,6 +178,7 @@ class RegisteredFacesListWidget(ListWidget):
         #버튼 자기 자신을 삭제
         
         frame_layout.addWidget(button)
+        frame_layout.addWidget(state_label)
         frame_layout.addWidget(button02)
         frame_layout.addWidget(button03)
         widget.setLayout(frame_layout)
@@ -189,6 +196,7 @@ class RegisteredFacesListWidget(ListWidget):
                 person_id = int(parent_widget.userData)
                 sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, person_id)
                 self.sticker_dialog.set_sticker_dialog(person_id, sticker_id)
+                
                 self.sticker_dialog.exec_()
                 
     def remove_button(self, button_widget):
@@ -201,6 +209,7 @@ class RegisteredFacesListWidget(ListWidget):
     def register_sticker(self, person_id, sticker_id):
         self.filter_setting_processor.update_sticker_id_in_filter(self.filter_name, person_id, sticker_id)
         self.onEventUpdate.emit()
+        self.update_list()
     
     def emit_button_clicked(self):
         """아이템 클릭 시그널을 발생시키는 메서드"""
@@ -220,8 +229,20 @@ class RegisteredFacesListWidget(ListWidget):
     def update_list(self):
         self.clear()
         for name, id in self.filter_setting_processor.get_face_in_filter(self.filter_name):
-            self.add_item(name, str(id))
+            widget = self.add_item(name, str(id))
+            sticker_id = self.filter_setting_processor.get_sticker_id_in_filter(self.filter_name, id)
+            self.set_label_state(widget, sticker_id)
             
+            
+    def set_label_state(self, widget : QWidget, state: int = -1):
+        label = widget.findChild(QLabel, "state_label")
+
+        if int(state) == -1:
+            label.setText("필터링 예외")
+        else:
+            label.setText("스티커 필터링")
+        
+        
         
 
 class AvailableFacesListWidget(ListWidget):
