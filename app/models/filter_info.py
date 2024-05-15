@@ -12,6 +12,8 @@ class Filter:
     mosaic_blur_strength: float = 50
     mosaic_blur_shape: str = "rect"
 
+    imgsz_mag: float = 33
+
     def __post_init__(self):
         if not isinstance(self.face_filter, dict):
             self.face_filter = {filter_name: -1 for filter_name in self.face_filter}

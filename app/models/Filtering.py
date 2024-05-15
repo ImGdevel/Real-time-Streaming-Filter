@@ -80,7 +80,9 @@ class Filtering:
         results = dict()
         results[-2] = []
         results[-1] = []
-        temp_ratio = self.current_filter_info.mosaic_blur_strength * 3 / 100 # 임시로 UI사용하려고 만든 todo
+        temp_ratio = self.current_filter_info.imgsz_mag * 3 / 100 + 0.01 # 임시로 UI사용하려고 만든 todo 0.01은 0 되지 말라고 넣어놨는데 if로 했다가 이게 더 나은거같음
+        #print(temp_ratio)
+        
         results = self.face_filter(img, results, temp_ratio)
 
         if is_video:
@@ -127,7 +129,7 @@ class Filtering:
         """
         if self.current_filter_info is None:
             return img
-        blurRatio = 40 #self.current_filter_info.mosaic_blur_strength   #todo
+        blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
 
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
@@ -150,7 +152,7 @@ class Filtering:
     def elliptical_blur(self, img, boxesList):
         if self.current_filter_info is None:
             return img
-        blurRatio = 40 #self.current_filter_info.mosaic_blur_strength #todo
+        blurRatio = self.current_filter_info.mosaic_blur_strength
         for box in boxesList:
             if len(box) == 0:
                 continue

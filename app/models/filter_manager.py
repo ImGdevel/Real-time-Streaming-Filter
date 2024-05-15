@@ -187,6 +187,15 @@ class FilterManager:
                 return
         raise ValueError("존재하지 않는 filtername입니다.")   
 
+    def update_imgsz_mag_in_filter(self, filter_name: str, imgsz_mag: float):
+        """필터 프리셋의 blur 강도를 변경한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                filter_obj.imgsz_mag = imgsz_mag
+                #print("blur strength:",blur_strength)
+                return
+        print("filterName:", filter_name)
+        raise ValueError("존재하지 않는 filtername입니다.")  
 
     def remove_filter(self, filter_name: str):
         """지정된 이름의 필터를 제거합니다."""
