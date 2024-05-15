@@ -175,6 +175,25 @@ class MainWindow(QMainWindow):
             print('Mouse click: LEFT CLICK')
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
+        # Close Event
+    def closeEvent(self, event):
+        self.streaming_widget.close()
+        self.video_widget.close()
+        self.image_widget.close()
+        self.filter_setting_widget.close()
+        # reply = QMessageBox.question(self, 'Message', 
+        #     "Are you sure you want to quit?", QMessageBox.Yes | 
+        #     QMessageBox.No, QMessageBox.No)
+
+        # if reply == QMessageBox.Yes:
+        #     # Close all sub widgets
+        #     self.streaming_widget.close()
+        #     self.video_widget.close()
+        #     self.image_widget.close()
+        #     self.filter_setting_widget.close()
+        #     event.accept()
+        # else:
+        #     event.ignore()
 
     # Manage Webcam State
     def webcamState(self):

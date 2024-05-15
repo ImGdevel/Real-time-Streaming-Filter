@@ -392,6 +392,11 @@ class FilterSettingView(QWidget):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
         self.set_current_filter(self.current_filter)
+    
+        # Close Event
+    def closeEvent(self, event):
+        if self.person_face_setting_window is not None:
+            self.person_face_setting_window.close()
 
     def webcamOn(self):
         self.webcam_on.emit()

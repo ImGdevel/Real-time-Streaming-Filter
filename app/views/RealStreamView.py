@@ -24,6 +24,7 @@ class RealStreamView(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
         self.current_filter = None
+        self.cam_dialog = None
         self.initUI()
 
     def initUI(self):
@@ -388,12 +389,14 @@ class RealStreamView(QWidget):
         
         return name_list
     
-    def refreash_webcam_combox(self):
+    def refresh_webcam_combox(self):
+        print("refresh")
+        self.running_webcam_stop()
         namelist = self.detect_webcams()
         combox = QComboBox()
         combox.addItems(namelist)
         self.webcam_combo = combox
-        self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
+        self.streaming_processor.set_webcam_mode()
 
     def render(self):
         """페이지 refesh"""
@@ -407,3 +410,18 @@ class RealStreamView(QWidget):
         self.timer.stop()
         del self.streaming_processor
         del self.timer
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
+
+    def running_webcam_stop(self):
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+        else:
+            if self.streaming_processor.capture_mode == 0:
+                if self.streaming_processor.webcam_on:
+                    self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)
