@@ -47,7 +47,7 @@ class VideoView(QWidget):
         list_frame = ContentLabeling()
         list_frame.setLabel("필터 목록")
         list_frame.setStyleSheet(Style.frame_style)
-        list_frame.setContentMargin(10,10,10,10)
+        list_frame.setContentMargin(0,0,0,0)
         
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
@@ -55,24 +55,30 @@ class VideoView(QWidget):
 
         self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
+        self.button1.setFixedWidth(190)
         self.button1.clicked.connect(self.do_video_encoding)
         self.button2 = QPushButton("다운로드")
         self.button2.setFixedHeight(40)
+        self.button2.setFixedWidth(190)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
         self.button3.setIcon(QIcon(Icons.folder_open))
         self.button3.clicked.connect(self.openFileDialog)
         self.button3.setFixedSize(50, 50)
-
-        setting_widget.addSettingButton(self.button3)
         setting_widget.addWidget(list_frame)
-        setting_widget.addSettingButton(self.button1)
-        setting_widget.addSettingButton(self.button2)
-        
-        
-        layout = QHBoxLayout()
+
+        setting_button_layout = QVBoxLayout()
+        setting_button_frame = QWidget()
+        setting_button_layout.setContentsMargins(15,0,0,5)
+        setting_button_layout.addWidget(self.button1)
+        setting_button_layout.addWidget(self.button2)
+        setting_button_frame.setLayout(setting_button_layout)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.button3)
         layout.addWidget(setting_widget)
-        layout.setContentsMargins(0,0,0,0)
+        layout.addWidget(setting_button_frame)
+        layout.setContentsMargins(5,5,5,5)
         frame.setLayout(layout)
         return frame
         
