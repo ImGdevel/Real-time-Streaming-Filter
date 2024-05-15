@@ -153,7 +153,7 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setFixedSize(30, 30)
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
-        self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox)
+        self.refreash_webcam_button.clicked.connect(self.refresh_webcam_combox)
         
         webcam_content_laytout.addWidget(self.webcam_combo)
         webcam_content_laytout.addWidget(self.refreash_webcam_button)
