@@ -23,6 +23,7 @@ class RealStreamView(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_video)
         self.current_filter = None
+        self.cam_dialog = None
         self.initUI()
 
     def initUI(self):

@@ -149,7 +149,8 @@ class RealStreamProcessor(QThread):
         '''스레드 종료 메서드'''
         self.is_running = False
         self.quit()
-        self.video_cap.release()
+        if self.video_cap is not None:
+            self.video_cap.release()
         self.video_cap = None
 
     def set_capture_area(self):
