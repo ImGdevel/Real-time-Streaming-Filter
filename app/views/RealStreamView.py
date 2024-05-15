@@ -30,15 +30,18 @@ class RealStreamView(QWidget):
         stream_main_layout = QGridLayout()  # 레이아웃 설정
 
         toolbar = self.setup_toolbar()
+        filter_list = self.setup_filter_list()
         video_widget = self.setup_video_layer()
         bottom_widget = self.setup_bottom_layer()
 
-        stream_main_layout.addWidget(toolbar, 0, 0)
-        stream_main_layout.addWidget(video_widget, 0, 1)
-        stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
+        stream_main_layout.addWidget(toolbar, 0, 0, 1, 2)
+        stream_main_layout.addWidget(filter_list, 1, 0)
+        stream_main_layout.addWidget(video_widget, 1, 1)
+        stream_main_layout.addWidget(bottom_widget, 2, 0, 3, 2)
         
-        stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
-        stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(0, 1)  # 상단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(1, 6)  # 하단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(2, 3)  # 하단 행 스트레칭 비율
 
         self.setLayout(stream_main_layout)
 
@@ -46,83 +49,34 @@ class RealStreamView(QWidget):
     def setup_toolbar(self):
         '''툴바 설정 메서드'''
         toolbar = QWidget()  # 툴바 위젯
-        toolbar.setMaximumWidth(250)  # 크기 설정
+        toolbar.setMaximumHeight(60)  # 크기 설정
         toolbar.setStyleSheet(Style.frame_style)
         toolbar.setGraphicsEffect(Style.shadow(toolbar))
         
         # 툴바 레이아웃 설정
-        toolbar_layout = QVBoxLayout()
-        toolbar_layout.setContentsMargins(0,0,0,0)
+        toolbar_layout = QHBoxLayout()
+        toolbar_layout.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        toolbar_layout.setSpacing(10)
+        toolbar_layout.setContentsMargins(10, 0, 10, 0)
         
-        # 상단 핵심 버튼 설정
-        core_buttons_widget = self.setup_core_buttons()
-        toolbar_layout.addWidget(core_buttons_widget)
-
-        # 중단 설정 (웹캠 선택, 비디오 배율)
-        video_options_widget = self.setup_video_options()
-        toolbar_layout.addWidget(video_options_widget)
-
-        # 하단 필터 리스트
-        filter_list_layout = self.setup_filter_list()
-        toolbar_layout.addWidget(filter_list_layout)
-
-        toolbar.setLayout(toolbar_layout)
-        return toolbar
-
-    def setup_core_buttons(self):
-        '''상단 핵심 버튼 설정 메서드'''
-        frame = QWidget()
-        frame.setStyleSheet(Style.frame_style)
-        frame.setGraphicsEffect(Style.shadow(frame))
-        frame.setFixedHeight(70)
-        
-        core_buttons_layout = QHBoxLayout()
-
         # 실시간 영상 재생/중지 버튼
         self.play_pause_button = QPushButton()
         self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setStyleSheet(Style.mini_button_style)
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
-
+        self.play_pause_button.setToolTip("실시간 스트리밍 시작")
         self.play_pause_button.setCheckable(True)
-        self.play_pause_button.clicked.connect(self.toggle_webcam)
+        self.play_pause_button.setChecked(False)
+        self.play_pause_button.clicked.connect(self.toggle_webcam)        
 
-        # 일시정지 버튼
-        self.stop_button = QPushButton()
-        self.stop_button.setFixedSize(50,50)
-        self.stop_button.setStyleSheet(Style.mini_button_style)
-        self.stop_button.setIcon(QIcon(Icons.stop_button))
-        self.stop_button.clicked.connect(self.record_webcam)
+        input_set = QFrame()
+        input_set.setStyleSheet(Style.frame_style_line)
 
-        # 새 창 버튼
-        self.new_window_button = QPushButton()
-        self.new_window_button.setFixedSize(50,50)
-        self.new_window_button.setStyleSheet(Style.mini_button_style)
-        self.new_window_button.setIcon(QIcon(Icons.clone))
-        self.new_window_button.clicked.connect(self.open_new_window)
-
-        # 상단 버튼 레이아웃 설정
-        core_buttons_layout.addWidget(self.play_pause_button)
-        core_buttons_layout.addWidget(self.stop_button)
-        core_buttons_layout.addWidget(self.new_window_button)
-        core_buttons_layout.setSpacing(10)  # 버튼 사이 간격 설정
+        input_set_layout = QHBoxLayout()
+        input_set.setLayout(input_set_layout)
         
-        frame.setLayout(core_buttons_layout)
-        return frame
-
-    def setup_video_options(self):
-        '''중단 비디오 옵션 설정 메서드'''
-        frame = QWidget()
-        frame.setMaximumHeight(120)
-        frame.setStyleSheet(Style.frame_style)
-        frame.setGraphicsEffect(Style.shadow(frame))
-        
-        video_options_layout = QGridLayout()
-
-        # 웹캠 선택 콤보박스
-        webcam_combo_label = QLabel("Webcam")
+        # 웹캠 설정 버튼
         self.webcam_combo = QComboBox()
-        self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.webcam_list = self.detect_webcams()
         self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
@@ -132,25 +86,62 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
         self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox)
-
-        # 중단 레이아웃 설정
-        video_options_layout.addWidget(webcam_combo_label, 0, 0)
-        video_options_layout.addWidget(self.webcam_combo, 1, 0)
-        video_options_layout.addWidget(self.refreash_webcam_button, 1, 1)
         
-        frame.setLayout(video_options_layout)
-        return frame
+        # 화면 캡쳐 버튼
+        self.screen_video_capture_button = QPushButton()
+        self.screen_video_capture_button.setFixedSize(50,50)
+        self.screen_video_capture_button.setStyleSheet(Style.mini_button_style)
+        self.screen_video_capture_button.setIcon(QIcon(Icons.screen_desktop))
+        self.screen_video_capture_button.setToolTip("화면 영상 캡쳐")
+        self.screen_video_capture_button.clicked.connect(self.screen_video_capture)
+        
+        input_set_layout.addWidget(self.webcam_combo)
+        input_set_layout.addWidget(self.screen_video_capture_button)
+        
+        
+        # 녹화 버튼
+        self.record_button = QPushButton()
+        self.record_button.setFixedSize(50,50)
+        self.record_button.setStyleSheet(Style.mini_button_style)
+        self.record_button.setIcon(QIcon(Icons.recode))
+        self.record_button.setToolTip("실시간 영상 녹화")
+        self.record_button.clicked.connect(self.record_video)
+
+        # 새 창 버튼
+        self.new_window_button = QPushButton()
+        self.new_window_button.setFixedSize(50,50)
+        self.new_window_button.setStyleSheet(Style.mini_button_style)
+        self.new_window_button.setIcon(QIcon(Icons.browser))
+        self.new_window_button.setToolTip("새 창에서 열기")
+        self.new_window_button.clicked.connect(self.open_new_window)
+        
+        # 상단 버튼 레이아웃 설정
+        toolbar_layout.addWidget(self.play_pause_button)
+        toolbar_layout.addWidget(self.record_button)
+        toolbar_layout.addWidget(self.new_window_button)
+        
+        
+        #toolbar_layout.addWidget(self.screen_video_capture_button)
+        #toolbar_layout.addWidget(self.webcam_combo)
+        #toolbar_layout.addWidget(self.refreash_webcam_button)
+        
+
+        toolbar.setLayout(toolbar_layout)
+        return toolbar
 
     def setup_filter_list(self):
         '''필터 리스트 위젯'''
         # Filter 목록
         frame = QWidget()
         frame.setStyleSheet(Style.list_frame_style)
+        frame.setMaximumWidth(240)
         frame.setGraphicsEffect(Style.shadow(frame))
+        
         layout = QVBoxLayout()
+        layout.setContentsMargins(20,10,20,15)
         
         list_label = QLabel("필터 목록")
-        list_label.setStyleSheet(Style.list_frame_label)
+        list_label.setStyleSheet(Style.title_label)
         
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_current_filter)
