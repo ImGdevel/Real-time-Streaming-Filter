@@ -169,7 +169,7 @@ class Style:
         }}
 
         QPushButton:checked {{
-            background-color: {Colors.base_color_X};
+            background-color: {Colors.identity_color_05};
         }}
 
     """
