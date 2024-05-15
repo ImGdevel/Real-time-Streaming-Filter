@@ -55,8 +55,10 @@ class VideoView(QWidget):
 
         self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
+        self.button1.setStyleSheet(Style.mini_button_style)
         self.button1.clicked.connect(self.do_video_encoding)
         self.button2 = QPushButton("다운로드")
+        self.button2.setStyleSheet(Style.mini_button_style)
         self.button2.setFixedHeight(40)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
