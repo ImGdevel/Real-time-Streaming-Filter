@@ -72,10 +72,19 @@ class ObjectDetect:
         return: [[box], 신뢰도, 객체 이름]의 리스트를 반환한다.
         """
         results = []
-        
+        if img.shape[0]%32 == 0:
+            height = img.shape[0]
+        else:
+            height = img.shape[0] - (img.shape[0]%32) + 32
+        if img.shape[1]%32 == 0:
+            width = img.shape[1]
+        else:
+            width = img.shape[1] - (img.shape[1]%32) + 32
+        imgsize = (height, width)
+
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, retina_masks=True, show=False, imgsz=(1280,736))[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, retina_masks=True, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
