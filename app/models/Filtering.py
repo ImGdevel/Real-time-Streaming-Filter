@@ -45,13 +45,13 @@ class Filtering:
         return img
 
 
-    def face_filter(self, img, results):
+    def face_filter(self, img, results, mag_ratio = 1):
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
             results[name] = []
 
-        origins = self.object.origin_detect(img)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
+        origins = self.object.origin_detect(img, mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             if self.current_filter_info.face_filter_on is True:
@@ -79,8 +79,9 @@ class Filtering:
 
         results = dict()
         results[-2] = []
-        results[-1] = [] 
-        results = self.face_filter(img, results)
+        results[-1] = []
+        temp_ratio = self.current_filter_info.mosaic_blur_strength * 3 / 100 # 임시로 UI사용하려고 만든 todo
+        results = self.face_filter(img, results, temp_ratio)
 
         if is_video:
             if len(results) != 0:
@@ -126,7 +127,7 @@ class Filtering:
         """
         if self.current_filter_info is None:
             return img
-        blurRatio = self.current_filter_info.mosaic_blur_strength
+        blurRatio = 40 #self.current_filter_info.mosaic_blur_strength   #todo
         for box in boxesList:
 
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
@@ -149,7 +150,7 @@ class Filtering:
     def elliptical_blur(self, img, boxesList):
         if self.current_filter_info is None:
             return img
-        blurRatio = self.current_filter_info.mosaic_blur_strength
+        blurRatio = 40 #self.current_filter_info.mosaic_blur_strength #todo
         for box in boxesList:
             if len(box) == 0:
                 continue
