@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
-    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, QStackedWidget
+    QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, 
+    QStackedWidget, QButtonGroup
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize, Signal
@@ -84,7 +85,7 @@ class RealStreamView(QWidget):
         self.play_pause_button.setFixedSize(50, 50)
         self.play_pause_button.setStyleSheet(Style.mini_button_style)
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
-
+        self.play_pause_button.setToolTip("실시간 스트리밍 시작")
         self.play_pause_button.setCheckable(True)
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
@@ -92,6 +93,7 @@ class RealStreamView(QWidget):
         self.stop_button = QPushButton()
         self.stop_button.setFixedSize(50, 50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
+        self.stop_button.setToolTip("화면 녹화 시작")
         self.stop_button.setIcon(QIcon(Icons.recode))
         self.stop_button.clicked.connect(self.record_video)
 
@@ -99,6 +101,7 @@ class RealStreamView(QWidget):
         self.new_window_button = QPushButton()
         self.new_window_button.setFixedSize(50, 50)
         self.new_window_button.setStyleSheet(Style.mini_button_style)
+        self.new_window_button.setToolTip("새 창 보기")
         self.new_window_button.setIcon(QIcon(Icons.browser))
         self.new_window_button.clicked.connect(self.open_new_window)
 
@@ -114,14 +117,31 @@ class RealStreamView(QWidget):
     def setup_video_options(self):
         '''중단 비디오 옵션 설정 메서드'''
         frame = QWidget()
-        frame.setMaximumHeight(130)
+        frame.setFixedHeight(100)
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
         
         video_options_layout = QGridLayout()
+        button_group =  QButtonGroup()
+        button_group.setExclusive(True)
 
         # 웹캠 선택 콤보박스
-        webcam_combo_label = QLabel("웹 캠 설정")
+        webcam_button = QPushButton("웹 캠")
+        webcam_button.setCheckable(True)
+        #webcam_button.setIcon(Icons.cam)
+        webcam_button.clicked.connect(self.select_video_option)
+        button_group.addButton(webcam_button)
+        
+        screen_capture_button = QPushButton("화면 캡쳐")
+        screen_capture_button.setCheckable(True)
+        #screen_capture_button.setIcon(Icons.screen_desktop)
+        screen_capture_button.clicked.connect(self.select_video_option)
+        button_group.addButton(screen_capture_button)
+        
+        # 웹캠 선택시 내용 출력
+        webcam_content_widget = QWidget()
+        webcam_content_laytout = QHBoxLayout()
+        
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.webcam_list = self.detect_webcams()
@@ -133,11 +153,34 @@ class RealStreamView(QWidget):
         self.refreash_webcam_button.setStyleSheet(Style.mini_button_style)
         self.refreash_webcam_button.setIcon(QIcon(Icons.reload))
         self.refreash_webcam_button.clicked.connect(self.refreash_webcam_combox)
-
-        # 중단 레이아웃 설정
-        video_options_layout.addWidget(webcam_combo_label, 0, 0)
-        video_options_layout.addWidget(self.webcam_combo, 1, 0)
-        video_options_layout.addWidget(self.refreash_webcam_button, 1, 1)
+        
+        webcam_content_laytout.addWidget(self.webcam_combo)
+        webcam_content_laytout.addWidget(self.refreash_webcam_button)
+        webcam_content_widget.setLayout(webcam_content_laytout)
+        
+        #화면 캡쳐시 내용 출력
+        screen_capture_content_widget = QWidget()
+        screen_capture_content_laytout = QHBoxLayout()
+        
+        self.screen_capture_button = QPushButton()
+        self.screen_capture_button.setFixedSize(40, 40)
+        self.screen_capture_button.setStyleSheet(Style.mini_button_style)
+        self.screen_capture_button.setIcon(QIcon(Icons.reload))
+        self.screen_capture_button.clicked.connect(self.set_screen_capture_area)
+        
+        screen_capture_content_laytout.addWidget(self.screen_capture_button)
+        screen_capture_content_widget.setLayout(screen_capture_content_laytout)
+        
+        self.video_options_content = QStackedWidget()
+        self.video_options_content.addWidget(webcam_content_widget)
+        self.video_options_content.addWidget(screen_capture_content_widget)
+        
+        video_options_layout.addWidget(webcam_button,0,0)
+        video_options_layout.addWidget(screen_capture_button,0,1)
+        video_options_layout.addWidget(self.video_options_content,1,0,2,2)
+        
+        video_options_layout.setColumnStretch(0, 1) 
+        video_options_layout.setColumnStretch(1, 1)
         
         frame.setLayout(video_options_layout)
         return frame
@@ -265,7 +308,7 @@ class RealStreamView(QWidget):
             self.streaming_processor.pause()
             self.timer.stop()
             
-    def screen_video_capture(self):
+    def set_screen_capture_area(self):
         '''화면 캡쳐 녹화'''
         if self.streaming_processor.isRunning():
             self.play_pause_button.setIcon(QIcon(Icons.puse_button))
@@ -322,7 +365,10 @@ class RealStreamView(QWidget):
             return
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+    
+    def select_video_option(self, index):
         
+        pass
     
     def detect_webcams(self):
         # 연결된 카메라 장치를 검색합니다.
