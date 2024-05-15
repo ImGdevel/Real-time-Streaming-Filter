@@ -5,6 +5,7 @@ from PySide6.QtCore import QTimer, Signal, Qt
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 from models import Filtering
+from utils import Style
 
 class CaptureWindow(QDialog):
     photo_captured = Signal(np.ndarray)
@@ -12,13 +13,16 @@ class CaptureWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.filtering = Filtering()
-        
-        self.setWindowTitle("Face Capture")
+        self.setStyleSheet(Style.dialog_style)    
+            
+        self.setWindowTitle("얼굴 캡쳐")
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)  # 종료 버튼만 있는 Dialog
 
         self.video_frame = QLabel()
         self.capture_button = QPushButton("캡쳐")
+        self.capture_button.setStyleSheet(Style.mini_button_style)
         self.close_button = QPushButton("취소")
+        self.close_button.setStyleSheet(Style.mini_button_style)
 
         layout = QVBoxLayout()
         layout.addWidget(self.video_frame)

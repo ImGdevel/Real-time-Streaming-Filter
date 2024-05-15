@@ -162,26 +162,43 @@ class PersonFaceDialog(QDialog):
     
     def add_face_process(self, images: list[QPixmap]):
         """이미지 등록 프로세스"""
-        self.progress_dialog = QProgressDialog()
-        self.progress_dialog.setWindowTitle("Progress")
-        self.progress_dialog.setLabelText("얼굴을 등록 중 입니다")
-        self.progress_dialog.setCancelButtonText("취소")
-        self.progress_dialog.setRange(0, 0)
-        self.progress_dialog.canceled.connect(self.cancel_progress)
+        try:
+            self.progress_dialog = QProgressDialog()
+            self.progress_dialog.setWindowTitle("Progress")
+            self.progress_dialog.setLabelText("얼굴을 등록 중 입니다")
+            self.progress_dialog.setCancelButtonText("취소")
+            self.progress_dialog.setRange(0, 0)
+            self.progress_dialog.canceled.connect(self.cancel_progress)
+            
+            self.face_registration_processor.setup(images, self.current_person)
+            self.face_registration_processor.start()
+            
+            self.progress_dialog.exec()
+        except:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("얼굴 등록에 실패 했습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
         
-        self.face_registration_processor.setup(images, self.current_person)
-        self.face_registration_processor.start()
-        
-        self.progress_dialog.exec()
-        
-    def enroll_finished(self):
+    def enroll_finished(self, result : int):
         """이미지 등록 완료"""
+        
+        if result == 1:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진의 경우 등록이 어려울 수 있습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
         self.progress_dialog.close()
 
     def cancel_progress(self):
         """등록 취소"""
         self.face_registration_processor.cancel()
-    
+        self.face_registration_processor.quit()
+        self.face_registration_processor.wait()
     
     def open_capture_window(self):
         """사진 캡쳐 페이지 Open"""
@@ -191,7 +208,7 @@ class PersonFaceDialog(QDialog):
             self.capture_window.photo_captured.connect(self.receive_photo_from_capture)
             self.capture_window.exec_()
         except Exception as e:
-            QMessageBox.warning(None, "경고", "이미지 등록에 실패했습니다", QMessageBox.Ok)
+            QMessageBox.warning(None, "경고", "얼굴 촬영에 실패 했습니다", QMessageBox.Ok)
             self.capture_window.close()
         
     def receive_photo_from_capture(self, photo):
