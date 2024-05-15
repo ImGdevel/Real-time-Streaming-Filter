@@ -26,19 +26,19 @@ class ObjectFilterSettngWidget(QWidget):
         
         # QCheckBox로 변경
         self.toggle_checkbox1 = QCheckBox("담배 필터")
-        self.toggle_checkbox1.userData = "smoke"
+        self.toggle_checkbox1.userData = "cigarette"
         self.toggle_checkbox2 = QCheckBox("칼 필터")
         self.toggle_checkbox2.userData = "knife"
-        self.toggle_checkbox3 = QCheckBox("소주/주류 필터")
-        self.toggle_checkbox3.userData = "liquor"
-        self.toggle_checkbox4 = QCheckBox("선정성 컨텐츠 필터")
-        self.toggle_checkbox4.userData = "4"
+        self.toggle_checkbox3 = QCheckBox("로고 라벨 필터")
+        self.toggle_checkbox3.userData = "logo"
+        self.toggle_checkbox4 = QCheckBox("손가락 욕 필터")
+        self.toggle_checkbox4.userData = "middlefinger"
         
         # 버튼에 고유한 식별자 부여
-        self.toggle_checkbox1.setObjectName("Tobacco")
-        self.toggle_checkbox2.setObjectName("Knife")
-        self.toggle_checkbox3.setObjectName("Bloodshed")
-        self.toggle_checkbox4.setObjectName("Explicit_Content")
+        self.toggle_checkbox1.setObjectName("cigarette")
+        self.toggle_checkbox2.setObjectName("knife")
+        self.toggle_checkbox3.setObjectName("logo")
+        self.toggle_checkbox4.setObjectName("middlefinger")
         
         # 버튼 클릭 이벤트 연결
         self.toggle_checkbox1.clicked.connect(self.toggle_checkbox_clicked)

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, QStackedWidget
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer, QSize, Signal
 from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
@@ -13,6 +13,7 @@ from views.component import (
 import cv2
 
 class RealStreamView(QWidget):
+    webcam_on = Signal()
     """실시간 스트리밍 View"""
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -26,20 +27,20 @@ class RealStreamView(QWidget):
 
     def initUI(self):
         '''GUI 초기화 메서드'''
-        self.stream_main_layout = QGridLayout()  # 레이아웃 설정
+        stream_main_layout = QGridLayout()  # 레이아웃 설정
 
         toolbar = self.setup_toolbar()
         video_widget = self.setup_video_layer()
         bottom_widget = self.setup_bottom_layer()
 
-        self.stream_main_layout.addWidget(toolbar, 0, 0)
-        self.stream_main_layout.addWidget(video_widget, 0, 1)
-        self.stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
+        stream_main_layout.addWidget(toolbar, 0, 0)
+        stream_main_layout.addWidget(video_widget, 0, 1)
+        stream_main_layout.addWidget(bottom_widget, 1, 0, 1, 2)
         
-        self.stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
-        self.stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(0, 6)  # 상단 행 스트레칭 비율
+        stream_main_layout.setRowStretch(1, 3)  # 하단 행 스트레칭 비율
 
-        self.setLayout(self.stream_main_layout)
+        self.setLayout(stream_main_layout)
 
 
     def setup_toolbar(self):
@@ -91,7 +92,7 @@ class RealStreamView(QWidget):
         self.stop_button.setFixedSize(50,50)
         self.stop_button.setStyleSheet(Style.mini_button_style)
         self.stop_button.setIcon(QIcon(Icons.stop_button))
-        self.stop_button.clicked.connect(self.stop_webcam)
+        self.stop_button.clicked.connect(self.record_webcam)
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
@@ -255,6 +256,7 @@ class RealStreamView(QWidget):
         if self.play_pause_button.isChecked():
             if not self.streaming_processor.isRunning():
                 self.streaming_processor.start()
+                self.webcam_on.emit()
                 self.play_pause_button.setIcon(QIcon(Icons.play_button))
                 self.timer.start(0)  # 비동기적으로 프레임 업데이트
         else:
@@ -263,12 +265,20 @@ class RealStreamView(QWidget):
                 self.streaming_processor.pause()
                 self.timer.stop()
                 
-    def stop_webcam(self):
+    def record_webcam(self):
         '''웹캠 정지 메서드'''
         self.running_webcam_stop()
         self.streaming_processor.set_capture_area()
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
         #raise NotImplementedError("This function is not implemented yet")
+    
+    def stop_webcam(self):
+        if self.streaming_processor.isRunning():
+            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.streaming_processor.pause()
+            self.timer.stop()
+        self.streaming_processor.stop()
+        self.play_pause_button.setChecked(False)
     
     def open_new_window(self):
         '''새창 메서드'''

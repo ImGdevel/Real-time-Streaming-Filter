@@ -71,7 +71,7 @@ class VideoProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        boxesList = self.filtering.video_filtering(frame)    
+        boxesList = self.filtering.filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
@@ -98,9 +98,11 @@ class VideoProcessor(QThread):
         video_name = f"output_video_{current_time}.mp4"
         output_video_path = self.path_manager.load_download_path()
         output_video_path = os.path.join(output_video_path, video_name)
-        
-        shutil.copy(self.temp_video_path, output_video_path)
-        print("copy video to : " + output_video_path)
+        if self.temp_video_path is None:
+            raise ValueError("인코딩된 동영상이 존재하지 않습니다.")
+        else:
+            shutil.copy(self.temp_video_path, output_video_path)
+            print("copy video to : " + output_video_path)
         
     def set_filter(self, filter):
         """필터 설정"""

@@ -3,8 +3,8 @@ from PySide6.QtWidgets import (
     QPushButton, QCheckBox, QLabel, QListWidget, QListWidgetItem, QSplitter, QSlider ,QComboBox, QButtonGroup,
     QCheckBox, QLineEdit, QApplication, QMessageBox, QStackedWidget, QSizePolicy, QDialog
 )
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon, QFont
+from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
     TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
@@ -14,6 +14,7 @@ from utils import Colors, Style, Icons
 
 
 class FilterSettingView(QWidget):
+    webcam_on = Signal()
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -53,6 +54,7 @@ class FilterSettingView(QWidget):
         frame = QWidget()
         frame.setStyleSheet(Style.frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
+        frame.setMinimumWidth(200)
         
         left_layout = QVBoxLayout()
         
@@ -283,6 +285,7 @@ class FilterSettingView(QWidget):
         
         self.person_face_setting_window = PersonFaceDialog()
         self.person_face_setting_window.updateEvent.connect(self.update_person_face_setting_dialog_event)
+        self.person_face_setting_window.webcam_on.connect(self.webcamOn)
         
         face_layout.addLayout(registered_faces_list_layout, 2)
         face_layout.addLayout(available_faces_list_layout, 1)
@@ -356,15 +359,22 @@ class FilterSettingView(QWidget):
     # 필터 이름 업데이트
     def update_filter_name(self, new_name):
         """필터 이름 변경"""
-        if self.current_filter:
-            if self.current_filter == new_name:
-                return
-            if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
-                self.set_current_filter(new_name)
-            else:
-                QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
-                self.set_current_filter(self.current_filter)
-            
+        validator = self.filter_title_label.filter_name_line_edit.validator()
+        state, _, _ = validator.validate(new_name,0)
+        print("update filter name:", state)
+        if state == QValidator.Acceptable:
+            if self.current_filter:
+                if self.current_filter == new_name:
+                    return
+                if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
+                    self.set_current_filter(new_name)
+                else:
+                    QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                    self.set_current_filter(self.current_filter)
+        else:
+                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)         
+                    self.set_current_filter(self.current_filter)
+
 
     # 필터 정보 저장
     def apply_filter_settings(self):
@@ -387,3 +397,6 @@ class FilterSettingView(QWidget):
     def closeEvent(self, event):
         if self.person_face_setting_window is not None:
             self.person_face_setting_window.close()
+
+    def webcamOn(self):
+        self.webcam_on.emit()

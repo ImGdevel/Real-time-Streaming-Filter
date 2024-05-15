@@ -86,7 +86,6 @@ class RealStreamProcessor(QThread):
             #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
-                print("frame type:",type(frame))
                 processed_frame = self.process_frame(frame)  # 프레임 처리
                 frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
@@ -107,7 +106,7 @@ class RealStreamProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
-        boxesList = self.filtering.video_filtering(frame)    
+        boxesList = self.filtering.filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:

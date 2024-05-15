@@ -21,4 +21,5 @@ class Icons:
     folder_open = resource_path('resources/icons/cil-folder-open')
     reload = resource_path('resources/icons/cil-reload.png')
     camera = resource_path('resources/icons/cil-camera.png')
+    loading = resource_path('resources/icons/cil-loading.png')
     
