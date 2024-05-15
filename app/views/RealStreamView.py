@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import ( 
     QWidget, QFrame, QVBoxLayout, QHBoxLayout,  QGridLayout, 
     QPushButton, QLabel, QComboBox, QScrollArea,  QSplitter, QDialog, 
-    QStackedWidget, QButtonGroup
+    QStackedWidget, QButtonGroup, QMessageBox
 )
 from PySide6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PySide6.QtCore import Qt, QTimer, QSize, Signal
@@ -327,7 +327,14 @@ class RealStreamView(QWidget):
     def record_video(self):
         '''웹캠 정지 메서드'''
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
-        self.streaming_processor.recordOn()
+        try: 
+            self.streaming_processor.recordOn()
+        except Exception as e:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def stop_webcam(self):
         if self.streaming_processor.isRunning():
@@ -353,6 +360,7 @@ class RealStreamView(QWidget):
             print("[Log] : 선택된 필터 > ", filter_name)
             self.current_filter = filter_name
             self.streaming_processor.set_filter(filter_name)
+            self.filter_list_widget.set_select_item(filter_name)
             self.show_setting(True)
             self.setup_settings(filter_name)
         else:

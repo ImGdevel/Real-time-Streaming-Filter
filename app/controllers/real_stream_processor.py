@@ -210,7 +210,7 @@ class RealStreamProcessor(QThread):
 
     def recordOn(self):
         if not self.isRunning():
-            raise ValueError("녹화를 위한 촬영이 진행되고 있지 않습니다")
+            raise Exception("녹화를 위한 촬영이 진행되고 있지 않습니다")
         if self.capture_mode == 0:
             cap = self.video_cap
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -222,7 +222,7 @@ class RealStreamProcessor(QThread):
             frame_height = int(self.capture_area[3])
             fps = 60
         if cap is None:
-            raise ValueError("녹화에 대한 입력이 없습니다")
+            raise Exception("녹화에 대한 입력이 없습니다")
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
