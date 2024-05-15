@@ -55,11 +55,9 @@ class VideoView(QWidget):
 
         self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
-        self.button1.setFixedWidth(190)
         self.button1.clicked.connect(self.do_video_encoding)
         self.button2 = QPushButton("다운로드")
         self.button2.setFixedHeight(40)
-        self.button2.setFixedWidth(190)
         self.button2.clicked.connect(self.download_video)
         self.button3 = QPushButton()
         self.button3.setIcon(QIcon(Icons.folder_open))
@@ -70,7 +68,7 @@ class VideoView(QWidget):
 
         setting_button_layout = QVBoxLayout()
         setting_button_frame = QWidget()
-        setting_button_layout.setContentsMargins(15,0,0,5)
+        setting_button_layout.setContentsMargins(15,0,15,5)
         setting_button_layout.addWidget(self.button1)
         setting_button_layout.addWidget(self.button2)
         setting_button_frame.setLayout(setting_button_layout)

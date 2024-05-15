@@ -59,13 +59,11 @@ class ImageView(QWidget):
         
         encoding_button = QPushButton("인코딩")
         encoding_button.setFixedHeight(40)
-        encoding_button.setFixedWidth(170)
         encoding_button.setStyleSheet(Style.mini_button_style)
         encoding_button.clicked.connect(self.Encoding)
 
         download_button = QPushButton("다운로드")
         download_button.setFixedHeight(40)
-        download_button.setFixedWidth(170)
         download_button.setStyleSheet(Style.mini_button_style)
         download_button.clicked.connect(self.Download)
         
@@ -74,7 +72,7 @@ class ImageView(QWidget):
         setting_layout.addWidget(self.setting_widget)
         setting_button_layout = QVBoxLayout()
         setting_button_frame = QWidget()
-        setting_button_layout.setContentsMargins(15,0,0,5)
+        setting_button_layout.setContentsMargins(15,0,15,5)
         setting_button_layout.addWidget(encoding_button)
         setting_button_layout.addWidget(download_button)
         setting_button_frame.setLayout(setting_button_layout)
