@@ -12,6 +12,7 @@ class BlackWindow:
         #self.overlay.attributes("-fullscreen", True)
         self.overlay.configure(bg="black")
         self.overlay.attributes("-alpha", 0.5)  # 투명도 조절
+        self.overlay.attributes('-topmost', True)
         # 이벤트 바인딩: 마우스 클릭 이벤트를 무시하도록 합니다.
         self.overlay.bind("<Button-1>", lambda event: "break")
         self.canvas = tk.Canvas(self.overlay, bg="black", highlightthickness=0)
@@ -46,10 +47,12 @@ class BlockClicksWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.geometry("400x300")
+        self.root.attributes('-topmost', True)
         self.root.title("Click Blocking Window")
         self.overlays = []
         self.clicked_coordinates = None
         self.root.withdraw()
+        
         
     def run(self):
 

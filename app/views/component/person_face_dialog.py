@@ -26,6 +26,7 @@ class PersonFaceDialog(QDialog):
         self.setStyleSheet(Style.frame_style)
 
         self.face_detector = Filtering()
+        self.capture_window = None
         
         self._initUI()
 
@@ -186,12 +187,12 @@ class PersonFaceDialog(QDialog):
         """사진 캡쳐 페이지 Open"""
         try:
             self.webcam_on.emit()
-            capture_window = CaptureWindow()
-            capture_window.photo_captured.connect(self.receive_photo_from_capture)
-            capture_window.exec_()
+            self.capture_window = CaptureWindow()
+            self.capture_window.photo_captured.connect(self.receive_photo_from_capture)
+            self.capture_window.exec_()
         except Exception as e:
             QMessageBox.warning(None, "경고", "이미지 등록에 실패했습니다", QMessageBox.Ok)
-            capture_window.close()
+            self.capture_window.close()
         
     def receive_photo_from_capture(self, photo):
         """이미지 등록이 완료된 이미지를 받습니다"""
@@ -320,3 +321,8 @@ class PersonFaceDialog(QDialog):
             self.add_face_process(images)
         else:
             event.ignore()
+    
+        # Close Event
+    def closeEvent(self, event):
+        if self.capture_window is not None:
+            self.capture_window.close()
