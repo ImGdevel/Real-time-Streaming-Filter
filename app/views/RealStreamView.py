@@ -279,7 +279,7 @@ class RealStreamView(QWidget):
     def record_video(self):
         '''웹캠 정지 메서드'''
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
-        raise NotImplementedError("This function is not implemented yet")
+        self.streaming_processor.recordOn()
     
     def stop_webcam(self):
         if self.streaming_processor.isRunning():

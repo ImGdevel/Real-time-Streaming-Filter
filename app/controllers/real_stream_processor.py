@@ -1,9 +1,10 @@
+from datetime import datetime
 import cv2
 from PySide6.QtGui import QImage, QColor
 from PySide6.QtCore import QThread, Signal
-from models import Filtering, FilterManager
+from models import Filtering, FilterManager, PathManager
 from models import DragArea
-import time
+import time, os
 
 
 
@@ -13,15 +14,20 @@ class RealStreamProcessor(QThread):
     
     def __init__(self):
         super().__init__()
-        self.video_cap = cv2.VideoCapture(0)  # 웹캠 캡처 객체
+        self.video_cap = None  # 웹캠 캡처 객체
         self.filtering = Filtering()
         self.filter_manager = FilterManager()
+        self.path_manager = PathManager()
+        self.capture = None
 
         self.is_running = False  # 스레드 실행 상태
         self.is_flipped = True  # 화면 좌우 뒤집기 상태
         self.current_webcam = 0
         self.capture_mode = 0
         self.capture_area = None
+        self.video_path : str = None
+        self.is_record = False
+        self.output_video = None
         
     class WindowCapture:
         def __init__(self, window_name=None, capture_rate=30, region=None, processor = None):
@@ -58,11 +64,12 @@ class RealStreamProcessor(QThread):
     def run_screen(self):
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
-        capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
         
+        self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
+
         while self.is_running:
             start=time.time()
-            processed_frame = capture.screenshot()
+            processed_frame = self.capture.screenshot()
             frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
 
             height, width, channel = frame_rgb.shape
@@ -73,6 +80,9 @@ class RealStreamProcessor(QThread):
             delta= time.time()-start
             if delta <SLEEP_TIME:
                 time.sleep(SLEEP_TIME-delta)
+            if self.is_record:
+                self.output_video.write(processed_frame)
+
         self.frame_clear(height, width)
 
 
@@ -94,6 +104,9 @@ class RealStreamProcessor(QThread):
                 bytes_per_line = 3 * width
                 q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
+
+                if self.is_record:
+                    self.output_video.write(processed_frame)
             #end = time.time()
             #result = end - start
             #print("time: "+ str(result))
@@ -141,6 +154,8 @@ class RealStreamProcessor(QThread):
         '''스레드 일시 중지'''
         self.is_running = False
         self.filtering.tracking_id_init()
+        self.is_record = False
+        self.output_video.release()
         self.wait()
 
     def stop(self):
@@ -179,3 +194,24 @@ class RealStreamProcessor(QThread):
 
         if self.isRunning():
             self.start()  # 스레드를 다시 시작
+
+    def recordOn(self):
+        if not self.isRunning():
+            raise ValueError("녹화를 위한 촬영이 진행되고 있지 않습니다")
+        if self.capture_mode == 0:
+            cap = self.video_cap
+        else:
+            cap = self.capture
+        if cap is None:
+            raise ValueError("녹화에 대한 입력이 없습니다")
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        video_name = f"output_video_{current_time}.mp4"
+        self.video_path = self.path_manager.load_download_path()
+        self.video_path = os.path.join(self.video_path, video_name)
+        self.output_video = cv2.VideoWriter(self.video_path, fourcc, fps, (frame_width, frame_height))
+        self.is_record = True

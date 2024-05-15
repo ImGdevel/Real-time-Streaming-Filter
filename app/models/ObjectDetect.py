@@ -37,7 +37,6 @@ class ObjectDetect:
         self.customFilterClasses = []    
         self.exclude_id = []
         self.sticker_id = dict()
-        self.CONFIDENCE_THRESHOLD = 0.2
     
     def set_filter_classes(self, filter_classes:list):
         """인식할 객체 목록들을 설정한다."""
@@ -76,7 +75,7 @@ class ObjectDetect:
         
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, show=False)[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, retina_masks=True, show=False, imgsz=(1280,736))[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
