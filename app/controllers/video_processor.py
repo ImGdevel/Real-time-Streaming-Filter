@@ -53,8 +53,7 @@ class VideoProcessor(QThread):
         self.is_running = True
         while self.is_running:
             #작업 진행상황 업데이트
-            i += 1
-            progress = ((i + 1) / total_elements) * 100
+            progress = ((i) / total_elements) * 100
             self.progressChanged.emit(progress)
 
             ret, frame = cap.read()  # 프레임 읽기            
@@ -64,6 +63,7 @@ class VideoProcessor(QThread):
 
             processed_frame = self.process_frame(frame)
             output_video.write(processed_frame)
+            i += 1
     
         cap.release()
         cv2.destroyAllWindows()

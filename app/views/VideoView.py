@@ -109,6 +109,7 @@ class VideoView(QWidget):
     def do_video_encoding(self):
         """비디오 인코딩"""
         #다이얼로그 구문 
+        print("do_video_encoding")
         if self.origin_video_path:
             self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
             self.video_processor.progressChanged.connect(self.setProgress)
@@ -118,7 +119,7 @@ class VideoView(QWidget):
 
             self.video_processor.start()
 
-            self.progress_dialog.exec_()
+            #self.progress_dialog.exec_()
             
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
@@ -126,6 +127,7 @@ class VideoView(QWidget):
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""
+        print("setProgress")
         self.progress_dialog.setValue(value)
 
     def cancelCounting(self):
@@ -137,6 +139,7 @@ class VideoView(QWidget):
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
+        print("get_encoding_video")
         if self.video_processor.is_complete is True :
             self.encoding_video_path = video_path
             self.play_video(video_path)
