@@ -117,25 +117,10 @@ class FilterSettingView(QWidget):
         # 설정 내용
         content_frame = QWidget()
         content_frame.setLayout(self.setting_page())
-        
-        #apply_button = QPushButton("적용")
-        #apply_button.clicked.connect(self.apply_filter_settings)
-        #apply_button.setFixedSize(60, 30)  # 높이 설정
-        
-        #cancel_button = QPushButton("취소")
-        #cancel_button.clicked.connect(self.apply_filter_settings)
-        #cancel_button.setFixedSize(60, 30)  # 높이 설정
-
-        # 수평 레이아웃 생성 및 오른쪽 정렬
-        #button_layout = QHBoxLayout()
-        #button_layout.addStretch(1)
-        #button_layout.addWidget(apply_button)
-        #button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
-        #right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -165,8 +150,6 @@ class FilterSettingView(QWidget):
         content03.setLabel("모자이크 블러 설정")
         content03.setContent(self.mosaic_setting_widget)
         
-
-
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
         self.settings_content.addWidget(content01)

@@ -220,11 +220,13 @@ class Style:
     title_label = f"""
         font-weight: bold; 
         font-size: 20px;
+        border: none;
     """
     
     title_label_middle = f"""
         font-weight: bold; 
         font-size: 16px;
+        border: none;
     """
 
 
@@ -294,4 +296,56 @@ class Style:
             font-size: 15px;
             padding: 0px;
         }}
+    """
+    
+    slider = f"""
+    QSlider::groove:horizontal {{
+        
+        border-radius: 5px;
+        height: 10px;
+    	margin: 0px;
+    	background-color: rgb(52, 59, 72);
+    }}
+    QSlider::groove:horizontal:hover {{
+    	background-color: rgb(55, 62, 76);
+    }}
+    QSlider::handle:horizontal {{
+        background-color: rgb(100, 181, 246);
+        border: none;
+        height: 10px;
+        width: 10px;
+        margin: 0px;
+    	border-radius: 5px;
+    }}
+    QSlider::handle:horizontal:hover {{
+        background-color: rgb(21, 101, 192);
+    }}
+    QSlider::handle:horizontal:pressed {{
+        background-color: rgb(13, 71, 161);
+    }}
+
+    QSlider::groove:vertical {{
+        border-radius: 5px;
+        width: 10px;
+        margin: 0px;
+    	background-color: rgb(52, 59, 72);
+    }}
+    QSlider::groove:vertical:hover {{
+    	background-color: rgb(55, 62, 76);
+    }}
+    QSlider::handle:vertical {{
+        background-color: rgb(100, 181, 246);
+    	border: none;
+        height: 10px;
+        width: 10px;
+        margin: 0px;
+    	border-radius: 5px;
+    }}
+    QSlider::handle:vertical:hover {{
+        background-color: rgb(21, 101, 192);
+    }}
+    QSlider::handle:vertical:pressed {{
+        background-color: rgb(13, 71, 161)
+    }}
+
     """
