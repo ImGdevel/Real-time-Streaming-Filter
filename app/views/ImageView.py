@@ -51,7 +51,7 @@ class ImageView(QWidget):
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
         
         content_label = ContentLabeling()
-        content_label.setLabel("필터 목록")
+        content_label.setLabel("필터 목록", Style.title_label)
         content_label.setContent(self.filter_list_widget)
         content_label.setContentMargin(0,0,0,0)
         
@@ -68,7 +68,7 @@ class ImageView(QWidget):
         download_button.clicked.connect(self.Download)
         
         setting_layout = QVBoxLayout()
-        setting_layout.setContentsMargins(0,0,0,0)
+        setting_layout.setContentsMargins(0,5,0,10)
         setting_layout.addWidget(self.setting_widget)
         setting_button_layout = QVBoxLayout()
         setting_button_frame = QWidget()

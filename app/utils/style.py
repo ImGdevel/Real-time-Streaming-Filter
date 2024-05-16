@@ -219,7 +219,7 @@ class Style:
 
     title_label = f"""
         font-weight: bold; 
-        font-size: 20px;
+        font-size: 18px;
         border: none;
     """
     
