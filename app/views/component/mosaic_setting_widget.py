@@ -27,11 +27,8 @@ class MosaicSettingWidget(QWidget):
         self.intensity_slider = QSlider(Qt.Horizontal)
         self.intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
-        
-        # slider_value_label = QLabel("0")
-        
-        default_mosaic_layout.addWidget(intensity_label, 1, 0)
-        default_mosaic_layout.addWidget(self.intensity_slider, 1, 2, alignment=Qt.AlignRight)
+        default_mosaic_layout.addWidget(intensity_label, 1, 0, 1, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider, 1, 3, 1, 6)
 
 
         ##########################################
@@ -42,20 +39,24 @@ class MosaicSettingWidget(QWidget):
         
         # slider_value_label = QLabel("0")
         
-        default_mosaic_layout.addWidget(intensity_label2, 4, 0)
-        default_mosaic_layout.addWidget(self.intensity_slider2, 4, 2, alignment=Qt.AlignRight)
+        default_mosaic_layout.addWidget(intensity_label2, 4, 0, 5, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider2, 4, 3, 5, 6)
         ##########################################
 
         shape_label = QLabel("블러 모양")
         self.shape_combobox = QComboBox()
         self.shape_combobox.addItems(["사각형", "원형"])
         self.shape_combobox.currentIndexChanged.connect(self.set_value_drop_down)  # 드롭다운 값 변경 시 이벤트 연결
-        default_mosaic_layout.addWidget(shape_label, 2, 0)
-        default_mosaic_layout.addWidget(self.shape_combobox, 2, 1, 2, 2, alignment=Qt.AlignRight)
+        default_mosaic_layout.addWidget(shape_label, 2, 0, 3, 2)
+        default_mosaic_layout.addWidget(self.shape_combobox, 2, 4, 3, 5)
         
-        default_mosaic_layout.setColumnStretch(0, 1)
-        default_mosaic_layout.setColumnStretch(1, 1)
-        default_mosaic_layout.setColumnStretch(2, 8)
+        default_mosaic_layout.setColumnStretch(0, 2)
+        default_mosaic_layout.setColumnStretch(1, 2)
+        default_mosaic_layout.setColumnStretch(2, 4)
+        default_mosaic_layout.setColumnStretch(3, 4)
+        default_mosaic_layout.setColumnStretch(4, 4)
+        default_mosaic_layout.setColumnStretch(5, 1)
+    
 
         default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
     
