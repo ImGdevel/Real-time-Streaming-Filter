@@ -52,15 +52,24 @@ class MainWindow(QMainWindow):
             UIFunctions.toggleRightBox(self, True)
         widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
+        
         # SET PAGE
         self.streaming_widget = StramingView()
         self.video_widget = VideoView()
         self.image_widget = ImageView()
         self.filter_setting_widget = FilterSettingView()
+        
+        
         widgets.streaming_layout.addWidget(self.streaming_widget)
         widgets.video_layout.addWidget(self.video_widget)
         widgets.image_layout.addWidget(self.image_widget)
         widgets.filter_setting_layout.addWidget(self.filter_setting_widget)
+        
+        self.view_widgets = []
+        self.view_widgets.append(self.streaming_widget)
+        self.view_widgets.append(self.video_widget)
+        self.view_widgets.append(self.image_widget)
+        self.view_widgets.append(self.filter_setting_widget)
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
@@ -117,6 +126,7 @@ class MainWindow(QMainWindow):
         if btnName == "btn_home" and self.current_page != widgets.home:
             widgets.stackedWidget.setCurrentWidget(widgets.home)
             self.current_page = widgets.home
+            
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
@@ -125,6 +135,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.streaming_page) 
             self.current_page = widgets.streaming_page
             self.streaming_widget.render()
+            self.swap_event(self.streaming_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
@@ -133,6 +144,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.video_page)
             self.current_page = widgets.video_page
             self.video_widget.render()
+            self.swap_event(self.video_widget)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -141,6 +153,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.image_page)
             self.current_page = widgets.image_page
             self.image_widget.render()
+            self.swap_event(self.image_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -149,12 +162,18 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.filter_setting_page)
             self.current_page = widgets.filter_setting_page
             self.filter_setting_widget.render()
+            self.swap_event(self.filter_setting_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
-
-        if btnName == "btn_save":
-            print("Save BTN clicked!")
-
+            
+        #페이지 전환시 이전 페이지 처리
+        
+            
+        
+    def swap_event(self, page):
+        for widget in self.view_widgets:
+            if page != widget:
+                widget.swap_event()
 
 
     # RESIZE EVENTS
@@ -175,6 +194,7 @@ class MainWindow(QMainWindow):
             print('Mouse click: LEFT CLICK')
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
+            
         # Close Event
     def closeEvent(self, event):
         self.streaming_widget.close()

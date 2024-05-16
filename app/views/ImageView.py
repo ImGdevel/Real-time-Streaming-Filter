@@ -174,3 +174,7 @@ class ImageView(QWidget):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
         pass
+
+    def swap_event(self):
+        
+        pass

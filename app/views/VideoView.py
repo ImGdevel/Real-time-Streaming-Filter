@@ -153,3 +153,7 @@ class VideoView(QWidget):
         """페이지 refresh"""
         self.filter_list_widget.update_list()
         
+    def swap_event(self):
+        
+        pass
+        
