@@ -21,8 +21,8 @@ class StickerRegisteredDialog(QDialog):
         self._initUI()
 
     def _initUI(self):
-        self.setWindowTitle("Registered Face View")
-        self.setFixedSize(660, 505)
+        self.setWindowTitle("얼굴 스티커 등록")
+        self.setFixedSize(660, 470)
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -30,10 +30,10 @@ class StickerRegisteredDialog(QDialog):
         main_layout.setAlignment(Qt.AlignCenter)
         
         # 새로운 타이틀 바 생성
-        self.title_bar = TitleBar(self)
-        self.title_bar.set_title("얼굴 스티커 등록")
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
-        self.title_bar.setFixedHeight(40)
+        # self.title_bar = TitleBar(self)
+        # self.title_bar.set_title("얼굴 스티커 등록")
+        # self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        # self.title_bar.setFixedHeight(40)
         
         content = QWidget()
         content.setStyleSheet(Style.frame_style)
@@ -101,7 +101,7 @@ class StickerRegisteredDialog(QDialog):
         content_layout.addWidget(set_frame)
         content.setLayout(content_layout)
         
-        main_layout.addWidget(self.title_bar)
+        # main_layout.addWidget(self.title_bar)
         main_layout.addWidget(content)
 
         self.setLayout(main_layout)
