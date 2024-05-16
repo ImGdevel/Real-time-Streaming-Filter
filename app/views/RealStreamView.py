@@ -316,7 +316,8 @@ class RealStreamView(QWidget):
     def set_screen_capture_area(self):
         '''화면 캡쳐 녹화'''
         if self.streaming_processor.isRunning():
-            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.play_pause_button.setIcon(QIcon(Icons.play_button))
+            self.play_pause_button.setToolTip("실시간 스트리밍 시작")
             self.streaming_processor.pause()
             self.timer.stop()
             if self.streaming_processor.capture_mode == 0:
@@ -338,7 +339,8 @@ class RealStreamView(QWidget):
     
     def stop_webcam(self):
         if self.streaming_processor.isRunning():
-            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.play_pause_button.setIcon(QIcon(Icons.play_button))
+            self.play_pause_button.setToolTip("실시간 스트리밍 시작")
             self.streaming_processor.pause()
             self.timer.stop()
         self.streaming_processor.stop()
@@ -437,7 +439,8 @@ class RealStreamView(QWidget):
 
     def running_webcam_stop(self):
         if self.streaming_processor.isRunning():
-            self.play_pause_button.setIcon(QIcon(Icons.puse_button))
+            self.play_pause_button.setIcon(QIcon(Icons.play_button))
+            self.play_pause_button.setToolTip("실시간 스트리밍 시작")
             self.streaming_processor.pause()
             self.timer.stop()
             if self.streaming_processor.capture_mode == 0:
