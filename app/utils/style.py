@@ -195,6 +195,18 @@ class Style:
         }}
 
     """
+    
+    list_button_style_none_line_none_hover = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: none;
+            border-radius: 5px;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 16px;
+        }}
+
+    """
 
     list_widget_style = f"""
         background-color: {Colors.base_color_03};

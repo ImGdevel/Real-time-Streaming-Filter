@@ -249,8 +249,8 @@ class FilterSettingView(QWidget):
         available_faces_list_label.setStyleSheet(Style.title_label_middle)
         
         # Add 버튼 추가
-        add_face_button = QPushButton("등록")
-        add_face_button.setFixedSize(60, 30)
+        add_face_button = QPushButton("인물 편집")
+        add_face_button.setFixedSize(90, 30)
         add_face_button.setStyleSheet(Style.mini_button_style)
         add_face_button.clicked.connect(self.open_person_face_setting_dialog)
         
