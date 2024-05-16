@@ -42,6 +42,9 @@ class FileViewWidget(QWidget):
         #button
         self.button_widget = QWidget()
         self.button_layout = QVBoxLayout()
+        self.button_layout.setAlignment(Qt.AlignTop)
+        self.button_layout.setContentsMargins(0,10,0,10)
+        self.button_layout.setSpacing(20)
 
         self.remove_button = QPushButton()
         self.remove_button.setToolTip("파일삭제")
