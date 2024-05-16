@@ -131,6 +131,7 @@ class RealStreamView(QWidget):
         button_layout.setContentsMargins(0,0,0,0)
         button_layout.setSpacing(0)
         button_layout.setAlignment(Qt.AlignLeft)
+        
         # 웹캠 선택 콤보박스
         self.webcam_button = QPushButton("웹 캠")
         self.webcam_button.setFixedSize(80,30)
@@ -149,6 +150,7 @@ class RealStreamView(QWidget):
         # 웹캠 선택시 내용 출력
         webcam_content_widget = QWidget()
         webcam_content_laytout = QHBoxLayout()
+        webcam_content_laytout.setContentsMargins(20,10,20,10)
         
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
@@ -187,6 +189,7 @@ class RealStreamView(QWidget):
         screen_capture_content_laytout.addWidget(self.screen_size_label, 6)
         screen_capture_content_widget.setLayout(screen_capture_content_laytout)
         
+        # 위젯 전환
         self.video_options_content = QStackedWidget()
         self.video_options_content.setStyleSheet(Style.frame_style)
         self.video_options_content.addWidget(webcam_content_widget)
@@ -206,6 +209,7 @@ class RealStreamView(QWidget):
         frame.setStyleSheet(Style.list_frame_style)
         frame.setGraphicsEffect(Style.shadow(frame))
         layout = QVBoxLayout()
+        layout.setContentsMargins(20,10,20,10)
         
         list_label = QLabel("필터 목록")
         list_label.setStyleSheet(Style.list_frame_label)
