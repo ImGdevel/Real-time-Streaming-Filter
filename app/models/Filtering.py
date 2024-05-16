@@ -45,13 +45,13 @@ class Filtering:
         return img
 
 
-    def face_filter(self, img, results, mag_ratio = 1):
+    def face_filter(self, img, results, conf = 10 ,mag_ratio = 1):
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
             results[name] = []
 
-        origins = self.object.origin_detect(img, mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
+        origins = self.object.origin_detect(img, conf ,mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             if self.current_filter_info.face_filter_on is True:
@@ -81,9 +81,10 @@ class Filtering:
         results[-2] = []
         results[-1] = []
         temp_ratio = self.current_filter_info.imgsz_mag * 3 / 100 + 0.01 # 임시로 UI사용하려고 만든 todo 0.01은 0 되지 말라고 넣어놨는데 if로 했다가 이게 더 나은거같음
+        conf = self.current_filter_info.predict_conf / 100
         #print(temp_ratio)
         
-        results = self.face_filter(img, results, temp_ratio)
+        results = self.face_filter(img, results, conf, temp_ratio)
 
         if is_video:
             if len(results) != 0:

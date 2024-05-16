@@ -13,6 +13,7 @@ class Filter:
     mosaic_blur_shape: str = "rect"
 
     imgsz_mag: float = 33
+    predict_conf: float = 20
 
     def __post_init__(self):
         if not isinstance(self.face_filter, dict):

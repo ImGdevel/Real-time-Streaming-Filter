@@ -61,7 +61,7 @@ class ObjectDetect:
             boxList.append(box)
         return boxList
 
-    def detect(self, img, filter_classes, model, names, mag_ratio = 1):
+    def detect(self, img, filter_classes, model, names, confidence = 0.1, mag_ratio = 1):
         """
         객체인식 결과를 반환한다.
         img: 객체 인식이 필요한 이미지
@@ -87,12 +87,12 @@ class ObjectDetect:
             width = width - (width % 32) + 32
 
         imgsize = (height, width)
-
         #print(imgsize)
+        print(confidence)
 
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, retina_masks=True, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=confidence, retina_masks=True, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
@@ -101,7 +101,7 @@ class ObjectDetect:
             results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
         return results 
     
-    def origin_detect(self, img, mag_ratio):
+    def origin_detect(self, img, conf, mag_ratio):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
@@ -110,7 +110,7 @@ class ObjectDetect:
         Returns:
             tuple: 바운딩 박스의 목록과 각 객체가 얼굴인지를 나타내는 목록을 포함하는 튜플입니다.
         """
-        return self.detect(img, self.originFilterClasses, self.modelManager.orginModel, self.orginNames, mag_ratio)
+        return self.detect(img, self.originFilterClasses, self.modelManager.orginModel, self.orginNames, conf, mag_ratio)
 
     def custom_detect(self, img):
         """사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
