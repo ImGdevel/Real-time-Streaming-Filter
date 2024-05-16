@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog, QMessageBox
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QThread, Signal, QUrl
 from views.component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget, ContentLabeling
@@ -157,10 +157,23 @@ class ImageView(QWidget):
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
             print(self.filtered_image)
             self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("등록된 이미지가 존재하지 않습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def Download(self):
         if self.filtered_image:
             self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("인코딩된 이미지가 존재하지 않습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+
 
     def UrlListConverter(self, urls):
         origin_urls =list()

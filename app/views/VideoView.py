@@ -1,5 +1,5 @@
 import time
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog, QMessageBox
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
@@ -100,7 +100,11 @@ class VideoView(QWidget):
             self.video_player.set_video(video_path)
             self.video_player.start_video()
         else :
-            pass
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("영상파일을 인식할 수 없습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
@@ -123,7 +127,11 @@ class VideoView(QWidget):
             
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
-            raise NotImplementedError("todo : 동영상이 선택 되지 않았음을 알려야 함")
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("등록된 영상파일이 존재하지 않습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""
