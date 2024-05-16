@@ -42,6 +42,17 @@ class MosaicSettingWidget(QWidget):
         default_mosaic_layout.addWidget(intensity_label2, 4, 0, 5, 2)
         default_mosaic_layout.addWidget(self.intensity_slider2, 4, 3, 5, 6)
         ##########################################
+        ##########################################
+        intensity_label3 = QLabel("Confidence")
+        self.intensity_slider3 = QSlider(Qt.Horizontal)
+        self.intensity_slider3.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.intensity_slider3.valueChanged.connect(self.set_value_slider3)  # 슬라이더 값 변경 시 이벤트 연결
+        
+        # slider_value_label = QLabel("0")
+        
+        default_mosaic_layout.addWidget(intensity_label3, 7, 0, 5, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider3, 7, 3, 5, 6)
+        ##########################################
 
         shape_label = QLabel("블러 모양")
         self.shape_combobox = QComboBox()
@@ -72,6 +83,7 @@ class MosaicSettingWidget(QWidget):
             self.intensity_slider.setValue(filter_data.mosaic_blur_strength)
 
             self.intensity_slider2.setValue(filter_data.imgsz_mag) ##################
+            self.intensity_slider3.setValue(filter_data.predict_conf) ##################
     
     def set_value_slider(self, value):
         """슬라이더 값 변경 시 호출되는 메서드"""
@@ -84,7 +96,12 @@ class MosaicSettingWidget(QWidget):
         self.filter_controller.update_imgsz_mag_in_filter(self.filter_name, value)
         self.onEventUpdate.emit()
     ########################################
-
+    #########################################
+    def set_value_slider3(self, value):
+        """슬라이더 값 변경 시 호출되는 메서드"""
+        self.filter_controller.update_predict_conf_in_filter(self.filter_name, value)
+        self.onEventUpdate.emit()
+    ########################################
     
     def set_value_drop_down(self, index):
         """드롭다운 값 변경 시 호출되는 메서드"""
