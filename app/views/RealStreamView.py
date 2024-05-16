@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QTimer, QSize, Signal
 from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
-    FilterListWidget, ShadowWidget, ObjectFilterSettngWidget, 
+    FilterListWidget, ObjectFilterSettngWidget, 
     MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow
 )
 import cv2
@@ -149,7 +149,6 @@ class RealStreamView(QWidget):
         # 웹캠 선택시 내용 출력
         webcam_content_widget = QWidget()
         webcam_content_laytout = QHBoxLayout()
-        #webcam_content_laytout.setContentsMargins(0,0,0,0)
         
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')

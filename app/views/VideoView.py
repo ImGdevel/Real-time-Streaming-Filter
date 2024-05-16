@@ -4,7 +4,7 @@ from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from controllers import VideoProcessor
-from views.component import FilterListWidget, VideoPlayer, ShadowWidget, SettingWidget, ContentLabeling
+from views.component import FilterListWidget, VideoPlayer, SettingWidget, ContentLabeling
 from utils import Colors, Style, Icons
 
 class VideoView(QWidget):

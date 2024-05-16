@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
+    TitleEdit, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style, Icons
@@ -317,7 +317,6 @@ class FilterSettingView(QWidget):
             print("[Log] : 선택된 필터 > ", filter_name)
             self.filter_list_widget.set_select_item(filter_name)
             self.filter_title_label.set_title(filter_name)
-            #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
             self.show_filter_setting_page(True)
         else:
