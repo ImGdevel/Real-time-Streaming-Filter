@@ -77,12 +77,14 @@ class FilterSettingView(QWidget):
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton()
+        add_button.setToolTip('새 필터')
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
         
         delete_button = QPushButton()
+        delete_button.setToolTip('필터 삭제')
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)

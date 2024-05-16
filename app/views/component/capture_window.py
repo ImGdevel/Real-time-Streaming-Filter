@@ -20,6 +20,7 @@ class CaptureWindow(QDialog):
 
         self.video_frame = QLabel()
         self.capture_button = QPushButton("캡쳐")
+        self.capture_button.setToolTip('얼굴 캡쳐')
         self.capture_button.setStyleSheet(Style.mini_button_style)
         self.close_button = QPushButton("취소")
         self.close_button.setStyleSheet(Style.mini_button_style)
