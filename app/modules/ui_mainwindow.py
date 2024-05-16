@@ -1558,7 +1558,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"CAMA", None))
-        self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"Modern GUI / Flat Style", None))
+        self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"실시간 / 비디오 모자이크", None))
         self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"\uba54\ub274", None))
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"\ud648", None))
         self.btn_streaming.setText(QCoreApplication.translate("MainWindow", u"\uc2a4\ud2b8\ub9ac\ubc0d", None))

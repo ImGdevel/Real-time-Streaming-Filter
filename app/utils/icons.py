@@ -32,5 +32,7 @@ class Icons:
     screen_desktop = resource_path('resources/icons/cil-screen-desktop.png')
     cam = resource_path('resources/icons/cil-cam.png')
     
+    mini = resource_path('resources/icons/icon_restore.png')
+    
     
     
