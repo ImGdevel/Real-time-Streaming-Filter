@@ -109,6 +109,7 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = filterinfo.name
+                filter.background_blur = filterinfo.background_blur
                 filter.face_filter = filterinfo.face_filter
                 filter.object_filter = filterinfo.object_filter
                 self.save_filters()
