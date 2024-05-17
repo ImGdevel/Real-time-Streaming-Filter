@@ -66,6 +66,9 @@ class RealStreamProcessor(QThread):
     def run_screen(self):
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
+
+        height = 0
+        width = 0
         
         self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
 
@@ -82,15 +85,20 @@ class RealStreamProcessor(QThread):
             delta= time.time()-start
             if delta <SLEEP_TIME:
                 time.sleep(SLEEP_TIME-delta)
+
             if self.is_record:
                 self.output_video.write(processed_frame)
 
-        self.frame_clear(height, width)
+        if width & height:
+            self.frame_clear(width, height)
 
 
     def run_webcam(self):
         if self.video_cap is None:
             self.video_cap = cv2.VideoCapture(self.current_webcam)
+        
+        height = 0
+        width = 0
 
         while self.is_running and self.video_cap.isOpened():
             self.webcam_on = True
@@ -114,7 +122,9 @@ class RealStreamProcessor(QThread):
             #result = end - start
             #print("time: "+ str(result))
         # 종료 후 프레임 비우기
-        self.frame_clear(height, width)
+        if width & height:
+            self.frame_clear(width, height)
+
 
 
     def process_frame(self, frame):
@@ -215,12 +225,13 @@ class RealStreamProcessor(QThread):
             cap = self.video_cap
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+            # fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+            fps = 15
         else:
             cap = self.capture
             frame_width = int(self.capture_area[2])
             frame_height = int(self.capture_area[3])
-            fps = 60
+            fps = 15
         if cap is None:
             raise Exception("녹화에 대한 입력이 없습니다")
 
@@ -228,7 +239,7 @@ class RealStreamProcessor(QThread):
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         video_name = f"output_video_{current_time}.mp4"
         self.video_path = self.path_manager.load_download_path()
-        self.video_path = os.path.join(self.video_path, video_name)
+        self.video_path = os.path.join(self.video_path, "Recodes" ,video_name)
         self.output_video = cv2.VideoWriter(self.video_path, fourcc, fps, (frame_width, frame_height))
         self.is_record = True
     

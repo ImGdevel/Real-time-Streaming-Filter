@@ -154,7 +154,8 @@ class RegisteredFacesListWidget(ListWidget):
         
         button = QPushButton(item_name)
         button.setObjectName(item_name)
-        button.setStyleSheet(Style.list_button_style_none_line)
+        button.setStyleSheet(Style.list_button_style_none_line_none_hover)
+        
         button.setMinimumHeight(40)
         button.clicked.connect(self.emit_button_clicked)
         
@@ -168,12 +169,14 @@ class RegisteredFacesListWidget(ListWidget):
         button02.setIcon(QIcon(Icons.smiley_sticker))
         button02.setFixedSize(40,40)
         button02.setStyleSheet(Style.list_button_style_none_line)
+        button02.setToolTip("스티커 등록")
         button02.clicked.connect(self.show_sticker_dialog)
         
         button03 = QPushButton()
         button03.setIcon(QIcon(Icons.dust_bin))
         button03.setFixedSize(40,40)
         button03.setStyleSheet(Style.list_button_style_none_line)
+        button03.setToolTip("인물 삭제")
         button03.clicked.connect(lambda: self.remove_button(widget.userData))
         #버튼 자기 자신을 삭제
         
@@ -233,6 +236,10 @@ class RegisteredFacesListWidget(ListWidget):
         self.filter_name = filter
 
     def register_person_faces(self, person_id):
+        list = self.filter_setting_processor.get_face_ids_in_filter(self.filter_name)
+        print(list)
+        if int(person_id) in list:
+            return
         self.filter_setting_processor.add_face_in_filter(self.filter_name, person_id)
         self.onEventUpdate.emit()
 
@@ -248,7 +255,7 @@ class RegisteredFacesListWidget(ListWidget):
         label = widget.findChild(QLabel, "state_label")
 
         if int(state) == -1:
-            label.setText("필터링 예외")
+            label.setText("필터링 예외 인물")
         else:
             label.setText("스티커 필터링")
         

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QGridLayout, QVBoxLayout, QProgressDialog, QMessageBox
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QThread, Signal, QUrl
 from views.component import DragDropLabel, ImageItem, SettingWidget, FileViewWidget, FilterListWidget, ContentLabeling
@@ -51,7 +51,7 @@ class ImageView(QWidget):
         self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
         
         content_label = ContentLabeling()
-        content_label.setLabel("필터 목록")
+        content_label.setLabel("필터 목록", Style.title_label)
         content_label.setContent(self.filter_list_widget)
         content_label.setContentMargin(0,0,0,0)
         
@@ -68,7 +68,7 @@ class ImageView(QWidget):
         download_button.clicked.connect(self.Download)
         
         setting_layout = QVBoxLayout()
-        setting_layout.setContentsMargins(0,0,0,0)
+        setting_layout.setContentsMargins(0,5,0,10)
         setting_layout.addWidget(self.setting_widget)
         setting_button_layout = QVBoxLayout()
         setting_button_frame = QWidget()
@@ -157,10 +157,35 @@ class ImageView(QWidget):
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
             print(self.filtered_image)
             self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
+            
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("인코딩이 완료되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+            
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("등록된 이미지가 존재하지 않습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def Download(self):
         if self.filtered_image:
             self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("다운로드가 완료되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("인코딩된 이미지가 존재하지 않습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+
 
     def UrlListConverter(self, urls):
         origin_urls =list()
@@ -173,4 +198,8 @@ class ImageView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
+        pass
+
+    def swap_event(self):
+        
         pass

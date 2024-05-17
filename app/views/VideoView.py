@@ -1,5 +1,5 @@
 import time
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSlider, QFileDialog, QHBoxLayout, QSizePolicy, QFrame, QProgressDialog, QMessageBox
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
@@ -100,7 +100,11 @@ class VideoView(QWidget):
             self.video_player.set_video(video_path)
             self.video_player.start_video()
         else :
-            pass
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("영상파일을 인식할 수 없습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
@@ -123,23 +127,29 @@ class VideoView(QWidget):
             
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
-            raise NotImplementedError("todo : 동영상이 선택 되지 않았음을 알려야 함")
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("등록된 영상파일이 존재하지 않습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""
-        print("setProgress")
         self.progress_dialog.setValue(value)
 
     def cancelCounting(self):
         """인코딩 취소시"""
         self.video_processor.encoding_cancel()
-        print("원래 비디오 재생할게요?")
         self.encoding_video_path = self.origin_video_path
         self.play_video(self.origin_video_path)
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
-        print("get_encoding_video")
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("인코딩이 완료 되었습니다")
+        msg.setWindowTitle("알림")
+        msg.exec_()
         if self.video_processor.is_complete is True :
             self.encoding_video_path = video_path
             self.play_video(video_path)
@@ -147,9 +157,27 @@ class VideoView(QWidget):
     
     def download_video(self):
         """영상 다운로드"""
-        self.video_processor.download_video()
+        try:
+            self.video_processor.download_video()
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("다운로드가 완료되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+        except ValueError as e:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("인코딩 영상이 존재하지 않습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
+        
         
     def render(self):
         """페이지 refresh"""
         self.filter_list_widget.update_list()
+        
+    def swap_event(self):
+        
+        pass
         

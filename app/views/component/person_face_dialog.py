@@ -132,8 +132,9 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.dragMoveEvent = self.drag_move_event
         self.image_list_widget.dropEvent = self.drop_event
         
-        image_list_label = QLabel("등록된 이미지")
+        image_list_label = QLabel("등록된 얼굴")
         image_list_label.setStyleSheet(Style.title_label)
+        image_list_label.setFixedHeight(45)
         
         # 파일 탐색기 열기 버튼 추가
         upload_image_button = QPushButton()
@@ -144,7 +145,6 @@ class PersonFaceDialog(QDialog):
         upload_image_button.setFocusPolicy(Qt.NoFocus)
         upload_image_button.clicked.connect(self.open_file_dialog)
         
-
         capture_button = QPushButton()
         capture_button.setIcon(QIcon(Icons.camera))
         capture_button.setStyleSheet(Style.mini_button_style)
@@ -154,8 +154,8 @@ class PersonFaceDialog(QDialog):
         capture_button.clicked.connect(self.open_capture_window)
         
         image_layout = QGridLayout()
-        image_layout.addWidget(self.text_layout, 0, 0, 1 , 7, Qt.AlignVCenter )
-        image_layout.addWidget(image_list_label, 1, 0, 2, 3)
+        image_layout.addWidget(self.text_layout, 0, 0, 1 ,7, Qt.AlignVCenter)
+        image_layout.addWidget(image_list_label, 1, 0, 2, 4, Qt.AlignTop)
         image_layout.addWidget(capture_button, 1, 5, Qt.AlignRight)
         image_layout.addWidget(upload_image_button, 1, 6, Qt.AlignRight)
         image_layout.addWidget(self.image_list_widget, 2, 0, 3, 7)

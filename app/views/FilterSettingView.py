@@ -77,12 +77,14 @@ class FilterSettingView(QWidget):
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton()
+        add_button.setToolTip('새 필터')
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
         
         delete_button = QPushButton()
+        delete_button.setToolTip('필터 삭제')
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
@@ -117,25 +119,10 @@ class FilterSettingView(QWidget):
         # 설정 내용
         content_frame = QWidget()
         content_frame.setLayout(self.setting_page())
-        
-        #apply_button = QPushButton("적용")
-        #apply_button.clicked.connect(self.apply_filter_settings)
-        #apply_button.setFixedSize(60, 30)  # 높이 설정
-        
-        #cancel_button = QPushButton("취소")
-        #cancel_button.clicked.connect(self.apply_filter_settings)
-        #cancel_button.setFixedSize(60, 30)  # 높이 설정
-
-        # 수평 레이아웃 생성 및 오른쪽 정렬
-        #button_layout = QHBoxLayout()
-        #button_layout.addStretch(1)
-        #button_layout.addWidget(apply_button)
-        #button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
-        #right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -165,8 +152,6 @@ class FilterSettingView(QWidget):
         content03.setLabel("모자이크 블러 설정")
         content03.setContent(self.mosaic_setting_widget)
         
-
-
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
         self.settings_content.addWidget(content01)
@@ -266,8 +251,8 @@ class FilterSettingView(QWidget):
         available_faces_list_label.setStyleSheet(Style.title_label_middle)
         
         # Add 버튼 추가
-        add_face_button = QPushButton("등록")
-        add_face_button.setFixedSize(60, 30)
+        add_face_button = QPushButton("인물 편집")
+        add_face_button.setFixedSize(90, 30)
         add_face_button.setStyleSheet(Style.mini_button_style)
         add_face_button.clicked.connect(self.open_person_face_setting_dialog)
         
@@ -396,3 +381,7 @@ class FilterSettingView(QWidget):
 
     def webcamOn(self):
         self.webcam_on.emit()
+        
+    def swap_event(self):
+        
+        pass

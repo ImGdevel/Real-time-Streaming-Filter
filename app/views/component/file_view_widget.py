@@ -42,6 +42,9 @@ class FileViewWidget(QWidget):
         #button
         self.button_widget = QWidget()
         self.button_layout = QVBoxLayout()
+        self.button_layout.setAlignment(Qt.AlignTop)
+        self.button_layout.setContentsMargins(0,10,0,10)
+        self.button_layout.setSpacing(20)
 
         self.remove_button = QPushButton()
         self.remove_button.setToolTip("파일삭제")
@@ -72,7 +75,7 @@ class FileViewWidget(QWidget):
             self.remove_button.setStyleSheet(f"background-color:{Colors.base_color_05}")
         else :
             self.remove_mode = True
-            self.remove_button.setStyleSheet(f"background-color:{Colors.buttonColor_01_select}")
+            self.remove_button.setStyleSheet(f"background-color:{Colors.identity_color_04}")
             print("on")
 
     def openFileExplorer(self):

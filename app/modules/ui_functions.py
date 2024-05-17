@@ -17,6 +17,8 @@
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
+from .resources_rc import *
+from utils import Icons
 
 # GLOBALS
 # ///////////////////////////////////////////////////////////////
@@ -34,7 +36,7 @@ class UIFunctions(MainWindow):
             GLOBAL_STATE = True
             self.ui.appMargins.setContentsMargins(0, 0, 0, 0)
             self.ui.maximizeRestoreAppBtn.setToolTip("Restore")
-            self.ui.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_restore.png"))
+            self.ui.maximizeRestoreAppBtn.setIcon(QIcon(Icons.mini))
             self.ui.frame_size_grip.hide()
             self.left_grip.hide()
             self.right_grip.hide()
@@ -46,7 +48,9 @@ class UIFunctions(MainWindow):
             self.resize(self.width()+1, self.height()+1)
             self.ui.appMargins.setContentsMargins(10, 10, 10, 10)
             self.ui.maximizeRestoreAppBtn.setToolTip("Maximize")
-            self.ui.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
+            iconx = QIcon()
+            iconx.addFile(u":/icons/resources/icons/icon_maximize.png", QSize(), QIcon.Normal, QIcon.Off)
+            self.ui.maximizeRestoreAppBtn.setIcon(iconx)
             self.ui.frame_size_grip.show()
             self.left_grip.show()
             self.right_grip.show()
