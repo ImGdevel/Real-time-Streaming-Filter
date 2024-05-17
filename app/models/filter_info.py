@@ -5,7 +5,7 @@ from typing import Dict
 class Filter:
     '''데이터 클래스로서의 필터 정보'''
     name: str
-    face_filter_on: bool = True
+    background_blur: bool = False
     face_filter: Dict[int, int] = field(default_factory=dict)  # 딕셔너리로 변경
     object_filter: list = field(default_factory=list)
     

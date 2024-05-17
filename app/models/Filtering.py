@@ -56,15 +56,14 @@ class Filtering:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
             cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
-            if self.current_filter_info.face_filter_on is True:
-                if result[2] == "Human face":
-                    face_encode = face_encoding_box(img, box)
-                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
-                    if is_known is not None: 
-                        results[int(is_known)].append(result)
-                    else:
-                        results[-1].append(result)
+            if result[2] == "Human face":
+                face_encode = face_encoding_box(img, box)
+                # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
+                if is_known is not None: 
+                    results[int(is_known)].append(result)
+                else:
+                    results[-1].append(result)
         return results
     
     def object_filter(self, img, results):
@@ -253,9 +252,8 @@ class Filtering:
             self.current_filter_info = None
         else :
             self.current_filter_info = current_filter
-            if self.current_filter_info.face_filter_on:
-                if "Human face" not in self.current_filter_info.object_filter:
-                    self.current_filter_info.object_filter.append("Human face")
+            if "Human face" not in self.current_filter_info.object_filter:
+                self.current_filter_info.object_filter.append("Human face")
             self.object.set_filter_classes(self.current_filter_info.object_filter)
             self.object.set_known_faces(current_filter.face_filter.keys())
 

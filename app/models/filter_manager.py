@@ -109,9 +109,16 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = filterinfo.name
-                filter.face_filter_on = filterinfo.face_filter_on
                 filter.face_filter = filterinfo.face_filter
                 filter.object_filter = filterinfo.object_filter
+                self.save_filters()
+                return True
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_background_blur(self, filtername: str, background_blur: bool):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.background_blur = background_blur
                 self.save_filters()
                 return True
         raise ValueError("존재하지 않는 filtername입니다.")
@@ -124,15 +131,6 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = newname
-                self.save_filters()
-                return True
-        return False
-
-    def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
-        """필터 프리셋의 얼굴 필터링 여부를 변경한다"""
-        for filter in self.filter_list:
-            if filter.name == filtername:
-                filter.face_filter_on = face_filter_on
                 self.save_filters()
                 return True
         return False

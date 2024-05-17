@@ -72,22 +72,22 @@ class FilterSettingController:
         """Filter """
         return self.filter_manager.get_filters()   
     
-    def update_filter(self, filter_target_name: str, filter_name: str, face_filter_on: bool, updated_face_filter: list, updated_object_filter: list):
+    def update_filter(self, filter_target_name: str, filter_name: str, background_blur: bool, updated_face_filter: list, updated_object_filter: list):
         """Filter 업데이트 메서드"""
         if self.filter_manager.get_filter(filter_target_name):
-            update_filter = Filter(filter_name, face_filter_on, updated_face_filter, updated_object_filter)
+            update_filter = Filter(filter_name, background_blur, updated_face_filter, updated_object_filter)
             self.filter_manager.update_filter(filter_target_name, update_filter)
             print(f"Filter '{filter_name}'의 face_filter 정보가 업데이트 되었습니다.")
         else:
             print(f"Filter '{filter_name}'를 찾을 수 없습니다.")
             
+    def update_background_blur(self, filter_name: str, background_blur: bool):
+        self.filter_manager.update_background_blur(filter_name, background_blur)    
+
     def update_filter_name(self, filter_target_name: str, filter_new_name: str):
         """필터 프리셋의 이름을 변경한다"""
         return self.filter_manager.update_filter_name(filter_target_name, filter_new_name)
 
-    def update_filter_face_filter_on(self, filter_name: str, face_filter_on: bool):
-        """필터 프리셋의 얼굴 필터링 여부를 변경한다"""
-        return self.filter_manager.update_filter_face_filter_on(filter_name, face_filter_on)
     
     def update_filter_face_filter(self, filter_name: str, face_filter: dict):
         """필터 프리셋의 얼굴 리스트를 변경한다."""
