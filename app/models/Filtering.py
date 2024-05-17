@@ -185,7 +185,7 @@ class Filtering:
 
             # 경계를 부드럽게 만들기 위해 사람 영역 확장
             kernel = np.ones((15, 15), np.uint8)
-            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=3)
+            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=1)
 
             # 흐린 배경과 원본 이미지를 조합하여 부드러운 경계 생성
             img = np.where(dilated_condition, img, blurred_background)

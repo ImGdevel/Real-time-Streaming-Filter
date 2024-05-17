@@ -121,7 +121,7 @@ class RealStreamProcessor(QThread):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = self.filtering.background_blur(frame)
         boxesList = self.filtering.filtering(processed_frame)  
-        processed_frame = self.filtering.blur_background(processed_frame, boxesList) 
+        # processed_frame = self.filtering.blur_background(processed_frame, boxesList) 
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
