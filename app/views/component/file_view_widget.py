@@ -75,7 +75,7 @@ class FileViewWidget(QWidget):
             self.remove_button.setStyleSheet(f"background-color:{Colors.base_color_05}")
         else :
             self.remove_mode = True
-            self.remove_button.setStyleSheet(f"background-color:{Colors.buttonColor_01_select}")
+            self.remove_button.setStyleSheet(f"background-color:{Colors.identity_color_04}")
             print("on")
 
     def openFileExplorer(self):
