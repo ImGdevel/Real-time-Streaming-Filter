@@ -86,6 +86,9 @@ class RealStreamProcessor(QThread):
             delta= time.time()-start
             if delta <SLEEP_TIME:
                 time.sleep(SLEEP_TIME-delta)
+                
+            if self.is_record:
+                self.output_video.write(processed_frame)
 
         if width != None & height != None:
             self.frame_clear(height, width)
