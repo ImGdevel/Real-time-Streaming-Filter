@@ -236,6 +236,10 @@ class RegisteredFacesListWidget(ListWidget):
         self.filter_name = filter
 
     def register_person_faces(self, person_id):
+        list = self.filter_setting_processor.get_face_ids_in_filter(self.filter_name)
+        print(list)
+        if int(person_id) in list:
+            return
         self.filter_setting_processor.add_face_in_filter(self.filter_name, person_id)
         self.onEventUpdate.emit()
 

@@ -155,7 +155,21 @@ class VideoView(QWidget):
     
     def download_video(self):
         """영상 다운로드"""
-        self.video_processor.download_video()
+        try:
+            path = self.video_processor.download_video()
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText(f"다운로드가 완료되었습니다 \n{path}")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+        except ValueError as e:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("인코딩 영상이 존재하지 않습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
+        
         
     def render(self):
         """페이지 refresh"""

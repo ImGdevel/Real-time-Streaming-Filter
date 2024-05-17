@@ -110,6 +110,7 @@ class VideoProcessor(QThread):
         else:
             shutil.copy(self.temp_video_path, output_video_path)
             print("copy video to : " + output_video_path)
+            return output_video_path
         
     def set_filter(self, filter):
         """필터 설정"""
