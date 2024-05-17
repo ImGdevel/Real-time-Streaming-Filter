@@ -102,7 +102,8 @@ class DragDropLabel(QLabel):
         # Scale pixmap with maintaining aspect ratio
         scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor) - 15, 
                                     int(image_size.height() * scale_factor) - 15, 
-                                    Qt.KeepAspectRatio)
+                                    Qt.KeepAspectRatio,
+                                    Qt.SmoothTransformation)
 
         self.dropbox_lable.setPixmap(scaled_pixmap)
 
@@ -135,7 +136,8 @@ class DragDropLabel(QLabel):
         # Scale pixmap while maintaining aspect ratio
         scaled_pixmap = pixmap.scaled(int(image_size.width() * scale_factor) -15, 
                                     int(image_size.height() * scale_factor) -15, 
-                                    Qt.KeepAspectRatio)
+                                    Qt.KeepAspectRatio,
+                                    Qt.SmoothTransformation)
 
         self.filtered_label.setPixmap(scaled_pixmap)
 

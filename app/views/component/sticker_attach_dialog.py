@@ -156,7 +156,6 @@ class StickerRegisteredDialog(QDialog):
     def set_sticker_dialog(self, person_id, sticker_id):
         """이미 등록된 스티커가 있다면 불러오기"""
         self.person_id = person_id
-        print(person_id, sticker_id)
         if sticker_id != -1:
             img = self.replace_manager.load_Qimg_to_id(sticker_id)
             if img is not None:
