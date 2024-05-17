@@ -66,10 +66,9 @@ class RealStreamProcessor(QThread):
     def run_screen(self):
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
-        capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
 
-        height = None
-        width = None
+        height = 0
+        width = 0
         
         self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
 
@@ -90,7 +89,7 @@ class RealStreamProcessor(QThread):
             if self.is_record:
                 self.output_video.write(processed_frame)
 
-        if width != None & height != None:
+        if width & height:
             self.frame_clear(width, height)
 
 
@@ -98,8 +97,8 @@ class RealStreamProcessor(QThread):
         if self.video_cap is None:
             self.video_cap = cv2.VideoCapture(self.current_webcam)
         
-        height = None
-        width = None
+        height = 0
+        width = 0
 
         while self.is_running and self.video_cap.isOpened():
             self.webcam_on = True
@@ -123,7 +122,7 @@ class RealStreamProcessor(QThread):
             #result = end - start
             #print("time: "+ str(result))
         # 종료 후 프레임 비우기
-        if width != None & height != None:
+        if width & height:
             self.frame_clear(width, height)
 
 
@@ -239,7 +238,7 @@ class RealStreamProcessor(QThread):
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         video_name = f"output_video_{current_time}.mp4"
         self.video_path = self.path_manager.load_download_path()
-        self.video_path = os.path.join(self.video_path, video_name)
+        self.video_path = os.path.join(self.video_path, "Recodes" ,video_name)
         self.output_video = cv2.VideoWriter(self.video_path, fourcc, fps, (frame_width, frame_height))
         self.is_record = True
     
