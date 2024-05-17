@@ -53,6 +53,14 @@ class ObjectDetect:
             self.sticker_id[face] = []
         #print("sticker_id: ", self.sticker_id)
 
+    def person_detect(self, img):
+        results = self.detect(img, [381], self.modelManager.orginModel, self.orginNames)
+        boxList = []
+        for result in results:
+            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]]
+            boxList.append(box)
+        return boxList
+
     def face_detect(self, img):
         results = self.detect(img, [264], self.modelManager.orginModel, self.orginNames)
         boxList = []
@@ -88,11 +96,11 @@ class ObjectDetect:
 
         imgsize = (height, width)
         #print(imgsize)
-        print(confidence)
+        # print(confidence)
 
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, conf=confidence, retina_masks=True, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=confidence, max_det=600, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
@@ -140,8 +148,9 @@ class ObjectDetect:
             detections.extend(value)
         tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
         last_results = dict()
-        last_results[-1] = []
+        last_results[-3] = []
         last_results[-2] = []
+        last_results[-1] = []
         for track in tracks:
             float_box = track.to_ltrb(orig=True).tolist()
             int_box = [int(float_box[0]), int(float_box[1]), int(float_box[2]), int(float_box[3])]

@@ -7,6 +7,7 @@ from .filter_info import Filter
 from .path_manager import PathManager
 import cv2
 import numpy as np
+import mediapipe as mp
 
 class Filtering:
     """
@@ -73,11 +74,36 @@ class Filtering:
                 box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
                 results[-2].append(box)
         return results
+    
+    
+    def background_blur(self, img):
+        mp_drawing = mp.solutions.drawing_utils
+        mp_selfie_segmentation = mp.solutions.selfie_segmentation
+        BG_COLOR = (255, 255, 255)
+        with mp_selfie_segmentation.SelfieSegmentation(model_selection=1) as selfie_segmentation:
+            # 이미지 처리 과정 (img는 입력 이미지로 가정)
+            img.flags.writeable = False
+            results = selfie_segmentation.process(img)
+            img.flags.writeable = True
+
+            # 세그멘테이션 마스크 생성
+            condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > 0.1
+
+            # 배경을 흐리게 처리
+            blurred_background = cv2.GaussianBlur(img, (55, 55), 0)
+
+            # 경계를 부드럽게 만들기 위해 사람 영역 확장
+            kernel = np.ones((15, 15), np.uint8)
+            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=1)
+
+            # 흐린 배경과 원본 이미지를 조합하여 부드러운 경계 생성
+            img = np.where(dilated_condition, img, blurred_background)
+        return img
 
     def filtering(self, img, is_video=True):
         if self.current_filter_info is None:
             return dict()
-
+                
         results = dict()
         results[-2] = []
         results[-1] = []
@@ -86,7 +112,7 @@ class Filtering:
         #print(temp_ratio)
         
         results = self.face_filter(img, results, conf, temp_ratio)
-
+        
         if is_video:
             if len(results) != 0:
                 results = self.object.object_track(img, results)
@@ -259,16 +285,20 @@ class Filtering:
 
     def filter_state_check(self, results):
         """filter가 변경됐는지 확인하고 변경사항을 적용한다."""
+        temp = results
         if self.filter_change is True:
             self.change_filter(self.change_filter_info)
             self.change_filter_info = None
             self.filter_change = False
-            temp = []
-            for values in results.values():
-                temp.extend(values)
-            results = dict()
-            results[-1] = temp
-        return results
+            temp = {}
+            temp[-2] = results[-2]
+            temp[-1] = results[-1]
+            faces = []
+            for key, value in results.items():
+                if key > -1:
+                    faces.extend(value)
+            temp[-1].extend(value)
+        return temp
 
     def tracking_id_init(self):
         """저장된 track_id 정보를 초기화한다."""

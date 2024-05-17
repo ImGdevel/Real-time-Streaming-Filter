@@ -129,18 +129,19 @@ class RealStreamProcessor(QThread):
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
-        processed_frame = frame
-        boxesList = self.filtering.filtering(frame)    
+        processed_frame = self.filtering.background_blur(frame)
+        boxesList = self.filtering.filtering(processed_frame)  
+        # processed_frame = self.filtering.blur_background(processed_frame, boxesList) 
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
-                    processed_frame = self.filtering.blur(frame, boxesList[key])
+                    processed_frame = self.filtering.blur(processed_frame, boxesList[key])
             elif key == -2:
                 if boxesList[key] is not None:
-                    processed_frame = self.filtering.square_blur(frame, boxesList[key])
-            else:
+                    processed_frame = self.filtering.square_blur(processed_frame, boxesList[key])
+            elif key != -3:
                 if boxesList[key] is not None:
-                    processed_frame = self.filtering.face_sticker(frame, boxesList[key], key)
+                    processed_frame = self.filtering.face_sticker(processed_frame, boxesList[key], key)
     
         return processed_frame
     
@@ -226,12 +227,12 @@ class RealStreamProcessor(QThread):
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             # fps = self.video_cap.get(cv2.CAP_PROP_FPS)
-            fps = 15
+            fps = 20
         else:
             cap = self.capture
             frame_width = int(self.capture_area[2])
             frame_height = int(self.capture_area[3])
-            fps = 15
+            fps = 20
         if cap is None:
             raise Exception("녹화에 대한 입력이 없습니다")
 
