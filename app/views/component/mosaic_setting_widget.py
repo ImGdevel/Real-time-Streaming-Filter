@@ -27,23 +27,47 @@ class MosaicSettingWidget(QWidget):
         self.intensity_slider = QSlider(Qt.Horizontal)
         self.intensity_slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.intensity_slider.valueChanged.connect(self.set_value_slider)  # 슬라이더 값 변경 시 이벤트 연결
+        default_mosaic_layout.addWidget(intensity_label, 1, 0, 1, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider, 1, 3, 1, 6)
+
+
+        ##########################################
+        intensity_label2 = QLabel("IMGSZ_MAG")
+        self.intensity_slider2 = QSlider(Qt.Horizontal)
+        self.intensity_slider2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.intensity_slider2.valueChanged.connect(self.set_value_slider2)  # 슬라이더 값 변경 시 이벤트 연결
         
         # slider_value_label = QLabel("0")
         
-        default_mosaic_layout.addWidget(intensity_label, 1, 0)
-        default_mosaic_layout.addWidget(self.intensity_slider, 1, 2, alignment=Qt.AlignRight)
+        default_mosaic_layout.addWidget(intensity_label2, 4, 0, 5, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider2, 4, 3, 5, 6)
+        ##########################################
+        ##########################################
+        intensity_label3 = QLabel("Confidence")
+        self.intensity_slider3 = QSlider(Qt.Horizontal)
+        self.intensity_slider3.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.intensity_slider3.valueChanged.connect(self.set_value_slider3)  # 슬라이더 값 변경 시 이벤트 연결
         
+        # slider_value_label = QLabel("0")
+        
+        default_mosaic_layout.addWidget(intensity_label3, 7, 0, 5, 2)
+        default_mosaic_layout.addWidget(self.intensity_slider3, 7, 3, 5, 6)
+        ##########################################
 
         shape_label = QLabel("블러 모양")
         self.shape_combobox = QComboBox()
         self.shape_combobox.addItems(["사각형", "원형"])
         self.shape_combobox.currentIndexChanged.connect(self.set_value_drop_down)  # 드롭다운 값 변경 시 이벤트 연결
-        default_mosaic_layout.addWidget(shape_label, 2, 0)
-        default_mosaic_layout.addWidget(self.shape_combobox, 2, 1, 2, 2, alignment=Qt.AlignRight)
+        default_mosaic_layout.addWidget(shape_label, 2, 0, 3, 2)
+        default_mosaic_layout.addWidget(self.shape_combobox, 2, 4, 3, 5)
         
-        default_mosaic_layout.setColumnStretch(0, 1)
-        default_mosaic_layout.setColumnStretch(1, 1)
-        default_mosaic_layout.setColumnStretch(2, 8)
+        default_mosaic_layout.setColumnStretch(0, 2)
+        default_mosaic_layout.setColumnStretch(1, 2)
+        default_mosaic_layout.setColumnStretch(2, 4)
+        default_mosaic_layout.setColumnStretch(3, 4)
+        default_mosaic_layout.setColumnStretch(4, 4)
+        default_mosaic_layout.setColumnStretch(5, 1)
+    
 
         default_mosaic_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
     
@@ -57,12 +81,27 @@ class MosaicSettingWidget(QWidget):
         if filter_data:
             self.shape_combobox.setCurrentIndex(0 if filter_data.mosaic_blur_shape == "rect" else 1)
             self.intensity_slider.setValue(filter_data.mosaic_blur_strength)
+
+            self.intensity_slider2.setValue(filter_data.imgsz_mag) ##################
+            self.intensity_slider3.setValue(filter_data.predict_conf) ##################
     
     def set_value_slider(self, value):
         """슬라이더 값 변경 시 호출되는 메서드"""
         self.filter_controller.update_blur_strength_in_filter(self.filter_name, value)
         self.onEventUpdate.emit()
-    
+
+    #########################################
+    def set_value_slider2(self, value):
+        """슬라이더 값 변경 시 호출되는 메서드"""
+        self.filter_controller.update_imgsz_mag_in_filter(self.filter_name, value)
+        self.onEventUpdate.emit()
+    ########################################
+    #########################################
+    def set_value_slider3(self, value):
+        """슬라이더 값 변경 시 호출되는 메서드"""
+        self.filter_controller.update_predict_conf_in_filter(self.filter_name, value)
+        self.onEventUpdate.emit()
+    ########################################
     
     def set_value_drop_down(self, index):
         """드롭다운 값 변경 시 호출되는 메서드"""

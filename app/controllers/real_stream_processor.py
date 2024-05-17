@@ -225,12 +225,13 @@ class RealStreamProcessor(QThread):
             cap = self.video_cap
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+            # fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+            fps = 15
         else:
             cap = self.capture
             frame_width = int(self.capture_area[2])
             frame_height = int(self.capture_area[3])
-            fps = 60
+            fps = 15
         if cap is None:
             raise Exception("녹화에 대한 입력이 없습니다")
 
