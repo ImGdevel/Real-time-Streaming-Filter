@@ -157,6 +157,13 @@ class ImageView(QWidget):
             self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
             print(self.filtered_image)
             self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
+            
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("인코딩이 완료되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+            
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
@@ -167,10 +174,15 @@ class ImageView(QWidget):
     def Download(self):
         if self.filtered_image:
             self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
-        else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText("인코딩된 이미지가 존재하지 않습니다.")
+            msg.setText("다운로드가 완료되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("인코딩된 이미지가 존재하지 않습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
 
