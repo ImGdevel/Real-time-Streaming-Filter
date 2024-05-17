@@ -66,6 +66,10 @@ class RealStreamProcessor(QThread):
     def run_screen(self):
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
+        capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
+
+        height = None
+        width = None
         
         self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
 
@@ -82,15 +86,20 @@ class RealStreamProcessor(QThread):
             delta= time.time()-start
             if delta <SLEEP_TIME:
                 time.sleep(SLEEP_TIME-delta)
+
             if self.is_record:
                 self.output_video.write(processed_frame)
 
-        self.frame_clear(height, width)
+        if width != None & height != None:
+            self.frame_clear(width, height)
 
 
     def run_webcam(self):
         if self.video_cap is None:
             self.video_cap = cv2.VideoCapture(self.current_webcam)
+        
+        height = None
+        width = None
 
         while self.is_running and self.video_cap.isOpened():
             self.webcam_on = True
@@ -114,7 +123,9 @@ class RealStreamProcessor(QThread):
             #result = end - start
             #print("time: "+ str(result))
         # 종료 후 프레임 비우기
-        self.frame_clear(width, height)
+        if width != None & height != None:
+            self.frame_clear(width, height)
+
 
 
     def process_frame(self, frame):
