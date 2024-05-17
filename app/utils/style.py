@@ -21,6 +21,7 @@ class Style:
     title_bar_style = f"""
             background-color: {Colors.base_color_03};
             color: {Colors.textColor01};
+            font-size: 16px;
             padding: 10px;
             border-radius: 0px;  
             
@@ -65,6 +66,13 @@ class Style:
     
     frame_style = f"""
         background-color: {Colors.base_color_06};
+        color: white;
+        border-radius: 5px;
+        padding: 0px;
+    """
+    
+    frame_style_background = f"""
+        background-color: {Colors.base_color_04};
         color: white;
         border-radius: 5px;
         padding: 0px;
@@ -162,7 +170,7 @@ class Style:
         }}
 
         QPushButton:checked {{
-            background-color: {Colors.base_color_X};
+            background-color: {Colors.identity_color_05};
         }}
 
     """
@@ -184,6 +192,18 @@ class Style:
 
         QPushButton:pressed {{
             background-color: {Colors.base_color_04};
+        }}
+
+    """
+    
+    list_button_style_none_line_none_hover = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: none;
+            border-radius: 5px;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 16px;
         }}
 
     """
@@ -211,12 +231,14 @@ class Style:
 
     title_label = f"""
         font-weight: bold; 
-        font-size: 20px;
+        font-size: 18px;
+        border: none;
     """
     
     title_label_middle = f"""
         font-weight: bold; 
         font-size: 16px;
+        border: none;
     """
 
 
@@ -256,5 +278,86 @@ class Style:
         QPushButton:checked {{
             background-color: {Colors.base_color_04};
         }}
+
+    """
+    
+    
+    cam_button = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_05};
+            border: none;
+            border-radius: 0px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 15px;
+            padding: 0px;
+        }}
+        QPushButton:hover {{
+            background-color: {Colors.base_color_07};
+        }}
+        
+    """
+    
+    cam_button_selected = f"""
+        QPushButton {{
+            background-color: {Colors.base_color_06};
+            border: none;
+            border-radius: 0px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 15px;
+            padding: 0px;
+        }}
+    """
+    
+    slider = f"""
+    QSlider::groove:horizontal {{
+        
+        border-radius: 5px;
+        height: 10px;
+    	margin: 0px;
+    	background-color: rgb(52, 59, 72);
+    }}
+    QSlider::groove:horizontal:hover {{
+    	background-color: rgb(55, 62, 76);
+    }}
+    QSlider::handle:horizontal {{
+        background-color: rgb(100, 181, 246);
+        border: none;
+        height: 10px;
+        width: 10px;
+        margin: 0px;
+    	border-radius: 5px;
+    }}
+    QSlider::handle:horizontal:hover {{
+        background-color: rgb(21, 101, 192);
+    }}
+    QSlider::handle:horizontal:pressed {{
+        background-color: rgb(13, 71, 161);
+    }}
+
+    QSlider::groove:vertical {{
+        border-radius: 5px;
+        width: 10px;
+        margin: 0px;
+    	background-color: rgb(52, 59, 72);
+    }}
+    QSlider::groove:vertical:hover {{
+    	background-color: rgb(55, 62, 76);
+    }}
+    QSlider::handle:vertical {{
+        background-color: rgb(100, 181, 246);
+    	border: none;
+        height: 10px;
+        width: 10px;
+        margin: 0px;
+    	border-radius: 5px;
+    }}
+    QSlider::handle:vertical:hover {{
+        background-color: rgb(21, 101, 192);
+    }}
+    QSlider::handle:vertical:pressed {{
+        background-color: rgb(13, 71, 161)
+    }}
 
     """

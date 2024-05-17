@@ -7,7 +7,8 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ShadowWidget, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
+    TitleEdit, ObjectFilterSettngWidget, BlurSettingWidget, ContentLabeling
+    , DetectSettingWidget
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style, Icons
@@ -77,12 +78,14 @@ class FilterSettingView(QWidget):
 
         # Add Filter, Delete Filter 버튼
         add_button = QPushButton()
+        add_button.setToolTip('새 필터')
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
         add_button.clicked.connect(self.add_filter)
         
         delete_button = QPushButton()
+        delete_button.setToolTip('필터 삭제')
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
@@ -117,25 +120,10 @@ class FilterSettingView(QWidget):
         # 설정 내용
         content_frame = QWidget()
         content_frame.setLayout(self.setting_page())
-        
-        #apply_button = QPushButton("적용")
-        #apply_button.clicked.connect(self.apply_filter_settings)
-        #apply_button.setFixedSize(60, 30)  # 높이 설정
-        
-        #cancel_button = QPushButton("취소")
-        #cancel_button.clicked.connect(self.apply_filter_settings)
-        #cancel_button.setFixedSize(60, 30)  # 높이 설정
-
-        # 수평 레이아웃 생성 및 오른쪽 정렬
-        #button_layout = QHBoxLayout()
-        #button_layout.addStretch(1)
-        #button_layout.addWidget(apply_button)
-        #button_layout.addWidget(cancel_button)
 
         # 수평 레이아웃을 오른쪽 레이아웃에 추가
         right_layout.addWidget(self.filter_title_label)
         right_layout.addWidget(content_frame)
-        #right_layout.addLayout(button_layout)
         
         right_layout.setStretch(0, 1)  # 상단 버튼 레이아웃 높이 비율
         right_layout.setStretch(1, 3)  # 중단 비디오 옵션 설정 높이 비율
@@ -151,7 +139,9 @@ class FilterSettingView(QWidget):
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
-        self.mosaic_setting_widget = MosaicSettingWidget()
+        self.mosaic_setting_widget = BlurSettingWidget()
+        
+        self.detect_setting_widget = DetectSettingWidget()
         
         content01 =  ContentLabeling()
         content01.setLabel("필터링 인물 설정")
@@ -165,6 +155,9 @@ class FilterSettingView(QWidget):
         content03.setLabel("모자이크 블러 설정")
         content03.setContent(self.mosaic_setting_widget)
         
+        content04 =  ContentLabeling()
+        content04.setLabel("감지 정확도 설정")
+        content04.setContent(self.detect_setting_widget)
 
 
         # 설정창 스택
@@ -172,6 +165,7 @@ class FilterSettingView(QWidget):
         self.settings_content.addWidget(content01)
         self.settings_content.addWidget(content02)
         self.settings_content.addWidget(content03)
+        self.settings_content.addWidget(content04)
     
         # 설정 목록에 들어갈 버튼 생성
         self.button1 = QPushButton("필터링 인물")
@@ -186,17 +180,23 @@ class FilterSettingView(QWidget):
         self.button3.setObjectName("setting03")
         self.button3.setMinimumHeight(45)
         self.button3.setCheckable(True)
+        self.button4 = QPushButton("감지 정확도")
+        self.button4.setObjectName("setting03")
+        self.button4.setMinimumHeight(45)
+        self.button4.setCheckable(True)
 
         #버튼 연결
         self.button1.clicked.connect(lambda: self.setup_setting_page(0))
         self.button2.clicked.connect(lambda: self.setup_setting_page(1))
         self.button3.clicked.connect(lambda: self.setup_setting_page(2))
+        self.button4.clicked.connect(lambda: self.setup_setting_page(3))
         
         button_group = QButtonGroup()
         button_group.setExclusive(False)
         button_group.addButton(self.button1)
         button_group.addButton(self.button2)
         button_group.addButton(self.button3)
+        button_group.addButton(self.button4)
         
         # 버튼을 수직으로 정렬하는 레이아웃 생성
         vbox = QVBoxLayout()
@@ -206,6 +206,7 @@ class FilterSettingView(QWidget):
         vbox.addWidget(self.button1)
         vbox.addWidget(self.button2)
         vbox.addWidget(self.button3)
+        vbox.addWidget(self.button4)
 
         # 설정 목록 위젯 생성 및 레이아웃 설정
         settings_list = QWidget()
@@ -229,6 +230,7 @@ class FilterSettingView(QWidget):
             self.button1.setChecked(True)
             self.button2.setChecked(False)
             self.button3.setChecked(False)
+            self.button4.setChecked(False)
         
         elif index == 1:
             self.settings_content.setCurrentIndex(1)
@@ -236,6 +238,7 @@ class FilterSettingView(QWidget):
             self.button2.setChecked(True)
             self.button1.setChecked(False)
             self.button3.setChecked(False)
+            self.button4.setChecked(False)
 
         elif index == 2:
             self.settings_content.setCurrentIndex(2)
@@ -243,6 +246,15 @@ class FilterSettingView(QWidget):
             self.button3.setChecked(True)
             self.button2.setChecked(False)
             self.button1.setChecked(False)
+            self.button4.setChecked(False)
+            
+        elif index == 3:
+            self.settings_content.setCurrentIndex(3)
+            self.detect_setting_widget.setup_detect_setting(self.current_filter)
+            self.button4.setChecked(True)
+            self.button2.setChecked(False)
+            self.button1.setChecked(False)
+            self.button3.setChecked(False)
 
 
     # 얼굴 레이어
@@ -266,8 +278,8 @@ class FilterSettingView(QWidget):
         available_faces_list_label.setStyleSheet(Style.title_label_middle)
         
         # Add 버튼 추가
-        add_face_button = QPushButton("등록")
-        add_face_button.setFixedSize(60, 30)
+        add_face_button = QPushButton("인물 편집")
+        add_face_button.setFixedSize(90, 30)
         add_face_button.setStyleSheet(Style.mini_button_style)
         add_face_button.clicked.connect(self.open_person_face_setting_dialog)
         
@@ -317,7 +329,6 @@ class FilterSettingView(QWidget):
             print("[Log] : 선택된 필터 > ", filter_name)
             self.filter_list_widget.set_select_item(filter_name)
             self.filter_title_label.set_title(filter_name)
-            #self.filter_title_label.set_show_mode()
             self.setup_setting_page(0)
             self.show_filter_setting_page(True)
         else:
@@ -369,24 +380,21 @@ class FilterSettingView(QWidget):
                 if self.filter_setting_processor.update_filter_name(self.current_filter, new_name):
                     self.set_current_filter(new_name)
                 else:
-                    QMessageBox.warning(None, "경고", "이미 존재하는 필터 입니다.", QMessageBox.Ok)
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("이미 존재하는 필터 입니다")
+                    msg.setWindowTitle("경고")
+                    msg.exec_()
                     self.set_current_filter(self.current_filter)
         else:
-                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)         
-                    self.set_current_filter(self.current_filter)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("유효하지 않은 이름입니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()      
+            self.set_current_filter(self.current_filter)
 
 
-    # 필터 정보 저장
-    def apply_filter_settings(self):
-        """세팅된 필터링 정보 저장"""
-        return
-        # registered_faces_list_widget의 내용 가져오기
-        updated_face_filter = self.registered_faces_list_widget.get_items_data()
-        updated_filtering_object = self.current_filter_object_list
-
-        # 현재 선택된 필터 정보 업데이트
-        self.filter_setting_processor.update_filter(self.current_filter, self.current_filter, True ,updated_face_filter, updated_filtering_object)
-        
     # 페이지 리프레쉬
     def render(self):
         """페이지 refesh"""
@@ -400,3 +408,7 @@ class FilterSettingView(QWidget):
 
     def webcamOn(self):
         self.webcam_on.emit()
+        
+    def swap_event(self):
+        
+        pass

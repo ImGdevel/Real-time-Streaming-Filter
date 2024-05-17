@@ -58,9 +58,11 @@ class ImageProcessor():
             
             # 이미지 처리 
             blur_ratio = 50
-
-            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = image
+            if self.filtering.current_filter_info is not None:
+                if self.filtering.current_filter_info.background_blur:
+                    processed_image = self.filtering.background_blur(processed_image)
+            boxesList = self.filtering.filtering(processed_image, is_video=False)
             for key in boxesList.keys():
                 if key == -1:
                     if boxesList[key] is not None:
@@ -100,9 +102,9 @@ class ImageProcessor():
 
             # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
             image_name = f"{current_time}_{sequence_number}.jpg"
-            output_path = os.path.join(download_directory, image_name)
+            output_path = os.path.join(download_directory, "Images", image_name)
             cv2.imwrite(output_path, img)
-            # print(f"이미지 처리 및 저장 완료: {output_path}")
+            print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1
 
 
@@ -127,9 +129,9 @@ class ImageProcessor():
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             # # 처리된 이미지를 파일로 저장 (새로운 파일명을 만듦)
             image_name = f"{current_time}_{sequence_number}.jpg"
-            output_path = os.path.join(download_directory, image_name)
+            output_path = os.path.join(download_directory, "Images", image_name)
             cv2.imwrite(output_path, img)
-            # print(f"이미지 처리 및 저장 완료: {output_path}")
+            print(f"이미지 처리 및 저장 완료: {output_path}")
             sequence_number += 1
 
     def set_filter(self, filter):

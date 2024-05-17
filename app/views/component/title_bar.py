@@ -46,7 +46,7 @@ class TitleBar(QWidget):
         return button
     
     def set_title(self, text):
-        """타이틀바 색 변경"""
+        """타이틀바 이름 변경"""
         self.title.setText(text)
 
     def hex_to_rgb(self, color):

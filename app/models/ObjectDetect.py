@@ -37,7 +37,6 @@ class ObjectDetect:
         self.customFilterClasses = []    
         self.exclude_id = []
         self.sticker_id = dict()
-        self.CONFIDENCE_THRESHOLD = 0.2
     
     def set_filter_classes(self, filter_classes:list):
         """인식할 객체 목록들을 설정한다."""
@@ -54,6 +53,14 @@ class ObjectDetect:
             self.sticker_id[face] = []
         #print("sticker_id: ", self.sticker_id)
 
+    def person_detect(self, img):
+        results = self.detect(img, [381], self.modelManager.orginModel, self.orginNames)
+        boxList = []
+        for result in results:
+            box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]]
+            boxList.append(box)
+        return boxList
+
     def face_detect(self, img):
         results = self.detect(img, [264], self.modelManager.orginModel, self.orginNames)
         boxList = []
@@ -62,7 +69,7 @@ class ObjectDetect:
             boxList.append(box)
         return boxList
 
-    def detect(self, img, filter_classes, model, names):
+    def detect(self, img, filter_classes, model, names, confidence = 0.1, mag_ratio = 1):
         """
         객체인식 결과를 반환한다.
         img: 객체 인식이 필요한 이미지
@@ -73,10 +80,27 @@ class ObjectDetect:
         return: [[box], 신뢰도, 객체 이름]의 리스트를 반환한다.
         """
         results = []
-        
+        height = img.shape[0]
+        width = img.shape[1]
+        height *= mag_ratio
+        width *= mag_ratio
+
+        if height % 32 == 0:
+            pass
+        else:
+            height = height - (height % 32) + 32
+        if width % 32 == 0:
+            pass
+        else:
+            width = width - (width % 32) + 32
+
+        imgsize = (height, width)
+        #print(imgsize)
+        # print(confidence)
+
         if not filter_classes:
             return results
-        detection = model.predict(img, verbose=False, classes=filter_classes, conf=0.1, show=False)[0]  # 일반 모델로 결과 예측
+        detection = model.predict(img, verbose=False, classes=filter_classes, conf=confidence, max_det=600, show=False, imgsz=imgsize)[0]  # 일반 모델로 결과 예측
 
         for data in detection.boxes.data.tolist():
             confidence = float(data[4])
@@ -85,7 +109,7 @@ class ObjectDetect:
             results.append([[xmin, ymin, xmax-xmin, ymax-ymin], confidence, label])
         return results 
     
-    def origin_detect(self, img):
+    def origin_detect(self, img, conf, mag_ratio):
         """일반 YOLO 모델을 사용하여 객체를 탐지합니다.
 
         Args:
@@ -94,7 +118,7 @@ class ObjectDetect:
         Returns:
             tuple: 바운딩 박스의 목록과 각 객체가 얼굴인지를 나타내는 목록을 포함하는 튜플입니다.
         """
-        return self.detect(img, self.originFilterClasses, self.modelManager.orginModel, self.orginNames)
+        return self.detect(img, self.originFilterClasses, self.modelManager.orginModel, self.orginNames, conf, mag_ratio)
 
     def custom_detect(self, img):
         """사용자 정의 YOLO 모델을 사용하여 객체를 탐지합니다.
@@ -111,11 +135,8 @@ class ObjectDetect:
             if result[2] == "middlefinger":
                 if result[1] < 0.8:
                     results.remove(result)
-            elif result[2] == 'knife':
-                if result[1] < 0.3:
-                    results.remove(result)
             else:
-                if result[1] < 0.2:
+                if result[1] < 0.3:
                     results.remove(result)
             
         return results
@@ -127,6 +148,7 @@ class ObjectDetect:
             detections.extend(value)
         tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
         last_results = dict()
+        last_results[-2] = []
         last_results[-1] = []
         for track in tracks:
             float_box = track.to_ltrb(orig=True).tolist()

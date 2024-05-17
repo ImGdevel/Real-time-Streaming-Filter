@@ -33,7 +33,7 @@ class PersonFaceDialog(QDialog):
     def _initUI(self):
         """다이얼로그 UI 초기화 메서드"""
         self.setWindowTitle("Add Face")
-        self.setFixedSize(600, 600)
+        self.setFixedSize(600, 500)
 
         main_layout = QHBoxLayout()
         main_layout.setContentsMargins(5,5,5,5)
@@ -42,12 +42,10 @@ class PersonFaceDialog(QDialog):
         face_registration_layout = self._setup_face_registration_layout()
 
         empty_widget = QWidget()
-        face_registration_widget = QWidget()
-        face_registration_widget.setLayout(face_registration_layout)
     
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.addWidget(empty_widget)
-        self.stacked_widget.addWidget(face_registration_widget)
+        self.stacked_widget.addWidget(face_registration_layout)
         
         main_layout.addWidget(face_registration_list_layout, 1)
         main_layout.addWidget(self.stacked_widget, 3)
@@ -76,6 +74,7 @@ class PersonFaceDialog(QDialog):
         add_button.setIcon(QIcon(Icons.plus))
         add_button.setFixedSize(50,50)
         add_button.setStyleSheet(Style.mini_button_style)
+        add_button.setToolTip("인물 추가")
         add_button.setFocusPolicy(Qt.NoFocus)
         add_button.clicked.connect(self.add_person)
         
@@ -83,11 +82,13 @@ class PersonFaceDialog(QDialog):
         delete_button.setIcon(QIcon(Icons.dust_bin))
         delete_button.setFixedSize(50,50)
         delete_button.setStyleSheet(Style.mini_button_style)
+        add_button.setToolTip("인물 삭제")
         delete_button.setFocusPolicy(Qt.NoFocus)
         delete_button.clicked.connect(self.delete_person)
 
         # Add Filter, Delete Filter 버튼
         filter_list_button_layout = QHBoxLayout()
+        filter_list_button_layout.setContentsMargins(0,10,0,10)
         filter_list_button_layout.addSpacing(10)
         filter_list_button_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         filter_list_button_layout.addWidget(add_button)
@@ -103,20 +104,17 @@ class PersonFaceDialog(QDialog):
 
     def _setup_face_registration_layout(self):
         """얼굴 등록 레이아웃 설정 메서드"""
-        face_registration_layout = QVBoxLayout()
-        face_registration_layout.setAlignment(Qt.AlignTop)
-
+        frame = QFrame()
+        
         self.text_layout = TitleEdit()
         self.text_layout.onEditEvent.connect(self.change_person_name)
 
-        image_frame = QFrame()
-        
         self.face_registration_processor = FaceRegistrationProcessor()
         self.face_registration_processor.finished.connect(self.enroll_finished)
         self.face_registration_processor.addItem.connect(self.add_image)
 
         self.image_list_widget = QListWidget()
-        self.image_list_widget.setStyleSheet(Style.frame_inner_style)
+        self.image_list_widget.setStyleSheet(Style.list_widget_style)
         self.image_list_widget.setViewMode(QListWidget.IconMode)
         self.image_list_widget.setFixedSize(350, 350)
         self.image_list_widget.setIconSize(QSize(200, 200))  # 아이콘 크기 설정
@@ -133,55 +131,77 @@ class PersonFaceDialog(QDialog):
         self.image_list_widget.dragEnterEvent = self.drag_enter_event
         self.image_list_widget.dragMoveEvent = self.drag_move_event
         self.image_list_widget.dropEvent = self.drop_event
-
+        
+        image_list_label = QLabel("등록된 얼굴")
+        image_list_label.setStyleSheet(Style.title_label)
+        image_list_label.setFixedHeight(45)
+        
         # 파일 탐색기 열기 버튼 추가
         upload_image_button = QPushButton()
         upload_image_button.setIcon(QIcon(Icons.folder_open))
         upload_image_button.setStyleSheet(Style.mini_button_style)
-        upload_image_button.clicked.connect(self.open_file_dialog)
+        upload_image_button.setFixedSize(45, 45)
+        upload_image_button.setToolTip("파일 탐색")
         upload_image_button.setFocusPolicy(Qt.NoFocus)
-        upload_image_button.setFixedSize(50,50)
-
+        upload_image_button.clicked.connect(self.open_file_dialog)
+        
         capture_button = QPushButton()
         capture_button.setIcon(QIcon(Icons.camera))
         capture_button.setStyleSheet(Style.mini_button_style)
-        capture_button.setFixedSize(50,50)
+        capture_button.setFixedSize(45, 45)
+        capture_button.setToolTip("얼굴 화면 캡쳐")
         capture_button.setFocusPolicy(Qt.NoFocus)
         capture_button.clicked.connect(self.open_capture_window)
         
         image_layout = QGridLayout()
-        image_layout.addWidget(capture_button, 0, 0)
-        image_layout.addWidget(upload_image_button, 0, 1)
-        image_layout.addWidget(self.image_list_widget, 1, 0, 1, 2)
-        image_frame.setLayout(image_layout)
-    
-        face_registration_layout.addWidget(self.text_layout)
-        face_registration_layout.addWidget(image_frame)
+        image_layout.addWidget(self.text_layout, 0, 0, 1 ,7, Qt.AlignVCenter)
+        image_layout.addWidget(image_list_label, 1, 0, 2, 4, Qt.AlignTop)
+        image_layout.addWidget(capture_button, 1, 5, Qt.AlignRight)
+        image_layout.addWidget(upload_image_button, 1, 6, Qt.AlignRight)
+        image_layout.addWidget(self.image_list_widget, 2, 0, 3, 7)
+        frame.setLayout(image_layout)
         
-        return face_registration_layout
+        return frame
     
     def add_face_process(self, images: list[QPixmap]):
         """이미지 등록 프로세스"""
-        self.progress_dialog = QProgressDialog()
-        self.progress_dialog.setWindowTitle("Progress")
-        self.progress_dialog.setLabelText("얼굴을 등록 중 입니다")
-        self.progress_dialog.setCancelButtonText("취소")
-        self.progress_dialog.setRange(0, 0)
-        self.progress_dialog.canceled.connect(self.cancel_progress)
+        try:
+            self.progress_dialog = QProgressDialog()
+            self.progress_dialog.setWindowTitle("Progress")
+            self.progress_dialog.setLabelText("얼굴을 등록 중 입니다")
+            self.progress_dialog.setCancelButtonText("취소")
+            self.progress_dialog.setRange(0, 0)
+            self.progress_dialog.canceled.connect(self.cancel_progress)
+            
+            self.face_registration_processor.setup(images, self.current_person)
+            self.face_registration_processor.start()
+            
+            self.progress_dialog.exec()
+        except:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("얼굴 등록에 실패 했습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
         
-        self.face_registration_processor.setup(images, self.current_person)
-        self.face_registration_processor.start()
-        
-        self.progress_dialog.exec()
-        
-    def enroll_finished(self):
+    def enroll_finished(self, result : int):
         """이미지 등록 완료"""
+        
+        if result == 1:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진의 경우 등록이 어려울 수 있습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            
         self.progress_dialog.close()
 
     def cancel_progress(self):
         """등록 취소"""
         self.face_registration_processor.cancel()
-    
+        self.face_registration_processor.quit()
+        self.face_registration_processor.wait()
     
     def open_capture_window(self):
         """사진 캡쳐 페이지 Open"""
@@ -191,7 +211,7 @@ class PersonFaceDialog(QDialog):
             self.capture_window.photo_captured.connect(self.receive_photo_from_capture)
             self.capture_window.exec_()
         except Exception as e:
-            QMessageBox.warning(None, "경고", "이미지 등록에 실패했습니다", QMessageBox.Ok)
+            QMessageBox.warning(None, "경고", "얼굴 촬영에 실패 했습니다", QMessageBox.Ok)
             self.capture_window.close()
         
     def receive_photo_from_capture(self, photo):

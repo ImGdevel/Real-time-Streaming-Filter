@@ -26,16 +26,19 @@ class VideoPlayer(QWidget):
         
 
         self.start_button = QPushButton()
+        self.start_button.setToolTip('재생')
         self.start_button.setFixedSize(30,30)
         self.start_button.setIcon(QIcon(Icons.play_button))
         self.start_button.clicked.connect(self.start_video)
 
         self.pause_button = QPushButton()
+        self.pause_button.setToolTip('일시정지')
         self.pause_button.setFixedSize(30,30)
         self.pause_button.setIcon(QIcon(Icons.puse_button))
         self.pause_button.clicked.connect(self.pause_video)
 
         self.stop_button = QPushButton()
+        self.stop_button.setToolTip('정지')
         self.stop_button.setFixedSize(30,30)
         self.stop_button.setIcon(QIcon(Icons.stop_button))
         self.stop_button.clicked.connect(self.stop_video)

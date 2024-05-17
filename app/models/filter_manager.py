@@ -109,9 +109,17 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = filterinfo.name
-                filter.face_filter_on = filterinfo.face_filter_on
+                filter.background_blur = filterinfo.background_blur
                 filter.face_filter = filterinfo.face_filter
                 filter.object_filter = filterinfo.object_filter
+                self.save_filters()
+                return True
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_background_blur(self, filtername: str, background_blur: bool):
+        for filter in self.filter_list:
+            if filter.name == filtername:
+                filter.background_blur = background_blur
                 self.save_filters()
                 return True
         raise ValueError("존재하지 않는 filtername입니다.")
@@ -124,15 +132,6 @@ class FilterManager:
         for filter in self.filter_list:
             if filter.name == filtername:
                 filter.name = newname
-                self.save_filters()
-                return True
-        return False
-
-    def update_filter_face_filter_on(self, filtername: str, face_filter_on: bool):
-        """필터 프리셋의 얼굴 필터링 여부를 변경한다"""
-        for filter in self.filter_list:
-            if filter.name == filtername:
-                filter.face_filter_on = face_filter_on
                 self.save_filters()
                 return True
         return False
@@ -187,6 +186,23 @@ class FilterManager:
                 return
         raise ValueError("존재하지 않는 filtername입니다.")   
 
+    def update_imgsz_mag_in_filter(self, filter_name: str, imgsz_mag: float):
+        """필터 프리셋의 blur 강도를 변경한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                filter_obj.imgsz_mag = imgsz_mag
+                return
+        print("filterName:", filter_name)
+        raise ValueError("존재하지 않는 filtername입니다.")
+
+    def update_predict_conf_in_filter(self, filter_name: str, predict_conf: float):
+        """필터 프리셋의 blur 강도를 변경한다."""
+        for filter_obj in self.filter_list:
+            if filter_obj.name == filter_name:
+                filter_obj.predict_conf = predict_conf
+                return
+        print("filterName:", filter_name)
+        raise ValueError("존재하지 않는 filtername입니다.")
 
     def remove_filter(self, filter_name: str):
         """지정된 이름의 필터를 제거합니다."""
