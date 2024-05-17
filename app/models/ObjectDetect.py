@@ -148,7 +148,6 @@ class ObjectDetect:
             detections.extend(value)
         tracks = self.modelManager.tracker.update_tracks(detections, frame=img)
         last_results = dict()
-        last_results[-3] = []
         last_results[-2] = []
         last_results[-1] = []
         for track in tracks:
