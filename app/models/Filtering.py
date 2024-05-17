@@ -55,8 +55,8 @@ class Filtering:
         origins = self.object.origin_detect(img, conf ,mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
         for result in origins:  # 수정: isFace를 is_face로 변경                
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
-            cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
-            cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
+            # cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
+            # cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
             if result[2] == "Human face":
                 face_encode = face_encoding_box(img, box)
                 # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
