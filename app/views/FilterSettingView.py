@@ -7,7 +7,8 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QIcon, QFont, QValidator
 from views.component import (
     PersonFaceDialog, FilterListWidget, RegisteredFacesListWidget, AvailableFacesListWidget, 
-    TitleEdit, ObjectFilterSettngWidget, MosaicSettingWidget, ContentLabeling
+    TitleEdit, ObjectFilterSettngWidget, BlurSettingWidget, ContentLabeling
+    , DetectSettingWidget
 )
 from controllers import FilterSettingController, PersonFaceSettingController
 from utils import Colors, Style, Icons
@@ -138,7 +139,9 @@ class FilterSettingView(QWidget):
 
         self.object_filter_widget = ObjectFilterSettngWidget()
         
-        self.mosaic_setting_widget = MosaicSettingWidget()
+        self.mosaic_setting_widget = BlurSettingWidget()
+        
+        self.detect_setting_widget = DetectSettingWidget()
         
         content01 =  ContentLabeling()
         content01.setLabel("필터링 인물 설정")
@@ -152,11 +155,17 @@ class FilterSettingView(QWidget):
         content03.setLabel("모자이크 블러 설정")
         content03.setContent(self.mosaic_setting_widget)
         
+        content04 =  ContentLabeling()
+        content04.setLabel("감지 정확도 설정")
+        content04.setContent(self.detect_setting_widget)
+
+
         # 설정창 스택
         self.settings_content = QStackedWidget(self)
         self.settings_content.addWidget(content01)
         self.settings_content.addWidget(content02)
         self.settings_content.addWidget(content03)
+        self.settings_content.addWidget(content04)
     
         # 설정 목록에 들어갈 버튼 생성
         self.button1 = QPushButton("필터링 인물")
@@ -171,17 +180,23 @@ class FilterSettingView(QWidget):
         self.button3.setObjectName("setting03")
         self.button3.setMinimumHeight(45)
         self.button3.setCheckable(True)
+        self.button4 = QPushButton("감지 정확도")
+        self.button4.setObjectName("setting03")
+        self.button4.setMinimumHeight(45)
+        self.button4.setCheckable(True)
 
         #버튼 연결
         self.button1.clicked.connect(lambda: self.setup_setting_page(0))
         self.button2.clicked.connect(lambda: self.setup_setting_page(1))
         self.button3.clicked.connect(lambda: self.setup_setting_page(2))
+        self.button4.clicked.connect(lambda: self.setup_setting_page(3))
         
         button_group = QButtonGroup()
         button_group.setExclusive(False)
         button_group.addButton(self.button1)
         button_group.addButton(self.button2)
         button_group.addButton(self.button3)
+        button_group.addButton(self.button4)
         
         # 버튼을 수직으로 정렬하는 레이아웃 생성
         vbox = QVBoxLayout()
@@ -191,6 +206,7 @@ class FilterSettingView(QWidget):
         vbox.addWidget(self.button1)
         vbox.addWidget(self.button2)
         vbox.addWidget(self.button3)
+        vbox.addWidget(self.button4)
 
         # 설정 목록 위젯 생성 및 레이아웃 설정
         settings_list = QWidget()
@@ -214,6 +230,7 @@ class FilterSettingView(QWidget):
             self.button1.setChecked(True)
             self.button2.setChecked(False)
             self.button3.setChecked(False)
+            self.button4.setChecked(False)
         
         elif index == 1:
             self.settings_content.setCurrentIndex(1)
@@ -221,6 +238,7 @@ class FilterSettingView(QWidget):
             self.button2.setChecked(True)
             self.button1.setChecked(False)
             self.button3.setChecked(False)
+            self.button4.setChecked(False)
 
         elif index == 2:
             self.settings_content.setCurrentIndex(2)
@@ -228,6 +246,15 @@ class FilterSettingView(QWidget):
             self.button3.setChecked(True)
             self.button2.setChecked(False)
             self.button1.setChecked(False)
+            self.button4.setChecked(False)
+            
+        elif index == 3:
+            self.settings_content.setCurrentIndex(3)
+            self.detect_setting_widget.setup_detect_setting(self.current_filter)
+            self.button4.setChecked(True)
+            self.button2.setChecked(False)
+            self.button1.setChecked(False)
+            self.button3.setChecked(False)
 
 
     # 얼굴 레이어

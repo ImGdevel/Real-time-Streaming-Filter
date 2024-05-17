@@ -9,7 +9,8 @@ from utils import Colors, Style, Icons
 from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ObjectFilterSettngWidget, 
-    MosaicSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow
+    BlurSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow,
+    DetectSettingWidget
 )
 import cv2
 
@@ -252,8 +253,10 @@ class RealStreamView(QWidget):
         self.setting_01.onEventUpdate.connect(self.update_filter)
         self.setting_02 = ObjectFilterSettngWidget()
         self.setting_02.onEventUpdate.connect(self.update_filter)
-        self.setting_03 = MosaicSettingWidget()
+        self.setting_03 = BlurSettingWidget()
         self.setting_03.onEventUpdate.connect(self.update_filter)
+        self.setting_04 = DetectSettingWidget()
+        self.setting_04.onEventUpdate.connect(self.update_filter)
         
         self.widget1 = ContentLabeling()
         self.widget1.setLabel("필터링 인물 관리")
@@ -267,13 +270,18 @@ class RealStreamView(QWidget):
         self.widget3.setLabel("모자이크 블러 설정")
         self.widget3.setContent(self.setting_03)
         
+        self.widget4 = ContentLabeling()
+        self.widget4.setLabel("감지 정확도 설정")
+        self.widget4.setContent(self.setting_04)
+        
 
         # 스플리터 생성 및 각 위젯 추가
         splitter = QSplitter()
         splitter.addWidget(self.widget1)
         splitter.addWidget(self.widget2)
         splitter.addWidget(self.widget3)
-        splitter.setSizes([300, 200, 200])  # 초기 비율을 3:2:2로 설정
+        splitter.addWidget(self.widget4)
+        splitter.setSizes([300, 200, 200, 200])
 
         self.stackedWidget = QStackedWidget()
         self.empty = QWidget()
@@ -300,6 +308,7 @@ class RealStreamView(QWidget):
             self.setting_01.update_list()
             self.setting_02.setup_object_filter_widget(filter_name)
             self.setting_03.setup_mosaic_setting(filter_name)
+            self.setting_04.setup_detect_setting(filter_name)
 
 
     # method

@@ -7,6 +7,7 @@ from .list_widget import ListWidget, RegisteredFacesListWidget, AvailableFacesLi
 from .title_edit import TitleEdit
 from .video_player import VideoPlayer
 from .object_filters_widget import ObjectFilterSettngWidget
-from .mosaic_setting_widget import MosaicSettingWidget
+from .blur_setting_widget import BlurSettingWidget
+from .detection_setting_widget import DetectSettingWidget
 from .labeling import ContentLabeling
 from .cam_window import CamWindow
