@@ -86,12 +86,12 @@ class RealStreamProcessor(QThread):
             delta= time.time()-start
             if delta <SLEEP_TIME:
                 time.sleep(SLEEP_TIME-delta)
-                
+
             if self.is_record:
                 self.output_video.write(processed_frame)
 
         if width != None & height != None:
-            self.frame_clear(height, width)
+            self.frame_clear(width, height)
 
 
     def run_webcam(self):
@@ -124,7 +124,7 @@ class RealStreamProcessor(QThread):
             #print("time: "+ str(result))
         # 종료 후 프레임 비우기
         if width != None & height != None:
-            self.frame_clear(height, width)
+            self.frame_clear(width, height)
 
 
 
