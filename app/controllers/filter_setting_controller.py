@@ -60,6 +60,14 @@ class FilterSettingController:
         """필터 프리셋의 blur 모양을 반환한다."""
         return self.filter_manager.get_blur_shape_in_filter(filter_name)
     
+    def get_imgsz_mag_in_filter(self, filter_name: str):
+        """필터 프리셋의 imgsz_mag를 반환한다."""
+        return self.filter_manager.get_imgsz_mag_in_filter(filter_name)
+    
+    def get_predict_conf_in_filter(self, filter_name: str):
+        """필터 프리셋의 predict_conf를 반환한다."""
+        return self.filter_manager.get_predict_conf_in_filter(filter_name)
+
     def get_filters(self):
         """Filter """
         return self.filter_manager.get_filters()   
@@ -100,7 +108,14 @@ class FilterSettingController:
     def update_blur_shape_in_filter(self, filter_name: str, blur_shape: str):
         """필터 프리셋의 blur 모양을 변경한다."""
         return self.filter_manager.update_blur_shape_in_filter(filter_name, blur_shape)
-
+    
+    def update_imgsz_mag_in_filter(self, filter_name: str, imgsz_mag: float):
+        """필터 프리셋의 imgsz_mag를 변경한다."""
+        return self.filter_manager.update_imgsz_mag_in_filter(filter_name, imgsz_mag)
+    
+    def update_predict_conf_in_filter(self, filter_name: str, predict_conf: float):
+        """필터 프리셋의 predict_conf를 변경한다."""
+        return self.filter_manager.update_predict_conf_in_filter(filter_name, predict_conf)
 
     def delete_filter(self, filter_name: str):
         """Filter 삭제 메서드"""
