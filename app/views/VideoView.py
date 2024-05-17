@@ -135,19 +135,21 @@ class VideoView(QWidget):
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""
-        print("setProgress")
         self.progress_dialog.setValue(value)
 
     def cancelCounting(self):
         """인코딩 취소시"""
         self.video_processor.encoding_cancel()
-        print("원래 비디오 재생할게요?")
         self.encoding_video_path = self.origin_video_path
         self.play_video(self.origin_video_path)
         
     def get_encoding_video(self, video_path):
         """인코딩 후 영상 반환, 재생"""
-        print("get_encoding_video")
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("인코딩이 완료 되었습니다")
+        msg.setWindowTitle("알림")
+        msg.exec_()
         if self.video_processor.is_complete is True :
             self.encoding_video_path = video_path
             self.play_video(video_path)
@@ -156,10 +158,10 @@ class VideoView(QWidget):
     def download_video(self):
         """영상 다운로드"""
         try:
-            path = self.video_processor.download_video()
+            self.video_processor.download_video()
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText(f"다운로드가 완료되었습니다 \n{path}")
+            msg.setText("다운로드가 완료되었습니다")
             msg.setWindowTitle("알림")
             msg.exec_()
         except ValueError as e:

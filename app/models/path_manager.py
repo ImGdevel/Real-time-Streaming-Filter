@@ -84,11 +84,11 @@ class PathManager:
         documents_folder = find_documents_folder()
         if documents_folder:
             # Documents 폴더 내에 임시 다운로드 폴더 생성
-            download_folder = os.path.join(documents_folder, 'TempDownloads')
+            download_folder = os.path.join(documents_folder, 'CAMA')
             # TempDownloads 폴더가 없으면 생성
             if not os.path.exists(download_folder):
                 os.makedirs(download_folder)
-                print("TempDownloads 폴더를 생성했습니다.")
+                print("CAMA 폴더를 생성했습니다.")
             return download_folder
         else:
             print("Documents 폴더를 찾을 수 없습니다.")
