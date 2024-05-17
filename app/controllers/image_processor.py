@@ -58,9 +58,11 @@ class ImageProcessor():
             
             # 이미지 처리 
             blur_ratio = 50
-
-            boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = image
+            if self.filtering.current_filter_info is not None:
+                if self.filtering.current_filter_info.background_blur:
+                    processed_image = self.filtering.background_blur(processed_image)
+            boxesList = self.filtering.filtering(processed_image, is_video=False)
             for key in boxesList.keys():
                 if key == -1:
                     if boxesList[key] is not None:

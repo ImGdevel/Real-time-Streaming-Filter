@@ -75,11 +75,11 @@ class Filtering:
                 results[-2].append(box)
         return results
     
-    
+
     def background_blur(self, img):
-        mp_drawing = mp.solutions.drawing_utils
         mp_selfie_segmentation = mp.solutions.selfie_segmentation
-        BG_COLOR = (255, 255, 255)
+        BG_COLOR = (200,200,200)
+
         with mp_selfie_segmentation.SelfieSegmentation(model_selection=1) as selfie_segmentation:
             # 이미지 처리 과정 (img는 입력 이미지로 가정)
             img.flags.writeable = False
@@ -87,18 +87,19 @@ class Filtering:
             img.flags.writeable = True
 
             # 세그멘테이션 마스크 생성
-            condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > 0.1
+            condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > 0.5
 
             # 배경을 흐리게 처리
             blurred_background = cv2.GaussianBlur(img, (55, 55), 0)
 
             # 경계를 부드럽게 만들기 위해 사람 영역 확장
-            kernel = np.ones((15, 15), np.uint8)
-            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=1)
+            kernel = np.ones((10, 10), np.uint8)  # 작은 kernel 크기로 변경
+            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=2)  # 작은 iteration 값으로 변경
 
             # 흐린 배경과 원본 이미지를 조합하여 부드러운 경계 생성
             img = np.where(dilated_condition, img, blurred_background)
         return img
+
 
     def filtering(self, img, is_video=True):
         if self.current_filter_info is None:

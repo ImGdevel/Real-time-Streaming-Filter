@@ -78,6 +78,9 @@ class VideoProcessor(QThread):
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
         processed_frame = frame
+        if self.filtering.current_filter_info is not None:
+            if self.filtering.current_filter_info.background_blur:
+                processed_frame = self.filtering.background_blur(processed_frame)
         boxesList = self.filtering.filtering(frame)    
         for key in boxesList.keys():
             if key == -1:
