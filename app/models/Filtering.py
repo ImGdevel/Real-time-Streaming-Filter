@@ -7,6 +7,7 @@ from .filter_info import Filter
 from .path_manager import PathManager
 import cv2
 import numpy as np
+import mediapipe as mp
 
 class Filtering:
     """
@@ -56,15 +57,16 @@ class Filtering:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
             cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
-            if self.current_filter_info.face_filter_on is True:
-                if result[2] == "Human face":
-                    face_encode = face_encoding_box(img, box)
-                    # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                    is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
-                    if is_known is not None: 
-                        results[int(is_known)].append(result)
-                    else:
-                        results[-1].append(result)
+            if result[2] == "Human face":
+                face_encode = face_encoding_box(img, box)
+                # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+                is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
+                if is_known is not None: 
+                    results[int(is_known)].append(result)
+                else:
+                    results[-1].append(result)
+            else:
+                results[-3].append(result)
         return results
     
     def object_filter(self, img, results):
@@ -74,12 +76,127 @@ class Filtering:
                 box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
                 results[-2].append(box)
         return results
+    
+    def remove_high_overlap_boxes_within_list(self, boxes, threshold=0.9):
+        def calculate_area(box):
+            x1, y1, x2, y2 = box
+            return (x2-x1) * (y2-y1)
+
+        def calculate_intersection_area(box1, box2):
+            x1_1, y1_1, x2_1, y2_1 = box1
+            x1_2, y1_2, x2_2, y2_2 = box2
+
+            intersection_x1 = max(x1_1, x1_2)
+            intersection_y1 = max(y1_1, y1_2)
+            intersection_x2 = min(x2_1, x2_2)
+            intersection_y2 = min(y2_1, y2_2)
+
+            intersection_width = max(0, intersection_x2 - intersection_x1)
+            intersection_height = max(0, intersection_y2 - intersection_y1)
+
+            return intersection_width * intersection_height
+
+        filtered_boxes = boxes.copy()
+
+        for i in range(len(boxes)):
+            for j in range(i + 1, len(boxes)):
+                box_a = boxes[i]
+                box_b = boxes[j]
+                intersection_area = calculate_intersection_area(box_a, box_b)
+                area_a = calculate_area(box_a)
+                area_b = calculate_area(box_b)
+
+                if intersection_area / area_a >= threshold or intersection_area / area_b >= threshold:
+                    if box_b in filtered_boxes:
+                        filtered_boxes.remove(box_b)
+
+        return filtered_boxes
+
+
+    def fully_overlapping_boxes(self, a_boxes, b_boxes):
+        fully_overlapping = []
+
+        for box_a in a_boxes:
+            x1_a, y1_a, x2_a, y2_a = box_a
+
+            for box_b in b_boxes:
+                x1_b, y1_b, x2_b, y2_b = box_b
+
+                # box_a가 box_b 안에 완전히 포함되는지 확인
+                if (x1_a >= x1_b and y1_a >= y1_b and x2_a <= x2_b and y2_a <= y2_b):
+                    fully_overlapping.append(box_b)
+                    break
+
+        return fully_overlapping
+
+    def blur_background(self, image, box_list, blur_kernel_size=(55, 55)):
+        blurred_image = image.copy()
+        persons = []
+        faces = []
+        temp = []
+        for key, box in box_list.items():
+            if len(box) > 0:
+                if key == -3:
+                    persons.extend(box)
+                elif key >= -1:
+                    faces.extend(box)
+        if len(persons) > 0 and len(faces) > 0:
+            persons = self.remove_high_overlap_boxes_within_list(persons)
+            temp = self.fully_overlapping_boxes(faces, persons)
+        elif len(faces) == 0:
+            temp = []
+
+        if len(temp) == 0:
+            # temp가 비었을 경우 전체 이미지를 블러 처리
+            image = cv2.GaussianBlur(image, blur_kernel_size, 0)
+        # 박스 리스트 순회
+        for box in temp:
+            x1, y1, x2, y2 = box[0], box[1], box[0]+box[2], box[1]+box[3]  # 박스의 좌표 (x1, y1): 좌상단, (x2, y2): 우하단
+
+            # 박스에 해당하는 부분은 스킵
+            blurred_image[y1:y2, x1:x2] = image[y1:y2, x1:x2]
+
+        # 전체 이미지에서 박스에 해당하지 않는 부분에만 가우시안 블러 적용
+        mask = np.ones_like(image, dtype=np.uint8) * 255
+        for box in temp:
+            x1, y1, x2, y2 = box[0], box[1], box[0]+box[2], box[1]+box[3]  # 박스의 좌표 (x1, y1): 좌상단, (x2, y2): 우하단
+            mask[y1:y2, x1:x2] = 0  # 박스에 해당하는 부분은 마스크에서 0으로 설정
+
+        blurred_background = cv2.GaussianBlur(image, blur_kernel_size, 0)
+        blurred_image = np.where(mask == 255, blurred_background, blurred_image)
+
+        return blurred_image
+    
+    def background_blur(self, img):
+        mp_drawing = mp.solutions.drawing_utils
+        mp_selfie_segmentation = mp.solutions.selfie_segmentation
+        BG_COLOR = (255, 255, 255)
+        with mp_selfie_segmentation.SelfieSegmentation(model_selection=1) as selfie_segmentation:
+            # 이미지 처리 과정 (img는 입력 이미지로 가정)
+            img.flags.writeable = False
+            results = selfie_segmentation.process(img)
+            img.flags.writeable = True
+
+            # 세그멘테이션 마스크 생성
+            condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > 0.1
+
+            # 배경을 흐리게 처리
+            blurred_background = cv2.GaussianBlur(img, (55, 55), 0)
+
+            # 경계를 부드럽게 만들기 위해 사람 영역 확장
+            kernel = np.ones((15, 15), np.uint8)
+            dilated_condition = cv2.dilate(condition.astype(np.uint8), kernel, iterations=3)
+
+            # 흐린 배경과 원본 이미지를 조합하여 부드러운 경계 생성
+            img = np.where(dilated_condition, img, blurred_background)
+        return img
 
     def filtering(self, img, is_video=True):
         if self.current_filter_info is None:
             return dict()
-
+                
         results = dict()
+        results[-3] = []
         results[-2] = []
         results[-1] = []
         temp_ratio = self.current_filter_info.imgsz_mag * 3 / 100 + 0.01 # 임시로 UI사용하려고 만든 todo 0.01은 0 되지 말라고 넣어놨는데 if로 했다가 이게 더 나은거같음
@@ -87,10 +204,16 @@ class Filtering:
         #print(temp_ratio)
         
         results = self.face_filter(img, results, conf, temp_ratio)
-
+        
         if is_video:
             if len(results) != 0:
+                temp = []
+                for box in results[-3]:
+                    tb = [box[0][0], box[0][1], box[0][0]+box[0][2], box[0][1]+box[0][3]]
+                    temp.append(tb)
+                del results[-3]
                 results = self.object.object_track(img, results)
+                results[-3] = temp
             if self.init_id is True:
                 self.object.init_exclude_id()
                 self.init_id = False
@@ -256,21 +379,32 @@ class Filtering:
             if self.current_filter_info.face_filter_on:
                 if "Human face" not in self.current_filter_info.object_filter:
                     self.current_filter_info.object_filter.append("Human face")
+                if "Person" not in self.current_filter_info.object_filter:
+                    self.current_filter_info.object_filter.append("Person")
+                if "Woman" not in self.current_filter_info.object_filter:
+                    self.current_filter_info.object_filter.append("Woman")
+                if "Man" not in self.current_filter_info.object_filter:
+                    self.current_filter_info.object_filter.append("Man")
             self.object.set_filter_classes(self.current_filter_info.object_filter)
             self.object.set_known_faces(current_filter.face_filter.keys())
 
     def filter_state_check(self, results):
         """filter가 변경됐는지 확인하고 변경사항을 적용한다."""
+        temp = results
         if self.filter_change is True:
             self.change_filter(self.change_filter_info)
             self.change_filter_info = None
             self.filter_change = False
-            temp = []
-            for values in results.values():
-                temp.extend(values)
-            results = dict()
-            results[-1] = temp
-        return results
+            temp = {}
+            temp[-3] = results[-3]
+            temp[-2] = results[-2]
+            temp[-1] = results[-1]
+            faces = []
+            for key, value in results.items():
+                if key > -1:
+                    faces.extend(value)
+            temp[-1].extend(value)
+        return temp
 
     def tracking_id_init(self):
         """저장된 track_id 정보를 초기화한다."""
