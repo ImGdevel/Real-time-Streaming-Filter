@@ -114,7 +114,7 @@ class RealStreamProcessor(QThread):
             #result = end - start
             #print("time: "+ str(result))
         # 종료 후 프레임 비우기
-        self.frame_clear(height, width)
+        self.frame_clear(width, height)
 
 
     def process_frame(self, frame):
