@@ -382,6 +382,7 @@ class RealStreamView(QWidget):
             self.setup_settings(filter_name)
         else:
             print("[Log] : 필터 미선택")
+            self.current_filter = None
             self.streaming_processor.set_filter(None)
             self.show_setting(False)
             

@@ -101,6 +101,7 @@ class FilterListWidget(ListWidget):
         self.button_group = QButtonGroup()
         self.button_group.setExclusive(True)
         self.filter_setting_processor = FilterSettingController()
+        self.seleted_filter = None
         self.update_list()
     
     def create_button(self, item_name: str, item_data = None):
@@ -118,7 +119,20 @@ class FilterListWidget(ListWidget):
         shadow_effect.setOffset(3, 3)
         widget.setGraphicsEffect(shadow_effect) 
 
-        return widget        
+        return widget 
+
+    def emit_button_clicked(self):
+        """아이템 클릭 시그널을 발생시키는 메서드"""
+        widget = self.sender()
+        if widget:
+            if self.seleted_filter != widget.objectName():
+                self.seleted_filter = widget.objectName()
+                self.onClickItemEvent.emit(widget.objectName())  # ObjectName을 시그널로 전달
+            else:
+                self.seleted_filter = None
+                self.onClickItemEvent.emit(None)  # ObjectName을 시그널로 전달
+                self.update_list()
+                
     
     def update_list(self):
         self.clear()
