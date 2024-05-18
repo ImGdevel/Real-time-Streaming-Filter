@@ -458,7 +458,7 @@ class RealStreamView(QWidget):
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
-        self.streaming_processor.wait()
+        #self.streaming_processor.wait()
         self.timer.stop()
         del self.streaming_processor
         del self.timer
