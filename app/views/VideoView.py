@@ -25,8 +25,6 @@ class VideoView(QWidget):
         self.video_player = VideoPlayer()
         self.video_player.setPlayVideo.connect(self.get_encoding_video)
         
-        right_layout = QWidget()
-        
         # 설정 위젯에 버튼 추가
         left_layout = self.initSettingButtons()
         
@@ -61,12 +59,21 @@ class VideoView(QWidget):
         self.button2.setStyleSheet(Style.mini_button_style)
         self.button2.setFixedHeight(40)
         self.button2.clicked.connect(self.download_video)
-        self.button3 = QPushButton()
-        self.button3.setIcon(QIcon(Icons.folder_open))
-        self.button3.clicked.connect(self.openFileDialog)
-        self.button3.setFixedSize(50, 50)
-        self.button3.setToolTip("파일탐색")
+        
+        tool_button_frame = QWidget()
+        tool_button_layout = QHBoxLayout()
+        tool_button_layout.setAlignment(Qt.AlignLeft)
+        
+        button3 = QPushButton()
+        button3.setIcon(QIcon(Icons.folder_open))
+        button3.setStyleSheet(Style.mini_button_style)
+        button3.clicked.connect(self.openFileDialog)
+        button3.setFixedSize(50, 50)
+        button3.setToolTip("파일탐색")
         setting_widget.addWidget(list_frame)
+        
+        tool_button_layout.addWidget(button3)
+        tool_button_frame.setLayout(tool_button_layout)
 
         setting_button_layout = QVBoxLayout()
         setting_button_frame = QWidget()
@@ -76,7 +83,7 @@ class VideoView(QWidget):
         setting_button_frame.setLayout(setting_button_layout)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.button3)
+        layout.addWidget(tool_button_frame)
         layout.addWidget(setting_widget)
         layout.addWidget(setting_button_frame)
         layout.setContentsMargins(5,5,5,5)
