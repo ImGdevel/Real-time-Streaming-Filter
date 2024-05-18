@@ -92,12 +92,14 @@ class RealStreamView(QWidget):
         self.play_pause_button.clicked.connect(self.toggle_webcam)
 
         # 녹화 버튼
-        self.stop_button = QPushButton()
-        self.stop_button.setFixedSize(50, 50)
-        self.stop_button.setStyleSheet(Style.mini_button_style)
-        self.stop_button.setToolTip("화면 녹화 시작")
-        self.stop_button.setIcon(QIcon(Icons.recode))
-        self.stop_button.clicked.connect(self.record_video)
+        self.recode_button = QPushButton()
+        self.recode_button.setFixedSize(50, 50)
+        self.recode_button.setStyleSheet(Style.mini_button_style)
+        self.recode_button.setToolTip("화면 녹화 시작")
+        self.recode_button.setIcon(QIcon(Icons.recode))
+        self.recode_button.setCheckable(True)
+        self.recode_button.clicked.connect(self.record_video)
+        
 
         # 새 창 버튼
         self.new_window_button = QPushButton()
@@ -106,10 +108,10 @@ class RealStreamView(QWidget):
         self.new_window_button.setToolTip("새 창")
         self.new_window_button.setIcon(QIcon(Icons.browser))
         self.new_window_button.clicked.connect(self.open_new_window)
-
+        
         # 상단 버튼 레이아웃 설정
         core_buttons_layout.addWidget(self.play_pause_button)
-        core_buttons_layout.addWidget(self.stop_button)
+        core_buttons_layout.addWidget(self.recode_button)
         core_buttons_layout.addWidget(self.new_window_button)
         core_buttons_layout.setSpacing(10)  # 버튼 사이 간격 설정
         
@@ -346,8 +348,18 @@ class RealStreamView(QWidget):
     def record_video(self):
         '''웹캠 정지 메서드'''
         # todo : 웹 캠 정지 -> 녹화기능으로 변경
-        try: 
-            self.streaming_processor.recordOn()
+        try:
+            print(self.recode_button.isChecked())
+            
+            if self.recode_button.isChecked():
+                self.recode_button.setChecked(True)
+                self.streaming_processor.recordOn()
+                self.recode_button.setStyleSheet(Style.mini_button_style_seletecd)
+            else:
+                self.recode_button.setChecked(False)
+                self.streaming_processor.recordOff()
+                self.recode_button.setStyleSheet(Style.mini_button_style)
+            
         except Exception as e:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)

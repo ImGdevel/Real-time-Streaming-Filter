@@ -203,14 +203,10 @@ class RealStreamProcessor(QThread):
         print("Clicked coordinates:", self.capture_area)
         self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
 
-
-
     def set_web_cam(self, web_cam):
-
         '''웹캠 설정'''
         if self.isRunning():
             self.pause()  # 스레드가 실행 중이면 중지
-        print("set_web_cam")
         self.capture_mode = 0
         if self.current_webcam != web_cam:  # 새로운 웹캠이 이전과 다를 경우에만 설정 변경
             if self.video_cap is not None:
@@ -245,6 +241,9 @@ class RealStreamProcessor(QThread):
         self.video_path = os.path.join(self.video_path, "Recodes" ,video_name)
         self.output_video = cv2.VideoWriter(self.video_path, fourcc, fps, (frame_width, frame_height))
         self.is_record = True
+        
+    def recordOff(self):
+        self.is_record = False
     
     def set_webcam_mode(self):
         self.capture_mode = 0
