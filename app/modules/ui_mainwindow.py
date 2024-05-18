@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 from .resources_rc import *
+from utils import Icons
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -957,9 +958,9 @@ class Ui_MainWindow(object):
         self.settingsTopBtn.setMinimumSize(QSize(28, 28))
         self.settingsTopBtn.setMaximumSize(QSize(28, 28))
         self.settingsTopBtn.setCursor(QCursor(Qt.PointingHandCursor))
-        icon1 = QIcon()
-        icon1.addFile(u":/icons/resources/icons/icon_settings.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.settingsTopBtn.setIcon(icon1)
+        #icon1 = QIcon()
+        #icon1.addFile(u":/icons/resources/icons/icon_bell.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.settingsTopBtn.setIcon(QIcon(Icons.bell))
         self.settingsTopBtn.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_2.addWidget(self.settingsTopBtn)
@@ -1593,19 +1594,19 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
         self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"CAMA  Real-time Streaming Filtering Application", None))
 #if QT_CONFIG(tooltip)
-        self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"도움말", None))
 #endif // QT_CONFIG(tooltip)
         self.settingsTopBtn.setText("")
 #if QT_CONFIG(tooltip)
-        self.minimizeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Minimize", None))
+        self.minimizeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"최소화", None))
 #endif // QT_CONFIG(tooltip)
         self.minimizeAppBtn.setText("")
 #if QT_CONFIG(tooltip)
-        self.maximizeRestoreAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Maximize", None))
+        self.maximizeRestoreAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"최대화", None))
 #endif // QT_CONFIG(tooltip)
         self.maximizeRestoreAppBtn.setText("")
 #if QT_CONFIG(tooltip)
-        self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
+        self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"종료", None))
 #endif // QT_CONFIG(tooltip)
         self.closeAppBtn.setText("")
         self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("MainWindow", u"FILE BOX", None))

@@ -33,6 +33,7 @@ class Icons:
     cam = resource_path('resources/icons/cil-cam.png')
     
     mini = resource_path('resources/icons/icon_restore.png')
+    bell = resource_path('resources/icons/cil-bell.png')
     
     
     
