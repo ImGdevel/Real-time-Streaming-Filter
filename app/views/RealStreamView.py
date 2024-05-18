@@ -369,6 +369,7 @@ class RealStreamView(QWidget):
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
+            self.recode_button.setChecked(False)
     
     def stop_webcam(self):
         if self.streaming_processor.isRunning():
