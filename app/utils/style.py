@@ -129,6 +129,17 @@ class Style:
         }}
     """
     
+    mini_button_style_seletecd = f"""
+        QPushButton {{
+            background-color: {Colors.identity_color_04};
+            border: 2px solid {Colors.identity_color_05};
+            border-radius: 5px;
+            font-size: 15px;
+            padding: 0px;
+        }}
+        
+    """
+    
     line_edit_style = f"""
         QLineEdit {{
             background-color: {Colors.base_color_04};

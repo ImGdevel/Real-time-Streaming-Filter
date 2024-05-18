@@ -82,6 +82,8 @@ class MainWindow(QMainWindow):
         widgets.btn_image.setToolTip('이미지 필터링')
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
         widgets.btn_filter_setting.setToolTip('필터설정 프리셋')
+        widgets.settingsTopBtn.clicked.connect(UIFunctions.open_website)
+        widgets.settingsTopBtn.setToolTip("도움말")
 
         # WebCam State
         self.webcam_state = False

@@ -134,6 +134,8 @@ class UIFunctions(MainWindow):
             # GET BTN STYLE
             style = self.ui.settingsTopBtn.styleSheet()
 
+            return 
+            
             # SET MAX WIDTH
             if width == 0:
                 widthExtended = maxExtend
@@ -148,6 +150,16 @@ class UIFunctions(MainWindow):
                 self.ui.settingsTopBtn.setStyleSheet(style.replace(color, ''))
 
             UIFunctions.start_box_animation(self, widthLeftBox, width, "right")
+
+    def open_website():
+        # 특정 웹사이트 URL 입력
+        print("버튼 클릭")
+        url = "https://github.com/ImGdevel/Real-time-Streaming-Filter/wiki"
+        # QDesktopServices 클래스 사용하여 웹사이트 열기
+        from PySide6.QtGui import QDesktopServices
+        from PySide6.QtCore import QUrl
+        QDesktopServices.openUrl(QUrl(url))
+        
 
     def start_box_animation(self, left_box_width, right_box_width, direction):
         right_width = 0
