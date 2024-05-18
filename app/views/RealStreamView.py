@@ -331,7 +331,10 @@ class RealStreamView(QWidget):
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 시작")
         self.streaming_processor.pause()
-        #self.streaming_processor.stop()
+        if self.recode_button.isChecked():
+            self.recode_button.setChecked(False)
+            self.streaming_processor.recordOff()
+            self.recode_button.setStyleSheet(Style.mini_button_style)
         self.timer.stop()
         
         
