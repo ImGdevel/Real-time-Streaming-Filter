@@ -179,6 +179,10 @@ class RealStreamProcessor(QThread):
     def stop(self):
         '''스레드 종료 메서드'''
         self.is_running = False
+        if self.is_record:
+            self.is_record = False
+            self.output_video.release()
+        self.filtering.tracking_id_init()
         self.quit()
         if self.video_cap is not None:
             self.video_cap.release()
