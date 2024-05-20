@@ -23,6 +23,7 @@ class RealStreamView(QWidget):
         self.stream_video_player = StreamVideoPlayer()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.streaming_processor.frame_ready.connect(self.stream_video_player.update_video)  # 프레임 수신 시 GUI 업데이트 연결
+        self.stream_video_player.select_forcus_signal.connect(self.set_focus_area)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.stream_video_player.update_video)
         self.current_filter = None
@@ -211,9 +212,18 @@ class RealStreamView(QWidget):
         self.focus_area_capture_button.setStyleSheet(Style.mini_button_style)
         self.focus_area_capture_button.setIcon(QIcon(Icons.screen_desktop))
         self.focus_area_capture_button.setToolTip('영역 선택')
-        self.focus_area_capture_button.clicked.connect(self.set_focus_area_size)
+        self.focus_area_capture_button.clicked.connect(self.set_focus_area_Mode)
 
-        screen_focus_area_layout.addWidget(self.focus_area_capture_button,1)
+        self.focus_area_reset_button = QPushButton()
+        self.focus_area_reset_button.setFixedSize(40, 40)
+        self.focus_area_reset_button.setStyleSheet(Style.mini_button_style)
+        self.focus_area_reset_button.setIcon(QIcon(Icons.dust_bin))
+        self.focus_area_reset_button.setToolTip('초기화')
+        self.focus_area_reset_button.clicked.connect(self.reset_focus_area)
+
+
+        screen_focus_area_layout.addWidget(self.focus_area_capture_button)
+        screen_focus_area_layout.addWidget(self.focus_area_reset_button)
         screen_focus_area_widget.setLayout(screen_focus_area_layout)
 
         # 위젯 전환
@@ -506,8 +516,7 @@ class RealStreamView(QWidget):
     def swap_event(self):
         self.stop_streaming()
         
-        
-    def set_focus_area_size(self):
+    def set_focus_area_Mode(self):
         if self.streaming_processor.is_running is True:
             self.stream_video_player.setFocusSelectMode(True)
         else:
@@ -518,3 +527,9 @@ class RealStreamView(QWidget):
             msg.setWindowTitle("경고")
             msg.exec_()
     
+    def set_focus_area(self, x1, y1, x2, y2):
+        print((x1, y1, x2, y2))
+        self.streaming_processor.set_focus_area((x1, y1, x2, y2))
+    
+    def reset_focus_area(self):
+        self.streaming_processor.del_focus_area()
