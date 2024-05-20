@@ -30,6 +30,7 @@ class RealStreamProcessor(QThread):
         self.video_path : str = None
         self.is_record = False
         self.output_video = None
+        self.focus_detection_area = None
         
     class WindowCapture:
         def __init__(self, window_name=None, capture_rate=30, region=None, processor = None):
@@ -133,7 +134,7 @@ class RealStreamProcessor(QThread):
         if self.filtering.current_filter_info is not None:
             if self.filtering.current_filter_info.background_blur:
                 processed_frame = self.filtering.background_blur(frame)
-        boxesList = self.filtering.filtering(processed_frame)  
+        boxesList = self.filtering.filtering(processed_frame, focus_area=self.focus_detection_area)  
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
@@ -255,3 +256,9 @@ class RealStreamProcessor(QThread):
     
     def set_webcam_mode(self):
         self.capture_mode = 0
+
+    def set_focus_area(self, box):
+        self.focus_detection_area = box
+
+    def del_focus_area(self):
+        self.focus_detection_area = None
