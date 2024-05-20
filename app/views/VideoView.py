@@ -130,7 +130,7 @@ class VideoView(QWidget):
 
             self.video_processor.start()
 
-            #self.progress_dialog.exec_()
+            self.progress_dialog.exec_()
             
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
