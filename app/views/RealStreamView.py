@@ -27,8 +27,8 @@ class RealStreamView(QWidget):
         self.timer.timeout.connect(self.stream_video_player.update_video)
         self.current_filter = None
         self.cam_dialog = None
-        self.original_size : QSize = None
-        self.current_size : QSize = None
+        # self.original_size : QSize = None
+        # self.current_size : QSize = None
         self.initUI()
 
     def initUI(self):
@@ -518,8 +518,7 @@ class RealStreamView(QWidget):
         
     def set_focus_area_size(self):
         if self.streaming_processor.is_running is True:
-            print(self.original_size)
-            print(self.current_size)
+            self.stream_video_player.focusSelectMode = not self.stream_video_player.focusSelectMode
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
@@ -527,36 +526,3 @@ class RealStreamView(QWidget):
             msg.setWindowTitle("경고")
             msg.exec_()
     
-    def convert_focus_area_coordinates(self, x1, y1, x2, y2):
-        if self.original_size is None :
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("원본 이미지 사이즈를 인식할 수 없습니다.")
-            msg.setWindowTitle("경고")
-            msg.exec_()
-            return
-        elif self.current_size is None:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("현재 이미지 사이즈를 인식할 수 없습니다.")
-            msg.setWindowTitle("경고")
-            msg.exec_()
-            return
-        
-        width1 = self.current_size.width()
-        height1 = self.current_size.height()
-        # 변환할 이미지의 너비와 높이
-        width2 = self.original_size.width()
-        height2 = self.original_size.height()
-        
-        # 너비와 높이의 비율 계산
-        width_ratio = width2 / width1
-        height_ratio = height2 / height1
-        
-        # 새로운 이미지 크기에 맞게 좌표 변환
-        new_x1 = x1 * width_ratio
-        new_y1 = y1 * height_ratio
-        new_x2 = x2 * width_ratio
-        new_y2 = y2 * height_ratio
-    
-        return new_x1, new_y1, new_x2, new_y2
