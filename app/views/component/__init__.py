@@ -11,3 +11,4 @@ from .blur_setting_widget import BlurSettingWidget
 from .detection_setting_widget import DetectSettingWidget
 from .labeling import ContentLabeling
 from .cam_window import CamWindow
+from .stream_player import StreamVideoPlayer

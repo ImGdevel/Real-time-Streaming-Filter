@@ -10,7 +10,7 @@ from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ObjectFilterSettngWidget, 
     BlurSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow,
-    DetectSettingWidget
+    DetectSettingWidget, StreamVideoPlayer
 )
 import cv2
 
@@ -20,12 +20,14 @@ class RealStreamView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filter_controller = FilterSettingController()
+        self.stream_video_player = StreamVideoPlayer()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
-        self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
+        self.streaming_processor.frame_ready.connect(self.stream_video_player.update_video)  # 프레임 수신 시 GUI 업데이트 연결
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_video)
+        self.timer.timeout.connect(self.stream_video_player.update_video)
         self.current_filter = None
         self.cam_dialog = None
+        self.temp_mode = True
         self.initUI()
 
     def initUI(self):
@@ -228,17 +230,9 @@ class RealStreamView(QWidget):
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
-        frame = QFrame()
-        video_layout = QHBoxLayout()
+        video = self.stream_video_player
         
-        self.video_box = QLabel()  # 비디오 플레이어 레이블
-        self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
-        video_layout.addWidget(self.video_box)
-        self.video_box.setMaximumWidth(725)
-        frame.setLayout(video_layout)
-        
-        return frame
+        return video
         
 
     def setup_bottom_layer(self):
@@ -406,12 +400,6 @@ class RealStreamView(QWidget):
         if self.current_filter:
             self.streaming_processor.set_filter(self.current_filter)
         
-    def update_video(self, q_img=None):
-        '''비디오 업데이트 메서드'''
-        if q_img is None:
-            return
-        pixmap = QPixmap.fromImage(q_img)
-        self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
     
     def select_video_option(self, index):
         if index == 0:  # 웹캠 선택
@@ -453,6 +441,7 @@ class RealStreamView(QWidget):
         combox.addItems(namelist)
         self.webcam_combo = combox
         self.streaming_processor.set_webcam_mode()
+
 
     def render(self):
         """페이지 refesh"""
