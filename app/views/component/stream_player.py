@@ -22,7 +22,10 @@ class StreamVideoPlayer(QWidget):
         # FocusDetectSelectArea를 show_box와 동일한 위치와 크기로 추가
         self.overlay = FocusDetectSelectArea(self.show_box)
         self.overlay.setGeometry(0, 0, self.show_box.width(), self.show_box.height())
-        self.overlay.raise_()
+        self.overlay.raise_()  # overlay를 맨 앞으로 가져옴
+
+        # 신호 연결
+        self.overlay.areaSelected.connect(self.handle_area_selected)
 
         self.setLayout(video_layout)
 
@@ -38,12 +41,6 @@ class StreamVideoPlayer(QWidget):
         pixmap = QPixmap.fromImage(frame)
         self.show_box.setPixmap(pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.AspectRatioMode.KeepAspectRatio))
 
-    def enterEvent(self, event):
-        if self.focusSelectMode:
-            self.show_box.setCursor(Qt.CrossCursor)
-
-    def setMode(self, mode : bool):
-        self.focusSelectMode = mode
-    
-    def setSize(self, size:QSize):
-        self.video_size = size
+    def handle_area_selected(self, x1, x2, y1, y2):
+        '''영역 선택 신호를 처리하는 슬롯'''
+        print(f"Selected area: x1={x1}, x2={x2}, y1={y1}, y2={y2}")
