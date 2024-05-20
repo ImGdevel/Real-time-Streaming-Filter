@@ -148,14 +148,14 @@ class RealStreamView(QWidget):
         self.screen_button.setStyleSheet(Style.cam_button)
         self.screen_button.clicked.connect(lambda: self.select_video_option(1))
 
-        self.screen_focuse_button = QPushButton("집중 탐색")
-        self.screen_focuse_button.setFixedSize(80,30)
-        self.screen_focuse_button.setStyleSheet(Style.cam_button)
-        self.screen_focuse_button.clicked.connect(lambda: self.select_video_option(2))
+        self.screen_focus_button = QPushButton("집중 탐색")
+        self.screen_focus_button.setFixedSize(80,30)
+        self.screen_focus_button.setStyleSheet(Style.cam_button)
+        self.screen_focus_button.clicked.connect(lambda: self.select_video_option(2))
     
         button_layout.addWidget(self.webcam_button)
         button_layout.addWidget(self.screen_button)
-        button_layout.addWidget(self.screen_focuse_button)
+        button_layout.addWidget(self.screen_focus_button)
         button_layout_frame.setLayout(button_layout)
         
         # 웹캠 선택시 내용 출력
@@ -437,17 +437,17 @@ class RealStreamView(QWidget):
         if index == 0:  # 웹캠 선택
             self.webcam_button.setStyleSheet(Style.cam_button_selected)
             self.screen_button.setStyleSheet(Style.cam_button)
-            self.screen_focuse_button.setStyleSheet(Style.cam_button)
+            self.screen_focus_button.setStyleSheet(Style.cam_button)
             self.video_options_content.setCurrentIndex(0)
         elif index == 1:  # 화면 캡쳐 선택
             self.screen_button.setStyleSheet(Style.cam_button_selected)
             self.webcam_button.setStyleSheet(Style.cam_button)
-            self.screen_focuse_button.setStyleSheet(Style.cam_button)
+            self.screen_focus_button.setStyleSheet(Style.cam_button)
             self.video_options_content.setCurrentIndex(1)
         elif index == 2:
             self.screen_button.setStyleSheet(Style.cam_button)
             self.webcam_button.setStyleSheet(Style.cam_button)
-            self.screen_focuse_button.setStyleSheet(Style.cam_button_selected)
+            self.screen_focus_button.setStyleSheet(Style.cam_button_selected)
             self.video_options_content.setCurrentIndex(2)
             
     
