@@ -36,7 +36,16 @@ class StreamVideoPlayer(QWidget):
 
     def setOverlaySize(self):
         """overlay의 크기를 재 설정"""
-        self.overlay.setGeometry(0,0, self.current_size.width(), self.show_box.height())
+        scaled_image = self.show_box.pixmap()
+        if scaled_image.isNull():
+            return
+        # 현재 show_box의 크기와 이미지의 크기를 비교하여 오프셋을 계산합니다.
+        offset_x = (self.show_box.width() - scaled_image.width()) // 2
+        offset_y = (self.show_box.height() - scaled_image.height()) // 2
+
+        print("영역:", offset_x, offset_y, scaled_image.width(), scaled_image.height())
+
+        self.overlay.setGeometry(offset_x, offset_y, scaled_image.width(), scaled_image.height())
 
     def update_video(self, frame: QImage = None):
         '''비디오 업데이트 메서드'''
@@ -46,16 +55,18 @@ class StreamVideoPlayer(QWidget):
             self.original_size = frame.size()
         
         pixmap = QPixmap.fromImage(frame)
-        self.show_box.setPixmap(pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio))
+        scaled_image = pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio)
+        self.show_box.setPixmap(scaled_image)
+
         if self.current_size is None:
-            self.current_size = QSize(self.show_box.width(), self.show_box.height())
+            self.current_size = QSize(scaled_image.width(), scaled_image.height())
             self.setOverlaySize()
-        elif self.current_size.width() != self.show_box.width() or self.current_size.height() != self.show_box.height():
-            self.current_size = QSize(self.show_box.width(), self.show_box.height())
+        elif self.current_size.width() != scaled_image.width() or scaled_image.height() != scaled_image.height():
+            self.current_size = QSize(scaled_image.width(), scaled_image.height())
             self.setOverlaySize()
 
     def handle_area_selected(self, x1, y1, x2, y2):
-        print(f"Selected area: x1={x1}, x2={x2}, y1={y1}, y2={y2}")
+        print(f"Selected area: x1={x1}, y1={y1}, x2={x2}, y2={y2}")
 
         if self.original_size is None:
             msg = QMessageBox()
@@ -77,6 +88,9 @@ class StreamVideoPlayer(QWidget):
         # 변환할 이미지의 너비와 높이
         width2 = self.original_size.width()
         height2 = self.original_size.height()
+
+
+        print("원본:", self.original_size.width(), self.original_size.height())
         
         # 너비와 높이의 비율 계산
         width_ratio = width2 / width1

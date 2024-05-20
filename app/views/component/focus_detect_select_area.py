@@ -16,12 +16,10 @@ class FocusDetectSelectArea(QLabel):
     def setFocusSelectMode(self, mode):
         self.focusSelectMode = mode
 
-
     def clearDrawing(self):
         self.start_point = QPoint()
         self.end_point = QPoint()
         self.update()
-        pass
 
     def mousePressEvent(self, event):
         if not self.focusSelectMode:
@@ -35,23 +33,31 @@ class FocusDetectSelectArea(QLabel):
         if not self.focusSelectMode:
             return
         if self.drawing:
-            self.end_point = event.pos()
-            self.update()
+            # 현재 이벤트의 위치를 가져옴
+            current_pos = event.pos()
+            # 영역 내에 있는지 확인
+            if self.rect().contains(current_pos):
+                self.end_point = current_pos
+                self.update()
 
     def mouseReleaseEvent(self, event):
         if not self.focusSelectMode:
             return
         if event.button() == Qt.LeftButton:
-            self.end_point = event.pos()
-            self.drawing = False
-            self.update()
+            # 현재 이벤트의 위치를 가져옴
+            current_pos = event.pos()
+            # 영역 내에 있는지 확인
+            if self.rect().contains(current_pos):
+                self.end_point = current_pos
+                self.drawing = False
+                self.update()
 
-            # 사각형의 좌표 계산 및 신호 발신
-            x1 = min(self.start_point.x(), self.end_point.x())
-            x2 = max(self.start_point.x(), self.end_point.x())
-            y1 = min(self.start_point.y(), self.end_point.y())
-            y2 = max(self.start_point.y(), self.end_point.y())
-            self.areaSelected.emit(x1, y1, x2, y2)
+                # 사각형의 좌표 계산 및 신호 발신
+                x1 = min(self.start_point.x(), self.end_point.x())
+                x2 = max(self.start_point.x(), self.end_point.x())
+                y1 = min(self.start_point.y(), self.end_point.y())
+                y2 = max(self.start_point.y(), self.end_point.y())
+                self.areaSelected.emit(x1, y1, x2, y2)
 
     def paintEvent(self, event):
         super().paintEvent(event)
