@@ -102,6 +102,7 @@ class Filtering:
 
     def get_area_img(self, img, box):
         focus_img = img[box[1]:box[3], box[0]:box[2]]
+        focus_img = np.ascontiguousarray(focus_img)
         return focus_img
 
     def filtering(self, img, is_video=True, focus_area=None):
@@ -118,18 +119,18 @@ class Filtering:
         results = self.face_filter(img, results, conf, temp_ratio)
         
         if focus_area is not None:
+            print("focus_area:",focus_area[0],focus_area[1],focus_area[2],focus_area[3])
             focus_img = self.get_area_img(img, focus_area)
             temp = {-2:[], -1:[]}
             focus_result = self.face_filter(focus_img, temp, conf, temp_ratio)
-            for key, value in focus_result:
+            for key, value in focus_result.items():
                 for box in value:
                     if len(box) > 0:
-                        box[0] += focus_area[0]
-                        box[1] += focus_area[1]
-                        box[2] += focus_area[2]
-                        box[3] += focus_area[3]
-                        result[key].append(value)
-
+                        print("box:",box)
+                        box[0][0] += focus_area[0]
+                        box[0][1] += focus_area[1]
+                        results[key].append(box)
+        # print("results:",results)
         
         if is_video:
             if len(results) != 0:
