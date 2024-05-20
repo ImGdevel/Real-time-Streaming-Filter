@@ -1,11 +1,11 @@
-from PySide6.QtCore import Qt, QPoint, QRect, QSize
+from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget, QMessageBox
 from utils import Colors
 from .focus_detect_select_area import FocusDetectSelectArea
 
 class StreamVideoPlayer(QWidget):
-
+    select_forcus_signal = Signal(int, int, int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -87,4 +87,4 @@ class StreamVideoPlayer(QWidget):
         new_x2 = x2 * width_ratio
         new_y2 = y2 * height_ratio
     
-        return new_x1, new_y1, new_x2, new_y2
+        self.select_forcus_signal.emit(int(new_x1), int(new_y1), int(new_x2), int(new_y2))
