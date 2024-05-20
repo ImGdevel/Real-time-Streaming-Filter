@@ -10,19 +10,37 @@ class FocusDetectSelectArea(QLabel):
         self.start_point = QPoint()
         self.end_point = QPoint()
         self.drawing = False
+        self.focusSelectMode = False
         self.setStyleSheet("background: transparent;")
 
+    def setFocusSelectMode(self, mode):
+        self.focusSelectMode = mode
+
+
+    def clearDrawing(self):
+        self.start_point = QPoint()
+        self.end_point = QPoint()
+        self.update()
+        pass
+
     def mousePressEvent(self, event):
+        if not self.focusSelectMode:
+            return
         if event.button() == Qt.LeftButton:
             self.start_point = event.pos()
+            self.end_point = event.pos()
             self.drawing = True
 
     def mouseMoveEvent(self, event):
+        if not self.focusSelectMode:
+            return
         if self.drawing:
             self.end_point = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
+        if not self.focusSelectMode:
+            return
         if event.button() == Qt.LeftButton:
             self.end_point = event.pos()
             self.drawing = False

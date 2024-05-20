@@ -418,25 +418,12 @@ class RealStreamView(QWidget):
             self.current_filter = None
             self.streaming_processor.set_filter(None)
             self.show_setting(False)
+
             
     def update_filter(self):
         if self.current_filter:
             self.streaming_processor.set_filter(self.current_filter)
-        
-    def update_video(self, q_img=None):
-        '''비디오 업데이트 메서드'''
-        if q_img is None:
-            return
-        if self.original_size is None:
-            self.original_size = q_img.size()
-            print(self.original_size)
-        
-        pixmap = QPixmap.fromImage(q_img)
-        self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
-        if self.current_size is None :
-            self.current_size = QSize(self.video_box.width(), self.video_box.height())
-        elif self.current_size.width() != self.video_box.width() or self.current_size.height() != self.video_box.height(): 
-            self.current_size = QSize(self.video_box.width(), self.video_box.height())
+
     
     def select_video_option(self, index):
         if index == 0:  # 웹캠 선택
@@ -492,6 +479,7 @@ class RealStreamView(QWidget):
         self.filter_list_widget.update_list()
         self.set_current_filter(self.current_filter)
 
+
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
@@ -501,6 +489,7 @@ class RealStreamView(QWidget):
         del self.timer
         if self.cam_dialog is not None:
             self.cam_dialog.close()
+
 
     def running_webcam_stop(self):
         if self.streaming_processor.isRunning():
@@ -512,14 +501,17 @@ class RealStreamView(QWidget):
                 if self.streaming_processor.webcam_on:
                     self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
+
         
     def swap_event(self):
         self.stop_streaming()
         
+        
     def set_focus_area_size(self):
         if self.streaming_processor.is_running is True:
-            self.stream_video_player.focusSelectMode = not self.stream_video_player.focusSelectMode
+            self.stream_video_player.setFocusSelectMode(True)
         else:
+            self.stream_video_player.setFocusSelectMode(False)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
