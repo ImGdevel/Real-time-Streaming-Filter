@@ -28,6 +28,7 @@ class RealStreamView(QWidget):
         self.current_filter = None
         self.cam_dialog = None
         self.original_size : QSize = None
+        self.current_size : QSize = None
         self.initUI()
 
     def initUI(self):
@@ -201,26 +202,26 @@ class RealStreamView(QWidget):
         screen_capture_content_widget.setLayout(screen_capture_content_layout)
 
         #집중 탐색 구역 설정
-        screen_focuse_area_widget = QWidget()
-        screen_focuse_area_layout = QHBoxLayout()
-        screen_focuse_area_layout.setSpacing(10)
+        screen_focus_area_widget = QWidget()
+        screen_focus_area_layout = QHBoxLayout()
+        screen_focus_area_layout.setSpacing(10)
 
-        self.focuse_area_capture_button = QPushButton()
-        self.focuse_area_capture_button.setFixedSize(40, 40)
-        self.focuse_area_capture_button.setStyleSheet(Style.mini_button_style)
-        self.focuse_area_capture_button.setIcon(QIcon(Icons.screen_desktop))
-        self.focuse_area_capture_button.setToolTip('영역 선택')
-        self.focuse_area_capture_button.clicked.connect(self.set_focuse_area_size)
+        self.focus_area_capture_button = QPushButton()
+        self.focus_area_capture_button.setFixedSize(40, 40)
+        self.focus_area_capture_button.setStyleSheet(Style.mini_button_style)
+        self.focus_area_capture_button.setIcon(QIcon(Icons.screen_desktop))
+        self.focus_area_capture_button.setToolTip('영역 선택')
+        self.focus_area_capture_button.clicked.connect(self.set_focus_area_size)
 
-        screen_focuse_area_layout.addWidget(self.focuse_area_capture_button,1)
-        screen_focuse_area_widget.setLayout(screen_focuse_area_layout)
+        screen_focus_area_layout.addWidget(self.focus_area_capture_button,1)
+        screen_focus_area_widget.setLayout(screen_focus_area_layout)
 
         # 위젯 전환
         self.video_options_content = QStackedWidget()
         self.video_options_content.setStyleSheet(Style.frame_style)
         self.video_options_content.addWidget(webcam_content_widget)
         self.video_options_content.addWidget(screen_capture_content_widget)
-        self.video_options_content.addWidget(screen_focuse_area_widget)
+        self.video_options_content.addWidget(screen_focus_area_widget)
         
         
         video_options_layout.addWidget(button_layout_frame)
@@ -432,6 +433,10 @@ class RealStreamView(QWidget):
         
         pixmap = QPixmap.fromImage(q_img)
         self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+        if self.current_size is None :
+            self.current_size = QSize(self.video_box.width(), self.video_box.height())
+        elif self.current_size.width() != self.video_box.width() or self.current_size.height() != self.video_box.height(): 
+            self.current_size = QSize(self.video_box.width(), self.video_box.height())
     
     def select_video_option(self, index):
         if index == 0:  # 웹캠 선택
@@ -511,14 +516,47 @@ class RealStreamView(QWidget):
     def swap_event(self):
         self.stop_streaming()
         
-    def set_focuse_area_size(self):
+    def set_focus_area_size(self):
         if self.streaming_processor.is_running is True:
             print(self.original_size)
+            print(self.current_size)
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
-            self.recode_button.setChecked(False)
     
+    def convert_focus_area_coordinates(self, x1, y1, x2, y2):
+        if self.original_size is None :
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("원본 이미지 사이즈를 인식할 수 없습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            return
+        elif self.current_size is None:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("현재 이미지 사이즈를 인식할 수 없습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            return
+        
+        width1 = self.current_size.width()
+        height1 = self.current_size.height()
+        # 변환할 이미지의 너비와 높이
+        width2 = self.original_size.width()
+        height2 = self.original_size.height()
+        
+        # 너비와 높이의 비율 계산
+        width_ratio = width2 / width1
+        height_ratio = height2 / height1
+        
+        # 새로운 이미지 크기에 맞게 좌표 변환
+        new_x1 = x1 * width_ratio
+        new_y1 = y1 * height_ratio
+        new_x2 = x2 * width_ratio
+        new_y2 = y2 * height_ratio
+    
+        return new_x1, new_y1, new_x2, new_y2
