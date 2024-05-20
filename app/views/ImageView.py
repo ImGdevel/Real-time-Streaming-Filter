@@ -150,26 +150,34 @@ class ImageView(QWidget):
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
-        if url_list:
-            progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
-            progress_dialog.setWindowModality(Qt.WindowModal)
-            progress_dialog.show()
-            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
-            print(self.filtered_image)
-            self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
-            
+        if self.filter_image_processor.filtering.current_filter_info != None:
+            if url_list:
+                progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+                progress_dialog.setWindowModality(Qt.WindowModal)
+                progress_dialog.show()
+                self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
+                print(self.filtered_image)
+                self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
+                
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+                msg.setText("인코딩이 완료되었습니다")
+                msg.setWindowTitle("알림")
+                msg.exec_()
+                
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+                msg.setText("등록된 이미지가 존재하지 않습니다.")
+                msg.setWindowTitle("경고")
+                msg.exec_()
+        else :
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText("인코딩이 완료되었습니다")
-            msg.setWindowTitle("알림")
-            msg.exec_()
-            
-        else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("등록된 이미지가 존재하지 않습니다.")
+            msg.setText("선택된 필터 프리셋이 존재하지 않습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
+
     
     def Download(self):
         if self.filtered_image:
