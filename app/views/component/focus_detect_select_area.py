@@ -11,7 +11,9 @@ class FocusDetectSelectArea(QLabel):
         self.end_point = QPoint()
         self.drawing = False
         self.focusSelectMode = False
+        self.rect_relative = QRect()
         self.setStyleSheet("background: transparent;")
+        self.last_size = self.size()
 
     def setFocusSelectMode(self, mode):
         self.focusSelectMode = mode
@@ -19,6 +21,7 @@ class FocusDetectSelectArea(QLabel):
     def clearDrawing(self):
         self.start_point = QPoint()
         self.end_point = QPoint()
+        self.rect_relative = QRect()
         self.update()
 
     def mousePressEvent(self, event):
@@ -33,9 +36,7 @@ class FocusDetectSelectArea(QLabel):
         if not self.focusSelectMode:
             return
         if self.drawing:
-            # 현재 이벤트의 위치를 가져옴
             current_pos = event.pos()
-            # 영역 내에 있는지 확인
             if self.rect().contains(current_pos):
                 self.end_point = current_pos
                 self.update()
@@ -44,15 +45,12 @@ class FocusDetectSelectArea(QLabel):
         if not self.focusSelectMode:
             return
         if event.button() == Qt.LeftButton:
-            # 현재 이벤트의 위치를 가져옴
             current_pos = event.pos()
-            # 영역 내에 있는지 확인
             if self.rect().contains(current_pos):
                 self.end_point = current_pos
                 self.drawing = False
                 self.update()
 
-                # 사각형의 좌표 계산 및 신호 발신
                 x1 = min(self.start_point.x(), self.end_point.x())
                 x2 = max(self.start_point.x(), self.end_point.x())
                 y1 = min(self.start_point.y(), self.end_point.y())
@@ -62,6 +60,8 @@ class FocusDetectSelectArea(QLabel):
                     self.clearDrawing()
                     return
 
+                self.rect_relative = QRect(x1, y1, x2 - x1, y2 - y1)
+                self.last_size = self.size()
                 self.areaSelected.emit(x1, y1, x2, y2)
 
     def paintEvent(self, event):
@@ -71,5 +71,23 @@ class FocusDetectSelectArea(QLabel):
             painter.setRenderHint(QPainter.RenderHint.Antialiasing)
             pen = QPen(Qt.GlobalColor.blue, 2, Qt.PenStyle.SolidLine)
             painter.setPen(pen)
-            rect = QRect(self.start_point, self.end_point)
-            painter.drawRect(rect)
+            
+            current_size = self.size()
+            if not self.last_size.isNull():
+                width_ratio = current_size.width() / self.last_size.width()
+                height_ratio = current_size.height() / self.last_size.height()
+
+                scaled_rect = QRect(
+                    int(self.rect_relative.x() * width_ratio),
+                    int(self.rect_relative.y() * height_ratio),
+                    int(self.rect_relative.width() * width_ratio),
+                    int(self.rect_relative.height() * height_ratio)
+                )
+            else:
+                scaled_rect = self.rect_relative
+            
+            painter.drawRect(scaled_rect)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update()
