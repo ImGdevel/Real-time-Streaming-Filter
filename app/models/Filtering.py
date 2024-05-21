@@ -47,6 +47,7 @@ class Filtering:
 
 
     def face_filter(self, img, results, conf = 10 ,mag_ratio = 1):
+        """return 값 results = {key:[[[box], confidence, label],]} 여기서 box는 x1, y1, w, h의 형식"""
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
@@ -68,6 +69,7 @@ class Filtering:
         return results
     
     def object_filter(self, img, results):
+        """return 값 results = {key:[[box],],} 여기서 box는 xyxy의 형태"""
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in self.current_filter_info.object_filter:
