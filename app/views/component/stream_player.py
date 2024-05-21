@@ -5,7 +5,7 @@ from utils import Colors
 from .focus_detect_select_area import FocusDetectSelectArea
 
 class StreamVideoPlayer(QWidget):
-    select_focus_signal = Signal(int, int, int, int)
+    select_focus_signal = Signal(tuple)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -80,6 +80,10 @@ class StreamVideoPlayer(QWidget):
         self.clearFocusBox()
 
     def handle_area_selected(self, x1, y1, x2, y2):
+        if x1 is None or  y1 is None or x2 is None or y2 is None:
+            self.select_focus_signal.emit(None)
+            return
+
         print(f"Selected area: x1={x1}, y1={y1}, x2={x2}, y2={y2}")
 
         if self.original_size is None:
@@ -115,7 +119,7 @@ class StreamVideoPlayer(QWidget):
 
         self.overlay.setFocusSelectMode(False)
     
-        self.select_focus_signal.emit(int(new_x1), int(new_y1), int(new_x2), int(new_y2))
+        self.select_focus_signal.emit((int(new_x1), int(new_y1), int(new_x2), int(new_y2)))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

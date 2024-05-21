@@ -356,6 +356,7 @@ class RealStreamView(QWidget):
             self.recode_button.setChecked(False)
             self.streaming_processor.recordOff()
             self.recode_button.setStyleSheet(Style.mini_button_style)
+            self.reset_focus_area()
         
             
     def set_screen_capture_area(self):
@@ -500,12 +501,14 @@ class RealStreamView(QWidget):
                 if self.streaming_processor.webcam_on:
                     self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
+        self.reset_focus_area()
 
         
     def swap_event(self):
         self.stop_streaming()
         
     def set_focus_area_mode(self):
+        self.reset_focus_area()
         if self.streaming_processor.is_running is True:
             self.stream_video_player.setFocusSelectMode(True)
         else:
@@ -516,9 +519,8 @@ class RealStreamView(QWidget):
             msg.setWindowTitle("경고")
             msg.exec_()
     
-    def set_focus_area(self, x1, y1, x2, y2):
-        print((x1, y1, x2, y2))
-        self.streaming_processor.set_focus_area((x1, y1, x2, y2))
+    def set_focus_area(self, box):
+        self.streaming_processor.set_focus_area(box)
     
     def reset_focus_area(self):
         self.stream_video_player.clearFocusBox()

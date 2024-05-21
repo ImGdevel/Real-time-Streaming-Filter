@@ -61,11 +61,14 @@ class FocusDetectSelectArea(QLabel):
 
                 if x1 == x2 or y1 == y2:
                     self.clearDrawing()
+                    self.areaSelected.emit(None, None, None, None)
                     return
 
                 self.rect_relative = QRect(x1, y1, x2 - x1, y2 - y1)
                 self.last_size = self.size()
                 self.areaSelected.emit(x1, y1, x2, y2)
+            else:
+                self.areaSelected.emit(None, None, None, None)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -89,7 +92,6 @@ class FocusDetectSelectArea(QLabel):
                     int(self.rect_relative.height() * height_ratio)
                 )
             else:
-                #scaled_rect = self.rect_relative
                 scaled_rect = QRect(self.start_point, self.end_point)
             
             painter.drawRect(scaled_rect)
