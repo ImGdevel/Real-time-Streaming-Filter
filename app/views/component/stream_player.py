@@ -50,7 +50,6 @@ class StreamVideoPlayer(QWidget):
     def update_video(self, frame: QImage = None):
         '''비디오 업데이트 메서드'''
         if frame is None:
-            self.original_size = None
             return
         if self.original_size is None:
             self.original_size = frame.size()

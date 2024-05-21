@@ -258,6 +258,7 @@ class RealStreamProcessor(QThread):
         self.capture_mode = 0
 
     def set_focus_area(self, box):
+        """box의 좌표는 x1, y1, x2, y2의 형식이다"""
         self.focus_detection_area = box
 
     def del_focus_area(self):
