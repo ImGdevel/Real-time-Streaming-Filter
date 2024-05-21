@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QPixmap, QColor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget, QMessageBox
 from utils import Colors
 from .focus_detect_select_area import FocusDetectSelectArea
@@ -52,8 +52,8 @@ class StreamVideoPlayer(QWidget):
 
     def update_video(self, frame: QImage = None):
         '''비디오 업데이트 메서드'''
-        if frame is None:
-            print("frame is None?")
+        if frame is None or frame.isNull():
+            self.frame_clear()
             return
         if self.original_size is None:
             self.original_size = frame.size()
@@ -68,6 +68,14 @@ class StreamVideoPlayer(QWidget):
         elif self.current_size.width() != scaled_image.width() or scaled_image.height() != scaled_image.height():
             self.current_size = QSize(scaled_image.width(), scaled_image.height())
             self.setOverlaySize()
+
+    def frame_clear(self):
+        empty_frame = QImage(10, 10, QImage.Format_RGB888)
+        empty_frame.fill(QColor(23, 26, 30))
+        pixmap = QPixmap.fromImage(empty_frame)
+        scaled_image = pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio,  Qt.SmoothTransformation)
+        self.show_box.setPixmap(scaled_image)
+        self.clearFocusBox()
 
     def handle_area_selected(self, x1, y1, x2, y2):
         print(f"Selected area: x1={x1}, y1={y1}, x2={x2}, y2={y2}")
