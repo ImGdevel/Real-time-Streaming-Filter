@@ -212,7 +212,7 @@ class RealStreamView(QWidget):
         self.focus_area_capture_button.setStyleSheet(Style.mini_button_style)
         self.focus_area_capture_button.setIcon(QIcon(Icons.screen_desktop))
         self.focus_area_capture_button.setToolTip('영역 선택')
-        self.focus_area_capture_button.clicked.connect(self.set_focus_area_Mode)
+        self.focus_area_capture_button.clicked.connect(self.set_focus_area_mode)
 
         self.focus_area_reset_button = QPushButton()
         self.focus_area_reset_button.setFixedSize(40, 40)
@@ -516,7 +516,7 @@ class RealStreamView(QWidget):
     def swap_event(self):
         self.stop_streaming()
         
-    def set_focus_area_Mode(self):
+    def set_focus_area_mode(self):
         if self.streaming_processor.is_running is True:
             self.stream_video_player.setFocusSelectMode(True)
         else:
