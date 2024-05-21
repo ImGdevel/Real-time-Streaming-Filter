@@ -150,20 +150,20 @@ class RealStreamProcessor(QThread):
 
     def pause(self):
         '''스레드 일시 중지'''
-        self.is_running = False
         if self.is_record:
             self.is_record = False
             self.output_video.release()
+        self.is_running = False
         self.filtering.tracking_id_init()
         
         self.wait()
 
     def stop(self):
         '''스레드 종료 메서드'''
-        self.is_running = False
         if self.is_record:
             self.is_record = False
             self.output_video.release()
+        self.is_running = False
         self.filtering.tracking_id_init()
         self.quit()
         if self.video_cap is not None:
@@ -185,6 +185,7 @@ class RealStreamProcessor(QThread):
         if (w == 0) | (h == 0):
             return
         self.capture_mode = 1
+        self.del_focus_area()
         self.capture_area = (min(x1,x2),min(y1,y2), w, h)
         print("Clicked coordinates:", self.capture_area)
         self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
@@ -194,7 +195,7 @@ class RealStreamProcessor(QThread):
         isRunning = self.isRunning()
         if self.isRunning():
             self.pause()  # 스레드가 실행 중이면 중지
-        self.capture_mode = 0
+        self.set_webcam_mode()
         if self.current_webcam != web_cam:  # 새로운 웹캠이 이전과 다를 경우에만 설정 변경
             if self.video_cap is not None:
                 self.video_cap.release()  # 이전 웹캠 해제
@@ -235,6 +236,7 @@ class RealStreamProcessor(QThread):
 
     
     def set_webcam_mode(self):
+        self.del_focus_area()
         self.capture_mode = 0
 
     def set_focus_area(self, box):

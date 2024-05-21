@@ -106,6 +106,32 @@ class Filtering:
         focus_img = img[box[1]:box[3], box[0]:box[2]]
         focus_img = np.ascontiguousarray(focus_img)
         return focus_img
+    
+    def is_dup(self, new, results):
+        already = []
+        for box in results.values():
+            already.extend(box)
+        
+        for box in already:
+            if len(box) > 0:
+                x1, y1, x2, y2 = box[0][0], box[0][1], box[0][0]+box[0][2], box[0][1]+box[0][3]
+                nx1, ny1, nx2, ny2 = new[0][0], new[0][1], new[0][0]+new[0][2], new[0][1]+new[0][3]
+
+                
+                intersection_x1 = max(x1, nx1)
+                intersection_y1 = max(y1, ny1)
+                intersection_x2 = min(x2, nx2)
+                intersection_y2 = min(y2, ny2)
+
+                intersection_width = max(0, intersection_x2 - intersection_x1)
+                intersection_height = max(0, intersection_y2 - intersection_y1)
+                intersection_area = intersection_height * intersection_width
+                if intersection_area / (new[0][2]*new[0][3]) >= 0.7:
+                    print("box:",box[0])
+                    print("new:",new[0])
+                    return True
+ 
+        return False
 
     def filtering(self, img, is_video=True, focus_area=None):
         if self.current_filter_info is None:
@@ -129,8 +155,8 @@ class Filtering:
                     if len(box) > 0:
                         box[0][0] += focus_area[0]
                         box[0][1] += focus_area[1]
-                        results[key].append(box)
-        # print("results:",results)
+                        if not self.is_dup(box, results):
+                            results[key].append(box)
         
         if is_video:
             if len(results) != 0:
