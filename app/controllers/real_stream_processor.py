@@ -215,7 +215,7 @@ class RealStreamProcessor(QThread):
         self.capture_mode = 1
         self.del_focus_area()
         self.capture_area = (min(x1,x2),min(y1,y2), w, h)
-        print("Clicked coordinates:", self.capture_area)
+        # print("Clicked coordinates:", self.capture_area)
         self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
 
     def set_web_cam(self, web_cam):
@@ -268,6 +268,9 @@ class RealStreamProcessor(QThread):
 
     def set_focus_area(self, box):
         """box의 좌표는 x1, y1, x2, y2의 형식이다"""
+        if box[0] == 0 and box[1] == 0 and box[2] == 0 and box[3] == 0:
+            self.focus_detection_area = None
+            return
         self.focus_detection_area = box
 
     def del_focus_area(self):
