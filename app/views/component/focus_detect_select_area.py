@@ -57,6 +57,11 @@ class FocusDetectSelectArea(QLabel):
                 x2 = max(self.start_point.x(), self.end_point.x())
                 y1 = min(self.start_point.y(), self.end_point.y())
                 y2 = max(self.start_point.y(), self.end_point.y())
+
+                if x1 == x2 or y1 == y2:
+                    self.clearDrawing()
+                    return
+
                 self.areaSelected.emit(x1, y1, x2, y2)
 
     def paintEvent(self, event):
