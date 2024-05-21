@@ -57,8 +57,7 @@ class StreamVideoPlayer(QWidget):
         if frame is None or frame.isNull():
             self.frame_clear()
             return
-        if self.original_size is None:
-            self.original_size = frame.size()
+        self.original_size = frame.size()
         
         pixmap = QPixmap.fromImage(frame)
         scaled_image = pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio,  Qt.SmoothTransformation)
@@ -118,7 +117,10 @@ class StreamVideoPlayer(QWidget):
         new_y2 = y2 * height_ratio
 
         self.overlay.setFocusSelectMode(False)
-    
+
+        print(f"실제 비율: width ", self.original_size.width() , "hight" , self.original_size.height())
+        print(f"실제 웹캠 비율 전환 : x1={new_x1}, y1={new_y1}, x2={new_x2}, y2={new_y2}")
+
         self.select_focus_signal.emit((int(new_x1), int(new_y1), int(new_x2), int(new_y2)))
 
     def resizeEvent(self, event):

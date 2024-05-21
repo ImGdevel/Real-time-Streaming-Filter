@@ -68,6 +68,7 @@ class FocusDetectSelectArea(QLabel):
                 self.last_size = self.size()
                 self.areaSelected.emit(x1, y1, x2, y2)
             else:
+                self.clearDrawing()
                 self.areaSelected.emit(None, None, None, None)
 
     def paintEvent(self, event):
