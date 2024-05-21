@@ -5,7 +5,7 @@ from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager, PathManager
 from models import DragArea
 import time, os
-import pyvirtualcam  # pyvirtualcam import
+import pyvirtualcam
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
@@ -26,11 +26,27 @@ class RealStreamProcessor(QThread):
         self.current_webcam = 0
         self.capture_mode = 0
         self.capture_area = None
-        self.video_path : str = None
+        self.video_path: str = None
         self.is_record = False
         self.output_video = None
         self.focus_detection_area = None
-        
+
+        self.virtual_cam_backend = self.detect_virtual_cam_backend()  # 가상 카메라 백엔드 탐지
+
+    def detect_virtual_cam_backend(self):
+        '''설치된 가상 카메라 백엔드를 탐지합니다.'''
+        try:
+            with pyvirtualcam.Camera(width=640, height=480, fps=30, backend='obs', fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+                return 'obs'
+        except RuntimeError:
+            pass
+        try:
+            with pyvirtualcam.Camera(width=640, height=480, fps=30, backend='unitycapture', fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+                return 'unitycapture'
+        except RuntimeError:
+            pass
+        return None
+
     class WindowCapture:
         def __init__(self, window_name=None, capture_rate=30, region=None, processor=None):
             self.window_name = window_name
@@ -63,7 +79,32 @@ class RealStreamProcessor(QThread):
         
         # 가상 웹캠 설정
         height, width, _ = self.capture.frame.shape
-        with pyvirtualcam.Camera(width=width, height=height, fps=FRAME_RATE, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+        if self.virtual_cam_backend:
+            with pyvirtualcam.Camera(width=width, height=height, fps=FRAME_RATE, backend=self.virtual_cam_backend, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+                while self.is_running:
+                    start = time.time()
+                    processed_frame = self.capture.screenshot()
+                    frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+
+                    height, width, channel = frame_rgb.shape
+                    bytes_per_line = 3 * width
+                    q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                    self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
+
+                    # 가상 웹캠으로 프레임 전송
+                    cam.send(processed_frame)
+                    cam.sleep_until_next_frame()
+
+                    delta = time.time() - start
+                    if delta < SLEEP_TIME:
+                        time.sleep(SLEEP_TIME - delta)
+
+                    if self.is_record:
+                        self.output_video.write(processed_frame)
+
+                # 종료 후 프레임 비우기
+                self.frame_ready.emit(None)
+        else:
             while self.is_running:
                 start = time.time()
                 processed_frame = self.capture.screenshot()
@@ -73,10 +114,6 @@ class RealStreamProcessor(QThread):
                 bytes_per_line = 3 * width
                 q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
-
-                # 가상 웹캠으로 프레임 전송
-                cam.send(processed_frame)
-                cam.sleep_until_next_frame()
 
                 delta = time.time() - start
                 if delta < SLEEP_TIME:
@@ -100,7 +137,30 @@ class RealStreamProcessor(QThread):
         width = int(self.video_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
         # 가상 웹캠 설정
-        with pyvirtualcam.Camera(width=width, height=height, fps=30, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+        if self.virtual_cam_backend:
+            with pyvirtualcam.Camera(width=width, height=height, fps=30, backend=self.virtual_cam_backend, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
+                while self.is_running and self.video_cap.isOpened():
+                    self.webcam_on = True
+                    ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
+                    if ret:
+                        processed_frame = self.process_frame(frame)  # 프레임 처리
+                        frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
+
+                        height, width, channel = frame_rgb.shape
+                        bytes_per_line = 3 * width
+                        q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                        self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
+
+                        # 가상 웹캠으로 프레임 전송
+                        cam.send(processed_frame)
+                        cam.sleep_until_next_frame()
+
+                        if self.is_record:
+                            self.output_video.write(processed_frame)
+
+                # 종료 후 프레임 비우기
+                self.frame_ready.emit(None)
+        else:
             while self.is_running and self.video_cap.isOpened():
                 self.webcam_on = True
                 ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
@@ -112,10 +172,6 @@ class RealStreamProcessor(QThread):
                     bytes_per_line = 3 * width
                     q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
                     self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
-
-                    # 가상 웹캠으로 프레임 전송
-                    cam.send(processed_frame)
-                    cam.sleep_until_next_frame()
 
                     if self.is_record:
                         self.output_video.write(processed_frame)
