@@ -79,7 +79,7 @@ class StreamVideoPlayer(QWidget):
         self.clearFocusBox()
 
     def handle_area_selected(self, x1, y1, x2, y2):
-        if x1 is None or  y1 is None or x2 is None or y2 is None:
+        if x1 is None or  y1 is None or x2 is None or y2 is None or (x2 == 0 and y2 == 0):
             self.select_focus_signal.emit(None)
             return
 
