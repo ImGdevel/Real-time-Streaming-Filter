@@ -182,7 +182,7 @@ class RealStreamProcessor(QThread):
         x1,y1,x2,y2 = app.clicked_coordinates
         w = abs(x1-x2) 
         h = abs(y1-y2)
-        if w == 0 | h == 0:
+        if (w == 0) | (h == 0):
             return
         self.capture_mode = 1
         self.capture_area = (min(x1,x2),min(y1,y2), w, h)
