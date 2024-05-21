@@ -74,6 +74,10 @@ class BlockClicksWindow:
 
 def get_mouse_click(app : BlockClicksWindow):
     # 이전 상태 초기화
+    x1 = None
+    y1 = None
+    x2 = None
+    y2 = None
     prev_state = win32api.GetKeyState(win32con.VK_LBUTTON)
     while True:
         # 현재 상태 확인
@@ -85,12 +89,14 @@ def get_mouse_click(app : BlockClicksWindow):
 
             if current_state < 0:
                 x1, y1 = win32api.GetCursorPos()
-                print(f"Mouse down at ({x1}, {y1})")
+                #print(f"Mouse down at ({x1}, {y1})")
 
             if prev_state < 0:
                 if current_state >= 0:
                     x2, y2 = win32api.GetCursorPos()
-                    print(f"Mouse up at ({x2}, {y2})")
+                    #print(f"Mouse up at ({x2}, {y2})")
+                    if (x1 is None) | (y1 is None):
+                        continue
                     app.stop()
                     return x1, y1, x2, y2
                     
