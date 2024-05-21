@@ -5,7 +5,8 @@ from PySide6.QtCore import QThread, Signal
 from models import Filtering, FilterManager, PathManager
 from models import DragArea
 import time, os
-import pyvirtualcam  # pyvirtualcam import
+
+
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
@@ -32,19 +33,22 @@ class RealStreamProcessor(QThread):
         self.focus_detection_area = None
         
     class WindowCapture:
-        def __init__(self, window_name=None, capture_rate=30, region=None, processor=None):
+        def __init__(self, window_name=None, capture_rate=30, region=None, processor = None):
             self.window_name = window_name
-            self.wait_time = 1 / capture_rate
+            self.wait_time = 1/capture_rate
             self.region = region
             self.processor = processor
-            self.frame = self.screenshot()
+            self.frame=self.screenshot()
             
+
         def screenshot(self):
             import pyautogui
             import numpy as np
             region = self.region
             frame = cv2.cvtColor(np.asarray(pyautogui.screenshot(region=region, allScreens=True)), cv2.COLOR_RGB2BGR)
+            
             processed_frame = self.processor.process_frame(frame)
+
             return processed_frame
 
     def run(self):
@@ -57,71 +61,59 @@ class RealStreamProcessor(QThread):
 
     def run_screen(self):
         FRAME_RATE = 60
-        SLEEP_TIME = 1 / FRAME_RATE
+        SLEEP_TIME = 1/FRAME_RATE
 
-        self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
+        height = 0
+        width = 0
         
-        # 가상 웹캠 설정
-        height, width, _ = self.capture.frame.shape
-        with pyvirtualcam.Camera(width=width, height=height, fps=FRAME_RATE, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
-            while self.is_running:
-                start = time.time()
-                processed_frame = self.capture.screenshot()
-                frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+        self.capture = self.WindowCapture(region=self.capture_area, capture_rate=FRAME_RATE, processor=self)
+
+        while self.is_running:
+            start=time.time()
+            processed_frame = self.capture.screenshot()
+            frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+
+            height, width, channel = frame_rgb.shape
+            bytes_per_line = 3 * width
+            q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
+            self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
+
+            delta= time.time()-start
+            if delta <SLEEP_TIME:
+                time.sleep(SLEEP_TIME-delta)
+
+            if self.is_record:
+                self.output_video.write(processed_frame)
+
+        # 종료 후 프레임 비우기
+        self.frame_ready.emit(None)
+
+
+    def run_webcam(self):
+        if self.video_cap is None:
+            self.video_cap = cv2.VideoCapture(self.current_webcam)
+        
+        height = 0
+        width = 0
+
+        while self.is_running and self.video_cap.isOpened():
+            self.webcam_on = True
+            ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
+            if ret:
+                processed_frame = self.process_frame(frame)  # 프레임 처리
+                frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
                 q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
                 self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
 
-                # 가상 웹캠으로 프레임 전송
-                cam.send(processed_frame)
-                cam.sleep_until_next_frame()
-
-                delta = time.time() - start
-                if delta < SLEEP_TIME:
-                    time.sleep(SLEEP_TIME - delta)
-
                 if self.is_record:
                     self.output_video.write(processed_frame)
+        # 종료 후 프레임 비우기
+        self.frame_ready.emit(None)
 
-            # 종료 후 프레임 비우기
-            self.frame_ready.emit(None)
 
-    def run_webcam(self):
-        if self.video_cap is None:
-            self.video_cap = cv2.VideoCapture(self.current_webcam)
-        
-        if not self.video_cap.isOpened():
-            print("Error: Could not open webcam.")
-            return
-
-        height = int(self.video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        width = int(self.video_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-
-        # 가상 웹캠 설정
-        with pyvirtualcam.Camera(width=width, height=height, fps=30, fmt=pyvirtualcam.PixelFormat.BGR) as cam:
-            while self.is_running and self.video_cap.isOpened():
-                self.webcam_on = True
-                ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
-                if ret:
-                    processed_frame = self.process_frame(frame)  # 프레임 처리
-                    frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
-
-                    height, width, channel = frame_rgb.shape
-                    bytes_per_line = 3 * width
-                    q_img = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
-                    self.frame_ready.emit(q_img)  # 프레임을 GUI로 전송
-
-                    # 가상 웹캠으로 프레임 전송
-                    cam.send(processed_frame)
-                    cam.sleep_until_next_frame()
-
-                    if self.is_record:
-                        self.output_video.write(processed_frame)
-
-            # 종료 후 프레임 비우기
-            self.frame_ready.emit(None)
 
     def process_frame(self, frame):
         '''프레임 처리 메서드 - 얼굴 모자이크 및 객체 인식'''
@@ -129,7 +121,7 @@ class RealStreamProcessor(QThread):
         if self.filtering.current_filter_info is not None:
             if self.filtering.current_filter_info.background_blur:
                 processed_frame = self.filtering.background_blur(frame)
-        boxesList = self.filtering.filtering(processed_frame, focus_area=self.focus_detection_area)
+        boxesList = self.filtering.filtering(processed_frame, focus_area=self.focus_detection_area)  
         for key in boxesList.keys():
             if key == -1:
                 if boxesList[key] is not None:
@@ -148,12 +140,13 @@ class RealStreamProcessor(QThread):
         if filter is not None:
             current_filter = self.filter_manager.get_filter(filter)
             self.filtering.set_filter(current_filter)
-        else:
+        else: 
             self.filtering.set_filter(None)
 
     def flip_horizontal(self):
         '''화면 좌우 뒤집기 메서드'''
         self.is_flipped = not self.is_flipped  # 화면 좌우 뒤집기 상태 변경
+
 
     def pause(self):
         '''스레드 일시 중지'''
@@ -162,6 +155,7 @@ class RealStreamProcessor(QThread):
             self.is_record = False
             self.output_video.release()
         self.filtering.tracking_id_init()
+        
         self.wait()
 
     def stop(self):
@@ -185,13 +179,13 @@ class RealStreamProcessor(QThread):
         app.start_event_handling()
         app.run()
         
-        x1, y1, x2, y2 = app.clicked_coordinates
-        w = abs(x1 - x2)
-        h = abs(y1 - y2)
-        if w == 0 or h == 0:
+        x1,y1,x2,y2 = app.clicked_coordinates
+        w = abs(x1-x2) 
+        h = abs(y1-y2)
+        if w == 0 | h == 0:
             return
         self.capture_mode = 1
-        self.capture_area = (min(x1, x2), min(y1, y2), w, h)
+        self.capture_area = (min(x1,x2),min(y1,y2), w, h)
         print("Clicked coordinates:", self.capture_area)
         self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
 
@@ -230,7 +224,7 @@ class RealStreamProcessor(QThread):
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         video_name = f"output_video_{current_time}.mp4"
         self.video_path = self.path_manager.load_download_path()
-        self.video_path = os.path.join(self.video_path, "Recodes", video_name)
+        self.video_path = os.path.join(self.video_path, "Recodes" ,video_name)
         self.output_video = cv2.VideoWriter(self.video_path, fourcc, fps, (frame_width, frame_height))
         self.is_record = True
         
@@ -239,6 +233,7 @@ class RealStreamProcessor(QThread):
             self.is_record = False
             self.output_video.release()
 
+    
     def set_webcam_mode(self):
         self.capture_mode = 0
 
