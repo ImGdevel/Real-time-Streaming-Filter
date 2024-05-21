@@ -59,11 +59,6 @@ class RealStreamProcessor(QThread):
         elif self.capture_mode == 1:
             self.run_screen()
 
-        # 종료 후 프레임 비우기
-
-
-
-
     def run_screen(self):
         FRAME_RATE = 60
         SLEEP_TIME = 1/FRAME_RATE
@@ -90,8 +85,8 @@ class RealStreamProcessor(QThread):
             if self.is_record:
                 self.output_video.write(processed_frame)
 
-        if width & height:
-            self.frame_clear(width, height)
+        # 종료 후 프레임 비우기
+        self.frame_ready.emit(None)
 
 
     def run_webcam(self):
@@ -103,14 +98,10 @@ class RealStreamProcessor(QThread):
 
         while self.is_running and self.video_cap.isOpened():
             self.webcam_on = True
-            #start = time.time()
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기
             if ret:
                 processed_frame = self.process_frame(frame)  # 프레임 처리
                 frame_rgb = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
-
-                # if self.is_flipped:
-                #     frame_rgb = cv2.flip(frame_rgb, 1)  # 화면 좌우 뒤집기
 
                 height, width, channel = frame_rgb.shape
                 bytes_per_line = 3 * width
@@ -119,12 +110,8 @@ class RealStreamProcessor(QThread):
 
                 if self.is_record:
                     self.output_video.write(processed_frame)
-            #end = time.time()
-            #result = end - start
-            #print("time: "+ str(result))
         # 종료 후 프레임 비우기
-        if width & height:
-            self.frame_clear(width, height)
+        self.frame_ready.emit(None)
 
 
 
@@ -147,12 +134,6 @@ class RealStreamProcessor(QThread):
                     processed_frame = self.filtering.face_sticker(processed_frame, boxesList[key], key)
     
         return processed_frame
-    
-    def frame_clear(self, width, height):
-        empty_frame = QImage(width, height, QImage.Format_RGB888)
-        empty_frame.fill(QColor(23, 26, 30))
-        self.frame_ready.emit(empty_frame)
-        pass
 
     def set_filter(self, filter):
         """필터 설정"""
@@ -230,7 +211,6 @@ class RealStreamProcessor(QThread):
             cap = self.video_cap
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            # fps = self.video_cap.get(cv2.CAP_PROP_FPS)
             fps = 20
         else:
             cap = self.capture

@@ -23,13 +23,9 @@ class RealStreamView(QWidget):
         self.stream_video_player = StreamVideoPlayer()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.streaming_processor.frame_ready.connect(self.stream_video_player.update_video)  # 프레임 수신 시 GUI 업데이트 연결
-        self.stream_video_player.select_forcus_signal.connect(self.set_focus_area)
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.stream_video_player.update_video)
+        self.stream_video_player.select_focus_signal.connect(self.set_focus_area)
         self.current_filter = None
         self.cam_dialog = None
-        # self.original_size : QSize = None
-        # self.current_size : QSize = None
         self.initUI()
 
     def initUI(self):
@@ -264,7 +260,6 @@ class RealStreamView(QWidget):
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
         video = self.stream_video_player
-        
         return video
         
 
@@ -352,7 +347,6 @@ class RealStreamView(QWidget):
         self.play_pause_button.setIcon(QIcon(Icons.puse_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 중지")
         self.streaming_processor.start()
-        self.timer.start(0)  # 비동기적으로 프레임 업데이트
             
     def stop_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
@@ -362,8 +356,6 @@ class RealStreamView(QWidget):
             self.recode_button.setChecked(False)
             self.streaming_processor.recordOff()
             self.recode_button.setStyleSheet(Style.mini_button_style)
-        self.timer.stop()
-        
         
             
     def set_screen_capture_area(self):
@@ -493,10 +485,7 @@ class RealStreamView(QWidget):
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
-        #self.streaming_processor.wait()
-        self.timer.stop()
         del self.streaming_processor
-        del self.timer
         if self.cam_dialog is not None:
             self.cam_dialog.close()
 
@@ -532,4 +521,5 @@ class RealStreamView(QWidget):
         self.streaming_processor.set_focus_area((x1, y1, x2, y2))
     
     def reset_focus_area(self):
+        self.stream_video_player.clearFocusBox()
         self.streaming_processor.del_focus_area()
