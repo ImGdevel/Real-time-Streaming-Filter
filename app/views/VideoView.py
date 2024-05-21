@@ -50,6 +50,7 @@ class VideoView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
         list_frame.setContent(self.filter_list_widget)
+        setting_widget.addWidget(list_frame)
 
         self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
@@ -70,9 +71,16 @@ class VideoView(QWidget):
         button3.clicked.connect(self.openFileDialog)
         button3.setFixedSize(50, 50)
         button3.setToolTip("파일탐색")
-        setting_widget.addWidget(list_frame)
+        
+        button4 = QPushButton()
+        button4.setIcon(QIcon(Icons.reload))
+        button4.setStyleSheet(Style.mini_button_style)
+        button4.clicked.connect(self.resetVideo)
+        button4.setFixedSize(50, 50)
+        button4.setToolTip("초기화")
         
         tool_button_layout.addWidget(button3)
+        tool_button_layout.addWidget(button4)
         tool_button_frame.setLayout(tool_button_layout)
 
         setting_button_layout = QVBoxLayout()
@@ -89,6 +97,36 @@ class VideoView(QWidget):
         layout.setContentsMargins(5,5,5,5)
         frame.setLayout(layout)
         return frame
+    
+    def resetVideo(self):
+        if self.origin_video_path:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("작업 내용을 초기화 하시겠습니까?")
+            msg.setWindowTitle("알림")
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg.setDefaultButton(QMessageBox.No)
+
+            result = msg.exec_()
+            
+            if result == QMessageBox.Yes:
+                print("yes reset")
+                self.encoding_video_path = None
+                self.video_processor.temp_video_path = None
+                self.video_processor.video_path = None
+                self.video_processor.set_video(self.origin_video_path)
+                self.video_processor.set_origin_video(self.origin_video_path)
+                self.video_player.set_video(self.origin_video_path)
+                self.video_player.start_video()
+            elif result == QMessageBox.No:
+                msg.close()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("초기화 시킬 내용이 없습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+
         
     def openFileDialog(self):
         '''파일 대화상자를 통해 비디오 파일 선택'''
