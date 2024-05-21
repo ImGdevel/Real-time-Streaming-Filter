@@ -23,13 +23,11 @@ class RealStreamView(QWidget):
         self.stream_video_player = StreamVideoPlayer()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
         self.streaming_processor.frame_ready.connect(self.stream_video_player.update_video)  # 프레임 수신 시 GUI 업데이트 연결
-        self.stream_video_player.select_forcus_signal.connect(self.set_focus_area)
+        self.stream_video_player.select_focus_signal.connect(self.set_focus_area)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.stream_video_player.update_video)
         self.current_filter = None
         self.cam_dialog = None
-        # self.original_size : QSize = None
-        # self.current_size : QSize = None
         self.initUI()
 
     def initUI(self):
@@ -532,4 +530,5 @@ class RealStreamView(QWidget):
         self.streaming_processor.set_focus_area((x1, y1, x2, y2))
     
     def reset_focus_area(self):
+        self.stream_video_player.clearFocusBox()
         self.streaming_processor.del_focus_area()

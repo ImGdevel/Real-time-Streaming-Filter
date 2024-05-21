@@ -5,7 +5,7 @@ from utils import Colors
 from .focus_detect_select_area import FocusDetectSelectArea
 
 class StreamVideoPlayer(QWidget):
-    select_forcus_signal = Signal(int, int, int, int)
+    select_focus_signal = Signal(int, int, int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -34,6 +34,9 @@ class StreamVideoPlayer(QWidget):
     def setFocusSelectMode(self, mode):
         self.overlay.setFocusSelectMode(mode)
 
+    def clearFocusBox(self):
+        self.overlay.clearDrawing()
+
     def setOverlaySize(self):
         """overlay의 크기를 재 설정"""
         scaled_image = self.show_box.pixmap()
@@ -50,12 +53,13 @@ class StreamVideoPlayer(QWidget):
     def update_video(self, frame: QImage = None):
         '''비디오 업데이트 메서드'''
         if frame is None:
+            print("frame is None?")
             return
         if self.original_size is None:
             self.original_size = frame.size()
         
         pixmap = QPixmap.fromImage(frame)
-        scaled_image = pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio)
+        scaled_image = pixmap.scaled(self.show_box.width(), self.show_box.height(), Qt.KeepAspectRatio,  Qt.SmoothTransformation)
         self.show_box.setPixmap(scaled_image)
 
         if self.current_size is None:
@@ -88,9 +92,6 @@ class StreamVideoPlayer(QWidget):
         # 변환할 이미지의 너비와 높이
         width2 = self.original_size.width()
         height2 = self.original_size.height()
-
-
-        print("원본:", self.original_size.width(), self.original_size.height())
         
         # 너비와 높이의 비율 계산
         width_ratio = width2 / width1
@@ -104,4 +105,4 @@ class StreamVideoPlayer(QWidget):
 
         self.overlay.setFocusSelectMode(False)
     
-        self.select_forcus_signal.emit(int(new_x1), int(new_y1), int(new_x2), int(new_y2))
+        self.select_focus_signal.emit(int(new_x1), int(new_y1), int(new_x2), int(new_y2))
