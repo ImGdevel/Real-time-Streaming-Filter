@@ -48,6 +48,7 @@ class StreamVideoPlayer(QWidget):
 
         print("영역:", offset_x, offset_y, scaled_image.width(), scaled_image.height())
 
+        # 새로운 크기 설정
         self.overlay.setGeometry(offset_x, offset_y, scaled_image.width(), scaled_image.height())
 
     def update_video(self, frame: QImage = None):
@@ -65,7 +66,7 @@ class StreamVideoPlayer(QWidget):
         if self.current_size is None:
             self.current_size = QSize(scaled_image.width(), scaled_image.height())
             self.setOverlaySize()
-        elif self.current_size.width() != scaled_image.width() or scaled_image.height() != scaled_image.height():
+        elif self.current_size.width() != scaled_image.width() or self.current_size.height() != scaled_image.height():
             self.current_size = QSize(scaled_image.width(), scaled_image.height())
             self.setOverlaySize()
 
