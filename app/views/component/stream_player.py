@@ -39,6 +39,7 @@ class StreamVideoPlayer(QWidget):
 
     def setOverlaySize(self):
         """overlay의 크기를 재 설정"""
+        
         scaled_image = self.show_box.pixmap()
         if scaled_image.isNull():
             return
@@ -115,3 +116,7 @@ class StreamVideoPlayer(QWidget):
         self.overlay.setFocusSelectMode(False)
     
         self.select_focus_signal.emit(int(new_x1), int(new_y1), int(new_x2), int(new_y2))
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.setOverlaySize()
