@@ -121,14 +121,12 @@ class Filtering:
         results = self.face_filter(img, results, conf, temp_ratio)
         
         if focus_area is not None:
-            print("focus_area:",focus_area[0],focus_area[1],focus_area[2],focus_area[3])
             focus_img = self.get_area_img(img, focus_area)
             temp = {-2:[], -1:[]}
             focus_result = self.face_filter(focus_img, temp, conf, temp_ratio)
             for key, value in focus_result.items():
                 for box in value:
                     if len(box) > 0:
-                        print("box:",box)
                         box[0][0] += focus_area[0]
                         box[0][1] += focus_area[1]
                         results[key].append(box)
