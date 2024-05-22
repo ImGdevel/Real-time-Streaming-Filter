@@ -521,6 +521,9 @@ class RealStreamView(QWidget):
         
     def cleanup(self):
         self.stop_streaming()
+        self.streaming_processor.stop()
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
         
     def set_focus_area_mode(self):
         self.reset_focus_area()
