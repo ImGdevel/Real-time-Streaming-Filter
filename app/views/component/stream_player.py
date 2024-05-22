@@ -21,13 +21,7 @@ class StreamVideoPlayer(QWidget):
         self.stream_info_bar.setMaximumWidth(725)
         self.stream_info_bar.setFixedHeight(30)
 
-        video = QLabel("비디오야")
-        recode_state = QLabel("레코드 중이야")
 
-        stream_info_bar_layout = QHBoxLayout()
-        stream_info_bar_layout.addWidget(video)
-        stream_info_bar_layout.addWidget(recode_state)
-        self.stream_info_bar.setLayout(stream_info_bar_layout)
         
 
         self.show_box = QLabel()
@@ -43,7 +37,7 @@ class StreamVideoPlayer(QWidget):
         self.overlay.raise_()
 
 
-        #video_layout.addWidget(self.stream_info_bar)
+
         video_layout.addWidget(self.show_box)
         self.setLayout(video_layout)
 
