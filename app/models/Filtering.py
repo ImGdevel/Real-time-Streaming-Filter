@@ -256,6 +256,8 @@ class Filtering:
         return img
     
     def face_sticker(self, img, boxesList, face_id):
+        if face_id not in self.current_filter_info.face_filter.keys():
+            return self.blur(img, boxesList)
         if self.current_filter_info.face_filter[face_id] == -1:
             return img
         for box in boxesList:
