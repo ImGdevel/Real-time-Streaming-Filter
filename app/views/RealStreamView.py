@@ -367,6 +367,19 @@ class RealStreamView(QWidget):
                 self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
         self.streaming_processor.set_capture_area()
+
+    def change_input_video_mode(self, mode):
+
+        if self.streaming_processor.isRunning():
+            self.stop_streaming()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+
+        if mode == 0:
+            self.streaming_processor.capture_mode = 0
+        else: 
+            self.streaming_processor.capture_mode = 1
+        
                 
     def record_video(self):
         '''웹캠 정지 메서드'''
@@ -430,11 +443,13 @@ class RealStreamView(QWidget):
     
     def select_video_option(self, index):
         if index == 0:  # 웹캠 선택
+            self.change_input_video_mode(0)
             self.webcam_button.setStyleSheet(Style.cam_button_selected)
             self.screen_button.setStyleSheet(Style.cam_button)
             self.screen_focus_button.setStyleSheet(Style.cam_button)
             self.video_options_content.setCurrentIndex(0)
         elif index == 1:  # 화면 캡쳐 선택
+            self.change_input_video_mode(1)
             self.screen_button.setStyleSheet(Style.cam_button_selected)
             self.webcam_button.setStyleSheet(Style.cam_button)
             self.screen_focus_button.setStyleSheet(Style.cam_button)
@@ -468,7 +483,6 @@ class RealStreamView(QWidget):
         return name_list
     
     def refresh_webcam_combox(self):
-        print("refresh")
         self.running_webcam_stop()
         namelist = self.detect_webcams()
         combox = QComboBox()
