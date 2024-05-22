@@ -131,7 +131,7 @@ class ImageView(QWidget):
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
             self.dropbox_widget.currunt_exm = file_path
-            if self.dropbox_widget.currunt_filt != None:
+            if self.dropbox_widget.currunt_filt is not None:
                 self.dropbox_widget.currunt_filt = None
                 self.dropbox_widget.emptyFiletLabel()
             self.file_view_widget.addNewFile(add_urls)
@@ -140,7 +140,7 @@ class ImageView(QWidget):
         file_path = url.toLocalFile()
         self.dropbox_widget.setExampleView(file_path)
         self.dropbox_widget.currunt_exm = file_path
-        if self.filtered_image.get(url.toLocalFile()) != None:
+        if self.filtered_image.get(url.toLocalFile()) is not None:
             print("in")
             self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
             self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
@@ -150,7 +150,7 @@ class ImageView(QWidget):
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
-        if self.filter_image_processor.filtering.current_filter_info != None:
+        if self.filter_image_processor.filtering.current_filter_info is not None:
             if url_list:
                 progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
                 progress_dialog.setWindowModality(Qt.WindowModal)
