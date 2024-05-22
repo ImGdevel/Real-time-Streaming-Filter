@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal
 from PySide6.QtGui import QImage, QPixmap, QColor
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget, QMessageBox
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QWidget, QMessageBox, QSizePolicy
 from utils import Colors
 from .focus_detect_select_area import FocusDetectSelectArea
 
@@ -14,21 +14,37 @@ class StreamVideoPlayer(QWidget):
         self.initUI()
 
     def initUI(self):
-        video_layout = QHBoxLayout()
+        video_layout = QVBoxLayout()
+        video_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.stream_info_bar = QWidget()
+        self.stream_info_bar.setMaximumWidth(725)
+        self.stream_info_bar.setFixedHeight(30)
+
+        video = QLabel("비디오야")
+        recode_state = QLabel("레코드 중이야")
+
+        stream_info_bar_layout = QHBoxLayout()
+        stream_info_bar_layout.addWidget(video)
+        stream_info_bar_layout.addWidget(recode_state)
+        self.stream_info_bar.setLayout(stream_info_bar_layout)
+        
 
         self.show_box = QLabel()
         self.show_box.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.show_box.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        video_layout.addWidget(self.show_box)
         self.show_box.setMaximumWidth(725)
+        self.show_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
 
         # FocusDetectSelectArea를 show_box와 동일한 위치와 크기로 추가
         self.overlay = FocusDetectSelectArea(self.show_box)
-        self.overlay.raise_()  # overlay를 맨 앞으로 가져옴
-
-        # 신호 연결
         self.overlay.areaSelected.connect(self.handle_area_selected)
+        self.overlay.raise_()
 
+
+        #video_layout.addWidget(self.stream_info_bar)
+        video_layout.addWidget(self.show_box)
         self.setLayout(video_layout)
 
     def setFocusSelectMode(self, mode):
