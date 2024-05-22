@@ -319,7 +319,7 @@ class Filtering:
 
     def change_filter(self, current_filter:Filter = None):
         """필터를 변경한다"""
-        if current_filter is None :
+        if (current_filter is None) | (current_filter == False) :
             self.current_filter_info = None
         else :
             self.current_filter_info = current_filter
