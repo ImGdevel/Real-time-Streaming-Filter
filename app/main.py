@@ -73,15 +73,10 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
-        widgets.btn_home.setToolTip('홈')
         widgets.btn_streaming.clicked.connect(self.buttonClick)
-        widgets.btn_streaming.setToolTip('실시간 스트림')
         widgets.btn_video.clicked.connect(self.buttonClick)
-        widgets.btn_video.setToolTip('비디오 필터링')
         widgets.btn_image.clicked.connect(self.buttonClick)
-        widgets.btn_image.setToolTip('이미지 필터링')
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
-        widgets.btn_filter_setting.setToolTip('필터설정 프리셋')
         widgets.settingsTopBtn.clicked.connect(UIFunctions.open_website)
         widgets.settingsTopBtn.setToolTip("도움말")
 
