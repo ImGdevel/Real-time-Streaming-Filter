@@ -168,12 +168,17 @@ class VideoView(QWidget):
             msg.setText("필터가 선택되지 않았습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
-        elif self.origin_video_path:
+        elif self.origin_video_path:         
+            self.video_processor.set_origin_video(self.origin_video_path)
+            self.video_processor.is_complete = True
+            self.video_player.set_video(self.origin_video_path)
+            # self.video_processor.set_video(self.origin_video_path)
+
+            self.video_player.stop_video()
+
             self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
             self.video_processor.progressChanged.connect(self.setProgress)
             self.progress_dialog.canceled.connect(self.cancelCounting) # 취소시
-
-            self.video_player.pause_video()
 
             self.video_processor.start()
 
