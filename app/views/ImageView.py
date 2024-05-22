@@ -150,7 +150,7 @@ class ImageView(QWidget):
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
-        if self.filter_image_processor.filtering.current_filter_info is not None:
+        if self.filter_list_widget.seleted_filter is not None:
             if url_list:
                 progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
                 progress_dialog.setWindowModality(Qt.WindowModal)
@@ -174,7 +174,7 @@ class ImageView(QWidget):
         else :
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText("선택된 필터 프리셋이 존재하지 않습니다.")
+            msg.setText("필터가 선택되지 않았습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
 

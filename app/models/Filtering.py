@@ -134,12 +134,14 @@ class Filtering:
         return False
 
     def filtering(self, img, is_video=True, focus_area=None):
-        if self.current_filter_info is None:
-            return dict()
-                
         results = dict()
         results[-2] = []
         results[-1] = []
+        results = self.filter_state_check(results)
+
+        if self.current_filter_info is None:
+            return results
+                
         temp_ratio = self.current_filter_info.imgsz_mag * 3 / 100 + 0.01 # 임시로 UI사용하려고 만든 todo 0.01은 0 되지 말라고 넣어놨는데 if로 했다가 이게 더 나은거같음
         conf = self.current_filter_info.predict_conf / 100
         #print(temp_ratio)

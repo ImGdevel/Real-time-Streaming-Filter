@@ -153,13 +153,22 @@ class VideoView(QWidget):
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
+        if index == False:
+            index = None
+
         self.video_processor.set_filter(index)
 
     def do_video_encoding(self):
         """비디오 인코딩"""
         #다이얼로그 구문 
         print("do_video_encoding")
-        if self.origin_video_path:
+        if self.filter_list_widget.seleted_filter is None:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("필터가 선택되지 않았습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+        elif self.origin_video_path:
             self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
             self.video_processor.progressChanged.connect(self.setProgress)
             self.progress_dialog.canceled.connect(self.cancelCounting) # 취소시
@@ -177,6 +186,7 @@ class VideoView(QWidget):
             msg.setText("등록된 영상파일이 존재하지 않습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
+        
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""

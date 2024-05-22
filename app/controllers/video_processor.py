@@ -34,6 +34,7 @@ class VideoProcessor(QThread):
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path):
+
         self.is_complete = False
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
@@ -120,5 +121,5 @@ class VideoProcessor(QThread):
         if not filter is None:
             current_filter = self.filter_manager.get_filter(filter)
             #print("현제 적용 필터 :",  current_filter)
-            self.filtering.set_filter(current_filter)
+            self.filtering.change_filter(current_filter)
             
