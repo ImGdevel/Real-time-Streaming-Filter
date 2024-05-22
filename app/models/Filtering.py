@@ -1,6 +1,5 @@
 from .ObjectDetect import ObjectDetect
 from .FaceFilter import *
-from .ModelManager import ModelManager
 from .sticker_manager import StickerManager
 from .face_manager import FaceManager
 from .filter_info import Filter
@@ -26,13 +25,12 @@ class Filtering:
         Filtering 클래스를 초기화합니다.
         """
         self.object = ObjectDetect()
-        self.modelManager = ModelManager()
         self.faceManager = FaceManager()
         self.stickerManager = StickerManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
-        known_faces = None
+        self.known_faces = []
 
         self.current_filter_info = None
         self.change_filter_info = None
@@ -48,9 +46,7 @@ class Filtering:
 
     def face_filter(self, img, results, conf = 10 ,mag_ratio = 1):
         """return 값 results = {key:[[[box], confidence, label],]} 여기서 box는 x1, y1, w, h의 형식"""
-        known_face_ids = []
-        for name in self.current_filter_info.face_filter.keys():
-            known_face_ids.append(name)
+        for name in self.known_faces:
             results[name] = []
 
         origins = self.object.origin_detect(img, conf ,mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
@@ -58,14 +54,13 @@ class Filtering:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             # cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
             # cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
-            if result[2] == "Human face":
-                face_encode = face_encoding_box(img, box)
-                # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
-                if is_known is not None: 
-                    results[int(is_known)].append(result)
-                else:
-                    results[-1].append(result)
+            face_encode = face_encoding_box(img, box)
+            # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+            is_known = identify_known_face(self.known_faces, face_encode, self.pathManeger.load_known_faces_path())
+            if is_known is not None: 
+                results[int(is_known)].append(result)
+            else:
+                results[-1].append(result)
         return results
     
     def object_filter(self, img, results):
@@ -323,8 +318,11 @@ class Filtering:
         """필터를 변경한다"""
         if (current_filter is None) | (current_filter == False) :
             self.current_filter_info = None
+            self.known_faces = []
         else :
             self.current_filter_info = current_filter
+            for name in current_filter.face_filter.keys():
+                self.known_faces.append(name)
             if "Human face" not in self.current_filter_info.object_filter:
                 self.current_filter_info.object_filter.append("Human face")
             self.object.set_filter_classes(self.current_filter_info.object_filter)
