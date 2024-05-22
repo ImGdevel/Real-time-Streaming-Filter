@@ -187,15 +187,21 @@ class PersonFaceDialog(QDialog):
         
     def enroll_finished(self, result : int):
         """이미지 등록 완료"""
-        
+        self.progress_dialog.close()
+    
         if result == 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
-            msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진의 경우 등록이 어려울 수 있습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
+            msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진은 등록할 수 없습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
             msg.setWindowTitle("경고")
             msg.exec_()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("얼굴 등록이 등록 되었습니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
             
-        self.progress_dialog.close()
 
     def cancel_progress(self):
         """등록 취소"""
