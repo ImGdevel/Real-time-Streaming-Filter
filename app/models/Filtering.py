@@ -30,8 +30,6 @@ class Filtering:
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
 
-        self.known_faces = []
-
         self.current_filter_info = None
         self.change_filter_info = None
         self.init_id = False
@@ -46,7 +44,9 @@ class Filtering:
 
     def face_filter(self, img, results, conf = 10 ,mag_ratio = 1):
         """return 값 results = {key:[[[box], confidence, label],]} 여기서 box는 x1, y1, w, h의 형식"""
-        for name in self.known_faces:
+        known_face_ids = []
+        for name in self.current_filter_info.face_filter.keys():
+            known_face_ids.append(name)
             results[name] = []
 
         origins = self.object.origin_detect(img, conf ,mag_ratio)  # 수정: results는 [[box], confidence, label]의 리스트 여기서의 box는 xywh의 값이므로 변환 필요
@@ -56,7 +56,7 @@ class Filtering:
             # cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
             face_encode = face_encoding_box(img, box)
             # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-            is_known = identify_known_face(self.known_faces, face_encode, self.pathManeger.load_known_faces_path())
+            is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
             if is_known is not None: 
                 results[int(is_known)].append(result)
             else:
@@ -132,7 +132,6 @@ class Filtering:
         results = dict()
         results[-2] = []
         results[-1] = []
-        results = self.filter_state_check(results)
 
         if self.current_filter_info is None:
             return results
@@ -318,11 +317,8 @@ class Filtering:
         """필터를 변경한다"""
         if (current_filter is None) | (current_filter == False) :
             self.current_filter_info = None
-            self.known_faces = []
         else :
             self.current_filter_info = current_filter
-            for name in current_filter.face_filter.keys():
-                self.known_faces.append(name)
             if "Human face" not in self.current_filter_info.object_filter:
                 self.current_filter_info.object_filter.append("Human face")
             self.object.set_filter_classes(self.current_filter_info.object_filter)

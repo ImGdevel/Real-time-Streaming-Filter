@@ -164,7 +164,7 @@ class RealStreamProcessor(QThread):
             elif key == -2:
                 if boxesList[key] is not None:
                     processed_frame = self.filtering.square_blur(processed_frame, boxesList[key])
-            elif key != -3:
+            else:
                 if boxesList[key] is not None:
                     processed_frame = self.filtering.face_sticker(processed_frame, boxesList[key], key)
     
