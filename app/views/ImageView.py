@@ -208,6 +208,6 @@ class ImageView(QWidget):
         self.filter_list_widget.update_list()
         pass
 
-    def swap_event(self):
+    def cleanup(self):
         
         pass

@@ -519,7 +519,7 @@ class RealStreamView(QWidget):
         self.reset_focus_area()
 
         
-    def swap_event(self):
+    def cleanup(self):
         self.stop_streaming()
         
     def set_focus_area_mode(self):

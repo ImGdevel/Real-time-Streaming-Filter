@@ -132,7 +132,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.streaming_page) 
             self.current_page = widgets.streaming_page
             self.streaming_widget.render()
-            self.swap_event(self.streaming_widget)
+            self.cleanup(self.streaming_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.video_page)
             self.current_page = widgets.video_page
             self.video_widget.render()
-            self.swap_event(self.video_widget)
+            self.cleanup(self.video_widget)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.image_page)
             self.current_page = widgets.image_page
             self.image_widget.render()
-            self.swap_event(self.image_widget)
+            self.cleanup(self.image_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -159,7 +159,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.filter_setting_page)
             self.current_page = widgets.filter_setting_page
             self.filter_setting_widget.render()
-            self.swap_event(self.filter_setting_widget)
+            self.cleanup(self.filter_setting_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
             
@@ -167,10 +167,10 @@ class MainWindow(QMainWindow):
         
             
         
-    def swap_event(self, page):
+    def cleanup(self, page):
         for widget in self.view_widgets:
             if page != widget:
-                widget.swap_event()
+                widget.cleanup()
 
 
     # RESIZE EVENTS

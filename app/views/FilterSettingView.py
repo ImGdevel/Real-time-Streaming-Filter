@@ -409,6 +409,6 @@ class FilterSettingView(QWidget):
     def webcamOn(self):
         self.webcam_on.emit()
         
-    def swap_event(self):
+    def cleanup(self):
         
         pass
