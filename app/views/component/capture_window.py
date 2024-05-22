@@ -13,7 +13,8 @@ class CaptureWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.filtering = Filtering()
-        self.setStyleSheet(Style.dialog_style)    
+        self.setStyleSheet(Style.dialog_style)
+        self.setGeometry(500, 300, 200, 100)
             
         self.setWindowTitle("얼굴 캡쳐")
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)  # 종료 버튼만 있는 Dialog
