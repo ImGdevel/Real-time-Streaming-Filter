@@ -26,6 +26,7 @@ class RealStreamView(QWidget):
         self.stream_video_player.select_focus_signal.connect(self.set_focus_area)
         self.current_filter = None
         self.cam_dialog = None
+        self.streaming_processor.webcam_start.connect(self.webcam_start)
         self.initUI()
 
     def initUI(self):
@@ -519,6 +520,9 @@ class RealStreamView(QWidget):
             msg.setWindowTitle("경고")
             msg.exec_()
     
+    def webcam_start(self):
+        self.webcam_on.emit()
+
     def set_focus_area(self, box):
         self.streaming_processor.set_focus_area(box)
     

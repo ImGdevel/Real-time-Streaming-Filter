@@ -9,6 +9,7 @@ import pyvirtualcam
 
 # 비디오 처리 스레드
 class RealStreamProcessor(QThread):
+    webcam_start = Signal()
     frame_ready = Signal(QImage)
     screen_size = Signal(tuple)
     
@@ -113,7 +114,7 @@ class RealStreamProcessor(QThread):
         if not self.video_cap.isOpened():
             print("Error: Could not open webcam.")
             return
-
+        self.webcam_start.emit()
         height = int(self.video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = int(self.video_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
