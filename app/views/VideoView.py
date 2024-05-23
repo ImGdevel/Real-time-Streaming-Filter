@@ -50,6 +50,7 @@ class VideoView(QWidget):
         self.filter_list_widget = FilterListWidget()
         self.filter_list_widget.set_items_event(self.set_filter_option)
         list_frame.setContent(self.filter_list_widget)
+        setting_widget.addWidget(list_frame)
 
         self.button1 = QPushButton("인코딩")
         self.button1.setFixedHeight(40)
@@ -70,9 +71,16 @@ class VideoView(QWidget):
         button3.clicked.connect(self.openFileDialog)
         button3.setFixedSize(50, 50)
         button3.setToolTip("파일탐색")
-        setting_widget.addWidget(list_frame)
+        
+        button4 = QPushButton()
+        button4.setIcon(QIcon(Icons.reload))
+        button4.setStyleSheet(Style.mini_button_style)
+        button4.clicked.connect(self.resetVideo)
+        button4.setFixedSize(50, 50)
+        button4.setToolTip("초기화")
         
         tool_button_layout.addWidget(button3)
+        tool_button_layout.addWidget(button4)
         tool_button_frame.setLayout(tool_button_layout)
 
         setting_button_layout = QVBoxLayout()
@@ -89,6 +97,38 @@ class VideoView(QWidget):
         layout.setContentsMargins(5,5,5,5)
         frame.setLayout(layout)
         return frame
+    
+    def resetVideo(self):
+        if self.origin_video_path:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("작업 내용을 초기화 하시겠습니까?")
+            msg.setWindowTitle("알림")
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg.setDefaultButton(QMessageBox.No)
+
+            result = msg.exec_()
+            
+            if result == QMessageBox.Yes:
+                print("yes reset")
+                self.encoding_video_path = None
+                self.video_processor.temp_video_path = None
+                self.video_processor.video_path = None
+                self.video_processor.set_video(self.origin_video_path)
+                self.video_processor.set_origin_video(self.origin_video_path)
+                self.video_player.set_video(self.origin_video_path)
+                self.video_player.start_video()
+            elif result == QMessageBox.No:
+                msg.close()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("초기화 시킬 내용이 없습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+
         
     def openFileDialog(self):
         '''파일 대화상자를 통해 비디오 파일 선택'''
@@ -109,36 +149,54 @@ class VideoView(QWidget):
         else :
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("영상파일을 인식할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
 
     def set_filter_option(self, index):
         """필터 옵션 선택"""
+        if index == False:
+            index = None
+
         self.video_processor.set_filter(index)
 
     def do_video_encoding(self):
         """비디오 인코딩"""
         #다이얼로그 구문 
         print("do_video_encoding")
-        if self.origin_video_path:
+        if self.filter_list_widget.seleted_filter is None:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("필터가 선택되지 않았습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+        elif self.origin_video_path:         
+            self.video_processor.set_origin_video(self.origin_video_path)
+            self.video_processor.is_complete = True
+            self.video_player.set_video(self.origin_video_path)
+            # self.video_processor.set_video(self.origin_video_path)
+
+            self.video_player.stop_video()
+
             self.progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
             self.video_processor.progressChanged.connect(self.setProgress)
             self.progress_dialog.canceled.connect(self.cancelCounting) # 취소시
 
-            self.video_player.pause_video()
-
             self.video_processor.start()
 
-            #self.progress_dialog.exec_()
+            self.progress_dialog.exec_()
             
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("등록된 영상파일이 존재하지 않습니다.")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("동영상을 가져오지 못했습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
+        
     
     def setProgress(self, value):
         """작업 진행 상황 업데이트"""
@@ -154,6 +212,7 @@ class VideoView(QWidget):
         """인코딩 후 영상 반환, 재생"""
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
+        msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
         msg.setText("인코딩이 완료 되었습니다")
         msg.setWindowTitle("알림")
         msg.exec_()
@@ -169,12 +228,14 @@ class VideoView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("다운로드가 완료되었습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("알림")
             msg.exec_()
         except ValueError as e:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("인코딩 영상이 존재하지 않습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
             msg.exec_()
             
@@ -184,7 +245,7 @@ class VideoView(QWidget):
         """페이지 refresh"""
         self.filter_list_widget.update_list()
         
-    def swap_event(self):
+    def cleanup(self):
         
         pass
         

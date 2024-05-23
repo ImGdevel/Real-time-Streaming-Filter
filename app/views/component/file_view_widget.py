@@ -153,7 +153,12 @@ class FileViewWidget(QWidget):
         if file_path:
             self.open_file(file_path)
         else:
-            QMessageBox.critical(self, "Error", "Failed to load image")
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("이미지를 가져오지 못했습니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
     
     def open_file(self, file_path):
         QDesktopServices.openUrl(file_path)

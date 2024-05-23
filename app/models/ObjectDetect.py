@@ -40,9 +40,8 @@ class ObjectDetect:
     
     def set_filter_classes(self, filter_classes:list):
         """인식할 객체 목록들을 설정한다."""
-        for key, value in self.orginNames.items():
-            if value in filter_classes:
-                self.originFilterClasses.append(key)
+        if "Human face" in filter_classes:
+            self.originFilterClasses.append(264)
         for key, value in self.customNames.items():
             if value in filter_classes:
                 self.customFilterClasses.append(key)

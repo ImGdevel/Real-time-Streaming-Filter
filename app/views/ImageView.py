@@ -131,7 +131,7 @@ class ImageView(QWidget):
             file_path = add_urls[0].toLocalFile()
             self.dropbox_widget.setExampleView(file_path)
             self.dropbox_widget.currunt_exm = file_path
-            if self.dropbox_widget.currunt_filt != None:
+            if self.dropbox_widget.currunt_filt is not None:
                 self.dropbox_widget.currunt_filt = None
                 self.dropbox_widget.emptyFiletLabel()
             self.file_view_widget.addNewFile(add_urls)
@@ -140,7 +140,7 @@ class ImageView(QWidget):
         file_path = url.toLocalFile()
         self.dropbox_widget.setExampleView(file_path)
         self.dropbox_widget.currunt_exm = file_path
-        if self.filtered_image.get(url.toLocalFile()) != None:
+        if self.filtered_image.get(url.toLocalFile()) is not None:
             print("in")
             self.dropbox_widget.setFilteredView(self.filtered_image.get(url.toLocalFile()))
             self.dropbox_widget.currunt_filt = self.filtered_image.get(url.toLocalFile())
@@ -150,38 +150,51 @@ class ImageView(QWidget):
 
     def Encoding(self):
         url_list = self.UrlListConverter(self.urls)
-        if url_list:
-            progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
-            progress_dialog.setWindowModality(Qt.WindowModal)
-            progress_dialog.show()
-            self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
-            print(self.filtered_image)
-            self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
-            
+        if self.filter_list_widget.seleted_filter is not None:
+            if url_list:
+                progress_dialog = QProgressDialog("Encoding", "Cancel", 0, 100)
+                progress_dialog.setWindowModality(Qt.WindowModal)
+                progress_dialog.show()
+                self.filtered_image = self.filter_image_processor.filtering_images_to_dict(url_list, progress_dialog)
+                print(self.filtered_image)
+                self.changeImage(QUrl.fromLocalFile(self.dropbox_widget.currunt_exm))
+                
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+                msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+                msg.setText("인코딩이 완료되었습니다")
+                msg.setWindowTitle("알림")
+                msg.exec_()
+                
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+                msg.setText("등록된 이미지가 존재하지 않습니다.")
+                msg.setWindowTitle("경고")
+                msg.exec_()
+        else :
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("인코딩이 완료되었습니다")
-            msg.setWindowTitle("알림")
-            msg.exec_()
-            
-        else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("등록된 이미지가 존재하지 않습니다.")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("필터가 선택되지 않았습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
+
     
     def Download(self):
         if self.filtered_image:
             self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("다운로드가 완료되었습니다")
             msg.setWindowTitle("알림")
             msg.exec_()
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("인코딩된 이미지가 존재하지 않습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -200,6 +213,6 @@ class ImageView(QWidget):
         self.filter_list_widget.update_list()
         pass
 
-    def swap_event(self):
+    def cleanup(self):
         
         pass

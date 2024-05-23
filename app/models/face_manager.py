@@ -175,13 +175,13 @@ class FaceManager:
         for face in self.face_list:
             if face.face_id == face_id:
                 return face
-        raise ValueError("존재하지 않는 face_id입니다")
+        return None
 
     def get_person_face_name(self, face_id : int):
         for face in self.face_list:
             if face.face_id == face_id:
                 return face.face_name
-        raise ValueError("존재하지 않는 face_id입니다")
+        return None
 
     def get_person_face_id(self, person_name):
         """person_face_id를 가져오게 하기"""
@@ -232,7 +232,7 @@ class FaceManager:
                     q_image = QImage(face_encoding.data, width, height, bytes_per_line, QImage.Format_RGB888)
                     q_images.append(q_image)
                 return q_images
-        raise ValueError("존재하지 않는 face_name입니다")
+        return None
 
     def get_person_encodings_by_id(self, face_id: int):
         #print("get person encodings")

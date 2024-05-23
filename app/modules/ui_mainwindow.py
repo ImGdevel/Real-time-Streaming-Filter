@@ -29,8 +29,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1280, 800)
-        MainWindow.setMinimumSize(QSize(1280, 800))
+        MainWindow.resize(1360, 800)
+        MainWindow.setMinimumSize(QSize(1360, 800))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
         font = QFont()
@@ -574,7 +574,7 @@ class Ui_MainWindow(object):
         self.appLayout.setContentsMargins(0, 0, 0, 0)
         self.leftMenuBg = QFrame(self.bgApp)
         self.leftMenuBg.setObjectName(u"leftMenuBg")
-        self.leftMenuBg.setMinimumSize(QSize(60, 0))
+        self.leftMenuBg.setMinimumSize(QSize(200, 0))
         self.leftMenuBg.setMaximumSize(QSize(60, 16777215))
         self.leftMenuBg.setFrameShape(QFrame.Shape.NoFrame)
         self.leftMenuBg.setFrameShadow(QFrame.Shadow.Raised)

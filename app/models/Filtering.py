@@ -1,6 +1,5 @@
 from .ObjectDetect import ObjectDetect
 from .FaceFilter import *
-from .ModelManager import ModelManager
 from .sticker_manager import StickerManager
 from .face_manager import FaceManager
 from .filter_info import Filter
@@ -26,13 +25,10 @@ class Filtering:
         Filtering 클래스를 초기화합니다.
         """
         self.object = ObjectDetect()
-        self.modelManager = ModelManager()
         self.faceManager = FaceManager()
         self.stickerManager = StickerManager()
         self.pathManeger = PathManager()
         self.face_recog_frame = 0
-
-        known_faces = None
 
         self.current_filter_info = None
         self.change_filter_info = None
@@ -47,6 +43,7 @@ class Filtering:
 
 
     def face_filter(self, img, results, conf = 10 ,mag_ratio = 1):
+        """return 값 results = {key:[[[box], confidence, label],]} 여기서 box는 x1, y1, w, h의 형식"""
         known_face_ids = []
         for name in self.current_filter_info.face_filter.keys():
             known_face_ids.append(name)
@@ -57,17 +54,17 @@ class Filtering:
             box = [result[0][0], result[0][1], result[0][0]+result[0][2], result[0][1]+result[0][3]] # xywh를 xyxy형태로 변환
             # cv2.rectangle(img, (box[0],box[1]), (box[2],box[3]), (0,255,0), 2)
             # cv2.putText(img, "face"+str(result[1]), (box[0] + 5, box[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
-            if result[2] == "Human face":
-                face_encode = face_encoding_box(img, box)
-                # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
-                if is_known is not None: 
-                    results[int(is_known)].append(result)
-                else:
-                    results[-1].append(result)
+            face_encode = face_encoding_box(img, box)
+            # cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
+            is_known = identify_known_face(known_face_ids, face_encode, self.pathManeger.load_known_faces_path())
+            if is_known is not None: 
+                results[int(is_known)].append(result)
+            else:
+                results[-1].append(result)
         return results
     
     def object_filter(self, img, results):
+        """return 값 results = {key:[[box],],} 여기서 box는 xyxy의 형태"""
         customs = self.object.custom_detect(img)
         for result in customs:
             if result[2] in self.current_filter_info.object_filter:
@@ -100,19 +97,62 @@ class Filtering:
             img = np.where(dilated_condition, img, blurred_background)
         return img
 
+    def get_area_img(self, img, box):
+        focus_img = img[box[1]:box[3], box[0]:box[2]]
+        focus_img = np.ascontiguousarray(focus_img)
+        return focus_img
+    
+    def is_dup(self, new, results):
+        already = []
+        for box in results.values():
+            already.extend(box)
+        
+        for box in already:
+            if len(box) > 0:
+                x1, y1, x2, y2 = box[0][0], box[0][1], box[0][0]+box[0][2], box[0][1]+box[0][3]
+                nx1, ny1, nx2, ny2 = new[0][0], new[0][1], new[0][0]+new[0][2], new[0][1]+new[0][3]
 
-    def filtering(self, img, is_video=True):
-        if self.current_filter_info is None:
-            return dict()
                 
+                intersection_x1 = max(x1, nx1)
+                intersection_y1 = max(y1, ny1)
+                intersection_x2 = min(x2, nx2)
+                intersection_y2 = min(y2, ny2)
+
+                intersection_width = max(0, intersection_x2 - intersection_x1)
+                intersection_height = max(0, intersection_y2 - intersection_y1)
+                intersection_area = intersection_height * intersection_width
+                if intersection_area / (new[0][2]*new[0][3]) >= 0.7:
+                    print("box:",box[0])
+                    print("new:",new[0])
+                    return True
+ 
+        return False
+
+    def filtering(self, img, is_video=True, focus_area=None):
         results = dict()
         results[-2] = []
         results[-1] = []
+
+        if self.current_filter_info is None:
+            return results
+                
         temp_ratio = self.current_filter_info.imgsz_mag * 3 / 100 + 0.01 # 임시로 UI사용하려고 만든 todo 0.01은 0 되지 말라고 넣어놨는데 if로 했다가 이게 더 나은거같음
         conf = self.current_filter_info.predict_conf / 100
         #print(temp_ratio)
         
         results = self.face_filter(img, results, conf, temp_ratio)
+        
+        if focus_area is not None:
+            focus_img = self.get_area_img(img, focus_area)
+            temp = {-2:[], -1:[]}
+            focus_result = self.face_filter(focus_img, temp, conf, temp_ratio)
+            for key, value in focus_result.items():
+                for box in value:
+                    if len(box) > 0:
+                        box[0][0] += focus_area[0]
+                        box[0][1] += focus_area[1]
+                        if not self.is_dup(box, results):
+                            results[key].append(box)
         
         if is_video:
             if len(results) != 0:
@@ -216,6 +256,8 @@ class Filtering:
         return img
     
     def face_sticker(self, img, boxesList, face_id):
+        if face_id not in self.current_filter_info.face_filter.keys():
+            return self.blur(img, boxesList)
         if self.current_filter_info.face_filter[face_id] == -1:
             return img
         for box in boxesList:
@@ -275,7 +317,7 @@ class Filtering:
 
     def change_filter(self, current_filter:Filter = None):
         """필터를 변경한다"""
-        if current_filter is None :
+        if (current_filter is None) | (current_filter == False) :
             self.current_filter_info = None
         else :
             self.current_filter_info = current_filter

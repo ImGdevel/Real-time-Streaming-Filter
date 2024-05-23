@@ -195,6 +195,8 @@ class StickerRegisteredDialog(QDialog):
         self.show_image(image)
         
     def reset_image(self):
+        if self.origin_image is None:
+            return
         self.is_sticker_seletecd = True
         self.edit_image = self.origin_image.scaled(self.image_label.width(), self.image_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.aspect_ratio = (self.origin_image.width() / self.edit_image.width())

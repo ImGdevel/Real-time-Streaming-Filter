@@ -34,12 +34,17 @@ class VideoProcessor(QThread):
         
     # 동영상 받아서 필터링된 동영상 파일 임시 생성
     def filtering_video(self, video_path):
+
         self.is_complete = False
         cap = cv2.VideoCapture(video_path) #filtered video_path
         fps = cap.get(cv2.CAP_PROP_FPS)
         total_elements = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         # 새 동영상 파일 경로 및 설정
         self.temp_video_path = os.path.join(self.path_manager.load_TempData_path(),'output_video.mp4')
+        
+        # 파일 존재 여부 확인 및 삭제
+        if os.path.exists(self.temp_video_path):
+            os.remove(self.temp_video_path)
 
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -64,7 +69,8 @@ class VideoProcessor(QThread):
             processed_frame = self.process_frame(frame)
             output_video.write(processed_frame)
             i += 1
-    
+
+        output_video.release()
         cap.release()
         cv2.destroyAllWindows()
         if self.is_complete is True:
@@ -120,5 +126,5 @@ class VideoProcessor(QThread):
         if not filter is None:
             current_filter = self.filter_manager.get_filter(filter)
             #print("현제 적용 필터 :",  current_filter)
-            self.filtering.set_filter(current_filter)
+            self.filtering.change_filter(current_filter)
             

@@ -10,7 +10,7 @@ from controllers import RealStreamProcessor, FilterSettingController
 from views.component import (
     FilterListWidget, ObjectFilterSettngWidget, 
     BlurSettingWidget, RegisteredFacesListWidget, ContentLabeling, CamWindow,
-    DetectSettingWidget
+    DetectSettingWidget, StreamVideoPlayer
 )
 import cv2
 
@@ -20,12 +20,13 @@ class RealStreamView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filter_controller = FilterSettingController()
+        self.stream_video_player = StreamVideoPlayer()
         self.streaming_processor = RealStreamProcessor()  # 실시간 영상 처리 스레드 객체 생성
-        self.streaming_processor.frame_ready.connect(self.update_video)  # 프레임 수신 시 GUI 업데이트 연결
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_video)
+        self.streaming_processor.frame_ready.connect(self.stream_video_player.update_video)  # 프레임 수신 시 GUI 업데이트 연결
+        self.stream_video_player.select_focus_signal.connect(self.set_focus_area)
         self.current_filter = None
         self.cam_dialog = None
+        self.streaming_processor.webcam_start.connect(self.webcam_start)
         self.initUI()
 
     def initUI(self):
@@ -145,9 +146,15 @@ class RealStreamView(QWidget):
         self.screen_button.setFixedSize(80,30)
         self.screen_button.setStyleSheet(Style.cam_button)
         self.screen_button.clicked.connect(lambda: self.select_video_option(1))
+
+        self.screen_focus_button = QPushButton("집중 탐색")
+        self.screen_focus_button.setFixedSize(80,30)
+        self.screen_focus_button.setStyleSheet(Style.cam_button)
+        self.screen_focus_button.clicked.connect(lambda: self.select_video_option(2))
     
         button_layout.addWidget(self.webcam_button)
         button_layout.addWidget(self.screen_button)
+        button_layout.addWidget(self.screen_focus_button)
         button_layout_frame.setLayout(button_layout)
         
         # 웹캠 선택시 내용 출력
@@ -174,8 +181,8 @@ class RealStreamView(QWidget):
         
         #화면 캡쳐시 내용 출력
         screen_capture_content_widget = QWidget()
-        screen_capture_content_laytout = QHBoxLayout()
-        screen_capture_content_laytout.setSpacing(10)
+        screen_capture_content_layout = QHBoxLayout()
+        screen_capture_content_layout.setSpacing(10)
         
         self.screen_capture_button = QPushButton()
         self.screen_capture_button.setFixedSize(40, 40)
@@ -188,15 +195,40 @@ class RealStreamView(QWidget):
         self.screen_size_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.streaming_processor.screen_size.connect(self.set_screen_size)
         
-        screen_capture_content_laytout.addWidget(self.screen_capture_button, 1)
-        screen_capture_content_laytout.addWidget(self.screen_size_label, 6)
-        screen_capture_content_widget.setLayout(screen_capture_content_laytout)
-        
+        screen_capture_content_layout.addWidget(self.screen_capture_button, 1)
+        screen_capture_content_layout.addWidget(self.screen_size_label, 6)
+        screen_capture_content_widget.setLayout(screen_capture_content_layout)
+
+        #집중 탐색 구역 설정
+        screen_focus_area_widget = QWidget()
+        screen_focus_area_layout = QHBoxLayout()
+        screen_focus_area_layout.setSpacing(10)
+
+        self.focus_area_capture_button = QPushButton()
+        self.focus_area_capture_button.setFixedSize(40, 40)
+        self.focus_area_capture_button.setStyleSheet(Style.mini_button_style)
+        self.focus_area_capture_button.setIcon(QIcon(Icons.screen_desktop))
+        self.focus_area_capture_button.setToolTip('영역 선택')
+        self.focus_area_capture_button.clicked.connect(self.set_focus_area_mode)
+
+        self.focus_area_reset_button = QPushButton()
+        self.focus_area_reset_button.setFixedSize(40, 40)
+        self.focus_area_reset_button.setStyleSheet(Style.mini_button_style)
+        self.focus_area_reset_button.setIcon(QIcon(Icons.dust_bin))
+        self.focus_area_reset_button.setToolTip('초기화')
+        self.focus_area_reset_button.clicked.connect(self.reset_focus_area)
+
+
+        screen_focus_area_layout.addWidget(self.focus_area_capture_button)
+        screen_focus_area_layout.addWidget(self.focus_area_reset_button)
+        screen_focus_area_widget.setLayout(screen_focus_area_layout)
+
         # 위젯 전환
         self.video_options_content = QStackedWidget()
         self.video_options_content.setStyleSheet(Style.frame_style)
         self.video_options_content.addWidget(webcam_content_widget)
         self.video_options_content.addWidget(screen_capture_content_widget)
+        self.video_options_content.addWidget(screen_focus_area_widget)
         
         
         video_options_layout.addWidget(button_layout_frame)
@@ -228,17 +260,8 @@ class RealStreamView(QWidget):
 
     def setup_video_layer(self):
         '''비디오 레이어 설정 메서드'''
-        frame = QFrame()
-        video_layout = QHBoxLayout()
-        
-        self.video_box = QLabel()  # 비디오 플레이어 레이블
-        self.video_box.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 배경색 및 테두리 설정
-        self.video_box.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)  # 정렬 설정
-        video_layout.addWidget(self.video_box)
-        self.video_box.setMaximumWidth(725)
-        frame.setLayout(video_layout)
-        
-        return frame
+        video = self.stream_video_player
+        return video
         
 
     def setup_bottom_layer(self):
@@ -324,19 +347,22 @@ class RealStreamView(QWidget):
     def start_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.puse_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 중지")
+        self.stream_video_player.start_loading()
         self.streaming_processor.start()
-        self.timer.start(0)  # 비동기적으로 프레임 업데이트
             
     def stop_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 시작")
+        self.stream_video_player.stop_loading()
+        self.stream_video_player.frame_clear()
         self.streaming_processor.pause()
         if self.recode_button.isChecked():
             self.recode_button.setChecked(False)
             self.streaming_processor.recordOff()
             self.recode_button.setStyleSheet(Style.mini_button_style)
-        self.timer.stop()
-        
+            self.reset_focus_area()
+        # if self.streaming_processor.capture_mode == 0:
+        #     self.streaming_processor.stop()
         
             
     def set_screen_capture_area(self):
@@ -347,6 +373,19 @@ class RealStreamView(QWidget):
                 self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
         self.streaming_processor.set_capture_area()
+
+    def change_input_video_mode(self, mode):
+
+        if self.streaming_processor.isRunning():
+            self.stop_streaming()
+            if self.streaming_processor.capture_mode == 0:
+                self.streaming_processor.stop()
+
+        if mode == 0:
+            self.streaming_processor.capture_mode = 0
+        else: 
+            self.streaming_processor.capture_mode = 1
+        
                 
     def record_video(self):
         '''웹캠 정지 메서드'''
@@ -367,6 +406,7 @@ class RealStreamView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
             msg.exec_()
             self.recode_button.setChecked(False)
@@ -401,27 +441,31 @@ class RealStreamView(QWidget):
             self.current_filter = None
             self.streaming_processor.set_filter(None)
             self.show_setting(False)
+
             
     def update_filter(self):
         if self.current_filter:
             self.streaming_processor.set_filter(self.current_filter)
-        
-    def update_video(self, q_img=None):
-        '''비디오 업데이트 메서드'''
-        if q_img is None:
-            return
-        pixmap = QPixmap.fromImage(q_img)
-        self.video_box.setPixmap(pixmap.scaled(self.video_box.width(), self.video_box.height(), Qt.KeepAspectRatio))
+
     
     def select_video_option(self, index):
         if index == 0:  # 웹캠 선택
+            self.change_input_video_mode(0)
             self.webcam_button.setStyleSheet(Style.cam_button_selected)
             self.screen_button.setStyleSheet(Style.cam_button)
+            self.screen_focus_button.setStyleSheet(Style.cam_button)
             self.video_options_content.setCurrentIndex(0)
         elif index == 1:  # 화면 캡쳐 선택
+            self.change_input_video_mode(1)
             self.screen_button.setStyleSheet(Style.cam_button_selected)
             self.webcam_button.setStyleSheet(Style.cam_button)
+            self.screen_focus_button.setStyleSheet(Style.cam_button)
             self.video_options_content.setCurrentIndex(1)
+        elif index == 2:
+            self.screen_button.setStyleSheet(Style.cam_button)
+            self.webcam_button.setStyleSheet(Style.cam_button)
+            self.screen_focus_button.setStyleSheet(Style.cam_button_selected)
+            self.video_options_content.setCurrentIndex(2)
             
     
     def set_screen_size(self, size : str):
@@ -446,7 +490,6 @@ class RealStreamView(QWidget):
         return name_list
     
     def refresh_webcam_combox(self):
-        print("refresh")
         self.running_webcam_stop()
         namelist = self.detect_webcams()
         combox = QComboBox()
@@ -454,20 +497,20 @@ class RealStreamView(QWidget):
         self.webcam_combo = combox
         self.streaming_processor.set_webcam_mode()
 
+
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
         self.set_current_filter(self.current_filter)
 
+
     def closeEvent(self, event):
         '''GUI 종료 이벤트 메서드'''
         self.streaming_processor.stop()
-        #self.streaming_processor.wait()
-        self.timer.stop()
         del self.streaming_processor
-        del self.timer
         if self.cam_dialog is not None:
             self.cam_dialog.close()
+
 
     def running_webcam_stop(self):
         if self.streaming_processor.isRunning():
@@ -479,7 +522,34 @@ class RealStreamView(QWidget):
                 if self.streaming_processor.webcam_on:
                     self.streaming_processor.stop()
         self.play_pause_button.setChecked(False)
+        self.reset_focus_area()
+
         
-    def swap_event(self):
+    def cleanup(self):
         self.stop_streaming()
+        self.streaming_processor.stop()
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
         
+    def set_focus_area_mode(self):
+        self.reset_focus_area()
+        if self.streaming_processor.is_running is True:
+            self.stream_video_player.setFocusSelectMode(True)
+        else:
+            self.stream_video_player.setFocusSelectMode(False)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+    
+    def webcam_start(self):
+        self.webcam_on.emit()
+
+    def set_focus_area(self, box):
+        self.streaming_processor.set_focus_area(box)
+    
+    def reset_focus_area(self):
+        self.stream_video_player.clearFocusBox()
+        self.streaming_processor.del_focus_area()
