@@ -1,8 +1,59 @@
-from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal
-from PySide6.QtGui import QImage, QPixmap, QColor
+from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal, QTimer, QRectF
+from PySide6.QtGui import QImage, QPixmap, QColor, QPainter, QBrush
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QWidget, QMessageBox, QSizePolicy
-from utils import Colors
+from utils import Colors, Icons
 from .focus_detect_select_area import FocusDetectSelectArea
+
+class SpinnerWidget(QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(200, 200)  # 위젯의 크기 설정
+        self.angle = 0
+        self.pixmap = QPixmap(Icons.loading)  # 이미지 로드
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.rotate)
+        self.is_spin = False
+        self.hide()  # 초기에는 이미지를 숨김
+
+    def start(self):
+        self.is_spin = True
+        self.angle = 0  # 각도 초기화
+        self.show()  # 이미지를 보임
+        self.timer.start(10)  # 타이머 시작
+
+    def stop(self):
+        self.is_spin = False
+        self.timer.stop()  # 타이머 멈춤
+        self.hide()  # 이미지를 숨김
+
+    def rotate(self):
+        self.angle = (self.angle + 5) % 360  # 각도를 5도씩 증가시키며 360도에서 다시 0도로
+        self.update()
+
+    def paintEvent(self, event):
+        if self.isHidden():
+            return  # 이미지가 숨겨져 있으면 그리지 않음
+
+        # 페인터 설정
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)  # 이미지 변환 시 부드럽게
+
+        # 중심점 설정
+        center = self.rect().center()
+        
+        # 이미지를 중심점 기준으로 회전
+        painter.translate(center)
+        painter.rotate(self.angle)
+        painter.translate(-center)
+
+        # 이미지를 그림
+        rect = QRectF(self.pixmap.rect())
+        rect.moveCenter(center)
+        painter.drawPixmap(rect.topLeft(), self.pixmap)
+        
+        painter.end()
+
 
 class StreamVideoPlayer(QWidget):
     select_focus_signal = Signal(tuple)
@@ -22,24 +73,30 @@ class StreamVideoPlayer(QWidget):
         self.stream_info_bar.setFixedHeight(30)
 
 
-        
-
         self.show_box = QLabel()
         self.show_box.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.show_box.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         self.show_box.setMaximumWidth(725)
         self.show_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
-
         # FocusDetectSelectArea를 show_box와 동일한 위치와 크기로 추가
         self.overlay = FocusDetectSelectArea(self.show_box)
         self.overlay.areaSelected.connect(self.handle_area_selected)
         self.overlay.raise_()
 
-
+        self.spinner = SpinnerWidget(self.show_box)
+        self.spinner.raise_()
 
         video_layout.addWidget(self.show_box)
         self.setLayout(video_layout)
+
+    def start_loading(self):
+        """로딩 시작"""
+        self.spinner.start()
+
+    def stop_loading(self):
+        """로딩 멈추기"""
+        self.spinner.stop()
 
     def setFocusSelectMode(self, mode):
         self.overlay.setFocusSelectMode(mode)
@@ -66,7 +123,11 @@ class StreamVideoPlayer(QWidget):
         '''비디오 업데이트 메서드'''
         if frame is None or frame.isNull():
             self.frame_clear()
+            self.stop_loading()
             return
+        if self.spinner.is_spin:
+            self.stop_loading()
+
         self.original_size = frame.size()
         
         pixmap = QPixmap.fromImage(frame)

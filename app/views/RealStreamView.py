@@ -347,6 +347,7 @@ class RealStreamView(QWidget):
     def start_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.puse_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 중지")
+        self.stream_video_player.start_loading()
         self.streaming_processor.start()
             
     def stop_streaming(self):
