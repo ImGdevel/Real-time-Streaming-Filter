@@ -353,12 +353,16 @@ class RealStreamView(QWidget):
     def stop_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 시작")
+        self.stream_video_player.stop_loading()
+        self.stream_video_player.frame_clear()
         self.streaming_processor.pause()
         if self.recode_button.isChecked():
             self.recode_button.setChecked(False)
             self.streaming_processor.recordOff()
             self.recode_button.setStyleSheet(Style.mini_button_style)
             self.reset_focus_area()
+        # if self.streaming_processor.capture_mode == 0:
+        #     self.streaming_processor.stop()
         
             
     def set_screen_capture_area(self):

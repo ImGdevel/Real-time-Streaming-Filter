@@ -1,6 +1,9 @@
-from PySide6.QtCore import Qt, QPoint, QRect, QSize, Signal, QTimer, QRectF
-from PySide6.QtGui import QImage, QPixmap, QColor, QPainter, QBrush
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QWidget, QMessageBox, QSizePolicy
+import sys
+from PySide6.QtCore import Qt, Signal, QTimer, QRectF, QSize
+from PySide6.QtGui import QImage, QPixmap, QColor, QPainter
+from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QMessageBox, QSizePolicy
+
+# Assuming Colors and Icons are defined elsewhere
 from utils import Colors, Icons
 from .focus_detect_select_area import FocusDetectSelectArea
 
@@ -27,7 +30,7 @@ class SpinnerWidget(QLabel):
         self.hide()  # 이미지를 숨김
 
     def rotate(self):
-        self.angle = (self.angle + 5) % 360  # 각도를 5도씩 증가시키며 360도에서 다시 0도로
+        self.angle = (self.angle + 10) % 360  # 각도를 5도씩 증가시키며 360도에서 다시 0도로
         self.update()
 
     def paintEvent(self, event):
@@ -72,13 +75,16 @@ class StreamVideoPlayer(QWidget):
         self.stream_info_bar.setMaximumWidth(725)
         self.stream_info_bar.setFixedHeight(30)
 
-
         self.show_box = QLabel()
         self.show_box.setStyleSheet(f'background-color: {Colors.baseColor01};')
         self.show_box.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         self.show_box.setMaximumWidth(725)
         self.show_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
+        # Layout for centering the spinner
+        show_box_layout = QVBoxLayout(self.show_box)
+        show_box_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         # FocusDetectSelectArea를 show_box와 동일한 위치와 크기로 추가
         self.overlay = FocusDetectSelectArea(self.show_box)
         self.overlay.areaSelected.connect(self.handle_area_selected)
@@ -86,6 +92,8 @@ class StreamVideoPlayer(QWidget):
 
         self.spinner = SpinnerWidget(self.show_box)
         self.spinner.raise_()
+
+        show_box_layout.addWidget(self.spinner, alignment=Qt.AlignmentFlag.AlignCenter)
 
         video_layout.addWidget(self.show_box)
         self.setLayout(video_layout)
