@@ -180,6 +180,7 @@ class PersonFaceDialog(QDialog):
         except:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("얼굴 등록에 실패 했습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -192,12 +193,14 @@ class PersonFaceDialog(QDialog):
         if result == 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진은 등록할 수 없습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
             msg.setWindowTitle("경고")
             msg.exec_()
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("얼굴 등록이 등록 되었습니다")
             msg.setWindowTitle("알림")
             msg.exec_()
@@ -217,7 +220,12 @@ class PersonFaceDialog(QDialog):
             self.capture_window.photo_captured.connect(self.receive_photo_from_capture)
             self.capture_window.exec_()
         except Exception as e:
-            QMessageBox.warning(None, "경고", "얼굴 촬영에 실패 했습니다", QMessageBox.Ok)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("얼굴 촬영에 실패했습니다.")
+            msg.setWindowTitle("경고")
+            msg.exec_()
             self.capture_window.close()
         
     def receive_photo_from_capture(self, photo):
@@ -242,7 +250,12 @@ class PersonFaceDialog(QDialog):
             self.text_layout.set_title(self.current_person.face_name) #title 변경
             self.update_image_list()
         else:
-            QMessageBox.warning(None, "경고", "존재하지 않는 사람 입니다", QMessageBox.Ok)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("존재하지 않는 사람입니다")
+            msg.setWindowTitle("알림")
+            msg.exec_()
             self.update_image_list()
     
     def add_person(self):
@@ -302,11 +315,21 @@ class PersonFaceDialog(QDialog):
                     self.change_current_registered_person(self.current_person.face_id)
                     self.updateEvent.emit()
                 else:
-                    QMessageBox.warning(None, "경고", "이미 등록된 사람이 있습니다.", QMessageBox.Ok)
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+                    msg.setText("이미 등록된 사람이 있습니다")
+                    msg.setWindowTitle("경고")
+                    msg.exec_()
                     self.change_current_registered_person(self.current_person.face_id)
         else:
-                    QMessageBox.warning(None, "경고", "유효하지 않은 이름입니다.", QMessageBox.Ok)
-                    self.change_current_registered_person(self.current_person.face_id)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("유효하지 않은 이름입니다")
+            msg.setWindowTitle("경고")
+            msg.exec_()
+            self.change_current_registered_person(self.current_person.face_id)
 
             
 

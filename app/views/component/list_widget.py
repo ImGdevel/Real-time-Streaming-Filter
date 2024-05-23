@@ -222,6 +222,7 @@ class RegisteredFacesListWidget(ListWidget):
             if e == "image error":
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
+                msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
                 msg.setText("이미지를 가져오지 못했습니다")
                 msg.setWindowTitle("경고")
                 msg.exec_()

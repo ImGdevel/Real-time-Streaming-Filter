@@ -167,6 +167,7 @@ class StreamVideoPlayer(QWidget):
         if self.original_size is None:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("원본 이미지 사이즈를 인식할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -174,6 +175,7 @@ class StreamVideoPlayer(QWidget):
         elif self.current_size is None:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("현재 이미지 사이즈를 인식할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
