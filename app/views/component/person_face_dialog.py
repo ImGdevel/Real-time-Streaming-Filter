@@ -188,17 +188,17 @@ class PersonFaceDialog(QDialog):
     def enroll_finished(self, result : int):
         """이미지 등록 완료"""
         self.progress_dialog.close()
-    
+        self.sucess = result
         if result == 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
-            msg.setText("얼굴 등록에 실패 했습니다 \n\n다음 사진은 등록할 수 없습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
+            msg.setText("얼굴 등록에 실패했습니다 \n\n다음 사진은 등록할 수 없습니다\n1) 얼굴을 인식하기 어려운 사진 \n2) 두 명 이상 얼굴이 촬영된 사진")
             msg.setWindowTitle("경고")
             msg.exec_()
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText("얼굴 등록이 등록 되었습니다")
+            msg.setText("얼굴 등록에 성공했습니다")
             msg.setWindowTitle("알림")
             msg.exec_()
             
@@ -253,7 +253,8 @@ class PersonFaceDialog(QDialog):
 
     def delete_person(self):
         """사람 삭제"""
-        self.face_setting_processor.delete_person_face_by_id(self.current_person.face_id)
+        if self.face_setting_processor.get_person_face_by_id(self.current_person.face_id) is not None:
+            self.face_setting_processor.delete_person_face_by_id(self.current_person.face_id)
         self.registered_person_list.update_list()
         self.updateEvent.emit()
         self.show_window(False)
@@ -274,8 +275,11 @@ class PersonFaceDialog(QDialog):
     def update_image_list(self):
         """이미지 리스트 업데이트 메서드"""
         self.image_list_widget.clear()  # 기존 아이템 삭제
-
         image_list = self.face_setting_processor.get_person_encodings_by_name(self.current_person.face_name)
+        if image_list is None:
+            QMessageBox.warning(None, "경고", "존재하지 않는 이름입니다.", QMessageBox.Ok)
+            self.delete_person()
+            return
         if self.current_person:
             for encoding_value in image_list:
                 self.add_image(encoding_value)

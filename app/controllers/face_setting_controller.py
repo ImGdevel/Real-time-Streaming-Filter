@@ -30,7 +30,7 @@ class PersonFaceSettingController:
         """person_face 삭제 메서드"""
         self.face_manager.delete_person_face_by_name(person_name)
 
-    def delete_person_face_by_id(self, face_id: str):
+    def delete_person_face_by_id(self, face_id: int):
         """person_face 삭제 메서드"""
         self.face_manager.delete_person_face_by_id(face_id)
 
