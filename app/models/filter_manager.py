@@ -192,7 +192,7 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 filter_obj.imgsz_mag = imgsz_mag
                 return
-        print("filterName:", filter_name)
+        #print("filterName:", filter_name)
         raise ValueError("존재하지 않는 filtername입니다.")
 
     def update_predict_conf_in_filter(self, filter_name: str, predict_conf: float):
@@ -201,7 +201,7 @@ class FilterManager:
             if filter_obj.name == filter_name:
                 filter_obj.predict_conf = predict_conf
                 return
-        print("filterName:", filter_name)
+        #print("filterName:", filter_name)
         raise ValueError("존재하지 않는 filtername입니다.")
 
     def remove_filter(self, filter_name: str):

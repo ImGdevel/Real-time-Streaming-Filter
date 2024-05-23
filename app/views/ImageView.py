@@ -161,19 +161,22 @@ class ImageView(QWidget):
                 
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Information)
+                msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
                 msg.setText("인코딩이 완료되었습니다")
                 msg.setWindowTitle("알림")
                 msg.exec_()
                 
             else:
                 msg = QMessageBox()
-                msg.setIcon(QMessageBox.Information)
+                msg.setIcon(QMessageBox.Warning)
+                msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
                 msg.setText("등록된 이미지가 존재하지 않습니다.")
                 msg.setWindowTitle("경고")
                 msg.exec_()
         else :
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("필터가 선택되지 않았습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -184,12 +187,14 @@ class ImageView(QWidget):
             self.filter_image_processor.create_filtered_image_dict(self.filtered_image)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("다운로드가 완료되었습니다")
             msg.setWindowTitle("알림")
             msg.exec_()
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("인코딩된 이미지가 존재하지 않습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -208,6 +213,6 @@ class ImageView(QWidget):
         self.filter_list_widget.update_list()
         pass
 
-    def swap_event(self):
+    def cleanup(self):
         
         pass

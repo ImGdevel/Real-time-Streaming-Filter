@@ -347,17 +347,22 @@ class RealStreamView(QWidget):
     def start_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.puse_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 중지")
+        self.stream_video_player.start_loading()
         self.streaming_processor.start()
             
     def stop_streaming(self):
         self.play_pause_button.setIcon(QIcon(Icons.play_button))
         self.play_pause_button.setToolTip("실시간 스트리밍 시작")
+        self.stream_video_player.stop_loading()
+        self.stream_video_player.frame_clear()
         self.streaming_processor.pause()
         if self.recode_button.isChecked():
             self.recode_button.setChecked(False)
             self.streaming_processor.recordOff()
             self.recode_button.setStyleSheet(Style.mini_button_style)
             self.reset_focus_area()
+        # if self.streaming_processor.capture_mode == 0:
+        #     self.streaming_processor.stop()
         
             
     def set_screen_capture_area(self):
@@ -401,6 +406,7 @@ class RealStreamView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
             msg.exec_()
             self.recode_button.setChecked(False)
@@ -519,8 +525,11 @@ class RealStreamView(QWidget):
         self.reset_focus_area()
 
         
-    def swap_event(self):
+    def cleanup(self):
         self.stop_streaming()
+        self.streaming_processor.stop()
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
         
     def set_focus_area_mode(self):
         self.reset_focus_area()
@@ -530,6 +539,7 @@ class RealStreamView(QWidget):
             self.stream_video_player.setFocusSelectMode(False)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()

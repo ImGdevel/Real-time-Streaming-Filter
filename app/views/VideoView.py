@@ -102,6 +102,7 @@ class VideoView(QWidget):
         if self.origin_video_path:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("작업 내용을 초기화 하시겠습니까?")
             msg.setWindowTitle("알림")
             msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -123,6 +124,7 @@ class VideoView(QWidget):
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("초기화 시킬 내용이 없습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -147,6 +149,7 @@ class VideoView(QWidget):
         else :
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("영상파일을 인식할 수 없습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -164,7 +167,8 @@ class VideoView(QWidget):
         print("do_video_encoding")
         if self.filter_list_widget.seleted_filter is None:
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("필터가 선택되지 않았습니다.")
             msg.setWindowTitle("경고")
             msg.exec_()
@@ -187,8 +191,9 @@ class VideoView(QWidget):
         else:
             # todo : 동영상이 선택 되지 않았음을 알려야 함
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("등록된 영상파일이 존재하지 않습니다.")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setText("동영상을 가져오지 못했습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
         
@@ -207,6 +212,7 @@ class VideoView(QWidget):
         """인코딩 후 영상 반환, 재생"""
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
+        msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
         msg.setText("인코딩이 완료 되었습니다")
         msg.setWindowTitle("알림")
         msg.exec_()
@@ -222,12 +228,14 @@ class VideoView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setText("다운로드가 완료되었습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("알림")
             msg.exec_()
         except ValueError as e:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("인코딩 영상이 존재하지 않습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
             msg.exec_()
             
@@ -237,7 +245,7 @@ class VideoView(QWidget):
         """페이지 refresh"""
         self.filter_list_widget.update_list()
         
-    def swap_event(self):
+    def cleanup(self):
         
         pass
         

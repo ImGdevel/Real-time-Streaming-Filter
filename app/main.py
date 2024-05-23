@@ -73,15 +73,10 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
-        widgets.btn_home.setToolTip('홈')
         widgets.btn_streaming.clicked.connect(self.buttonClick)
-        widgets.btn_streaming.setToolTip('실시간 스트림')
         widgets.btn_video.clicked.connect(self.buttonClick)
-        widgets.btn_video.setToolTip('비디오 필터링')
         widgets.btn_image.clicked.connect(self.buttonClick)
-        widgets.btn_image.setToolTip('이미지 필터링')
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
-        widgets.btn_filter_setting.setToolTip('필터설정 프리셋')
         widgets.settingsTopBtn.clicked.connect(UIFunctions.open_website)
         widgets.settingsTopBtn.setToolTip("도움말")
 
@@ -137,7 +132,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.streaming_page) 
             self.current_page = widgets.streaming_page
             self.streaming_widget.render()
-            self.swap_event(self.streaming_widget)
+            self.cleanup(self.streaming_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
@@ -146,7 +141,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.video_page)
             self.current_page = widgets.video_page
             self.video_widget.render()
-            self.swap_event(self.video_widget)
+            self.cleanup(self.video_widget)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -155,7 +150,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.image_page)
             self.current_page = widgets.image_page
             self.image_widget.render()
-            self.swap_event(self.image_widget)
+            self.cleanup(self.image_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
@@ -164,7 +159,7 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.filter_setting_page)
             self.current_page = widgets.filter_setting_page
             self.filter_setting_widget.render()
-            self.swap_event(self.filter_setting_widget)
+            self.cleanup(self.filter_setting_widget)
             UIFunctions.resetStyle(self, btnName) 
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
             
@@ -172,10 +167,10 @@ class MainWindow(QMainWindow):
         
             
         
-    def swap_event(self, page):
+    def cleanup(self, page):
         for widget in self.view_widgets:
             if page != widget:
-                widget.swap_event()
+                widget.cleanup()
 
 
     # RESIZE EVENTS

@@ -216,7 +216,6 @@ class RealStreamProcessor(QThread):
         self.capture_mode = 1
         self.del_focus_area()
         self.capture_area = (min(x1,x2),min(y1,y2), w, h)
-        # print("Clicked coordinates:", self.capture_area)
         self.screen_size.emit((self.capture_area[2], self.capture_area[3]))
 
     def set_web_cam(self, web_cam):

@@ -382,6 +382,7 @@ class FilterSettingView(QWidget):
                 else:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
+                    msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
                     msg.setText("이미 존재하는 필터 입니다")
                     msg.setWindowTitle("경고")
                     msg.exec_()
@@ -389,6 +390,7 @@ class FilterSettingView(QWidget):
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setText("유효하지 않은 이름입니다")
             msg.setWindowTitle("경고")
             msg.exec_()      
@@ -409,6 +411,6 @@ class FilterSettingView(QWidget):
     def webcamOn(self):
         self.webcam_on.emit()
         
-    def swap_event(self):
+    def cleanup(self):
         
         pass
