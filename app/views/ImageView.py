@@ -48,7 +48,7 @@ class ImageView(QWidget):
 
 
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.onClickItemEvent.connect(self.set_filter_option)
+        self.filter_list_widget.onClickItemEvent.connect(self.set_current_filter)
         
         content_label = ContentLabeling()
         content_label.setLabel("필터 목록", Style.title_label)
@@ -115,7 +115,7 @@ class ImageView(QWidget):
             self.dropbox_widget.currunt_filt = None
 
 
-    def set_filter_option(self, index):
+    def set_current_filter(self, index):
         """필터 옵션 선택"""
         self.filter_image_processor.set_filter(index)
         pass
@@ -211,8 +211,9 @@ class ImageView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
+        self.set_current_filter(None)
         pass
 
     def cleanup(self):
-        
+        self.set_current_filter(None)
         pass

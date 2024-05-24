@@ -319,6 +319,7 @@ class FilterSettingView(QWidget):
         """현제 선택된 필터로 창 업데이트"""
         self.filter_list_widget.update_list()
         self.current_filter = filter_name
+        print(filter_name)
         if filter_name is None or filter_name == "":
             self.show_filter_setting_page(False)
             return
@@ -401,7 +402,7 @@ class FilterSettingView(QWidget):
     def render(self):
         """페이지 refesh"""
         self.filter_list_widget.update_list()
-        self.set_current_filter(self.current_filter)
+        self.set_current_filter(None)
     
         # Close Event
     def closeEvent(self, event):
@@ -412,5 +413,5 @@ class FilterSettingView(QWidget):
         self.webcam_on.emit()
         
     def cleanup(self):
+        self.set_current_filter(None)
         
-        pass

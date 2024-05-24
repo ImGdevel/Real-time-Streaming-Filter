@@ -136,6 +136,7 @@ class FilterListWidget(ListWidget):
     
     def update_list(self):
         self.clear()
+        self.seleted_filter = None
         lists = self.filter_setting_processor.get_filters()
         for filter in lists:
             self.add_item(filter.name)

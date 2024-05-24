@@ -124,6 +124,7 @@ class VideoProcessor(QThread):
         """필터 설정"""
         if not filter is None:
             current_filter = self.filter_manager.get_filter(filter)
-            #print("현제 적용 필터 :",  current_filter)
             self.filtering.change_filter(current_filter)
+        else:
+            self.filtering.change_filter(None)
             

@@ -506,20 +506,6 @@ class RealStreamView(QWidget):
         msg.exec_()
 
 
-    def render(self):
-        """페이지 refesh"""
-        self.filter_list_widget.update_list()
-        self.set_current_filter(self.current_filter)
-
-
-    def closeEvent(self, event):
-        '''GUI 종료 이벤트 메서드'''
-        self.streaming_processor.stop()
-        del self.streaming_processor
-        if self.cam_dialog is not None:
-            self.cam_dialog.close()
-
-
     def running_webcam_stop(self):
         if self.streaming_processor.isRunning():
             self.stop_streaming()
@@ -533,11 +519,7 @@ class RealStreamView(QWidget):
         self.reset_focus_area()
 
         
-    def cleanup(self):
-        self.stop_streaming()
-        self.streaming_processor.stop()
-        if self.cam_dialog is not None:
-            self.cam_dialog.close()
+
         
     def set_focus_area_mode(self):
         self.reset_focus_area()
@@ -561,3 +543,23 @@ class RealStreamView(QWidget):
     def reset_focus_area(self):
         self.stream_video_player.clearFocusBox()
         self.streaming_processor.del_focus_area()
+
+    
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.update_list()
+        self.set_current_filter(None)
+
+    def cleanup(self):
+        self.stop_streaming()
+        self.streaming_processor.stop()
+        self.set_current_filter(None)
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
+
+    def closeEvent(self, event):
+        '''GUI 종료 이벤트 메서드'''
+        self.streaming_processor.stop()
+        del self.streaming_processor
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
