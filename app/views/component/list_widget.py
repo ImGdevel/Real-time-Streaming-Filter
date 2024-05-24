@@ -129,14 +129,15 @@ class FilterListWidget(ListWidget):
                 self.seleted_filter = widget.objectName()
                 self.onClickItemEvent.emit(widget.objectName())  # ObjectName을 시그널로 전달
             else:
-                self.seleted_filter = None
+                self.clear_seletecd()
                 self.onClickItemEvent.emit(None)  # ObjectName을 시그널로 전달
-                self.update_list()
                 
+    def clear_seletecd(self):
+        self.seleted_filter = None
+        self.update_list()
     
     def update_list(self):
         self.clear()
-        self.seleted_filter = None
         lists = self.filter_setting_processor.get_filters()
         for filter in lists:
             self.add_item(filter.name)

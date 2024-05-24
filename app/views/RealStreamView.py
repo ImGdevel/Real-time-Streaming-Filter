@@ -547,7 +547,7 @@ class RealStreamView(QWidget):
     
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_list()
+        self.filter_list_widget.clear_seletecd()
         self.set_current_filter(None)
 
     def cleanup(self):
