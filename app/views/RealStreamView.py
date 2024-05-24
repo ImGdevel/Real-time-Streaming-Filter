@@ -162,13 +162,11 @@ class RealStreamView(QWidget):
         webcam_content_laytout = QHBoxLayout()
         webcam_content_laytout.setContentsMargins(20,10,20,10)
         
-        self.cam_set_init = False
+        
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
-        self.webcam_list = self.detect_webcams()
-        self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
-        self.cam_set_init = True
+        self.detect_webcams()
 
         self.refreash_webcam_button = QPushButton()
         self.refreash_webcam_button.setFixedSize(30, 30)
@@ -476,36 +474,36 @@ class RealStreamView(QWidget):
         self.screen_size_label.setText(screen_size)
     
     def detect_webcams(self):
-        # 연결된 카메라 장치를 검색합니다.
+        """연결된 카메라 장치를 검색합니다"""
+        
         index = 0
-        name_list = list()
         while True:
             cap = cv2.VideoCapture(index)
             if not cap.read()[0]:
                 break
             
             # 장치의 이름을 가져옵니다.
-            name_list.append(str(index))
+            if index == 0:
+                cam_name = "default cam"
+            else:
+                cam_name = "device "+ str(index) 
+                
+            self.webcam_combo.addItem(cam_name, userData=index)
             cap.release()
             index += 1
             
-        if self.cam_set_init:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("웹캠 장치가 갱신되었습니다")
-            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
-            msg.setWindowTitle("알림")
-            msg.exec_()
-            
-        return name_list
-    
     def refresh_webcam_combox(self):
         self.running_webcam_stop()
-        namelist = self.detect_webcams()
-        combox = QComboBox()
-        combox.addItems(namelist)
-        self.webcam_combo = combox
+        self.webcam_combo.clear()
+        self.detect_webcams()
         self.streaming_processor.set_webcam_mode()
+        
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("웹캠 장치가 갱신되었습니다")
+        msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+        msg.setWindowTitle("알림")
+        msg.exec_()
 
 
     def render(self):
