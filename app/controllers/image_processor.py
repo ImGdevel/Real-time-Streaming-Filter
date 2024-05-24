@@ -17,21 +17,15 @@ class ImageProcessor():
         self.path_manager = PathManager()
         self.filter_manager = FilterManager()
 
-
     #원본 사진을 받아서 임시로 이미지 처리
     def filtering_images(self, image_paths):
         processed_images = []
         for image_path in image_paths:
             # 이미지 읽어오기
             image = cv2.imread(image_path)
-            
-            # 이미지 처리 
-            #blur_ratio = 50
 
             boxesList = self.filtering.filtering(image, is_video=False)
             processed_image = self.filtering.square_blur(image, boxesList)
-            
-
             
             processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)  # BGR을 RGB로 변환
             height, width, channel = processed_image.shape
@@ -80,7 +74,6 @@ class ImageProcessor():
             q_img = QImage(processed_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
 
             processed_images_dict[image_path] = q_img
-
 
         return processed_images_dict
 

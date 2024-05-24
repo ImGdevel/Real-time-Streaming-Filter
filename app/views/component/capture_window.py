@@ -53,10 +53,6 @@ class CaptureWindow(QDialog):
 
             frame = cv2.cvtColor(processed_img, cv2.COLOR_BGR2RGB)
             gray = cv2.cvtColor(processed_img, cv2.COLOR_BGR2GRAY)
-            
-            #faces = self.face_detector.origin_detect(frame)
-            # for (x, y, w, h) in faces:
-            #     cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
                 
             height, width, channel = frame.shape
             bytes_per_line = 3 * width

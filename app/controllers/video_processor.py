@@ -109,7 +109,6 @@ class VideoProcessor(QThread):
         
     def download_video(self):
         """필터링 된 비디오를 다운합니다."""
-        # todo : output_video_path를 다운로드 경로로 이동
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         video_name = f"output_video_{current_time}.mp4"
         output_video_path = self.path_manager.load_download_path()
