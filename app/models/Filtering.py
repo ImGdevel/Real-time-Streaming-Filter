@@ -309,7 +309,6 @@ class Filtering:
     
     def set_filter(self, current_filter:Filter = None):
         """변경될 필터 정보를 전달하고 필터를 변경해야 하는 상태라고 저장한다"""
-        print("필터링 변경에 적용되는 필터: ", current_filter)
         if self.current_filter_info is None:
             self.change_filter(current_filter)
             return
@@ -319,7 +318,6 @@ class Filtering:
 
     def change_filter(self, current_filter:Filter = None):
         """필터를 변경한다"""
-        print("필터링 변경에 적용되는 필터: ", current_filter)
         if (current_filter is None) | (current_filter == False) :
             self.current_filter_info = None
         else :
