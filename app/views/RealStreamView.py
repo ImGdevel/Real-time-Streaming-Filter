@@ -162,11 +162,13 @@ class RealStreamView(QWidget):
         webcam_content_laytout = QHBoxLayout()
         webcam_content_laytout.setContentsMargins(20,10,20,10)
         
+        self.cam_set_init = False
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
         self.webcam_list = self.detect_webcams()
         self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
+        self.cam_set_init = True
 
         self.refreash_webcam_button = QPushButton()
         self.refreash_webcam_button.setFixedSize(30, 30)
@@ -404,7 +406,7 @@ class RealStreamView(QWidget):
             
         except Exception as e:
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Warning)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
             msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
@@ -486,7 +488,15 @@ class RealStreamView(QWidget):
             name_list.append(str(index))
             cap.release()
             index += 1
-        
+            
+        if self.cam_set_init:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("웹캠 장치가 갱신되었습니다")
+            msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+            msg.setWindowTitle("알림")
+            msg.exec_()
+            
         return name_list
     
     def refresh_webcam_combox(self):
@@ -540,7 +550,7 @@ class RealStreamView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
-            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
+            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
     
