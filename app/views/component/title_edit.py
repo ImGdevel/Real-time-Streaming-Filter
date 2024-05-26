@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QListWidget, QListWidgetItem, QSplitter, QCheckBox, QLineEdit
-from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QFontMetrics, QValidator
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QValidator
 from utils import Colors, Style
 
 class SpaceValidator(QValidator):

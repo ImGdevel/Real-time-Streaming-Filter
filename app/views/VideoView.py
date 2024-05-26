@@ -48,7 +48,7 @@ class VideoView(QWidget):
         list_frame.setContentMargin(0,0,0,0)
         
         self.filter_list_widget = FilterListWidget()
-        self.filter_list_widget.set_items_event(self.set_filter_option)
+        self.filter_list_widget.set_items_event(self.set_current_filter)
         list_frame.setContent(self.filter_list_widget)
         setting_widget.addWidget(list_frame)
 
@@ -154,7 +154,7 @@ class VideoView(QWidget):
             msg.setWindowTitle("경고")
             msg.exec_()
 
-    def set_filter_option(self, index):
+    def set_current_filter(self, index = None):
         """필터 옵션 선택"""
         if index == False:
             index = None
@@ -243,9 +243,10 @@ class VideoView(QWidget):
         
     def render(self):
         """페이지 refresh"""
-        self.filter_list_widget.update_list()
+        self.filter_list_widget.clear_seletecd()
+        self.set_current_filter(None)
         
     def cleanup(self):
-        
+        self.set_current_filter(None)
         pass
         

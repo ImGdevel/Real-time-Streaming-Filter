@@ -400,8 +400,8 @@ class FilterSettingView(QWidget):
     # 페이지 리프레쉬
     def render(self):
         """페이지 refesh"""
-        self.filter_list_widget.update_list()
-        self.set_current_filter(self.current_filter)
+        self.filter_list_widget.clear_seletecd()
+        self.set_current_filter(None)
     
         # Close Event
     def closeEvent(self, event):
@@ -412,5 +412,5 @@ class FilterSettingView(QWidget):
         self.webcam_on.emit()
         
     def cleanup(self):
+        self.set_current_filter(None)
         
-        pass

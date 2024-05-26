@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QSlider, QFrame, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QApplication, QVBoxLayout, QWidget, QPushButton, QSlider, QFrame, QHBoxLayout, QLabel
 from PySide6.QtMultimedia import QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtGui import QIcon, QDragEnterEvent, QDropEvent

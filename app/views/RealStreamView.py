@@ -162,11 +162,11 @@ class RealStreamView(QWidget):
         webcam_content_laytout = QHBoxLayout()
         webcam_content_laytout.setContentsMargins(20,10,20,10)
         
+        
         self.webcam_combo = QComboBox()
         self.webcam_combo.setStyleSheet(f'background-color: {Colors.base_color_03}')
-        self.webcam_list = self.detect_webcams()
-        self.webcam_combo.addItems(self.webcam_list)
         self.webcam_combo.currentIndexChanged.connect(self.change_webcam)
+        self.detect_webcams()
 
         self.refreash_webcam_button = QPushButton()
         self.refreash_webcam_button.setFixedSize(30, 30)
@@ -404,7 +404,7 @@ class RealStreamView(QWidget):
             
         except Exception as e:
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Warning)
             msg.setText("실시간 스트리밍 촬영이 시작되지 않아 녹화를 진행할 수 없습니다")
             msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
             msg.setWindowTitle("경고")
@@ -474,42 +474,36 @@ class RealStreamView(QWidget):
         self.screen_size_label.setText(screen_size)
     
     def detect_webcams(self):
-        # 연결된 카메라 장치를 검색합니다.
+        """연결된 카메라 장치를 검색합니다"""
+        
         index = 0
-        name_list = list()
         while True:
             cap = cv2.VideoCapture(index)
             if not cap.read()[0]:
                 break
             
             # 장치의 이름을 가져옵니다.
-            name_list.append(str(index))
+            if index == 0:
+                cam_name = "default cam"
+            else:
+                cam_name = "device "+ str(index) 
+                
+            self.webcam_combo.addItem(cam_name, userData=index)
             cap.release()
             index += 1
-        
-        return name_list
-    
+            
     def refresh_webcam_combox(self):
         self.running_webcam_stop()
-        namelist = self.detect_webcams()
-        combox = QComboBox()
-        combox.addItems(namelist)
-        self.webcam_combo = combox
+        self.webcam_combo.clear()
+        self.detect_webcams()
         self.streaming_processor.set_webcam_mode()
-
-
-    def render(self):
-        """페이지 refesh"""
-        self.filter_list_widget.update_list()
-        self.set_current_filter(self.current_filter)
-
-
-    def closeEvent(self, event):
-        '''GUI 종료 이벤트 메서드'''
-        self.streaming_processor.stop()
-        del self.streaming_processor
-        if self.cam_dialog is not None:
-            self.cam_dialog.close()
+        
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("웹캠 장치가 갱신되었습니다")
+        msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
+        msg.setWindowTitle("알림")
+        msg.exec_()
 
 
     def running_webcam_stop(self):
@@ -525,11 +519,7 @@ class RealStreamView(QWidget):
         self.reset_focus_area()
 
         
-    def cleanup(self):
-        self.stop_streaming()
-        self.streaming_processor.stop()
-        if self.cam_dialog is not None:
-            self.cam_dialog.close()
+
         
     def set_focus_area_mode(self):
         self.reset_focus_area()
@@ -540,7 +530,7 @@ class RealStreamView(QWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
             msg.setWindowFlags(msg.windowFlags() | Qt.WindowStaysOnTopHint)
-            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다.")
+            msg.setText("실시간 스트리밍 촬영이 시작되지 않아 집중 탐색구역을 설정할 수 없습니다")
             msg.setWindowTitle("경고")
             msg.exec_()
     
@@ -553,3 +543,23 @@ class RealStreamView(QWidget):
     def reset_focus_area(self):
         self.stream_video_player.clearFocusBox()
         self.streaming_processor.del_focus_area()
+
+    
+    def render(self):
+        """페이지 refesh"""
+        self.filter_list_widget.clear_seletecd()
+        self.set_current_filter(None)
+
+    def cleanup(self):
+        self.stop_streaming()
+        self.streaming_processor.stop()
+        self.set_current_filter(None)
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()
+
+    def closeEvent(self, event):
+        '''GUI 종료 이벤트 메서드'''
+        self.streaming_processor.stop()
+        del self.streaming_processor
+        if self.cam_dialog is not None:
+            self.cam_dialog.close()

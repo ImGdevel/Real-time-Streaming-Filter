@@ -48,6 +48,7 @@ class RealStreamProcessor(QThread):
         return None
 
     class WindowCapture:
+        """화면 캠쳐 객체"""
         def __init__(self, window_name=None, capture_rate=30, region=None, processor=None):
             self.window_name = window_name
             self.wait_time = 1 / capture_rate
@@ -124,7 +125,7 @@ class RealStreamProcessor(QThread):
         else:
             self.run_webcam_process()
 
-    def run_webcam_process(self, cam : pyvirtualcam.Camera= None):
+    def run_webcam_process(self, cam : pyvirtualcam.Camera = None):
         while self.is_running and self.video_cap.isOpened():
             self.webcam_on = True
             ret, frame = self.video_cap.read()  # 웹캠에서 프레임 읽기

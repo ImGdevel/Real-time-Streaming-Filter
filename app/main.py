@@ -194,23 +194,23 @@ class MainWindow(QMainWindow):
             
         # Close Event
     def closeEvent(self, event):
-        self.streaming_widget.close()
-        self.video_widget.close()
-        self.image_widget.close()
-        self.filter_setting_widget.close()
-        # reply = QMessageBox.question(self, 'Message', 
-        #     "Are you sure you want to quit?", QMessageBox.Yes | 
-        #     QMessageBox.No, QMessageBox.No)
+        # self.streaming_widget.close()
+        # self.video_widget.close()
+        # self.image_widget.close()
+        # self.filter_setting_widget.close()
+        reply = QMessageBox.question(self, 'Message', 
+            "종료 하시겠습니까?", QMessageBox.Yes | 
+            QMessageBox.No, QMessageBox.No)
 
-        # if reply == QMessageBox.Yes:
-        #     # Close all sub widgets
-        #     self.streaming_widget.close()
-        #     self.video_widget.close()
-        #     self.image_widget.close()
-        #     self.filter_setting_widget.close()
-        #     event.accept()
-        # else:
-        #     event.ignore()
+        if reply == QMessageBox.Yes:
+            # Close all sub widgets
+            self.streaming_widget.close()
+            self.video_widget.close()
+            self.image_widget.close()
+            self.filter_setting_widget.close()
+            event.accept()
+        else:
+            event.ignore()
 
     # Manage Webcam State
     def webcamState(self):

@@ -1,79 +1,54 @@
-import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPixmap, QColor
-from utils import Icons
+from PySide6.QtCore import Qt, Signal, QTimer, QRectF, QSize
+from PySide6.QtGui import QImage, QPixmap, QColor, QPainter
+from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QMessageBox, QSizePolicy
+from utils import Colors, Icons
 
-class LoadingWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("로딩중")
-        self.setFixedSize(300, 300)
+class SpinnerLoading(QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(200, 200)  # 위젯의 크기 설정
+        self.angle = 0
+        self.pixmap = QPixmap(Icons.loading)  # 이미지 로드
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.rotate)
+        self.is_spin = False
+        self.hide()  # 초기에는 이미지를 숨김
 
-        layout = QVBoxLayout()
-        central_widget = QWidget()
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+    def start(self):
+        self.is_spin = True
+        self.angle = 0  # 각도 초기화
+        self.show()  # 이미지를 보임
+        self.timer.start(10)  # 타이머 시작
 
-        self.scene = QGraphicsScene()
-        self.scene.setBackgroundBrush(QColor(0, 0, 0))  # 배경색을 검은색으로 설정
+    def stop(self):
+        self.is_spin = False
+        self.timer.stop()  # 타이머 멈춤
+        self.hide()  # 이미지를 숨김
 
-        self.graphics_view = QGraphicsView(self.scene)
-        layout.addWidget(self.graphics_view)
+    def rotate(self):
+        self.angle = (self.angle + 10) % 360  # 각도를 10도씩 증가시키며 360도에서 다시 0도로
+        self.update()
 
-        # Icons 모듈에서 로딩 이미지 경로를 가져와 QPixmap으로 변환
-        loading_pixmap = QPixmap(Icons.loading)
-        self.loading_item = QGraphicsPixmapItem(loading_pixmap)
-        self.scene.addItem(self.loading_item)
+    def paintEvent(self, event):
+        if self.isHidden():
+            return  # 이미지가 숨겨져 있으면 그리지 않음
 
-        # 중심점을 설정하여 이미지가 로테이션 될 때 중심이 고정되도록 함
-        self.loading_item.setTransformOriginPoint(loading_pixmap.width() / 2, loading_pixmap.height() / 2)
+        # 페인터 설정
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)  # 이미지 변환 시 부드럽게
 
-        # 회전 각도 초기화
-        self.rotation_angle = 0
+        # 중심점 설정
+        center = self.rect().center()
+        
+        # 이미지를 중심점 기준으로 회전
+        painter.translate(center)
+        painter.rotate(self.angle)
+        painter.translate(-center)
 
-        # 타이머 설정하여 이미지 회전
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.rotate_image)
-        self.timer.start(10)  # 10 milliseconds마다 이미지를 회전시킴
-
-        # 종료 버튼 추가
-        self.close_button = QPushButton("종료")
-        self.close_button.clicked.connect(self.close_window)
-        layout.addWidget(self.close_button)
-
-    def rotate_image(self):
-        # 회전 각도를 증가시켜 이미지를 회전시킴
-        self.rotation_angle += 5
-        if self.rotation_angle >= 360:
-            self.rotation_angle = 0
-        self.loading_item.setRotation(self.rotation_angle)
-
-    def close_window(self):
-        self.close()
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("메인 윈도우")
-        self.setGeometry(100, 100, 400, 200)
-
-        self.loading_window = None
-
-        # Loading 윈도우를 시작하는 버튼
-        self.start_loading_button = QPushButton("로딩 시작")
-        self.start_loading_button.clicked.connect(self.start_loading)
-        self.setCentralWidget(self.start_loading_button)
-
-    def start_loading(self):
-        # Loading 윈도우를 생성하고 표시
-        self.loading_window = LoadingWindow()
-        self.loading_window.show()
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+        # 이미지를 그림
+        rect = QRectF(self.pixmap.rect())
+        rect.moveCenter(center)
+        painter.drawPixmap(rect.topLeft(), self.pixmap)
+        
+        painter.end()

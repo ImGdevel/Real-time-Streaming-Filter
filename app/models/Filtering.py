@@ -169,9 +169,10 @@ class Filtering:
                         boxes.append(box)
                 results[key] = boxes
 
-        results = self.filter_state_check(results)
 
         results = self.object_filter(img, results)
+        results = self.filter_state_check(results)
+
         # print("results:",results)
         return results
     

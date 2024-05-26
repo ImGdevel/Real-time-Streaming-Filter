@@ -182,45 +182,6 @@ def register_person(person_name, image, known_faces_path = './models/known_faces
     print("No faces found for :", person_name)
     return False
 
-# 사람 얼굴 사진을 등록하는 함수
-def register_person_by_img(person_name, image, known_faces_path = './models/known_faces.pickle'):
-    """
-    사람의 사진을 등록하고 얼굴 특징을 저장합니다.
-    
-    Args:
-    - person_name: 사람의 이름
-    - image_path: 사진 파일 경로
-    - known_faces_path: 얼굴 특징을 저장하는 파일 경로
-    
-    Returns:
-    - True: 얼굴 특징이 성공적으로 등록되었을 경우
-    - False: 얼굴 특징이 등록되지 않았거나 이미지에서 얼굴을 찾지 못한 경우
-    """
-
-    if os.path.exists(known_faces_path):
-        person_faces = load_known_faces(known_faces_path)
-    else:
-        person_faces = {}
-
-
-    
-    face_features = extract_face_features_by_img(image)
-    if face_features is not None:
-        max_face_number = find_max_face_number(person_name, person_faces) + 1
-        face_code = person_name + "_" + str(max_face_number)
-        person_faces[face_code] = face_features           
-        
-        print("register FaceFilter :", face_code)
-        
-        with open(known_faces_path, 'wb') as f:
-            pickle.dump(person_faces, f)
-
-        return True
-
-    print("No faces found for :", person_name)
-    return False
-
-
 
 # known_faces와 face_encoding 사이의 거리를 비교하여 인식하는 함수
 def recognize_face(known_faces, face_encoding, tolerance=0.3):

@@ -1,5 +1,5 @@
 from PySide6.QtCore import Signal, QThread
-from PySide6.QtGui import QPixmap, QImage
+from PySide6.QtGui import QImage
 from controllers import PersonFaceSettingController
 import cv2
 import numpy as np

@@ -109,7 +109,6 @@ class VideoProcessor(QThread):
         
     def download_video(self):
         """필터링 된 비디오를 다운합니다."""
-        # todo : output_video_path를 다운로드 경로로 이동
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
         video_name = f"output_video_{current_time}.mp4"
         output_video_path = self.path_manager.load_download_path()
@@ -125,6 +124,7 @@ class VideoProcessor(QThread):
         """필터 설정"""
         if not filter is None:
             current_filter = self.filter_manager.get_filter(filter)
-            #print("현제 적용 필터 :",  current_filter)
             self.filtering.change_filter(current_filter)
+        else:
+            self.filtering.change_filter(None)
             
