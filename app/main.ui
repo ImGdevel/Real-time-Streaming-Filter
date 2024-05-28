@@ -72,7 +72,7 @@ Left Menu */
 }
 #topLogo {
 	background-color: rgb(33, 37, 43);
-	background-image: url(:/images/resources/images/CAMA_Icon.png);
+	background-image: url(:/images/resources/images/OBLIND_Icon.png);
 	background-position: centered;
 	background-repeat: no-repeat;
 }
@@ -682,7 +682,7 @@ Button */
               </font>
              </property>
              <property name="text">
-              <string>CAMA</string>
+              <string>OBLIND</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
@@ -1586,7 +1586,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    </font>
                   </property>
                   <property name="text">
-                   <string>CAMA  Real-time Streaming Filtering Application</string>
+                   <string>OBLIND  Real-time Streaming Filtering Application</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -1866,7 +1866,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
-                       <string notr="true">background-image: url(:/images/resources/images/CAMA_Logo.png);
+                       <string notr="true">background-image: url(:/images/resources/images/OBLIND_Logo.png);
 background-position: center;
 background-repeat: no-repeat;</string>
                       </property>
@@ -3009,7 +3009,7 @@ background-repeat: no-repeat;</string>
                    </font>
                   </property>
                   <property name="text">
-                   <string>CAMA: Real-time Streaming Filtering Application</string>
+                   <string>OBLIND: Real-time Streaming Filtering Application</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
