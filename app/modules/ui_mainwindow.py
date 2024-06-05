@@ -82,7 +82,7 @@ class Ui_MainWindow(object):
 "}\n"
 "#topLogo {\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	background-image: url(:/images/resources/images/CAMA_Icon.png);\n"
+"	background-image: url(:/images/resources/images/OBLIND_Icon.png);\n"
 "	background-position: centered;\n"
 "	background-repeat: no-repeat;\n"
 "}\n"
@@ -1042,7 +1042,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/CAMA_Logo.png);\n"
+        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/OBLIND_Logo.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;")
         self.stackedWidget.addWidget(self.home)
@@ -1558,7 +1558,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"CAMA", None))
+        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"OBLIND", None))
         self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"실시간 / 비디오 모자이크", None))
         self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"\uba54\ub274", None))
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"\ud648", None))
@@ -1592,7 +1592,7 @@ class Ui_MainWindow(object):
                         "r:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe UI'; font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
-        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"CAMA  Real-time Streaming Filtering Application", None))
+        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"OBLIND  Real-time Streaming Filtering Application", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"도움말", None))
 #endif // QT_CONFIG(tooltip)
@@ -1678,7 +1678,7 @@ class Ui_MainWindow(object):
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
-        self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"CAMA: Real-time Streaming Filtering Application", None))
+        self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"OBLIND: Real-time Streaming Filtering Application", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.1.4", None))
     # retranslateUi
 
