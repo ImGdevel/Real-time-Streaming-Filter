@@ -30,6 +30,7 @@ class RealStreamProcessor(QThread):
         self.is_record = False
         self.output_video = None
         self.focus_detection_area = None
+        self.record_state_change = False
 
         self.virtual_cam_backend = self.detect_virtual_cam_backend()  # 가상 카메라 백엔드 탐지
 
@@ -102,6 +103,11 @@ class RealStreamProcessor(QThread):
             if delta < sleep_time:
                 time.sleep(sleep_time - delta)
 
+            if self.record_state_change:
+                self.record_state_change = False
+                self.is_record = False
+                self.output_video.release()
+                
             if self.is_record:
                 self.output_video.write(processed_frame)
 
@@ -142,7 +148,10 @@ class RealStreamProcessor(QThread):
                 if cam:
                     cam.send(processed_frame)
                     cam.sleep_until_next_frame()
-
+                if self.record_state_change:
+                    self.record_state_change = False
+                    self.is_record = False
+                    self.output_video.release()
                 # 녹화
                 if self.is_record:
                     self.output_video.write(processed_frame)
@@ -246,7 +255,7 @@ class RealStreamProcessor(QThread):
             cap = self.capture
             frame_width = int(self.capture_area[2])
             frame_height = int(self.capture_area[3])
-            fps = 20
+            fps = 15
         if cap is None:
             raise Exception("녹화에 대한 입력이 없습니다")
 
@@ -260,8 +269,9 @@ class RealStreamProcessor(QThread):
         
     def recordOff(self):
         if self.is_record:
-            self.is_record = False
-            self.output_video.release()
+            self.record_state_change = True
+            # self.is_record = False
+            # self.output_video.release()
 
     def set_webcam_mode(self):
         self.del_focus_area()
