@@ -1,6 +1,7 @@
 
 
 #  OBLIND | Real-time-Streaming-Filter
+<img src="https://github.com/ImGdevel/Real-time-Streaming-Filter/assets/62339794/408bf0f5-52bc-4a90-9716-28a0acacacf7" alt="image" width="680" height="400">
 
 실시간 스트리밍 데이터를 효율적으로 처리하고 필터링하는 강력한 애플리케이션입니다.
 
