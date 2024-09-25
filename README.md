@@ -1,5 +1,4 @@
 
-
 #  OBLIND | Real-time-Streaming-Filter
 <img src="https://github.com/ImGdevel/Real-time-Streaming-Filter/assets/62339794/408bf0f5-52bc-4a90-9716-28a0acacacf7" alt="image" width="680" height="400">
 
@@ -10,21 +9,19 @@
 빌드버전 다운로드<br>
 https://drive.google.com/file/d/1j6hMPa1un8TR8fsX2P9NtMW6TSgmluGy/view?usp=drive_link
 
-## 목차
-
-- [소개](#소개)
-- [특징](#특징)
-- [설치](#설치)
-- [사용법](#사용법)
-- [구성](#구성)
-- [기여](#기여)
-- [라이선스](#라이선스)
 
 ## 소개
 
 `Real-time-Streaming-Filter`는 다양한 스트리밍 데이터 소스에 대해 강력한 실시간 필터링 기능을 제공하는 애플리케이션입니다. 여러 필터 기준을 지원하며, 최소한의 지연 시간으로 고처리량 데이터 스트림을 처리할 수 있습니다.
 
-## 특징
+## 구조
+
+### Image filtering logic flow
+<img src="https://github.com/user-attachments/assets/ea4bff43-88b4-480d-a59e-42bcb3f08719" alt="image" width="300">
+
+### Program Operation Sequence
+<img src="https://github.com/user-attachments/assets/5e6a0cc8-fae2-444c-a5c0-f2cd0ed9cd30" alt="image" width="400">
+
 
 ## 특징
 
@@ -46,8 +43,6 @@ https://drive.google.com/file/d/1j6hMPa1un8TR8fsX2P9NtMW6TSgmluGy/view?usp=drive
 ## 설치
 
 ### 프로그램 실행 요구 사항
-
-
 
 - [Python 3.10.6 이상](https://www.python.org/)
 
